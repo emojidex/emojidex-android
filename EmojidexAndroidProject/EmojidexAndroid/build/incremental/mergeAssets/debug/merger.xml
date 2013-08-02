@@ -2,10 +2,10 @@
 <merger>
 
     <dataSet config="main" >
-        <source path="/Users/nazuki/repo/EmojidexAndroidProject/EmojidexAndroid/src/main/assets" />
+        <source path="/Users/nazuki/repo/emojidex-android/EmojidexAndroidProject/EmojidexAndroid/src/main/assets" />
     </dataSet>
     <dataSet config="debug" >
-        <source path="/Users/nazuki/repo/EmojidexAndroidProject/EmojidexAndroid/src/debug/assets" />
+        <source path="/Users/nazuki/repo/emojidex-android/EmojidexAndroidProject/EmojidexAndroid/src/debug/assets" />
     </dataSet>
 
 </merger>

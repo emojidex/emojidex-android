@@ -1,11 +1,11 @@
 # incremental data. DO NOT EDIT.
 # format is <lastModified> <length> <SHA-1> <path>
 # Encoding is UTF-8
-1375407051000 764 8871ab38987a641347bd19be196cb60868405903 /Users/nazuki/repo/EmojidexAndroidProject/EmojidexAndroid/build/res/all/debug/layout/activity_main.xml
-1375407051000 348 ddd0aee1d93511c5f3d47b6193381d0dbf6296a7 /Users/nazuki/repo/EmojidexAndroidProject/EmojidexAndroid/build/res/all/debug/menu/main.xml
-1375407051000 1125 78ff964a68bef8922ae07179883877083c238977 /Users/nazuki/repo/EmojidexAndroidProject/EmojidexAndroid/build/res/all/debug/values/values.xml
-1375407051000 251 ed395ade34dc19c3b9f19ba4cfb2349a790840c7 /Users/nazuki/repo/EmojidexAndroidProject/EmojidexAndroid/build/res/all/debug/values-sw720dp-land/values.xml
-1375407051000 9487 7e58a59b9c3cf7a7a1df12376c329591dd31f5e4 /Users/nazuki/repo/EmojidexAndroidProject/EmojidexAndroid/build/res/all/debug/drawable-xhdpi/ic_launcher.png
-1375407051000 6120 ced3785afb467e5670c9c7db0d3a345d15454ea5 /Users/nazuki/repo/EmojidexAndroidProject/EmojidexAndroid/build/res/all/debug/drawable-hdpi/ic_launcher.png
-1375407051000 18087 8d35b7c0e81c9caf7ee547905d69c9542a08b87f /Users/nazuki/repo/EmojidexAndroidProject/EmojidexAndroid/build/res/all/debug/drawable-xxhdpi/ic_launcher.png
-1375407051000 3156 be9d6d2174e9cbaabca59e8090160434dbd60002 /Users/nazuki/repo/EmojidexAndroidProject/EmojidexAndroid/build/res/all/debug/drawable-mdpi/ic_launcher.png
+1375411917000 268 cd61d8f4e9c193da57da0cc871c8bb9369d6f10d /Users/nazuki/repo/emojidex-android/EmojidexAndroidProject/EmojidexAndroid/build/res/all/debug/values-sw720dp-land/values.xml
+1375411917000 1176 0cd27487b37ebf011a51ccf56e7c62d7951ce8e7 /Users/nazuki/repo/emojidex-android/EmojidexAndroidProject/EmojidexAndroid/build/res/all/debug/values/values.xml
+1375411917000 781 89ee4ec3b449adfe3e152f579303f0c4d829933a /Users/nazuki/repo/emojidex-android/EmojidexAndroidProject/EmojidexAndroid/build/res/all/debug/layout/activity_main.xml
+1375411917000 9487 7e58a59b9c3cf7a7a1df12376c329591dd31f5e4 /Users/nazuki/repo/emojidex-android/EmojidexAndroidProject/EmojidexAndroid/build/res/all/debug/drawable-xhdpi/ic_launcher.png
+1375411917000 6120 ced3785afb467e5670c9c7db0d3a345d15454ea5 /Users/nazuki/repo/emojidex-android/EmojidexAndroidProject/EmojidexAndroid/build/res/all/debug/drawable-hdpi/ic_launcher.png
+1375411917000 3156 be9d6d2174e9cbaabca59e8090160434dbd60002 /Users/nazuki/repo/emojidex-android/EmojidexAndroidProject/EmojidexAndroid/build/res/all/debug/drawable-mdpi/ic_launcher.png
+1375411917000 18087 8d35b7c0e81c9caf7ee547905d69c9542a08b87f /Users/nazuki/repo/emojidex-android/EmojidexAndroidProject/EmojidexAndroid/build/res/all/debug/drawable-xxhdpi/ic_launcher.png
+1375411917000 365 2a1db9eeafd14aa2f83568a13969e97fe6963f54 /Users/nazuki/repo/emojidex-android/EmojidexAndroidProject/EmojidexAndroid/build/res/all/debug/menu/main.xml

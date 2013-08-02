@@ -2,39 +2,39 @@
 <merger>
 
     <dataSet config="main" >
-        <source path="/Users/nazuki/repo/EmojidexAndroidProject/EmojidexAndroid/src/main/res" >
+        <source path="/Users/nazuki/repo/emojidex-android/EmojidexAndroidProject/EmojidexAndroid/src/main/res" >
             <file
                 name="ic_launcher"
-                path="/Users/nazuki/repo/EmojidexAndroidProject/EmojidexAndroid/src/main/res/drawable-hdpi/ic_launcher.png"
+                path="/Users/nazuki/repo/emojidex-android/EmojidexAndroidProject/EmojidexAndroid/src/main/res/drawable-hdpi/ic_launcher.png"
                 qualifiers="hdpi"
                 type="drawable" />
             <file
                 name="ic_launcher"
-                path="/Users/nazuki/repo/EmojidexAndroidProject/EmojidexAndroid/src/main/res/drawable-mdpi/ic_launcher.png"
+                path="/Users/nazuki/repo/emojidex-android/EmojidexAndroidProject/EmojidexAndroid/src/main/res/drawable-mdpi/ic_launcher.png"
                 qualifiers="mdpi"
                 type="drawable" />
             <file
                 name="ic_launcher"
-                path="/Users/nazuki/repo/EmojidexAndroidProject/EmojidexAndroid/src/main/res/drawable-xhdpi/ic_launcher.png"
+                path="/Users/nazuki/repo/emojidex-android/EmojidexAndroidProject/EmojidexAndroid/src/main/res/drawable-xhdpi/ic_launcher.png"
                 qualifiers="xhdpi"
                 type="drawable" />
             <file
                 name="ic_launcher"
-                path="/Users/nazuki/repo/EmojidexAndroidProject/EmojidexAndroid/src/main/res/drawable-xxhdpi/ic_launcher.png"
+                path="/Users/nazuki/repo/emojidex-android/EmojidexAndroidProject/EmojidexAndroid/src/main/res/drawable-xxhdpi/ic_launcher.png"
                 qualifiers="xxhdpi"
                 type="drawable" />
             <file
                 name="activity_main"
-                path="/Users/nazuki/repo/EmojidexAndroidProject/EmojidexAndroid/src/main/res/layout/activity_main.xml"
+                path="/Users/nazuki/repo/emojidex-android/EmojidexAndroidProject/EmojidexAndroid/src/main/res/layout/activity_main.xml"
                 qualifiers=""
                 type="layout" />
             <file
                 name="main"
-                path="/Users/nazuki/repo/EmojidexAndroidProject/EmojidexAndroid/src/main/res/menu/main.xml"
+                path="/Users/nazuki/repo/emojidex-android/EmojidexAndroidProject/EmojidexAndroid/src/main/res/menu/main.xml"
                 qualifiers=""
                 type="menu" />
             <file
-                path="/Users/nazuki/repo/EmojidexAndroidProject/EmojidexAndroid/src/main/res/values/dimens.xml"
+                path="/Users/nazuki/repo/emojidex-android/EmojidexAndroidProject/EmojidexAndroid/src/main/res/values/dimens.xml"
                 qualifiers="" >
                 <dimen name="activity_horizontal_margin" >16dp
                 </dimen>
@@ -42,7 +42,7 @@
                 </dimen>
             </file>
             <file
-                path="/Users/nazuki/repo/EmojidexAndroidProject/EmojidexAndroid/src/main/res/values/strings.xml"
+                path="/Users/nazuki/repo/emojidex-android/EmojidexAndroidProject/EmojidexAndroid/src/main/res/values/strings.xml"
                 qualifiers="" >
                 <string name="action_settings" >Settings
                 </string>
@@ -52,7 +52,7 @@
                 </string>
             </file>
             <file
-                path="/Users/nazuki/repo/EmojidexAndroidProject/EmojidexAndroid/src/main/res/values/styles.xml"
+                path="/Users/nazuki/repo/emojidex-android/EmojidexAndroidProject/EmojidexAndroid/src/main/res/values/styles.xml"
                 qualifiers="" >
 
                 <style
@@ -74,16 +74,16 @@
                 </style>
             </file>
             <file
-                path="/Users/nazuki/repo/EmojidexAndroidProject/EmojidexAndroid/src/main/res/values-sw720dp-land/dimens.xml"
+                path="/Users/nazuki/repo/emojidex-android/EmojidexAndroidProject/EmojidexAndroid/src/main/res/values-sw720dp-land/dimens.xml"
                 qualifiers="sw720dp-land" >
                 <dimen name="activity_horizontal_margin" >128dp
                 </dimen>
             </file>
         </source>
-        <source path="/Users/nazuki/repo/EmojidexAndroidProject/EmojidexAndroid/build/res/rs/debug" />
+        <source path="/Users/nazuki/repo/emojidex-android/EmojidexAndroidProject/EmojidexAndroid/build/res/rs/debug" />
     </dataSet>
     <dataSet config="debug" >
-        <source path="/Users/nazuki/repo/EmojidexAndroidProject/EmojidexAndroid/src/debug/res" />
+        <source path="/Users/nazuki/repo/emojidex-android/EmojidexAndroidProject/EmojidexAndroid/src/debug/res" />
     </dataSet>
 
 </merger>

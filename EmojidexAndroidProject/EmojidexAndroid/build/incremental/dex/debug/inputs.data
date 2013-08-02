@@ -1,15 +1,15 @@
 # incremental data. DO NOT EDIT.
 # format is <lastModified> <length> <SHA-1> <path>
 # Encoding is UTF-8
-1375407051000 458 e591e48b0d374a562ba178c147f1bf88654a0d1d /Users/nazuki/repo/EmojidexAndroidProject/EmojidexAndroid/build/classes/debug/org/genshin/emojidexandroid/R$style.class
-1375407051000 420 5dc40c773ea0408b1ea2be1e5b84d45a505bfe47 /Users/nazuki/repo/EmojidexAndroidProject/EmojidexAndroid/build/classes/debug/org/genshin/emojidexandroid/R$id.class
-1375407051000 363 50597b11531f343c21c026845ac5e1d9799a89ba /Users/nazuki/repo/EmojidexAndroidProject/EmojidexAndroid/build/classes/debug/org/genshin/emojidexandroid/BuildConfig.class
-1375407051000 488 57631e46c2c414c30ad3c3f42f96c450c05afd97 /Users/nazuki/repo/EmojidexAndroidProject/EmojidexAndroid/build/classes/debug/org/genshin/emojidexandroid/R$dimen.class
-1375407051000 835 cf11b3f9a040c603027eca54ba913418698a6136 /Users/nazuki/repo/EmojidexAndroidProject/EmojidexAndroid/build/classes/debug/org/genshin/emojidexandroid/MainActivity.class
-1375407051000 415 58c1dd33b5ac98b8e97898cad5d384ad0f25b96d /Users/nazuki/repo/EmojidexAndroidProject/EmojidexAndroid/build/classes/debug/org/genshin/emojidexandroid/R$menu.class
-1375407051000 430 7994546dfda65d58ce7bd21e717505e885566fef /Users/nazuki/repo/EmojidexAndroidProject/EmojidexAndroid/build/classes/debug/org/genshin/emojidexandroid/R$layout.class
+1375411918000 488 57631e46c2c414c30ad3c3f42f96c450c05afd97 /Users/nazuki/repo/emojidex-android/EmojidexAndroidProject/EmojidexAndroid/build/classes/debug/org/genshin/emojidexandroid/R$dimen.class
 1369432937000 490914 3fe75433da602500cc71fcc1c46e5550291dd45d /Applications/Android Studio.app/sdk/extras/android/m2repository/com/android/support/support-v4/13.0.0/support-v4-13.0.0.jar
-1375407051000 499 001b755ead5b96159714ff7c9f27a2fb73b9bfeb /Users/nazuki/repo/EmojidexAndroidProject/EmojidexAndroid/build/classes/debug/org/genshin/emojidexandroid/R$string.class
-1375407051000 434 1ad0680434a25722976e501d613b09d52c6d9a2d /Users/nazuki/repo/EmojidexAndroidProject/EmojidexAndroid/build/classes/debug/org/genshin/emojidexandroid/R$drawable.class
-1375407051000 767 708ec7255c9caa629943b35ac803aa3e5ac5860a /Users/nazuki/repo/EmojidexAndroidProject/EmojidexAndroid/build/classes/debug/org/genshin/emojidexandroid/R.class
-1375407051000 367 8a75fdde71fed69d7ff01f6a0d72a2ee0bf1e7b0 /Users/nazuki/repo/EmojidexAndroidProject/EmojidexAndroid/build/classes/debug/org/genshin/emojidexandroid/R$attr.class
+1375411918000 458 e591e48b0d374a562ba178c147f1bf88654a0d1d /Users/nazuki/repo/emojidex-android/EmojidexAndroidProject/EmojidexAndroid/build/classes/debug/org/genshin/emojidexandroid/R$style.class
+1375411918000 434 1ad0680434a25722976e501d613b09d52c6d9a2d /Users/nazuki/repo/emojidex-android/EmojidexAndroidProject/EmojidexAndroid/build/classes/debug/org/genshin/emojidexandroid/R$drawable.class
+1375411918000 420 5dc40c773ea0408b1ea2be1e5b84d45a505bfe47 /Users/nazuki/repo/emojidex-android/EmojidexAndroidProject/EmojidexAndroid/build/classes/debug/org/genshin/emojidexandroid/R$id.class
+1375411918000 363 50597b11531f343c21c026845ac5e1d9799a89ba /Users/nazuki/repo/emojidex-android/EmojidexAndroidProject/EmojidexAndroid/build/classes/debug/org/genshin/emojidexandroid/BuildConfig.class
+1375411918000 415 58c1dd33b5ac98b8e97898cad5d384ad0f25b96d /Users/nazuki/repo/emojidex-android/EmojidexAndroidProject/EmojidexAndroid/build/classes/debug/org/genshin/emojidexandroid/R$menu.class
+1375411918000 430 7994546dfda65d58ce7bd21e717505e885566fef /Users/nazuki/repo/emojidex-android/EmojidexAndroidProject/EmojidexAndroid/build/classes/debug/org/genshin/emojidexandroid/R$layout.class
+1375411918000 835 cf11b3f9a040c603027eca54ba913418698a6136 /Users/nazuki/repo/emojidex-android/EmojidexAndroidProject/EmojidexAndroid/build/classes/debug/org/genshin/emojidexandroid/MainActivity.class
+1375411918000 499 001b755ead5b96159714ff7c9f27a2fb73b9bfeb /Users/nazuki/repo/emojidex-android/EmojidexAndroidProject/EmojidexAndroid/build/classes/debug/org/genshin/emojidexandroid/R$string.class
+1375411918000 767 708ec7255c9caa629943b35ac803aa3e5ac5860a /Users/nazuki/repo/emojidex-android/EmojidexAndroidProject/EmojidexAndroid/build/classes/debug/org/genshin/emojidexandroid/R.class
+1375411918000 367 8a75fdde71fed69d7ff01f6a0d72a2ee0bf1e7b0 /Users/nazuki/repo/emojidex-android/EmojidexAndroidProject/EmojidexAndroid/build/classes/debug/org/genshin/emojidexandroid/R$attr.class
