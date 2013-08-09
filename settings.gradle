@@ -1,1 +1,1 @@
-include ':EmojidexAndroid'
+include ':EmojidexAndroid', ':'
