@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/EmojidexAndroid/EmojidexAndroid.iml" filepath="$PROJECT_DIR$/EmojidexAndroid/EmojidexAndroid.iml" />
+      <module fileurl="file://$PROJECT_DIR$/EmojidexAndroidProject.iml" filepath="$PROJECT_DIR$/EmojidexAndroidProject.iml" />
+      <module fileurl="file://$PROJECT_DIR$/emojidex-android.iml" filepath="$PROJECT_DIR$/emojidex-android.iml" />
+    </modules>
+  </component>
+</project>
+
