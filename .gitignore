@@ -13,8 +13,6 @@ bin/
 gen/
 EmojidexAndroid/build/
 
-.gradle/
-
 # Local configuration file (sdk path, etc)
 local.properties
 
@@ -28,3 +26,15 @@ local.properties
 # Swap files
 *.swp
 *.swo
+
+# Android Studio
+.gradle/
+.idea/
+gradle/
+build/
+build.gradle
+gradlew
+gradlew.bat
+settings.gradle
+*.iml
+
