@@ -1,20 +1,13 @@
 package org.genshin.emojidexandroid;
 
-import android.app.Service;
-import android.content.Intent;
 import android.inputmethodservice.InputMethodService;
-import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
-import android.os.IBinder;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.LinearLayout;
 
 /**
  * Created by kou on 13/08/11.
  */
-public class EmojidexKeyboard extends InputMethodService implements KeyboardView.OnKeyboardActionListener {
+public class EmojidexIME extends InputMethodService implements KeyboardView.OnKeyboardActionListener {
     View layout;
 
     @Override
@@ -24,7 +17,7 @@ public class EmojidexKeyboard extends InputMethodService implements KeyboardView
 
     @Override
     public View onCreateInputView() {
-        layout = (View)getLayoutInflater().inflate(R.layout.keyboard, null);
+        layout = (View)getLayoutInflater().inflate(R.layout.ime, null);
         return layout;
     }
 
