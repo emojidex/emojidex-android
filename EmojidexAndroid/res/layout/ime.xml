@@ -7,36 +7,35 @@
     android:background="#000000">
     <LinearLayout
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            >
+            android:layout_height="wrap_content">
 
-        <Button
+        <ImageButton
+                android:id="@+id/search_button"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="Search"
                 android:layout_weight="1"
-                />
+                android:src="@android:drawable/ic_menu_search"/>
 
-        <Button
+        <ImageButton
+                android:id="@+id/favorite_button"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="Favorite"
                 android:layout_weight="1"
-                />
+                android:src="@android:drawable/btn_star"/>
 
-        <Button
+        <ImageButton
+                android:id="@+id/history_button"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="History"
                 android:layout_weight="1"
-                />
+                android:src="@android:drawable/ic_menu_recent_history"/>
 
-        <Button
+        <ImageButton
+                android:id="@+id/settings_button"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="Settings"
                 android:layout_weight="1"
-                />
+                android:src="@android:drawable/ic_menu_manage"/>
 
     </LinearLayout>
 
@@ -45,7 +44,7 @@
             android:layout_height="fill_parent">
 
         <Button
-                android:layout_width="wrap_content"
+                android:layout_width="35dp"
                 android:layout_height="wrap_content"
                 android:text="＜"/>
 
@@ -67,7 +66,7 @@
         </HorizontalScrollView>
 
         <Button
-                android:layout_width="wrap_content"
+                android:layout_width="35dp"
                 android:layout_height="wrap_content"
                 android:text="＞"/>
     </LinearLayout>
@@ -75,26 +74,29 @@
     <ScrollView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/ime_keyboard"/>
+            android:id="@+id/ime_keyboard">
+
+    </ScrollView>
 
     <LinearLayout
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            >
+            android:layout_height="wrap_content">
 
         <Button
+                android:id="@+id/back_button"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="Left"
+                android:text="＜"
                 android:layout_weight="1"/>
 
         <Button
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="Right"
+                android:text="＞"
                 android:layout_weight="1"/>
 
         <Button
+                android:id="@+id/space_button"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="Space"
