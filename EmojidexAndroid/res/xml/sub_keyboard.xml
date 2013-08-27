@@ -6,6 +6,7 @@
         android:verticalGap="0px"
         android:keyHeight="55dp"
         android:keyWidth="20%">
+
     <Row>
         <Key android:codes="21" android:keyLabel="←" android:keyEdgeFlags="left"/>
         <Key android:codes="22" android:keyLabel="→" />
@@ -13,4 +14,15 @@
         <Key android:codes="67" android:keyLabel="DEL" />
         <Key android:codes="66" android:keyLabel="ENT" android:keyEdgeFlags="right"/>
     </Row>
+
+<!--
+    <Row>
+        <Key android:codes="21" android:keyIcon="@drawable/key_left" android:keyEdgeFlags="left"/>
+        <Key android:codes="22" android:keyIcon="@drawable/key_right" />
+        <Key android:codes="62" android:keyIcon="@drawable/key_space" />
+        <Key android:codes="67" android:keyIcon="@drawable/key_delete" />
+        <Key android:codes="66" android:keyIcon="@drawable/key_enter" android:keyEdgeFlags="right"/>
+    </Row>
+-->
+
 </Keyboard>
