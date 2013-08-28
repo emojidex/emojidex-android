@@ -15,11 +15,13 @@ import java.util.ArrayList;
 /**
  * Created by nazuki on 2013/08/28.
  */
-public class EmojiList {
+public class EmojiList
+{
     ArrayList<Emoji> emojis;
     ArrayList<String> categories;
 
-    public EmojiList(Context context) {
+    public EmojiList(Context context)
+    {
         emojis = new ArrayList<Emoji>();
         categories = new ArrayList<String>();
 
@@ -27,15 +29,18 @@ public class EmojiList {
         setCategories();
     }
 
-    public ArrayList<Emoji> getEmojis() {
+    public ArrayList<Emoji> getEmojis()
+    {
         return emojis;
     }
 
-    public ArrayList<String> getCategories() {
+    public ArrayList<String> getCategories()
+    {
         return categories;
     }
 
-    private void setEmojisFromJson(Context context) {
+    private void setEmojisFromJson(Context context)
+    {
         // Create ObjectMapper
         ObjectMapper mapper = new ObjectMapper();
 
@@ -49,8 +54,8 @@ public class EmojiList {
         catch (IOException e) { e.printStackTrace(); }
 
         // Get JSON data from root node and put in an Emoji
-        JsonNode current;
-        for (int i = 0; (current = rootNode.get(i)) != null; i++) {
+        for (JsonNode current : rootNode)
+        {
             Emoji emoji = new Emoji();
 
             if (current.get("moji") != null) emoji.setMoji(current.get("moji").textValue());
@@ -63,7 +68,8 @@ public class EmojiList {
         }
     }
 
-    private void setCategories() {
+    private void setCategories()
+    {
         categories.add("all");
 
         for (Emoji emoji : emojis)
