@@ -20,7 +20,7 @@ public class Emoji
         unicode = "";
     }
 
-    public Object getMoji()
+    public String getMoji()
     {
         return moji;
     }
