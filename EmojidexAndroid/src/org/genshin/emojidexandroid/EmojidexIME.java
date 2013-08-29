@@ -3,8 +3,11 @@ package org.genshin.emojidexandroid;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.widget.ViewFlipper;
 
 /**
  * Created by kou on 13/08/11.
@@ -12,6 +15,8 @@ import android.view.ViewGroup;
 public class EmojidexIME extends InputMethodService implements KeyboardView.OnKeyboardActionListener {
     Keyboard keyboard;
     View layout;
+
+    ViewFlipper viewFlipper;
 
     @Override
     public void onInitializeInterface() {
@@ -31,6 +36,10 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         // add keyboard view to IME layout.
         ViewGroup targetView = (ViewGroup)layout.findViewById(R.id.ime_keyboard);
         targetView.addView(keyboardView);
+
+        // set viewFlipper action
+        viewFlipper = (ViewFlipper)layout.findViewById(R.id.viewFlipper);
+        viewFlipper.setOnTouchListener(new FlickTouchListener());
 
         return layout;
     }
@@ -73,5 +82,38 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     @Override
     public void swipeUp() {
 
+    }
+
+    private float lastTouchX;
+    private float currentX;
+    private class FlickTouchListener implements View.OnTouchListener
+    {
+        @Override
+        public boolean onTouch(View view, MotionEvent event)
+        {
+            switch (event.getAction())
+            {
+                case MotionEvent.ACTION_DOWN:
+                    lastTouchX = event.getX();
+                    break;
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    currentX = event.getX();
+                    if (lastTouchX < currentX)
+                    {
+                        viewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_in));
+                        viewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_out));
+                        viewFlipper.showPrevious();
+                    }
+                    if (lastTouchX > currentX)
+                    {
+                        viewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_in));
+                        viewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_out));
+                        viewFlipper.showNext();
+                    }
+                    break;
+            }
+            return true;
+        }
     }
 }

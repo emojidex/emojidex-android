@@ -10,37 +10,34 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
 
-        <ImageButton
-                android:id="@+id/search_button"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:src="@android:drawable/ic_menu_search"
-                android:contentDescription="@string/search"/>
+        <ImageView
+            android:id="@+id/flipper_left_button"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:src="@android:drawable/arrow_down_float"
+            android:rotation="90"
+            android:contentDescription="@string/left"/>
 
-        <ImageButton
-                android:id="@+id/favorite_button"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:src="@android:drawable/btn_star"
-                android:contentDescription="@string/favorite"/>
+        <ViewFlipper
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/viewFlipper"
+            android:layout_weight="1">
 
-        <ImageButton
-                android:id="@+id/history_button"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:src="@android:drawable/ic_menu_recent_history"
-                android:contentDescription="@string/history"/>
+            <include android:id="@+id/search_layout" layout="@layout/search" />
+            <include android:id="@+id/favorite_layout" layout="@layout/favorite" />
+            <include android:id="@+id/history_layout" layout="@layout/history" />
+            <include android:id="@+id/settings_layout" layout="@layout/settings" />
 
-        <ImageButton
-                android:id="@+id/settings_button"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:src="@android:drawable/ic_menu_manage"
-                android:contentDescription="@string/settings"/>
+        </ViewFlipper>
+
+        <ImageView
+            android:id="@+id/flipper_right_button"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:src="@android:drawable/arrow_up_float"
+            android:rotation="90"
+            android:contentDescription="@string/right"/>
 
     </LinearLayout>
 
