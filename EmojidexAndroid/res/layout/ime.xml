@@ -49,7 +49,7 @@
                 android:id="@+id/left_button"
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
-                android:src="@android:drawable/ic_media_play"
+                android:src="@drawable/arrow"
                 android:rotation="180"
                 android:contentDescription="@string/left"/>
 
@@ -74,7 +74,7 @@
                 android:id="@+id/right_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@android:drawable/ic_media_play"
+                android:src="@drawable/arrow"
                 android:contentDescription="@string/right"/>
 
     </LinearLayout>
