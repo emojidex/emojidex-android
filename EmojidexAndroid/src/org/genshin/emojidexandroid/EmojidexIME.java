@@ -1,35 +1,47 @@
 package org.genshin.emojidexandroid;
 
+import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
+import android.text.Html;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.ScrollView;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Created by kou on 13/08/11.
  */
 public class EmojidexIME extends InputMethodService implements KeyboardView.OnKeyboardActionListener {
-    Keyboard keyboard;
-    View layout;
+    private Keyboard keyboard;
+    private View layout;
 
     @Override
     public void onInitializeInterface() {
-        keyboard = new Keyboard(this, R.xml.keyboard);
+        keyboard = EmojidexKeyboard.create(this, null);
     }
 
     @Override
     public View onCreateInputView() {
-        // load IME layout from xml.
+        // Create IME layout.
         layout = (View)getLayoutInflater().inflate(R.layout.ime, null);
 
-        // create keyboard view.
+        // Create KeyboardView.
         KeyboardView keyboardView = new KeyboardView(this, null);
         keyboardView.setKeyboard(keyboard);
         keyboardView.setOnKeyboardActionListener(this);
 
-        // add keyboard view to IME layout.
-        ViewGroup targetView = (ViewGroup)layout.findViewById(R.id.ime_keyboard);
+        // Add KeyboardView to IME layout.
+        ScrollView targetView = (ScrollView)layout.findViewById(R.id.ime_keyboard);
         targetView.addView(keyboardView);
 
         return layout;
