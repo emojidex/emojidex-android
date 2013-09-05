@@ -1,0 +1,72 @@
+[
+  {
+    "category" : "all",
+    "English"  : "All",
+    "Japanese" : "全て"
+  },
+  {
+    "category" : "faces",
+    "English"  : "Faces",
+    "Japanese" : "顔"
+  },
+  {
+    "category" : "people",
+    "English"  : "People",
+    "Japanese" : "人"
+  },
+  {
+    "category" : "gesture",
+    "English"  : "Gesture",
+    "Japanese" : "ジェスチャー"
+  },
+  {
+    "category" : "food",
+    "English"  : "Food",
+    "Japanese" : "食べ物"
+  },
+  {
+    "category" : "object",
+    "English"  : "Object",
+    "Japanese" : "物"
+  },
+  {
+    "category" : "tools",
+    "English"  : "Tools",
+    "Japanese" : "道具"
+  },
+  {
+    "category" : "nature",
+    "English"  : "Nature",
+    "Japanese" : "自然"
+  },
+  {
+    "category" : "cosmos",
+    "English"  : "Cosmos",
+    "Japanese" : "宇宙"
+  },
+  {
+    "category" : "places",
+    "English"  : "Places",
+    "Japanese" : "場所"
+  },
+  {
+    "category" : "transportation",
+    "English"  : "Transportation",
+    "Japanese" : "乗り物"
+  },
+  {
+    "category" : "abstract",
+    "English"  : "Abstract",
+    "Japanese" : "抽象物"
+  },
+  {
+    "category" : "logos",
+    "English"  : "Logos",
+    "Japanese" : "ロゴ"
+  },
+  {
+    "category" : "individuals",
+    "English"  : "Individuals",
+    "Japanese" : "個人"
+  }
+]
