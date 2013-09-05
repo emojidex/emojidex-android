@@ -3,8 +3,10 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
-    <!-- Keyboard layout size. -->
-    <dimen name="keyboard_key_width">32dp</dimen>
-    <dimen name="keyboard_key_height">32dp</dimen>
-    <dimen name="keyboard_area_height">100dp</dimen>
+    <!-- IME layout size. -->
+    <dimen name="ime_text_size">12px</dimen>
+    <dimen name="ime_category_height">32dp</dimen>
+    <dimen name="ime_keyboard_key_width">32dp</dimen>
+    <dimen name="ime_keyboard_key_height">32dp</dimen>
+    <dimen name="ime_keyboard_area_height">100dp</dimen>
 </resources>

@@ -18,7 +18,7 @@ import java.io.InputStream;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class EmojiData
 {
-    @JsonProperty("moji")           private String moji;
+    @JsonProperty("moji")           private String moji = " ";
 //    @JsonProperty("alto")           private String[] alto;
     @JsonProperty("name")           private String name;
 //    @JsonProperty("name-ja")        private String nameJa;

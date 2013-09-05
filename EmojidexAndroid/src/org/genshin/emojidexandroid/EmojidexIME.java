@@ -5,24 +5,38 @@ import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
-import android.widget.ScrollView;
+import android.widget.Button;
 import android.widget.ViewFlipper;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by kou on 13/08/11.
  */
 public class EmojidexIME extends InputMethodService implements KeyboardView.OnKeyboardActionListener {
     private EmojiDataManager emojiDataManager;
-    private Keyboard keyboard;
+    private Map<String, Keyboard> keyboards;
+
     private View layout;
+    private KeyboardView keyboardView;
 
     ViewFlipper viewFlipper;
 
     @Override
     public void onInitializeInterface() {
+        // Create EmojiDataManager object.
         emojiDataManager = new EmojiDataManager(this);
-        keyboard = EmojidexKeyboard.create(this, emojiDataManager.getCategorizedList(getString(R.string.ime_all_category_name)));
+
+        // Create categorized keyboards.
+        keyboards = new HashMap<String, Keyboard>();
+        for(String categoryName : emojiDataManager.getCategoryNames())
+        {
+            Keyboard newKeyboard = EmojidexKeyboard.create(this, emojiDataManager.getCategorizedList(categoryName));
+            keyboards.put(categoryName, newKeyboard);
+        }
     }
 
     @Override
@@ -30,14 +44,8 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         // Create IME layout.
         layout = (View)getLayoutInflater().inflate(R.layout.ime, null);
 
-        // Create KeyboardView.
-        KeyboardView keyboardView = new KeyboardView(this, null);
-        keyboardView.setKeyboard(keyboard);
-        keyboardView.setOnKeyboardActionListener(this);
-
-        // Add KeyboardView to IME layout.
-        ScrollView targetView = (ScrollView)layout.findViewById(R.id.ime_keyboard);
-        targetView.addView(keyboardView);
+        createCategoryButtons();
+        createKeyboardView();
 
         // set viewFlipper action
         viewFlipper = (ViewFlipper)layout.findViewById(R.id.viewFlipper);
@@ -62,7 +70,6 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         if(primaryCode > Character.MAX_CODE_POINT)
         {
             EmojiData emoji = emojiDataManager.getEmojiData(primaryCode);
-
             getCurrentInputConnection().commitText(emoji.getMoji(), 1);
         }
         // Input unicode.
@@ -95,6 +102,55 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     @Override
     public void swipeUp() {
 
+    }
+
+    /**
+     * Create category buttons and add to IME layout.
+     */
+    private void createCategoryButtons()
+    {
+        ViewGroup targetView = (ViewGroup)layout.findViewById(R.id.ime_categories);
+        float textSize = getResources().getDimension(R.dimen.ime_text_size);
+
+        for(final String categoryName : emojiDataManager.getCategoryNames())
+        {
+            Button newButton = new Button(this);
+            newButton.setText(categoryName);
+            newButton.setTextSize(textSize);
+            newButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    setKeyboard(categoryName);
+                }
+            });
+            targetView.addView(newButton);
+        }
+    }
+
+    /**
+     * Create KeyboardView object and add to IME layout.
+     */
+    private void createKeyboardView()
+    {
+        // Create KeyboardView.
+        keyboardView = new KeyboardView(this, null);
+        keyboardView.setOnKeyboardActionListener(this);
+
+        // Add KeyboardView to IME layout.
+        ViewGroup targetView = (ViewGroup)layout.findViewById(R.id.ime_keyboard);
+        targetView.addView(keyboardView);
+
+        // Set default keyboard.
+        setKeyboard(getString(R.string.ime_all_category_name));
+    }
+
+    /**
+     * Set categorized keyboard.
+     * @param categoryName
+     */
+    private void setKeyboard(String categoryName)
+    {
+        keyboardView.setKeyboard(keyboards.get(categoryName));
     }
 
 

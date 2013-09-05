@@ -43,7 +43,7 @@
 
     <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="@dimen/ime_category_height">
 
         <ImageButton
                 android:id="@+id/left_button"
@@ -55,25 +55,19 @@
 
         <HorizontalScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1">
             <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:id="@+id/ime_categories">
-
-                <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="All"/>
-
             </LinearLayout>
         </HorizontalScrollView>
 
         <ImageButton
                 android:id="@+id/right_button"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:src="@drawable/arrow"
                 android:contentDescription="@string/right"/>
 
@@ -81,12 +75,12 @@
 
     <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="@dimen/keyboard_area_height"
+            android:layout_height="@dimen/ime_keyboard_area_height"
             android:id="@+id/ime_keyboard"/>
 
 
     <LinearLayout
-            android:id="@+id/sub_keyboard"
+            android:id="@+id/ime_sub_keyboard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal" />

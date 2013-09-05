@@ -115,8 +115,11 @@ public class EmojiDataManager
             List<EmojiData> targetList = categorizedLists.get(category);
 
             // Create new list if category is not found.
-            targetList = new ArrayList<EmojiData>();
-            categorizedLists.put(category, targetList);
+            if(targetList == null)
+            {
+                targetList = new ArrayList<EmojiData>();
+                categorizedLists.put(category, targetList);
+            }
 
             // Add emoji to category.
             targetList.add(emoji);
