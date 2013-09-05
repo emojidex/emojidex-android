@@ -22,6 +22,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
 
     private View layout;
     private KeyboardView keyboardView;
+    private KeyboardView subKeyboardView;
 
     ViewFlipper viewFlipper;
 
@@ -46,6 +47,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
 
         createCategoryButtons();
         createKeyboardView();
+        createSubKeyboardView();
 
         // set viewFlipper action
         viewFlipper = (ViewFlipper)layout.findViewById(R.id.viewFlipper);
@@ -128,7 +130,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     }
 
     /**
-     * Create KeyboardView object and add to IME layout.
+     * Create main KeyboardView object and add to IME layout.
      */
     private void createKeyboardView()
     {
@@ -142,6 +144,24 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
 
         // Set default keyboard.
         setKeyboard(getString(R.string.ime_all_category_name));
+    }
+
+    /**
+     * Create sub KeyboardView object and add to IME layout.
+     */
+    private void createSubKeyboardView()
+    {
+        // Create KeyboardView.
+        subKeyboardView = new KeyboardView(this, null);
+        subKeyboardView.setOnKeyboardActionListener(this);
+
+        // Create Keyboard and set to KeyboardView.
+        Keyboard keyboard = new Keyboard(this, R.xml.sub_keyboard);
+        subKeyboardView.setKeyboard(keyboard);
+
+        // Add KeyboardView to IME layout.
+        ViewGroup targetView = (ViewGroup)layout.findViewById(R.id.ime_sub_keyboard);
+        targetView.addView(subKeyboardView);
     }
 
     /**

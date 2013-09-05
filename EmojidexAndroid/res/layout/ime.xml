@@ -46,7 +46,7 @@
             android:layout_height="@dimen/ime_category_height">
 
         <ImageButton
-                android:id="@+id/left_button"
+                android:id="@+id/ime_category_button_left"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:src="@drawable/arrow"
@@ -65,7 +65,7 @@
         </HorizontalScrollView>
 
         <ImageButton
-                android:id="@+id/right_button"
+                android:id="@+id/ime_category_button_right"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:src="@drawable/arrow"
