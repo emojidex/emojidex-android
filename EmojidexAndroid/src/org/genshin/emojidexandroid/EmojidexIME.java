@@ -6,13 +6,14 @@ import android.inputmethodservice.KeyboardView;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AnimationUtils;
-import android.widget.ViewFlipper;
 import android.widget.ScrollView;
+import android.widget.ViewFlipper;
 
 /**
  * Created by kou on 13/08/11.
  */
 public class EmojidexIME extends InputMethodService implements KeyboardView.OnKeyboardActionListener {
+    private EmojiDataManager emojiDataManager;
     private Keyboard keyboard;
     private View layout;
 
@@ -20,7 +21,8 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
 
     @Override
     public void onInitializeInterface() {
-        keyboard = EmojidexKeyboard.create(this, null);
+        emojiDataManager = new EmojiDataManager(this);
+        keyboard = EmojidexKeyboard.create(this, emojiDataManager.getCategorizedList(getString(R.string.ime_all_category_name)));
     }
 
     @Override
@@ -45,22 +47,33 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     }
 
     @Override
-    public void onPress(int i) {
+    public void onPress(int primaryCode) {
 
     }
 
     @Override
-    public void onRelease(int i) {
+    public void onRelease(int primaryCode) {
 
     }
 
     @Override
-    public void onKey(int i, int[] ints) {
+    public void onKey(int primaryCode, int[] keyCodes) {
+        // Input emoji code.
+        if(primaryCode > Character.MAX_CODE_POINT)
+        {
+            EmojiData emoji = emojiDataManager.getEmojiData(primaryCode);
 
+            getCurrentInputConnection().commitText(emoji.getMoji(), 1);
+        }
+        // Input unicode.
+        else
+        {
+            sendDownUpKeyEvents(primaryCode);
+        }
     }
 
     @Override
-    public void onText(CharSequence charSequence) {
+    public void onText(CharSequence text) {
 
     }
 
@@ -83,6 +96,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     public void swipeUp() {
 
     }
+
 
     private float lastTouchX;
     private float currentX;

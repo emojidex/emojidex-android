@@ -3,20 +3,11 @@ package org.genshin.emojidexandroid;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.inputmethodservice.Keyboard;
 import android.util.DisplayMetrics;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 /**
  * Created by kou on 13/08/26.
@@ -67,8 +58,9 @@ public class EmojidexKeyboard extends Keyboard {
 
     /**
      * Add new key to keyboard.
+     * @param emojiData
      */
-    private void addKey()
+    private void addKey(EmojiData emojiData)
     {
         List<Key> keys = getKeys();
 
@@ -77,13 +69,18 @@ public class EmojidexKeyboard extends Keyboard {
         int x = keyCount % columnCount * (row.defaultWidth + row.defaultHorizontalGap);
         int y = keyCount / columnCount * (row.defaultHeight + row.verticalGap);
 
+        // Create new key and set parameters.
         Key newKey = new Key(row);
 
-        newKey.codes = new int[]{ 'a' };
-        newKey.label = null;
-        newKey.icon = testIcon;
+        newKey.codes = new int[]{ emojiData.getCode() };
         newKey.x = x;
         newKey.y = y;
+
+        Drawable icon = emojiData.getIcon();
+        if(icon != null)
+            newKey.icon = emojiData.getIcon();
+        else
+            newKey.label = emojiData.getMoji();
 
         keys.add(newKey);
     }
@@ -91,13 +88,13 @@ public class EmojidexKeyboard extends Keyboard {
     /**
      * Create EmojidexKeyboard object.
      * @param context
-     * @param emojiArray
+     * @param emojiDatas
      * @return      New EmojidexKeyboard object.
      */
-    public static EmojidexKeyboard create(Context context, Object emojiArray)
+    public static EmojidexKeyboard create(Context context, List<EmojiData> emojiDatas)
     {
         // Set keyboard parameters.
-        emojiCount = 42;
+        emojiCount = emojiDatas.size();
 
         // Create keyboard.
         EmojidexKeyboard newKeyboard = new EmojidexKeyboard(context);
@@ -105,28 +102,11 @@ public class EmojidexKeyboard extends Keyboard {
         // Initialize keyboard.
 
         // Key add test.
-        if(testIcon == null)    loadTestIcon(context.getResources());
-        for(int i = 0;  i < emojiCount; ++i)
-            newKeyboard.addKey();
+        for(EmojiData emojiData : emojiDatas)
+        {
+            newKeyboard.addKey(emojiData);
+        }
 
         return newKeyboard;
-    }
-
-    private static Drawable testIcon;
-
-    private static void loadTestIcon(Resources res)
-    {
-        try
-        {
-            InputStream is = res.getAssets().open("mdpi/anchor.png");
-            Bitmap bitmap = BitmapFactory.decodeStream(is);
-            is.close();
-            testIcon = new BitmapDrawable(res, bitmap);
-            testIcon.setBounds(0, 0, testIcon.getIntrinsicWidth(), testIcon.getIntrinsicHeight());
-        }
-        catch(IOException e)
-        {
-            e.printStackTrace();
-        }
     }
 }
