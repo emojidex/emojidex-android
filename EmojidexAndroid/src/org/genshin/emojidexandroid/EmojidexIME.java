@@ -25,6 +25,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     private Map<String, Keyboard> keyboards;
 
     private View layout;
+    private HorizontalScrollView categoryScrollView;
     private ScrollView keyboardScrollView;
     private KeyboardView keyboardView;
     private KeyboardView subKeyboardView;
@@ -60,6 +61,13 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         viewFlipper.setOnTouchListener(new FlickTouchListener());
 
         return layout;
+    }
+
+    @Override
+    public void onWindowShown() {
+        // Reset IME.
+        setKeyboard(getString(R.string.ime_all_category_name));
+        categoryScrollView.scrollTo(0, 0);
     }
 
     @Override
@@ -134,6 +142,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
             final String buttonText = isJapanese ? categoryData.getJapaneseName() : categoryData.getEnglishName();
             newButton.setText(buttonText);
             newButton.setTextSize(textSize);
+            newButton.setTextColor(0xFFFFFFFF);
             newButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -148,18 +157,14 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         }
 
         // Create categories scroll buttons.
-        final HorizontalScrollView scrollView = (HorizontalScrollView)layout.findViewById(R.id.ime_category_scrollview);
-        final int scrollSpeed = 100;
+        categoryScrollView = (HorizontalScrollView)layout.findViewById(R.id.ime_category_scrollview);
         final ImageButton leftButton = (ImageButton)layout.findViewById(R.id.ime_category_button_left);
         final ImageButton rightButton = (ImageButton)layout.findViewById(R.id.ime_category_button_right);
 
         leftButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                android.util.Log.d("ime", "Click left category button : deltaX = " + (-scrollSpeed));
-//                scrollView.scrollBy(-scrollSpeed, 0);
-
-                final float currentX = scrollView.getScrollX();
+                final float currentX = categoryScrollView.getScrollX();
                 final int childCount = categoriesView.getChildCount();
                 int nextX = 0;
                 for(int i = 0;  i < childCount;  ++i)
@@ -169,16 +174,13 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
                         break;
                     nextX = (int)childX;
                 }
-                scrollView.smoothScrollTo(nextX, 0);
+                categoryScrollView.smoothScrollTo(nextX, 0);
             }
         });
         rightButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                android.util.Log.d("ime", "Click right category button : deltaX = " + scrollSpeed);
-//                scrollView.scrollBy(scrollSpeed, 0);
-
-                final float currentX = scrollView.getScrollX();
+                final float currentX = categoryScrollView.getScrollX();
                 final int childCount = categoriesView.getChildCount();
                 int nextX = 0;
                 for(int i = 0;  i < childCount;  ++i)
@@ -190,7 +192,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
                         break;
                     }
                 }
-                scrollView.smoothScrollTo(nextX, 0);
+                categoryScrollView.smoothScrollTo(nextX, 0);
             }
         });
     }

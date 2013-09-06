@@ -8,5 +8,5 @@
     <dimen name="ime_category_height">32dp</dimen>
     <dimen name="ime_keyboard_key_width">32dp</dimen>
     <dimen name="ime_keyboard_key_height">32dp</dimen>
-    <dimen name="ime_keyboard_area_height">100dp</dimen>
+    <dimen name="ime_keyboard_area_height">112dp</dimen>
 </resources>
