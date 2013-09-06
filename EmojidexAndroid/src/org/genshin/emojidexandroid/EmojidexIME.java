@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.HorizontalScrollView;
+import android.widget.ImageButton;
 import android.widget.ViewFlipper;
 
 import java.util.HashMap;
@@ -45,7 +47,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         // Create IME layout.
         layout = (View)getLayoutInflater().inflate(R.layout.ime, null);
 
-        createCategoryButtons();
+        createCategorySelector();
         createKeyboardView();
         createSubKeyboardView();
 
@@ -68,6 +70,8 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
 
     @Override
     public void onKey(int primaryCode, int[] keyCodes) {
+        android.util.Log.d("ime", "Click key : code = " + primaryCode);
+
         // Input emoji code.
         if(primaryCode > Character.MAX_CODE_POINT)
         {
@@ -107,26 +111,80 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     }
 
     /**
-     * Create category buttons and add to IME layout.
+     * Create category selector..
      */
-    private void createCategoryButtons()
+    private void createCategorySelector()
     {
-        ViewGroup targetView = (ViewGroup)layout.findViewById(R.id.ime_categories);
-        float textSize = getResources().getDimension(R.dimen.ime_text_size);
+        // Create category buttons and add to IME layout.
+        final ViewGroup categoriesView = (ViewGroup)layout.findViewById(R.id.ime_categories);
+        final float textSize = getResources().getDimension(R.dimen.ime_text_size);
 
         for(final String categoryName : emojiDataManager.getCategoryNames())
         {
-            Button newButton = new Button(this);
+            // Create button.
+            final Button newButton = new Button(this);
+
+            // Set button parametors.
             newButton.setText(categoryName);
             newButton.setTextSize(textSize);
             newButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    android.util.Log.d("ime", "Click category button : category = " + categoryName);
                     setKeyboard(categoryName);
                 }
             });
-            targetView.addView(newButton);
+
+            // Add button to IME layout.
+            categoriesView.addView(newButton);
         }
+
+        // Create categories scroll buttons.
+        final HorizontalScrollView scrollView = (HorizontalScrollView)layout.findViewById(R.id.ime_category_scrollview);
+        final int scrollSpeed = 100;
+        final ImageButton leftButton = (ImageButton)layout.findViewById(R.id.ime_category_button_left);
+        final ImageButton rightButton = (ImageButton)layout.findViewById(R.id.ime_category_button_right);
+
+        leftButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                android.util.Log.d("ime", "Click left category button : deltaX = " + (-scrollSpeed));
+//                scrollView.scrollBy(-scrollSpeed, 0);
+
+                final float currentX = scrollView.getScrollX();
+                final int childCount = categoriesView.getChildCount();
+                int nextX = 0;
+                for(int i = 0;  i < childCount;  ++i)
+                {
+                    final float childX = categoriesView.getChildAt(i).getX();
+                    if(childX >= currentX)
+                        break;
+                    nextX = (int)childX;
+                }
+                scrollView.smoothScrollTo(nextX, 0);
+            }
+        });
+        rightButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                android.util.Log.d("ime", "Click right category button : deltaX = " + scrollSpeed);
+//                scrollView.scrollBy(scrollSpeed, 0);
+
+                final float currentX = scrollView.getScrollX();
+                final int childCount = categoriesView.getChildCount();
+                int nextX = 0;
+                for(int i = 0;  i < childCount;  ++i)
+                {
+                    final float childX = categoriesView.getChildAt(i).getX();
+                    if(childX > currentX)
+                    {
+                        nextX = (int)childX;
+                        break;
+                    }
+                }
+                scrollView.smoothScrollTo(nextX, 0);
+            }
+        });
     }
 
     /**
