@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by nazuki on 2013/08/28.
@@ -23,6 +22,7 @@ public class EmojiDataManager
 {
     private Map<String, List<EmojiData>> categorizedLists;
     private Map<Integer, EmojiData> emojiTable;
+    private List<CategoryData> categories;
 
     /**
      * Construct EmojiDataManager object.
@@ -50,9 +50,9 @@ public class EmojiDataManager
      * Get category name list.
      * @return      Set of category name.
      */
-    public Set<String> getCategoryNames()
+    public List<CategoryData> getCategoryDatas()
     {
-        return categorizedLists.keySet();
+        return categories;
     }
 
     /**
@@ -130,5 +130,17 @@ public class EmojiDataManager
         {
             emojiTable.put(emoji.getCode(), emoji);
         }
+
+        // Load category data from "categories.json".
+        try
+        {
+            InputStream is = res.getAssets().open("categories.json");
+            ObjectMapper objectMapper = new ObjectMapper();
+            categories = objectMapper.readValue(is, new TypeReference<ArrayList<CategoryData>>(){});
+            is.close();
+        }
+        catch (JsonParseException e) { e.printStackTrace(); }
+        catch (JsonMappingException e) { e.printStackTrace(); }
+        catch (IOException e) { e.printStackTrace(); }
     }
 }

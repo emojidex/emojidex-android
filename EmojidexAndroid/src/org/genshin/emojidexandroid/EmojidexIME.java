@@ -10,9 +10,11 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
+import android.widget.ScrollView;
 import android.widget.ViewFlipper;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -23,10 +25,11 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     private Map<String, Keyboard> keyboards;
 
     private View layout;
+    private ScrollView keyboardScrollView;
     private KeyboardView keyboardView;
     private KeyboardView subKeyboardView;
 
-    ViewFlipper viewFlipper;
+    private ViewFlipper viewFlipper;
 
     @Override
     public void onInitializeInterface() {
@@ -35,8 +38,9 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
 
         // Create categorized keyboards.
         keyboards = new HashMap<String, Keyboard>();
-        for(String categoryName : emojiDataManager.getCategoryNames())
+        for(CategoryData categoryData : emojiDataManager.getCategoryDatas())
         {
+            final String categoryName = categoryData.getName();
             Keyboard newKeyboard = EmojidexKeyboard.create(this, emojiDataManager.getCategorizedList(categoryName));
             keyboards.put(categoryName, newKeyboard);
         }
@@ -119,17 +123,21 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         final ViewGroup categoriesView = (ViewGroup)layout.findViewById(R.id.ime_categories);
         final float textSize = getResources().getDimension(R.dimen.ime_text_size);
 
-        for(final String categoryName : emojiDataManager.getCategoryNames())
+        for(final CategoryData categoryData : emojiDataManager.getCategoryDatas())
         {
             // Create button.
             final Button newButton = new Button(this);
 
             // Set button parametors.
-            newButton.setText(categoryName);
+            final Locale locale = Locale.getDefault();
+            final boolean isJapanese = locale.equals(Locale.JAPANESE) || locale.equals(Locale.JAPAN);
+            final String buttonText = isJapanese ? categoryData.getJapaneseName() : categoryData.getEnglishName();
+            newButton.setText(buttonText);
             newButton.setTextSize(textSize);
             newButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    final String categoryName = categoryData.getName();
                     android.util.Log.d("ime", "Click category button : category = " + categoryName);
                     setKeyboard(categoryName);
                 }
@@ -197,8 +205,8 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         keyboardView.setOnKeyboardActionListener(this);
 
         // Add KeyboardView to IME layout.
-        ViewGroup targetView = (ViewGroup)layout.findViewById(R.id.ime_keyboard);
-        targetView.addView(keyboardView);
+        keyboardScrollView = (ScrollView)layout.findViewById(R.id.ime_keyboard);
+        keyboardScrollView.addView(keyboardView);
 
         // Set default keyboard.
         setKeyboard(getString(R.string.ime_all_category_name));
@@ -224,11 +232,15 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
 
     /**
      * Set categorized keyboard.
-     * @param categoryName
+     * @param categoryID
      */
-    private void setKeyboard(String categoryName)
+    private void setKeyboard(String categoryID)
     {
-        keyboardView.setKeyboard(keyboards.get(categoryName));
+        // Set categorized keyboard to KeyboardView.
+        keyboardView.setKeyboard(keyboards.get(categoryID));
+
+        // Scroll to top.
+        keyboardScrollView.scrollTo(0, 0);
     }
 
 
