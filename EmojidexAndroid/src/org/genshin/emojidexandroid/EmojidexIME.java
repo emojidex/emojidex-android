@@ -35,7 +35,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     @Override
     public void onInitializeInterface() {
         // Create EmojiDataManager object.
-        emojiDataManager = new EmojiDataManager(this);
+        emojiDataManager = EmojiDataManager.create(this);
 
         // Create categorized keyboards.
         keyboards = new HashMap<String, Keyboard>();

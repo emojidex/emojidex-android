@@ -20,20 +20,38 @@ import java.util.Map;
  */
 public class EmojiDataManager
 {
+    private static EmojiDataManager instance = new EmojiDataManager();
+
     private Map<String, List<EmojiData>> categorizedLists;
     private Map<Integer, EmojiData> emojiTable;
     private List<CategoryData> categories;
 
+    private boolean isInitialized;
+
+
+    /**
+     * Create EmojiDataManager object.
+     * @param context
+     * @return      EmojiDataManager object.
+     */
+    public static EmojiDataManager create(Context context)
+    {
+        if( !instance.isInitialized )
+        {
+            instance.initialize(context);
+            instance.isInitialized = true;
+        }
+        return instance;
+    }
+
     /**
      * Construct EmojiDataManager object.
-     * @param context
      */
-    public EmojiDataManager(Context context)
+    private EmojiDataManager()
     {
         categorizedLists = new HashMap<String, List<EmojiData>>();
         emojiTable = new HashMap<Integer, EmojiData>();
-
-        initialize(context);
+        isInitialized = false;
     }
 
     /**
