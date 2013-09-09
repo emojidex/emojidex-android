@@ -9,6 +9,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        testEmojidex();
         setContentView(R.layout.activity_main);
     }
 
@@ -19,4 +20,19 @@ public class MainActivity extends Activity {
         return true;
     }
 
+    /**
+     * Emojidex test space.
+     * Finally delete this method.
+     */
+    private void testEmojidex()
+    {
+        Emojidex emojidex = new Emojidex(getApplicationContext());
+        String buf = "hoge:piyo:cyclone:fuga::hogera";
+
+        android.util.Log.d("ime", "Source = " + buf);
+        buf = emojidex.emojify(buf);
+        android.util.Log.d("ime", "Encode = " + buf);
+        buf = emojidex.deEmojify(buf);
+        android.util.Log.d("ime", "Decode = " + buf);
+    }
 }
