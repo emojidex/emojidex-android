@@ -94,17 +94,15 @@ public class EmojidexKeyboard extends Keyboard {
     public static EmojidexKeyboard create(Context context, List<EmojiData> emojiDatas)
     {
         // Set keyboard parameters.
-        emojiCount = emojiDatas.size();
+        emojiCount = (emojiDatas != null) ? emojiDatas.size() : 0;
 
         // Create keyboard.
         EmojidexKeyboard newKeyboard = new EmojidexKeyboard(context);
 
-        // Initialize keyboard.
-
         // Key add test.
-        for(EmojiData emojiData : emojiDatas)
+        for(int i = 0;  i < emojiCount;  ++i)
         {
-            newKeyboard.addKey(emojiData);
+            newKeyboard.addKey( emojiDatas.get(i) );
         }
 
         return newKeyboard;
