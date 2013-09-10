@@ -33,13 +33,13 @@ public class Emojidex {
             if(endIndex == -1)
                 break;
 
-            // Get EmojiData from emoji name.
+            // Get EmojiData by emoji name.
             final String emojiName = result.substring(startIndex + 1, endIndex);
-            final EmojiData emojiData = emojiDataManager.getEmojiData(emojiName);
+            final EmojiData emojiData = emojiDataManager.getEmojiDataByName(emojiName);
             if(emojiData == null)
                 continue;
 
-            // Replace emoji code to emoji.
+            // Replace emoji tag to emoji.
             final String regex = result.substring(startIndex, endIndex + 1);
             final String replacement = emojiData.getMoji();
             result = result.replace(regex, replacement);
@@ -54,6 +54,34 @@ public class Emojidex {
      */
     public String deEmojify(String text)
     {
-        return text;
+        String result = text;
+        for(int i = 0;  i < result.length();  ++i)
+        {
+            final int codePoint = result.codePointAt(i);
+            if( !isEmoji(codePoint) )
+                continue;
+
+            // Get EmojiData by unicode.
+            final EmojiData emojiData = emojiDataManager.getEmojiDataByUnicode(codePoint);
+            if(emojiData == null)
+                continue;
+
+            // Replace emoji to emoji tag.
+            result = result.replace(
+                    String.valueOf(Character.toChars(codePoint)),
+                    separator + emojiData.getName() + separator
+            );
+        }
+        return result;
+    }
+
+    /**
+     *
+     * @param codePoint
+     * @return
+     */
+    private boolean isEmoji(int codePoint)
+    {
+        return codePoint >= 0x2000;
     }
 }

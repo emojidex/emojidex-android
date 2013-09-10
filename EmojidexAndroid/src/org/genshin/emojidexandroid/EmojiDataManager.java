@@ -20,14 +20,16 @@ import java.util.Map;
  */
 public class EmojiDataManager
 {
-    private static EmojiDataManager instance = new EmojiDataManager();
+    private static final EmojiDataManager instance = new EmojiDataManager();
 
-    private Map<String, List<EmojiData>> categorizedLists;
-    private Map<String, EmojiData> nameTable;
-    private Map<Integer, EmojiData> codeTable;
-    private List<CategoryData> categories;
+    private final Map<String, List<EmojiData>> categorizedLists = new HashMap<String, List<EmojiData>>();
+    private final Map<String, EmojiData> nameTable = new HashMap<String, EmojiData>();
+    private final Map<Integer, EmojiData> unicodeTable = new HashMap<Integer, EmojiData>();
+    private final Map<Integer, EmojiData> codeTable = new HashMap<Integer, EmojiData>();
 
-    private boolean isInitialized;
+    private List<CategoryData> categories = null;
+
+    private boolean isInitialized = false;
 
 
     /**
@@ -50,10 +52,7 @@ public class EmojiDataManager
      */
     private EmojiDataManager()
     {
-        categorizedLists = new HashMap<String, List<EmojiData>>();
-        nameTable = new HashMap<String, EmojiData>();
-        codeTable = new HashMap<Integer, EmojiData>();
-        isInitialized = false;
+        // Nothing is implemented.
     }
 
     /**
@@ -76,21 +75,31 @@ public class EmojiDataManager
     }
 
     /**
-     * Get EmojiData object from emoji name.
+     * Get EmojiData object by emoji name.
      * @param name      Emoji name.
      * @return          EmojiData object.
      */
-    public EmojiData getEmojiData(String name)
+    public EmojiData getEmojiDataByName(String name)
     {
         return nameTable.get(name);
     }
 
     /**
-     * Get EmojiData object from emoji code.
+     * Get EmojiData object by unicode.
+     * @param code      Unicode.
+     * @return          EmojiData object.
+     */
+    public EmojiData getEmojiDataByUnicode(int code)
+    {
+        return unicodeTable.get(code);
+    }
+
+    /**
+     * Get EmojiData object by emoji code.
      * @param code      Emoji code.
      * @return          EmojiData object.
      */
-    public EmojiData getEmojiData(int code)
+    public EmojiData getEmojiDataByCode(int code)
     {
         return codeTable.get(code);
     }
@@ -158,7 +167,17 @@ public class EmojiDataManager
         // Create EmojiData table.
         for(EmojiData emoji : newEmojiList)
         {
+            // Add to name table.
             nameTable.put(emoji.getName(), emoji);
+
+            // Add to unicode table.
+            final String unicode = emoji.getUnicode();
+            if(unicode != null)
+            {
+                unicodeTable.put(Integer.valueOf(unicode, 16), emoji);
+            }
+
+            // Add to emoji code table
             codeTable.put(emoji.getCode(), emoji);
         }
 

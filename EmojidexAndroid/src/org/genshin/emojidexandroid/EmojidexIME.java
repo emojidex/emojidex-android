@@ -87,7 +87,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         // Input emoji code.
         if(primaryCode > Character.MAX_CODE_POINT)
         {
-            EmojiData emoji = emojiDataManager.getEmojiData(primaryCode);
+            EmojiData emoji = emojiDataManager.getEmojiDataByCode(primaryCode);
             getCurrentInputConnection().commitText(emoji.getMoji(), 1);
         }
         // Input unicode.

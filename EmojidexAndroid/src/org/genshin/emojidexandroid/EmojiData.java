@@ -24,7 +24,7 @@ public class EmojiData
 //    @JsonProperty("name-ja")        private String nameJa;
 //    @JsonProperty("emoticon")       private String emoticon;
     @JsonProperty("category")       private String category;
-//    @JsonProperty("unicode")        private String unicode;
+    @JsonProperty("unicode")        private String unicode;
 //    @JsonProperty("attribution")    private String attribution;
 //    @JsonProperty("contributor")    private String contributor;
 //    @JsonProperty("url")            private String url;
@@ -82,6 +82,15 @@ public class EmojiData
     public String getCategory()
     {
         return category;
+    }
+
+    /**
+     * Get unicode.
+     * @return      Unicode.
+     */
+    public String getUnicode()
+    {
+        return unicode;
     }
 
     /**
