@@ -67,6 +67,15 @@ public class EmojiData
     }
 
     /**
+     * Get emoji name.
+     * @return      Emoji name.
+     */
+    public String getName()
+    {
+        return name;
+    }
+
+    /**
      * Get category name.
      * @return  Category name.
      */

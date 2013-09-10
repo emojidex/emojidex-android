@@ -23,7 +23,8 @@ public class EmojiDataManager
     private static EmojiDataManager instance = new EmojiDataManager();
 
     private Map<String, List<EmojiData>> categorizedLists;
-    private Map<Integer, EmojiData> emojiTable;
+    private Map<String, EmojiData> nameTable;
+    private Map<Integer, EmojiData> codeTable;
     private List<CategoryData> categories;
 
     private boolean isInitialized;
@@ -50,7 +51,8 @@ public class EmojiDataManager
     private EmojiDataManager()
     {
         categorizedLists = new HashMap<String, List<EmojiData>>();
-        emojiTable = new HashMap<Integer, EmojiData>();
+        nameTable = new HashMap<String, EmojiData>();
+        codeTable = new HashMap<Integer, EmojiData>();
         isInitialized = false;
     }
 
@@ -74,13 +76,23 @@ public class EmojiDataManager
     }
 
     /**
+     * Get EmojiData object from emoji name.
+     * @param name      Emoji name.
+     * @return          EmojiData object.
+     */
+    public EmojiData getEmojiData(String name)
+    {
+        return nameTable.get(name);
+    }
+
+    /**
      * Get EmojiData object from emoji code.
      * @param code      Emoji code.
-     * @return      EmojiData object.
+     * @return          EmojiData object.
      */
     public EmojiData getEmojiData(int code)
     {
-        return emojiTable.get(code);
+        return codeTable.get(code);
     }
 
     /**
@@ -146,7 +158,8 @@ public class EmojiDataManager
         // Create EmojiData table.
         for(EmojiData emoji : newEmojiList)
         {
-            emojiTable.put(emoji.getCode(), emoji);
+            nameTable.put(emoji.getName(), emoji);
+            codeTable.put(emoji.getCode(), emoji);
         }
 
         // Load category data from "categories.json".

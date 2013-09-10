@@ -27,7 +27,7 @@ public class MainActivity extends Activity {
     private void testEmojidex()
     {
         Emojidex emojidex = new Emojidex(getApplicationContext());
-        String buf = "hoge:piyo:cyclone:fuga::hogera";
+        String buf = "hot_beverage:hoge:piyo:hot_beverage:fuga::hogera:hot_beverage";
 
         android.util.Log.d("ime", "Source = " + buf);
         buf = emojidex.emojify(buf);
