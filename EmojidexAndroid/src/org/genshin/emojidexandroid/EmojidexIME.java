@@ -82,15 +82,15 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
 
     @Override
     public void onKey(int primaryCode, int[] keyCodes) {
-        android.util.Log.d("ime", "Click key : code = " + primaryCode);
+        android.util.Log.d("ime", "Click key : code = 0x" + Integer.toString(primaryCode, 16));
 
-        // Input emoji code.
-        if(primaryCode > Character.MAX_CODE_POINT)
+        // Input emoji.
+        final EmojiData emoji = emojiDataManager.getEmojiData(primaryCode);
+        if(emoji != null)
         {
-            EmojiData emoji = emojiDataManager.getEmojiDataByCode(primaryCode);
-            getCurrentInputConnection().commitText(emoji.getMoji(), 1);
+            getCurrentInputConnection().commitText(emoji.createImageString(), 1);
         }
-        // Input unicode.
+        // Input other.
         else
         {
             sendDownUpKeyEvents(primaryCode);

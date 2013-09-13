@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.text.SpannableString;
+import android.text.style.ImageSpan;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -18,19 +20,32 @@ import java.io.InputStream;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class EmojiData
 {
-    @JsonProperty("moji")           private String moji = " ";
+    private static final String NOT_UNICODE_MOJI = "\uFFFC";
+
+    @JsonProperty("moji")           private String moji = NOT_UNICODE_MOJI;
 //    @JsonProperty("alto")           private String[] alto;
     @JsonProperty("name")           private String name;
 //    @JsonProperty("name-ja")        private String nameJa;
 //    @JsonProperty("emoticon")       private String emoticon;
     @JsonProperty("category")       private String category;
-    @JsonProperty("unicode")        private String unicode;
+//    @JsonProperty("unicode")        private String unicode;
 //    @JsonProperty("attribution")    private String attribution;
 //    @JsonProperty("contributor")    private String contributor;
 //    @JsonProperty("url")            private String url;
 
     private Drawable icon = null;
-    private int code;
+    private int code = 0;
+
+
+    /**
+     * Initialize EmojiData object.
+     * @param res
+     * @param dir
+     */
+    public void initialize(Resources res, String dir)
+    {
+        initialize(res, dir, moji.codePointAt(0));
+    }
 
     /**
      * Initialize EmojiData object.
@@ -40,6 +55,10 @@ public class EmojiData
      */
     public void initialize(Resources res, String dir, int code)
     {
+        // Set emoji code.
+        this.code = code;
+        moji = new String(Character.toChars(this.code));
+
         // Load icon image.
         try
         {
@@ -52,9 +71,18 @@ public class EmojiData
         {
             e.printStackTrace();
         }
+    }
 
-        // Set emoji code.
-        this.code = code;
+    /**
+     * Create image string.
+     * @return      Image string.
+     */
+    public CharSequence createImageString()
+    {
+        final ImageSpan imageSpan = new ImageSpan(icon);
+        final SpannableString str = new SpannableString(moji);
+        str.setSpan(imageSpan, 0, str.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return str;
     }
 
     /**
@@ -85,15 +113,6 @@ public class EmojiData
     }
 
     /**
-     * Get unicode.
-     * @return      Unicode.
-     */
-    public String getUnicode()
-    {
-        return unicode;
-    }
-
-    /**
      * Get icon image.
      * @return      Icon image.
      */
@@ -109,5 +128,14 @@ public class EmojiData
     public int getCode()
     {
         return code;
+    }
+
+    /**
+     * Get flag of has code.
+     * @return
+     */
+    public boolean hasCode()
+    {
+        return code != 0 || !moji.equals(NOT_UNICODE_MOJI);
     }
 }

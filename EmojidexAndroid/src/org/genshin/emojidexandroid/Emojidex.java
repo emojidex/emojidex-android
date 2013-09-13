@@ -35,7 +35,7 @@ public class Emojidex {
 
             // Get EmojiData by emoji name.
             final String emojiName = result.substring(startIndex + 1, endIndex);
-            final EmojiData emojiData = emojiDataManager.getEmojiDataByName(emojiName);
+            final EmojiData emojiData = emojiDataManager.getEmojiData(emojiName);
             if(emojiData == null)
                 continue;
 
@@ -62,7 +62,7 @@ public class Emojidex {
                 continue;
 
             // Get EmojiData by unicode.
-            final EmojiData emojiData = emojiDataManager.getEmojiDataByUnicode(codePoint);
+            final EmojiData emojiData = emojiDataManager.getEmojiData(codePoint);
             if(emojiData == null)
                 continue;
 

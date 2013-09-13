@@ -24,7 +24,6 @@ public class EmojiDataManager
 
     private final Map<String, List<EmojiData>> categorizedLists = new HashMap<String, List<EmojiData>>();
     private final Map<String, EmojiData> nameTable = new HashMap<String, EmojiData>();
-    private final Map<Integer, EmojiData> unicodeTable = new HashMap<Integer, EmojiData>();
     private final Map<Integer, EmojiData> codeTable = new HashMap<Integer, EmojiData>();
 
     private List<CategoryData> categories = null;
@@ -79,19 +78,9 @@ public class EmojiDataManager
      * @param name      Emoji name.
      * @return          EmojiData object.
      */
-    public EmojiData getEmojiDataByName(String name)
+    public EmojiData getEmojiData(String name)
     {
         return nameTable.get(name);
-    }
-
-    /**
-     * Get EmojiData object by unicode.
-     * @param code      Unicode.
-     * @return          EmojiData object.
-     */
-    public EmojiData getEmojiDataByUnicode(int code)
-    {
-        return unicodeTable.get(code);
     }
 
     /**
@@ -99,7 +88,7 @@ public class EmojiDataManager
      * @param code      Emoji code.
      * @return          EmojiData object.
      */
-    public EmojiData getEmojiDataByCode(int code)
+    public EmojiData getEmojiData(int code)
     {
         return codeTable.get(code);
     }
@@ -139,10 +128,13 @@ public class EmojiDataManager
         categorizedLists.put(context.getString(R.string.ime_all_category_name), newEmojiList);
 
         // Initialize emoji.
-        int nextCode = Character.MAX_CODE_POINT + 1;
+        int nextCode = 0x100000;
         for(EmojiData emoji : newEmojiList)
         {
-            emoji.initialize(res, dpiDir, nextCode++);
+            if(emoji.hasCode())
+                emoji.initialize(res, dpiDir);
+            else
+                emoji.initialize(res, dpiDir, nextCode++);
         }
 
         // Create categorized list.
@@ -169,13 +161,6 @@ public class EmojiDataManager
         {
             // Add to name table.
             nameTable.put(emoji.getName(), emoji);
-
-            // Add to unicode table.
-            final String unicode = emoji.getUnicode();
-            if(unicode != null)
-            {
-                unicodeTable.put(Integer.valueOf(unicode, 16), emoji);
-            }
 
             // Add to emoji code table
             codeTable.put(emoji.getCode(), emoji);
