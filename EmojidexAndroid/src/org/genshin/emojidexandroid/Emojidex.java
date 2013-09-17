@@ -1,12 +1,13 @@
 package org.genshin.emojidexandroid;
 
 import android.content.Context;
+import android.text.SpannableStringBuilder;
 
 /**
  * Created by kou on 13/09/09.
  */
 public class Emojidex {
-    private final char separator = ':';
+    private final String separator = ":";
     private final EmojiDataManager emojiDataManager;
 
     /**
@@ -23,27 +24,59 @@ public class Emojidex {
      * @param text      Normal text.
      * @return          Emojidex text.
      */
-    public String emojify(String text)
+    public CharSequence emojify(CharSequence text)
     {
-        String result = text;
-        int startIndex = -1;
-        while( (startIndex = result.indexOf(separator, startIndex + 1)) != -1 )
+        final SpannableStringBuilder result = new SpannableStringBuilder();
+
+        final int length = text.length();
+        int charCount = 0;
+        int startIndex = 0;
+        boolean startIsSeparator = false;
+        for(int i = 0;  i < length;  i += charCount)
         {
-            final int endIndex = result.indexOf(separator, startIndex + 1);
-            if(endIndex == -1)
-                break;
+            final int codePoint = Character.codePointAt(text, i);
+            charCount = Character.charCount(codePoint);
 
-            // Get EmojiData by emoji name.
-            final String emojiName = result.substring(startIndex + 1, endIndex);
-            final EmojiData emojiData = emojiDataManager.getEmojiData(emojiName);
-            if(emojiData == null)
-                continue;
+            if( String.valueOf(Character.toChars(codePoint)).equals(separator) )
+            {
+                final int endIndex = i;
 
-            // Replace emoji tag to emoji.
-            final String regex = result.substring(startIndex, endIndex + 1);
-            final String replacement = emojiData.getMoji();
-            result = result.replace(regex, replacement);
+                // Start character is not separator.
+                if( !startIsSeparator )
+                {
+                    result.append( text.subSequence(startIndex, endIndex) );
+                    startIndex = endIndex;
+                    startIsSeparator = true;
+                    continue;
+                }
+
+                // Get EmojiData by emoji name.
+                final String emojiName = text.subSequence(startIndex + 1, endIndex).toString();
+                final EmojiData emojiData = emojiDataManager.getEmojiData(emojiName);
+
+                // String is not emoji tag.
+                if(emojiData == null)
+                {
+                    result.append( text.subSequence(startIndex, endIndex) );
+                    startIndex = endIndex;
+                    continue;
+                }
+
+                // This string is emoji tag !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                result.append( emojiData.createImageString() );
+                startIndex = endIndex + charCount;
+                startIsSeparator = false;
+            }
         }
+
+        // Last string is not emoji tag.
+        if(startIndex < length)
+        {
+            result.append( text.subSequence(startIndex, length) );
+        }
+
+        android.util.Log.d("ime", "emojify : " + text + " -> " + result);
+
         return result;
     }
 
@@ -52,26 +85,36 @@ public class Emojidex {
      * @param text      Emojidex text.
      * @return          Normal text.
      */
-    public String deEmojify(String text)
+    public CharSequence deEmojify(CharSequence text)
     {
-        String result = text;
-        for(int i = 0;  i < result.length();  ++i)
-        {
-            final int codePoint = result.codePointAt(i);
-            if( !isEmoji(codePoint) )
-                continue;
+        final SpannableStringBuilder result = new SpannableStringBuilder();
 
-            // Get EmojiData by unicode.
+        final int length = text.length();
+        int charCount = 0;
+        for(int i = 0;  i < length;  i += charCount)
+        {
+            final int codePoint = Character.codePointAt(text, i);
+            charCount = Character.charCount(codePoint);
+            if( !isEmoji(codePoint) )
+            {
+                result.append( text.subSequence(i, i + charCount) );
+                continue;
+            }
+
+            // Get EmojiData by code.
             final EmojiData emojiData = emojiDataManager.getEmojiData(codePoint);
             if(emojiData == null)
+            {
+                result.append( text.subSequence(i, i + charCount) );
                 continue;
+            }
 
             // Replace emoji to emoji tag.
-            result = result.replace(
-                    String.valueOf(Character.toChars(codePoint)),
-                    separator + emojiData.getName() + separator
-            );
+            result.append(separator + emojiData.getName() + separator);
         }
+
+        android.util.Log.d("ime", "deEmojify : " + text + " -> " + result);
+
         return result;
     }
 

@@ -33,8 +33,9 @@ public class MainActivity extends Activity {
     {
         initEmojidexTest();
 
-        final String src = testEditText.getText().toString();
-        final String dest = emojidex.emojify(src);
+        final CharSequence src = testEditText.getText();
+        final CharSequence dest = emojidex.emojify(src);
+
         testEditText.setText(dest);
     }
 
@@ -42,8 +43,9 @@ public class MainActivity extends Activity {
     {
         initEmojidexTest();
 
-        final String src = testEditText.getText().toString();
-        final String dest = emojidex.deEmojify(src);
+        final CharSequence src = testEditText.getText();
+        final CharSequence dest = emojidex.deEmojify(src);
+
         testEditText.setText(dest);
     }
 
