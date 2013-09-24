@@ -32,6 +32,15 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
 
     private ViewFlipper viewFlipper;
 
+
+    /**
+     * Construct EmojidexIME object.
+     */
+    public EmojidexIME()
+    {
+        setTheme(R.style.IMETheme);
+    }
+
     @Override
     public void onInitializeInterface() {
         // Create EmojiDataManager object.
@@ -129,7 +138,6 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     {
         // Create category buttons and add to IME layout.
         final ViewGroup categoriesView = (ViewGroup)layout.findViewById(R.id.ime_categories);
-        final float textSize = getResources().getDimension(R.dimen.ime_text_size);
 
         for(final CategoryData categoryData : emojiDataManager.getCategoryDatas())
         {
@@ -141,8 +149,6 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
             final boolean isJapanese = locale.equals(Locale.JAPANESE) || locale.equals(Locale.JAPAN);
             final String buttonText = isJapanese ? categoryData.getJapaneseName() : categoryData.getEnglishName();
             newButton.setText(buttonText);
-            newButton.setTextSize(textSize);
-            newButton.setTextColor(0xFFFFFFFF);
             newButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -203,7 +209,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     private void createKeyboardView()
     {
         // Create KeyboardView.
-        keyboardView = new KeyboardView(this, null);
+        keyboardView = new KeyboardView(this, null, R.attr.keyboardViewStyle);
         keyboardView.setOnKeyboardActionListener(this);
 
         // Add KeyboardView to IME layout.
@@ -220,7 +226,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     private void createSubKeyboardView()
     {
         // Create KeyboardView.
-        subKeyboardView = new KeyboardView(this, null);
+        subKeyboardView = new KeyboardView(this, null, R.attr.keyboardViewStyle);
         subKeyboardView.setOnKeyboardActionListener(this);
 
         // Create Keyboard and set to KeyboardView.

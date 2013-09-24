@@ -57,7 +57,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:id="@+id/ime_category_scrollview">
+                android:id="@+id/ime_category_scrollview"
+                style="@style/IMEHorizontalScrollViewStyle">
             <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -80,10 +81,9 @@
             android:id="@+id/ime_keyboard"/>
 
 
-    <LinearLayout
-            android:id="@+id/ime_sub_keyboard"
+    <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal" />
+            android:id="@+id/ime_sub_keyboard"/>
 
 </LinearLayout>

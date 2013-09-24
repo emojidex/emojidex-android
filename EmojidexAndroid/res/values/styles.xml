@@ -1,20 +1,35 @@
 <resources>
 
-    <!--
-        Base application theme, dependent on API level. This theme is replaced
-        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
-    -->
-    <style name="AppBaseTheme" parent="android:Theme">
-        <!--
-            Theme customizations available in newer API levels can go in
-            res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
-        -->
+    <!-- IME Theme. -->
+    <attr name="keyboardViewStyle" format="reference" />
+    <attr name="horizontalScrollViewStyle" format="reference" />
+    <style name="IMETheme" parent="android:Theme.Holo.InputMethod">
+        <item name="android:buttonStyle">@style/IMEButtonStyle</item>
+        <item name="android:imageButtonStyle">@style/IMEImageButtonStyle</item>
+        <item name="android:scrollViewStyle">@style/IMEScrollViewStyle</item>
+        <item name="horizontalScrollViewStyle">@style/IMEHorizontalScrollViewStyle</item>
+        <item name="keyboardViewStyle">@style/IMEKeyboardViewStyle</item>
     </style>
 
-    <!-- Application theme. -->
-    <style name="AppTheme" parent="AppBaseTheme">
-        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    <!-- IME Button -->
+    <style name="IMEButtonStyle" parent="android:style/Widget.Holo.Button">
+        <item name="android:textSize">@dimen/ime_text_size</item>
+    </style>
+
+    <!-- IME ImageButton -->
+    <style name="IMEImageButtonStyle" parent="android:Widget.Holo.ImageButton">
+    </style>
+
+    <!-- IME ScrollView -->
+    <style name="IMEScrollViewStyle" parent="android:Widget.Holo.ScrollView">
+    </style>
+
+    <!-- IME HorizontalScrollView -->
+    <style name="IMEHorizontalScrollViewStyle" parent="android:Widget.Holo.HorizontalScrollView">
+    </style>
+
+    <!-- IME KeyboardView -->
+    <style name="IMEKeyboardViewStyle" parent="android:style/Widget.KeyboardView">
     </style>
 
 </resources>
