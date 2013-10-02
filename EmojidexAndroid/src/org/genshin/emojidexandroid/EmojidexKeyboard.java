@@ -16,6 +16,7 @@ public class EmojidexKeyboard extends Keyboard {
     private static int emojiCount;
     private static int rowCount;
     private static int columnCount = 0;
+    private static int minHeight = 0;
 
     private final Row row;
 
@@ -52,6 +53,7 @@ public class EmojidexKeyboard extends Keyboard {
         Row newRow = super.createRowFromXml(res, parser);
         newRow.defaultWidth = displayWidth;
         newRow.defaultHeight *= rowCount;
+        newRow.defaultHeight = Math.max(newRow.defaultHeight, minHeight);
 
         return newRow;
     }
@@ -89,12 +91,14 @@ public class EmojidexKeyboard extends Keyboard {
      * Create EmojidexKeyboard object.
      * @param context
      * @param emojiDatas
+     * @param minHeight
      * @return      New EmojidexKeyboard object.
      */
-    public static EmojidexKeyboard create(Context context, List<EmojiData> emojiDatas)
+    public static EmojidexKeyboard create(Context context, List<EmojiData> emojiDatas, int minHeight)
     {
         // Set keyboard parameters.
         emojiCount = (emojiDatas != null) ? emojiDatas.size() : 0;
+        EmojidexKeyboard.minHeight = minHeight;
 
         // Create keyboard.
         EmojidexKeyboard newKeyboard = new EmojidexKeyboard(context);

@@ -6,7 +6,5 @@
     <!-- IME layout size. -->
     <dimen name="ime_text_size">12sp</dimen>
     <dimen name="ime_category_height">32dp</dimen>
-    <dimen name="ime_keyboard_key_width">32dp</dimen>
-    <dimen name="ime_keyboard_key_height">32dp</dimen>
-    <dimen name="ime_keyboard_area_height">112dp</dimen>
+    <dimen name="ime_keyboard_area_height">112dp</dimen>    <!-- 32dp * 3.5row -->
 </resources>

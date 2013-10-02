@@ -47,11 +47,12 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         emojiDataManager = EmojiDataManager.create(this);
 
         // Create categorized keyboards.
+        final int minHeight = (int)getResources().getDimension(R.dimen.ime_keyboard_area_height);
         keyboards = new HashMap<String, Keyboard>();
         for(CategoryData categoryData : emojiDataManager.getCategoryDatas())
         {
             final String categoryName = categoryData.getName();
-            Keyboard newKeyboard = EmojidexKeyboard.create(this, emojiDataManager.getCategorizedList(categoryName));
+            Keyboard newKeyboard = EmojidexKeyboard.create(this, emojiDataManager.getCategorizedList(categoryName), minHeight);
             keyboards.put(categoryName, newKeyboard);
         }
     }
@@ -226,7 +227,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     private void createSubKeyboardView()
     {
         // Create KeyboardView.
-        subKeyboardView = new KeyboardView(this, null, R.attr.keyboardViewStyle);
+        subKeyboardView = new KeyboardView(this, null, R.attr.subKeyboardViewStyle);
         subKeyboardView.setOnKeyboardActionListener(this);
 
         // Create Keyboard and set to KeyboardView.
