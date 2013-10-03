@@ -212,6 +212,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         // Create KeyboardView.
         keyboardView = new KeyboardView(this, null, R.attr.keyboardViewStyle);
         keyboardView.setOnKeyboardActionListener(this);
+        keyboardView.setPreviewEnabled(false);
 
         // Add KeyboardView to IME layout.
         keyboardScrollView = (ScrollView)layout.findViewById(R.id.ime_keyboard);
