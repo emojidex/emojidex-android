@@ -1,5 +1,6 @@
 package org.genshin.emojidexandroid;
 
+import android.content.Context;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
@@ -7,6 +8,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
@@ -23,6 +25,9 @@ import java.util.Map;
 public class EmojidexIME extends InputMethodService implements KeyboardView.OnKeyboardActionListener {
     private EmojiDataManager emojiDataManager;
     private Map<String, Keyboard> keyboards;
+
+    private InputMethodManager inputMethodManager = null;
+    private int showIMEPickerCode = 0;
 
     private View layout;
     private HorizontalScrollView categoryScrollView;
@@ -43,6 +48,10 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
 
     @Override
     public void onInitializeInterface() {
+        // Get InputMethodManager object.
+        inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        showIMEPickerCode = getResources().getInteger(R.integer.ime_keycode_show_ime_picker);
+
         // Create EmojiDataManager object.
         emojiDataManager = EmojiDataManager.create(this);
 
@@ -94,16 +103,24 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     public void onKey(int primaryCode, int[] keyCodes) {
         android.util.Log.d("ime", "Click key : code = 0x" + Integer.toString(primaryCode, 16));
 
-        // Input emoji.
-        final EmojiData emoji = emojiDataManager.getEmojiData(primaryCode);
-        if(emoji != null)
+        // Input show ime picker.
+        if(primaryCode == showIMEPickerCode)
         {
-            getCurrentInputConnection().commitText(emoji.createImageString(), 1);
+            inputMethodManager.showInputMethodPicker();
         }
-        // Input other.
         else
         {
-            sendDownUpKeyEvents(primaryCode);
+            // Input emoji.
+            final EmojiData emoji = emojiDataManager.getEmojiData(primaryCode);
+            if(emoji != null)
+            {
+                getCurrentInputConnection().commitText(emoji.createImageString(), 1);
+            }
+            // Input other.
+            else
+            {
+                sendDownUpKeyEvents(primaryCode);
+            }
         }
     }
 

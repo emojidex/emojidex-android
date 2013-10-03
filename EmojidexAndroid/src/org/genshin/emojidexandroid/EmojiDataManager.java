@@ -128,7 +128,7 @@ public class EmojiDataManager
         categorizedLists.put(context.getString(R.string.ime_all_category_name), newEmojiList);
 
         // Initialize emoji.
-        int nextCode = 0x100000;
+        int nextCode = res.getInteger(R.integer.ime_keycode_start);
         for(EmojiData emoji : newEmojiList)
         {
             if(emoji.hasCode())
