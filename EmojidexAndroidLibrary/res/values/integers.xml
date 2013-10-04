@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <integer name="original_code_start">0x100000</integer>
+</resources>

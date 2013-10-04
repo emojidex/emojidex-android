@@ -4,6 +4,7 @@ import android.content.Context;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
+import android.text.SpannableStringBuilder;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -85,7 +86,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     @Override
     public void onWindowShown() {
         // Reset IME.
-        setKeyboard(getString(R.string.ime_all_category_name));
+        setKeyboard(getString(R.string.all_category));
         categoryScrollView.scrollTo(0, 0);
     }
 
@@ -234,9 +235,6 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         // Add KeyboardView to IME layout.
         keyboardScrollView = (ScrollView)layout.findViewById(R.id.ime_keyboard);
         keyboardScrollView.addView(keyboardView);
-
-        // Set default keyboard.
-        setKeyboard(getString(R.string.ime_all_category_name));
     }
 
     /**

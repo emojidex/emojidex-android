@@ -4,17 +4,18 @@
     <facet type="android" name="Android">
       <configuration>
         <option name="SELECTED_BUILD_VARIANT" value="Debug" />
-        <option name="ASSEMBLE_TASK_NAME" value="assembleDebug" />
+        <option name="ASSEMBLE_TASK_NAME" value="bundleDebug" />
         <option name="COMPILE_JAVA_TASK_NAME" value="compileDebug" />
         <option name="ASSEMBLE_TEST_TASK_NAME" value="assembleTest" />
         <option name="SOURCE_GEN_TASK_NAME" value="generateDebugSources" />
         <option name="ALLOW_USER_CONFIGURATION" value="false" />
         <option name="RES_FOLDERS_RELATIVE_PATH" value="file://$MODULE_DIR$/res" />
+        <option name="LIBRARY_PROJECT" value="true" />
       </configuration>
     </facet>
     <facet type="android-gradle" name="Android-Gradle">
       <configuration>
-        <option name="GRADLE_PROJECT_PATH" value=":EmojidexAndroid" />
+        <option name="GRADLE_PROJECT_PATH" value=":EmojidexAndroidLibrary" />
       </configuration>
     </facet>
   </component>
@@ -66,7 +67,9 @@
     </content>
     <orderEntry type="jdk" jdkName="Android 4.2.2 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="EmojidexAndroidLibrary" exported="" />
+    <orderEntry type="library" exported="" name="jackson-annotations-2.1.2" level="project" />
+    <orderEntry type="library" exported="" name="jackson-core-2.1.2" level="project" />
+    <orderEntry type="library" exported="" name="jackson-databind-2.1.0" level="project" />
   </component>
 </module>
 

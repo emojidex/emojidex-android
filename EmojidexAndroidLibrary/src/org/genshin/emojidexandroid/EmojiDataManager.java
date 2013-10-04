@@ -125,10 +125,10 @@ public class EmojiDataManager
         catch (JsonMappingException e) { e.printStackTrace(); }
         catch (IOException e) { e.printStackTrace(); }
 
-        categorizedLists.put(context.getString(R.string.ime_all_category_name), newEmojiList);
+        categorizedLists.put(context.getString(R.string.all_category), newEmojiList);
 
         // Initialize emoji.
-        int nextCode = res.getInteger(R.integer.ime_keycode_start);
+        int nextCode = res.getInteger(R.integer.original_code_start);
         for(EmojiData emoji : newEmojiList)
         {
             if(emoji.hasCode())
