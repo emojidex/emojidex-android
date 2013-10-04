@@ -34,3 +34,18 @@ android {
 dependencies {
     compile files('libs/jackson-annotations-2.1.2.jar', 'libs/jackson-core-2.1.2.jar', 'libs/jackson-databind-2.1.0.jar')
 }
+
+
+// aar
+apply plugin: 'maven'
+def deployTo = new File(projectDir, "repository")
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository url: "file://${deployTo.absolutePath}"
+            pom.version = '0.0.1'
+            pom.groupId = 'org.genshin'
+            pom.artifactId = 'emojidexandroid-lib'
+        }
+    }
+}
