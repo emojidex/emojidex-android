@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="jackson-databind-2.1.0">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/EmojidexAndroid/libs/jackson-databind-2.1.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
