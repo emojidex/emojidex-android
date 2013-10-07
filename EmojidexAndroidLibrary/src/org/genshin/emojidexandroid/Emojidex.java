@@ -75,7 +75,7 @@ public class Emojidex {
             result.append( text.subSequence(startIndex, length) );
         }
 
-        android.util.Log.d("ime", "emojify : " + text + " -> " + result);
+        android.util.Log.d("lib", "emojify : " + text + " -> " + result);
 
         return result;
     }
@@ -113,7 +113,7 @@ public class Emojidex {
             result.append(separator + emojiData.getName() + separator);
         }
 
-        android.util.Log.d("ime", "deEmojify : " + text + " -> " + result);
+        android.util.Log.d("lib", "deEmojify : " + text + " -> " + result);
 
         return result;
     }

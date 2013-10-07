@@ -109,7 +109,7 @@ public class EmojiDataManager
         else if(dpi <= 280)     dpiDir = "hdpi/";
         else                    dpiDir = "xhdpi/";
 
-        android.util.Log.d("ime", "Device DPI = " + dpi + ", Assets directory = " + dpiDir);
+        android.util.Log.d("lib", "Device DPI = " + dpi + ", Assets directory = " + dpiDir);
 
         // Load emoji data from "index.json".
         List<EmojiData> newEmojiList = null;
