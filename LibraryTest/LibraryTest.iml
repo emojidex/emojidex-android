@@ -14,7 +14,7 @@
     </facet>
     <facet type="android-gradle" name="Android-Gradle">
       <configuration>
-        <option name="GRADLE_PROJECT_PATH" value=":EmojidexAndroid" />
+        <option name="GRADLE_PROJECT_PATH" value=":LibraryTest" />
       </configuration>
     </facet>
   </component>
@@ -68,7 +68,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="jackson-annotations-2.1.2" level="project" />
     <orderEntry type="library" exported="" name="jackson-core-2.1.2" level="project" />
-    <orderEntry type="module" module-name="EmojidexAndroidLibrary" exported="" />
+    <orderEntry type="library" exported="" name="OrgGenshinEmojidexandroidLib001.aar" level="project" />
     <orderEntry type="library" exported="" name="jackson-databind-2.1.0" level="project" />
   </component>
 </module>

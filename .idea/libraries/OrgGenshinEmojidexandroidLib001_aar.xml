@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="OrgGenshinEmojidexandroidLib001.aar">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/LibraryTest/build/exploded-bundles/OrgGenshinEmojidexandroidLib001.aar/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/LibraryTest/build/exploded-bundles/OrgGenshinEmojidexandroidLib001.aar/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
