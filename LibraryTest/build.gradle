@@ -33,5 +33,6 @@ android {
 }
 
 dependencies {
-    compile 'org.genshin:emojidexandroid-lib:0.0.1'
+//    compile 'org.genshin:emojidexandroid-lib:0.0.1'
+    compile project(':EmojidexAndroidLibrary')
 }
