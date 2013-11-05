@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/EmojidexAndroid/EmojidexAndroid.iml" filepath="$PROJECT_DIR$/EmojidexAndroid/EmojidexAndroid.iml" />
       <module fileurl="file://$PROJECT_DIR$/EmojidexAndroidLibrary/EmojidexAndroidLibrary.iml" filepath="$PROJECT_DIR$/EmojidexAndroidLibrary/EmojidexAndroidLibrary.iml" />
       <module fileurl="file://$PROJECT_DIR$/LibraryTest/LibraryTest.iml" filepath="$PROJECT_DIR$/LibraryTest/LibraryTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ReceiveSendTest/ReceiveSendTest.iml" filepath="$PROJECT_DIR$/ReceiveSendTest/ReceiveSendTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/emojidex-android.iml" filepath="$PROJECT_DIR$/emojidex-android.iml" />
     </modules>
   </component>
