@@ -36,34 +36,16 @@
 
     </LinearLayout>
 
-    <EditText
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:gravity="top"
-        android:id="@+id/testEditText"
-        android:background="#ffffff"
-        android:textColor="#000000"
-        android:hint="@string/text_hint_emoji" />
-
-    <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="emojify"
-            android:id="@+id/button"
-            android:onClick="emojifyTest"/>
-
-    <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="deEmojify"
-            android:id="@+id/button2"
-            android:onClick="deEmojifyTest"/>
-
-    <Button
-        android:layout_width="wrap_content"
+    <ViewFlipper
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Send"
-        android:id="@+id/button3"
-        android:onClick="actionSendTest" />
+        android:id="@+id/viewFlipper_editor"
+        android:layout_weight="1">
+
+        <include android:id="@+id/emoji_text_layout" layout="@layout/emoji_text_view" />
+        <include android:id="@+id/emoji_layout" layout="@layout/emoji_view" />
+        <include android:id="@+id/text_layout" layout="@layout/text_view" />
+
+    </ViewFlipper>
 
 </LinearLayout>

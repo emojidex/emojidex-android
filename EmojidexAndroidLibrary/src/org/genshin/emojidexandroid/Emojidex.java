@@ -20,9 +20,9 @@ public class Emojidex {
     }
 
     /**
-     * Normal text encode to Emojidex text.
-     * @param text      Normal text.
-     * @return          Emojidex text.
+     * Normal text_view encode to Emojidex text_view.
+     * @param text      Normal text_view.
+     * @return          Emojidex text_view.
      */
     public CharSequence emojify(CharSequence text)
     {
@@ -50,11 +50,11 @@ public class Emojidex {
                     continue;
                 }
 
-                // Get EmojiData by emoji name.
+                // Get EmojiData by emoji_view name.
                 final String emojiName = text.subSequence(startIndex + 1, endIndex).toString();
                 final EmojiData emojiData = emojiDataManager.getEmojiData(emojiName);
 
-                // String is not emoji tag.
+                // String is not emoji_view tag.
                 if(emojiData == null)
                 {
                     result.append( text.subSequence(startIndex, endIndex) );
@@ -62,14 +62,14 @@ public class Emojidex {
                     continue;
                 }
 
-                // This string is emoji tag !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                // This string is emoji_view tag !!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 result.append( emojiData.createImageString() );
                 startIndex = endIndex + charCount;
                 startIsSeparator = false;
             }
         }
 
-        // Last string is not emoji tag.
+        // Last string is not emoji_view tag.
         if(startIndex < length)
         {
             result.append( text.subSequence(startIndex, length) );
@@ -81,9 +81,9 @@ public class Emojidex {
     }
 
     /**
-     * Emojidex text encode to normal text.
-     * @param text      Emojidex text.
-     * @return          Normal text.
+     * Emojidex text_view encode to normal text_view.
+     * @param text      Emojidex text_view.
+     * @return          Normal text_view.
      */
     public CharSequence deEmojify(CharSequence text)
     {
@@ -109,7 +109,7 @@ public class Emojidex {
                 continue;
             }
 
-            // Replace emoji to emoji tag.
+            // Replace emoji_view to emoji_view tag.
             result.append(separator + emojiData.getName() + separator);
         }
 

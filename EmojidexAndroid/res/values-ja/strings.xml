@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">emojidex</string>
+    <string name="action_settings">設定</string>
+
+    <string name="search">検索</string>
+    <string name="favorite">お気に入り</string>
+    <string name="history">履歴</string>
+    <string name="settings">設定</string>
+    <string name="left">左</string>
+    <string name="right">右</string>
+
+    <string name="share">共有</string>
+    <string name="text_hint_emoji">絵文字を入力してください。</string>
+    <string name="text_hint_text">テキストを入力してください。</string>
+</resources>
