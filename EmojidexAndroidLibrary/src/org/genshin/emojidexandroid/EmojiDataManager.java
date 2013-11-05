@@ -74,7 +74,7 @@ public class EmojiDataManager
     }
 
     /**
-     * Get EmojiData object by emoji_view name.
+     * Get EmojiData object by emoji name.
      * @param name      Emoji name.
      * @return          EmojiData object.
      */
@@ -84,7 +84,7 @@ public class EmojiDataManager
     }
 
     /**
-     * Get EmojiData object by emoji_view code.
+     * Get EmojiData object by emoji code.
      * @param code      Emoji code.
      * @return          EmojiData object.
      */
@@ -111,7 +111,7 @@ public class EmojiDataManager
 
         android.util.Log.d("lib", "Device DPI = " + dpi + ", Assets directory = " + dpiDir);
 
-        // Load emoji_view data from "index.json".
+        // Load emoji data from "index.json".
         List<EmojiData> newEmojiList = null;
 
         try
@@ -127,7 +127,7 @@ public class EmojiDataManager
 
         categorizedLists.put(context.getString(R.string.all_category), newEmojiList);
 
-        // Initialize emoji_view.
+        // Initialize emoji.
         int nextCode = res.getInteger(R.integer.original_code_start);
         for(EmojiData emoji : newEmojiList)
         {
@@ -152,7 +152,7 @@ public class EmojiDataManager
                 categorizedLists.put(category, targetList);
             }
 
-            // Add emoji_view to category.
+            // Add emoji to category.
             targetList.add(emoji);
         }
 
@@ -162,7 +162,7 @@ public class EmojiDataManager
             // Add to name table.
             nameTable.put(emoji.getName(), emoji);
 
-            // Add to emoji_view code table
+            // Add to emoji code table
             codeTable.put(emoji.getCode(), emoji);
         }
 

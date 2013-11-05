@@ -55,7 +55,7 @@ public class EmojiData
      */
     public void initialize(Resources res, String dir, int code)
     {
-        // Set emoji_view code.
+        // Set emoji code.
         this.code = code;
         moji = new String(Character.toChars(this.code));
 
@@ -95,7 +95,7 @@ public class EmojiData
     }
 
     /**
-     * Get emoji_view name.
+     * Get emoji name.
      * @return      Emoji name.
      */
     public String getName()
@@ -122,7 +122,7 @@ public class EmojiData
     }
 
     /**
-     * Get emoji_view code.
+     * Get emoji code.
      * @return      Emoji code.
      */
     public int getCode()

@@ -110,7 +110,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         }
         else
         {
-            // Input emoji_view.
+            // Input emoji.
             final EmojiData emoji = emojiDataManager.getEmojiData(primaryCode);
             if(emoji != null)
             {
