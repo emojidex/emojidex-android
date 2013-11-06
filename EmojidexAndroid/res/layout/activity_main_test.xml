@@ -32,7 +32,8 @@
             android:layout_width="wrap_content"
             android:gravity="center_vertical"
             android:background="@android:drawable/ic_menu_share"
-            android:contentDescription="@string/share" />
+            android:contentDescription="@string/share"
+            android:onClick="share"/>
 
     </LinearLayout>
 

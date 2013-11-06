@@ -8,7 +8,7 @@
         android:keyWidth="17%">
 
     <Row>
-        <Key android:codes="@integer/ime_keycode_show_ime_picker" android:keyLabel="@drawable/keyboard" android:keyEdgeFlags="left" />
+        <Key android:codes="@integer/ime_keycode_show_ime_picker" android:keyIcon="@drawable/keyboard" android:keyEdgeFlags="left" />
         <Key android:codes="21" android:keyIcon="@drawable/key_left" />
         <Key android:codes="22" android:keyIcon="@drawable/key_right" />
         <Key android:codes="62" android:keyIcon="@drawable/key_space" />
