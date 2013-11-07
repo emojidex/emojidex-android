@@ -39,7 +39,6 @@ public class MainActivity extends Activity {
     private Emojidex emojidex = null;
     private EditText testEditText = null;
 
-    private CharSequence tempCs = null;
     private EditText emojiEditText;
     private EditText textEditText;
     private EditText emojiHalfEditText;
@@ -163,6 +162,8 @@ public class MainActivity extends Activity {
                 intent.putExtra(Intent.EXTRA_TEXT, emojiEditText.getText());
             else if (viewFlipper.getCurrentView() == findViewById(R.id.text_layout))
                 intent.putExtra(Intent.EXTRA_TEXT, textEditText.getText());
+            else
+                intent.putExtra(Intent.EXTRA_TEXT, emojiHalfEditText.getText());
 
             intent.setType("text/plain");
             startActivity(Intent.createChooser(intent, "Send to"));
@@ -176,18 +177,15 @@ public class MainActivity extends Activity {
 
     public void moveRight(View v)
     {
+        if (viewFlipper.getCurrentView() == findViewById(R.id.text_layout))
+            return;
+
         // move emoji
         if (viewFlipper.getCurrentView() == findViewById(R.id.emoji_text_layout))
-        {
-            tempCs = emojiHalfEditText.getText();
-            emojiEditText.setText(tempCs);
-        }
+            emojiEditText.setText(emojiHalfEditText.getText());
         // move text and deEmojify
         else
-        {
-            tempCs = emojiEditText.getText();
-            textEditText.setText(deEmojify(tempCs));
-        }
+            textEditText.setText(emojify(emojiEditText.getText().toString()));
 
         viewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_in));
         viewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_out));
@@ -196,18 +194,17 @@ public class MainActivity extends Activity {
 
     public void moveLeft(View v)
     {
+        if (viewFlipper.getCurrentView() == findViewById(R.id.emoji_text_layout))
+            return;
+
         // move text and emojify
         if (viewFlipper.getCurrentView() == findViewById(R.id.text_layout))
-        {
-            tempCs = textEditText.getText();
-            emojiEditText.setText(emojify(tempCs));
-        }
+            emojiEditText.setText(emojify(deEmojify(textEditText.getText())));
         // move emoji and deEmojify
         else
         {
-            tempCs = emojiEditText.getText();
-            emojiHalfEditText.setText(tempCs);
-            textHalfEditText.setText(deEmojify(tempCs));
+            emojiHalfEditText.setText(emojiEditText.getText());
+            textHalfEditText.setText(deEmojify(emojiEditText.getText()));
         }
 
         viewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_in));
@@ -230,14 +227,10 @@ public class MainActivity extends Activity {
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL:
                     currentX = event.getX();
-                    if (lastTouchX + 10 < currentX && viewFlipper.getCurrentView() != findViewById(R.id.emoji_text_layout))
-                    {
+                    if (lastTouchX + 30 < currentX)
                         moveLeft(null);
-                    }
-                    if (lastTouchX > currentX + 10 && viewFlipper.getCurrentView() != findViewById(R.id.text_layout))
-                    {
+                    if (lastTouchX > currentX + 30)
                         moveRight(null);
-                    }
                     break;
             }
             return true;
@@ -266,21 +259,23 @@ public class MainActivity extends Activity {
         @Override
         public void afterTextChanged(Editable s)
         {
-            if (inputEditTextId == R.id.emoji_half_edittext)
+            final Object[] spans = s.getSpans(0, s.length(), Object.class);
+            for(Object span : spans)
+                if(span.getClass().getName().equals("android.view.inputmethod.ComposingText"))
+                    return;
+
+            if (inputEditTextId == R.id.emoji_half_edittext )
             {
-                //int pos = te
                 emojiHalfEditText.removeTextChangedListener(emojiTextWatcher);
-                //emojiHalfEditText.setText(emojify(s.toString()));
-                textHalfEditText.setText(deEmojify(s.toString()));
-               // emojiHalfEditText.setSelection(emojiHalfEditText.getText().length());
+                emojiHalfEditText.setText(emojify(s));
+                textHalfEditText.setText(deEmojify(s));
                 emojiHalfEditText.addTextChangedListener(emojiTextWatcher);
             }
             else
             {
                 textHalfEditText.removeTextChangedListener(textTextWatcher);
-                emojiHalfEditText.setText(emojify(s.toString()));
-                //textHalfEditText.setText(deEmojify(s.toString()));
-                //textHalfEditText.setSelection(textHalfEditText.getText().length());
+                emojiHalfEditText.setText(emojify(s));
+                textHalfEditText.setText(deEmojify(s));
                 textHalfEditText.addTextChangedListener(textTextWatcher);
             }
         }
