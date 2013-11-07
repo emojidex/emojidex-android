@@ -26,7 +26,6 @@ public class MainActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
@@ -37,7 +36,7 @@ public class MainActivity extends Activity {
      * Emojidex test.
      */
     private Emojidex emojidex = null;
-    private EditText testEditText = null;
+    //private EditText testEditText = null;
 
     private EditText emojiEditText;
     private EditText textEditText;
@@ -47,6 +46,7 @@ public class MainActivity extends Activity {
     private CustomTextWatcher textTextWatcher;
     private ViewFlipper viewFlipper;
 
+    /*
     public void emojifyTest(View v)
     {
         final CharSequence src = testEditText.getText();
@@ -63,7 +63,6 @@ public class MainActivity extends Activity {
         testEditText.setText(dest);
     }
 
-    /*
     public void actionSendTest(View v)
     {
         try
@@ -79,9 +78,7 @@ public class MainActivity extends Activity {
             Log.d("hoge", "send error.");
         }
     }
-    */
 
-    /*
     private void initEmojidexTest()
     {
         if(emojidex == null)
@@ -138,18 +135,12 @@ public class MainActivity extends Activity {
 
     private CharSequence emojify(CharSequence cs)
     {
-        final CharSequence src = cs;
-        final CharSequence dest = emojidex.emojify(src);
-
-        return dest;
+        return emojidex.emojify(cs);
     }
 
     private CharSequence deEmojify(CharSequence cs)
     {
-        final CharSequence src = cs;
-        final CharSequence dest = emojidex.deEmojify(src);
-
-        return dest;
+        return emojidex.deEmojify(cs);
     }
 
     public void share(View v)
@@ -158,6 +149,8 @@ public class MainActivity extends Activity {
         {
             Intent intent = new Intent(Intent.ACTION_SEND);
 
+            // TODO
+            // 共有で送るデータの調整
             if (viewFlipper.getCurrentView() == findViewById(R.id.emoji_layout))
                 intent.putExtra(Intent.EXTRA_TEXT, emojiEditText.getText());
             else if (viewFlipper.getCurrentView() == findViewById(R.id.text_layout))
@@ -177,6 +170,7 @@ public class MainActivity extends Activity {
 
     public void moveRight(View v)
     {
+        // right edge of the screen
         if (viewFlipper.getCurrentView() == findViewById(R.id.text_layout))
             return;
 
@@ -185,6 +179,8 @@ public class MainActivity extends Activity {
             emojiEditText.setText(emojiHalfEditText.getText());
         // move text and deEmojify
         else
+            // TODO
+            // UTF8のない絵文字は:~:に変換
             textEditText.setText(emojify(emojiEditText.getText().toString()));
 
         viewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_in));
@@ -194,6 +190,7 @@ public class MainActivity extends Activity {
 
     public void moveLeft(View v)
     {
+        // left edge of the screen
         if (viewFlipper.getCurrentView() == findViewById(R.id.emoji_text_layout))
             return;
 
@@ -212,10 +209,11 @@ public class MainActivity extends Activity {
         viewFlipper.showPrevious();
     }
 
-    private float lastTouchX;
-    private float currentX;
     private class FlickTouchListener implements View.OnTouchListener
     {
+        private float lastTouchX;
+        private float currentX;
+
         @Override
         public boolean onTouch(View view, MotionEvent event)
         {
@@ -259,11 +257,13 @@ public class MainActivity extends Activity {
         @Override
         public void afterTextChanged(Editable s)
         {
+            // exclude while converting the Japanese
             final Object[] spans = s.getSpans(0, s.length(), Object.class);
             for(Object span : spans)
                 if(span.getClass().getName().equals("android.view.inputmethod.ComposingText"))
                     return;
 
+            // conversion while input emoji
             if (inputEditTextId == R.id.emoji_half_edittext )
             {
                 emojiHalfEditText.removeTextChangedListener(emojiTextWatcher);
@@ -271,6 +271,7 @@ public class MainActivity extends Activity {
                 textHalfEditText.setText(deEmojify(s));
                 emojiHalfEditText.addTextChangedListener(emojiTextWatcher);
             }
+            // conversion while input text
             else
             {
                 textHalfEditText.removeTextChangedListener(textTextWatcher);
