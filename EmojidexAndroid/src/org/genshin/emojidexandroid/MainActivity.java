@@ -21,7 +21,6 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main_test);
 
         initEmojidexEditor();
-        //initEmojidexTest();
     }
 
     @Override
@@ -33,10 +32,9 @@ public class MainActivity extends Activity {
 
 
     /**
-     * Emojidex test.
+     * Emojidex
      */
     private Emojidex emojidex = null;
-    //private EditText testEditText = null;
 
     private EditText emojiEditText;
     private EditText textEditText;
@@ -45,53 +43,6 @@ public class MainActivity extends Activity {
     private CustomTextWatcher emojiTextWatcher;
     private CustomTextWatcher textTextWatcher;
     private ViewFlipper viewFlipper;
-
-    /*
-    public void emojifyTest(View v)
-    {
-        final CharSequence src = testEditText.getText();
-        final CharSequence dest = emojidex.emojify(src);
-
-        testEditText.setText(dest);
-    }
-
-    public void deEmojifyTest(View v)
-    {
-        final CharSequence src = testEditText.getText();
-        final CharSequence dest = emojidex.deEmojify(src);
-
-        testEditText.setText(dest);
-    }
-
-    public void actionSendTest(View v)
-    {
-        try
-        {
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.putExtra(Intent.EXTRA_TEXT, testEditText.getText());
-            intent.setType("text/plain");
-            startActivity(Intent.createChooser(intent, "Send to"));
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-            Log.d("hoge", "send error.");
-        }
-    }
-
-    private void initEmojidexTest()
-    {
-        if(emojidex == null)
-            emojidex = new Emojidex(getApplicationContext());
-        if(testEditText == null)
-            testEditText = (EditText)findViewById(R.id.testEditText);
-
-        // set viewFlipper action
-        viewFlipper = (ViewFlipper)findViewById(R.id.viewFlipper_editor);
-        viewFlipper.setOnTouchListener(new FlickTouchListener());
-        viewFlipper.showNext();
-    }
-    */
 
     private void initEmojidexEditor()
     {
