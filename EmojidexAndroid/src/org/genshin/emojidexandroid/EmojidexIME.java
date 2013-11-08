@@ -244,6 +244,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         // Create KeyboardView.
         subKeyboardView = new KeyboardView(this, null, R.attr.subKeyboardViewStyle);
         subKeyboardView.setOnKeyboardActionListener(this);
+        subKeyboardView.setPreviewEnabled(false);
 
         // Create Keyboard and set to KeyboardView.
         Keyboard keyboard = new Keyboard(this, R.xml.sub_keyboard);
