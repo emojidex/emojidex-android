@@ -45,8 +45,8 @@ public class EmojidexKeyboard extends Keyboard {
         int displayWidth = metrics.widthPixels;
 
         // Set keyboard parameters.
-        setKeyHeight(getKeyHeight() * 2);
-        setKeyWidth(getKeyHeight());
+        //setKeyHeight(getKeyHeight() * 2);
+        //setKeyWidth(getKeyHeight());
         columnCount = displayWidth / getKeyWidth();
         rowCount = emojiCount / columnCount + 1;
 
