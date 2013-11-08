@@ -94,6 +94,11 @@ public class MainActivity extends Activity {
         return emojidex.deEmojify(cs);
     }
 
+    private CharSequence toUnicodeString(CharSequence cs)
+    {
+        return emojidex.toUnicodeString(cs);
+    }
+
     public void share(View v)
     {
         try
@@ -132,7 +137,7 @@ public class MainActivity extends Activity {
         else
             // TODO
             // UTF8のない絵文字は:~:に変換
-            textEditText.setText(emojify(emojiEditText.getText().toString()));
+            textEditText.setText(toUnicodeString(emojiEditText.getText()));
 
         viewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_in));
         viewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_out));
@@ -217,18 +222,38 @@ public class MainActivity extends Activity {
             // conversion while input emoji
             if (inputEditTextId == R.id.emoji_half_edittext )
             {
+                int oldPos = emojiHalfEditText.getSelectionStart();
+                int oldTextLength = emojiHalfEditText.getText().length();
+
                 emojiHalfEditText.removeTextChangedListener(emojiTextWatcher);
                 emojiHalfEditText.setText(emojify(s));
                 textHalfEditText.setText(deEmojify(s));
                 emojiHalfEditText.addTextChangedListener(emojiTextWatcher);
+
+                // adjustment cursor position 
+                int addTextLength = emojiHalfEditText.getText().length() - oldTextLength;
+                int newPos = oldPos + addTextLength;
+                if (newPos > emojiHalfEditText.getText().length())
+                    newPos = emojiHalfEditText.getText().length();
+                emojiHalfEditText.setSelection(newPos);
             }
             // conversion while input text
             else
             {
+                int oldPos = textHalfEditText.getSelectionStart();
+                int oldTextLength = textHalfEditText.getText().length();
+
                 textHalfEditText.removeTextChangedListener(textTextWatcher);
                 emojiHalfEditText.setText(emojify(s));
                 textHalfEditText.setText(deEmojify(s));
                 textHalfEditText.addTextChangedListener(textTextWatcher);
+
+                // adjustment cursor position
+                int addTextLength = textHalfEditText.getText().length() - oldTextLength;
+                int newPos = oldPos + addTextLength;
+                if (newPos > textHalfEditText.getText().length())
+                    newPos = textHalfEditText.getText().length();
+                textHalfEditText.setSelection(newPos);
             }
         }
     }
