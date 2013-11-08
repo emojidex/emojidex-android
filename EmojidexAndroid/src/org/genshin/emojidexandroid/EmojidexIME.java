@@ -1,6 +1,7 @@
 package org.genshin.emojidexandroid;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
@@ -87,6 +88,12 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         // Reset IME.
         setKeyboard(getString(R.string.all_category));
         categoryScrollView.scrollTo(0, 0);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        super.hideWindow();
     }
 
     @Override

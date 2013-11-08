@@ -39,7 +39,8 @@ public class EmojidexKeyboard extends Keyboard {
     }
 
     @Override
-    protected Row createRowFromXml(Resources res, XmlResourceParser parser) {
+    protected Row createRowFromXml(Resources res, XmlResourceParser parser)
+    {
         // Get display size.
         DisplayMetrics metrics = res.getDisplayMetrics();
         int displayWidth = metrics.widthPixels;

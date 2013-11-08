@@ -230,7 +230,7 @@ public class MainActivity extends Activity {
                 textHalfEditText.setText(deEmojify(s));
                 emojiHalfEditText.addTextChangedListener(emojiTextWatcher);
 
-                // adjustment cursor position 
+                // adjustment cursor position
                 int addTextLength = emojiHalfEditText.getText().length() - oldTextLength;
                 int newPos = oldPos + addTextLength;
                 if (newPos > emojiHalfEditText.getText().length())
