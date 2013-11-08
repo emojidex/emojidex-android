@@ -31,10 +31,11 @@ public class EmojiData
 //    @JsonProperty("unicode")        private String unicode;
 //    @JsonProperty("attribution")    private String attribution;
 //    @JsonProperty("contributor")    private String contributor;
-//    @JsonProperty("url")            private String url;
+//    @JsonProperty("url")          .toString()  private String url;
 
     private Drawable icon = null;
     private int code = 0;
+    private boolean isUnicode = true;
 
 
     /**
@@ -44,7 +45,18 @@ public class EmojiData
      */
     public void initialize(Resources res, String dir)
     {
-        initialize(res, dir, moji.codePointAt(0));
+        // Load icon image.
+        try
+        {
+            InputStream is = res.getAssets().open(dir + name + ".png");
+            Bitmap bitmap = BitmapFactory.decodeStream(is);
+            is.close();
+            icon = new BitmapDrawable(res, bitmap);
+        }
+        catch(IOException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -58,19 +70,10 @@ public class EmojiData
         // Set emoji code.
         this.code = code;
         moji = new String(Character.toChars(this.code));
+        isUnicode = false;
 
-        // Load icon image.
-        try
-        {
-            InputStream is = res.getAssets().open(dir + name + ".png");
-            Bitmap bitmap = BitmapFactory.decodeStream(is);
-            is.close();
-            icon = new BitmapDrawable(res, bitmap);
-        }
-        catch(IOException e)
-        {
-            e.printStackTrace();
-        }
+        // Initialize emoji data.
+        initialize(res, dir);
     }
 
     /**
@@ -137,5 +140,14 @@ public class EmojiData
     public boolean hasCode()
     {
         return code != 0 || !moji.equals(NOT_UNICODE_MOJI);
+    }
+
+    /**
+     * Get flag of unicode emoji.
+     * @return
+     */
+    public boolean isUnicodeEmoji()
+    {
+        return isUnicode;
     }
 }
