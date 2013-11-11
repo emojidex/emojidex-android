@@ -84,17 +84,17 @@ public class MainActivity extends Activity {
         viewFlipper.showNext();
     }
 
-    private CharSequence emojify(CharSequence cs)
+    private CharSequence emojify(final CharSequence cs)
     {
         return emojidex.emojify(cs);
     }
 
-    private CharSequence deEmojify(CharSequence cs)
+    private CharSequence deEmojify(final CharSequence cs)
     {
         return emojidex.deEmojify(cs);
     }
 
-    private CharSequence toUnicodeString(CharSequence cs)
+    private CharSequence toUnicodeString(final CharSequence cs)
     {
         return emojidex.toUnicodeString(cs);
     }
@@ -105,14 +105,13 @@ public class MainActivity extends Activity {
         {
             Intent intent = new Intent(Intent.ACTION_SEND);
 
-            // TODO
-            // 共有で送るデータの調整
+            // set share data
             if (viewFlipper.getCurrentView() == findViewById(R.id.emoji_layout))
                 intent.putExtra(Intent.EXTRA_TEXT, emojiEditText.getText());
             else if (viewFlipper.getCurrentView() == findViewById(R.id.text_layout))
                 intent.putExtra(Intent.EXTRA_TEXT, textEditText.getText());
             else
-                intent.putExtra(Intent.EXTRA_TEXT, emojiHalfEditText.getText());
+                intent.putExtra(Intent.EXTRA_TEXT, textHalfEditText.getText());
 
             intent.setType("text/plain");
             startActivity(Intent.createChooser(intent, "Send to"));
@@ -133,10 +132,8 @@ public class MainActivity extends Activity {
         // move emoji
         if (viewFlipper.getCurrentView() == findViewById(R.id.emoji_text_layout))
             emojiEditText.setText(emojiHalfEditText.getText());
-        // move text and deEmojify
+        // move text and toUnicodeString
         else
-            // TODO
-            // UTF8のない絵文字は:~:に変換
             textEditText.setText(toUnicodeString(emojiEditText.getText()));
 
         viewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_in));

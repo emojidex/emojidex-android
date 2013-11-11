@@ -12,7 +12,7 @@
         <Key android:codes="21" android:keyIcon="@drawable/key_left" />
         <Key android:codes="22" android:keyIcon="@drawable/key_right" />
         <Key android:codes="62" android:keyIcon="@drawable/key_space" />
-        <Key android:codes="67" android:keyIcon="@drawable/key_delete" />
+        <Key android:codes="67" android:keyIcon="@drawable/key_delete" android:isRepeatable="true" />
         <Key android:codes="66" android:keyIcon="@drawable/key_enter" android:keyEdgeFlags="right" />
     </Row>
 

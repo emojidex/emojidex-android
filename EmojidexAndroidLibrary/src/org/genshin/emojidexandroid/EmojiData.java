@@ -37,48 +37,12 @@ public class EmojiData
     private int code = 0;
     private boolean isUnicode = true;
 
-    /**
-     * Initialize EmojiData object.
-     * @param res
-     * @param dir
-     */
-    public void initialize(Resources res, String dir)
-    {
-        initialize(res, dir, moji.codePointAt(0));
-    }
-
-    /**
-     * Initialize EmojiData object.
-     * @param res
-     * @param dir
-     * @param code
-     */
-    public void initialize(Resources res, String dir, int code)
-    {
-        // Set emoji code.
-        this.code = code;
-        moji = new String(Character.toChars(this.code));
-
-        // Load icon image.
-        try
-        {
-            InputStream is = res.getAssets().open(dir + name + ".png");
-            Bitmap bitmap = BitmapFactory.decodeStream(is);
-            is.close();
-            icon = new BitmapDrawable(res, bitmap);
-        }
-        catch(IOException e)
-        {
-            e.printStackTrace();
-        }
-    }
 
     /**
      * Initialize EmojiData object.
      * @param res
      * @param dir
      */
-    /*
     public void initialize(Resources res, String dir)
     {
         // Set emoji code.
@@ -97,7 +61,6 @@ public class EmojiData
             e.printStackTrace();
         }
     }
-    */
 
     /**
      * Initialize EmojiData object.
@@ -105,7 +68,6 @@ public class EmojiData
      * @param dir
      * @param code
      */
-    /*
     public void initialize(Resources res, String dir, int code)
     {
         // Set fields.
@@ -115,7 +77,6 @@ public class EmojiData
         // Initialize emoji data.
         initialize(res, dir);
     }
-    */
 
     /**
      * Create image string.

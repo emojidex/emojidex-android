@@ -115,6 +115,12 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         {
             inputMethodManager.showInputMethodPicker();
         }
+        /*
+        else if (primaryCode == KeyEvent.KEYCODE_ENTER)
+        {
+
+        }
+        */
         else
         {
             // Input emoji.
