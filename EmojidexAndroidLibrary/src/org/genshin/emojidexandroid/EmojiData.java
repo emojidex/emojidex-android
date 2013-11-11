@@ -31,7 +31,7 @@ public class EmojiData
 //    @JsonProperty("unicode")        private String unicode;
 //    @JsonProperty("attribution")    private String attribution;
 //    @JsonProperty("contributor")    private String contributor;
-//    @JsonProperty("url")          .toString()  private String url;
+//    @JsonProperty("url")            private String url;
 
     private Drawable icon = null;
     private int code = 0;
@@ -81,6 +81,9 @@ public class EmojiData
     /*
     public void initialize(Resources res, String dir)
     {
+        // Set emoji code.
+        code = moji.codePointAt(0);
+
         // Load icon image.
         try
         {
@@ -105,9 +108,8 @@ public class EmojiData
     /*
     public void initialize(Resources res, String dir, int code)
     {
-        // Set emoji code.
-        this.code = code;
-        moji = new String(Character.toChars(this.code));
+        // Set fields.
+        moji = new String(Character.toChars(code));
         isUnicode = false;
 
         // Initialize emoji data.
