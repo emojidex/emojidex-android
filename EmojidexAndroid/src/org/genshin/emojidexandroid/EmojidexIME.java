@@ -6,7 +6,6 @@ import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.text.InputType;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -96,7 +95,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        super.hideWindow();
+        hideWindow();
     }
 
     @Override
@@ -123,15 +122,17 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
             String hex = Integer.toHexString(getCurrentInputEditorInfo().inputType);
             int type = Integer.parseInt(hex, 16);
 
+            // check multi-line flag
             if ((type & InputType.TYPE_TEXT_FLAG_MULTI_LINE) > 0 ||
                 (type & InputType.TYPE_TEXT_FLAG_IME_MULTI_LINE) > 0)
             {
                 sendDownUpKeyEvents(primaryCode);
             }
+            // when multi-line is not allowed, hide keyboard
             else
             {
-                Log.e("test", "bbb");
-                //sendDownUpKeyEvents(primaryCode);
+                hideWindow();
+                //sendDownUpKeyEvents(KeyEvent.KEYCODE_ENTER);
             }
         }
         else

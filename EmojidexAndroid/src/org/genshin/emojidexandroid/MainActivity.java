@@ -107,11 +107,17 @@ public class MainActivity extends Activity {
 
             // set share data
             if (viewFlipper.getCurrentView() == findViewById(R.id.emoji_layout))
+            {
                 intent.putExtra(Intent.EXTRA_TEXT, emojiEditText.getText());
+            }
             else if (viewFlipper.getCurrentView() == findViewById(R.id.text_layout))
+            {
                 intent.putExtra(Intent.EXTRA_TEXT, textEditText.getText());
+            }
             else
+            {
                 intent.putExtra(Intent.EXTRA_TEXT, textHalfEditText.getText());
+            }
 
             intent.setType("text/plain");
             startActivity(Intent.createChooser(intent, "Send to"));
@@ -131,10 +137,14 @@ public class MainActivity extends Activity {
 
         // move emoji
         if (viewFlipper.getCurrentView() == findViewById(R.id.emoji_text_layout))
+        {
             emojiEditText.setText(emojiHalfEditText.getText());
+        }
         // move text and toUnicodeString
         else
+        {
             textEditText.setText(toUnicodeString(emojiEditText.getText()));
+        }
 
         viewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_in));
         viewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_out));
@@ -149,7 +159,9 @@ public class MainActivity extends Activity {
 
         // move text and emojify
         if (viewFlipper.getCurrentView() == findViewById(R.id.text_layout))
+        {
             emojiEditText.setText(emojify(deEmojify(textEditText.getText())));
+        }
         // move emoji and deEmojify
         else
         {
