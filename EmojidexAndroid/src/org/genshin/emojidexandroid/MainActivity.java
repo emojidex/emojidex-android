@@ -18,7 +18,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_test);
+        setContentView(R.layout.activity_main);
 
         initEmojidexEditor();
     }
@@ -99,7 +99,7 @@ public class MainActivity extends Activity {
         return emojidex.toUnicodeString(cs);
     }
 
-    public void share(View v)
+    public void shareData(View v)
     {
         try
         {
@@ -123,7 +123,7 @@ public class MainActivity extends Activity {
         }
     }
 
-    public void moveRight(View v)
+    public void moveViewToRight(View v)
     {
         // right edge of the screen
         if (viewFlipper.getCurrentView() == findViewById(R.id.text_layout))
@@ -141,7 +141,7 @@ public class MainActivity extends Activity {
         viewFlipper.showNext();
 }
 
-    public void moveLeft(View v)
+    public void moveViewToLeft(View v)
     {
         // left edge of the screen
         if (viewFlipper.getCurrentView() == findViewById(R.id.emoji_text_layout))
@@ -179,9 +179,9 @@ public class MainActivity extends Activity {
                 case MotionEvent.ACTION_CANCEL:
                     currentX = event.getX();
                     if (lastTouchX + 30 < currentX)
-                        moveLeft(null);
+                        moveViewToLeft(null);
                     if (lastTouchX > currentX + 30)
-                        moveRight(null);
+                        moveViewToRight(null);
                     break;
             }
             return true;
