@@ -19,7 +19,7 @@
 
         <ViewFlipper
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/ime_view_flipper_height"
             android:id="@+id/viewFlipper"
             android:layout_weight="1">
 
@@ -61,7 +61,8 @@
             <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:id="@+id/ime_categories">
+                    android:id="@+id/ime_categories"
+                    android:orientation="horizontal" >
             </LinearLayout>
         </HorizontalScrollView>
 

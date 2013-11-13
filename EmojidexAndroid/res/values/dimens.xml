@@ -4,7 +4,8 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
 
     <!-- IME layout size. -->
-    <dimen name="ime_text_size">12sp</dimen>
-    <dimen name="ime_category_height">32dp</dimen>
-    <dimen name="ime_keyboard_area_height">112dp</dimen>    <!-- 32dp * 3.5row -->
+    <dimen name="ime_text_size">14sp</dimen>
+    <dimen name="ime_category_height">40dp</dimen>
+    <dimen name="ime_view_flipper_height">40dp</dimen>
+    <dimen name="ime_keyboard_area_height">144dp</dimen>    <!-- 48dp * 3row -->
 </resources>
