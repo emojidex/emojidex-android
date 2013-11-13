@@ -5,8 +5,6 @@ import android.content.res.Configuration;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
-import android.text.InputType;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -117,6 +115,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         {
             inputMethodManager.showInputMethodPicker();
         }
+        /*
         else if (primaryCode == KeyEvent.KEYCODE_ENTER)
         {
             String hex = Integer.toHexString(getCurrentInputEditorInfo().inputType);
@@ -132,9 +131,9 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
             else
             {
                 hideWindow();
-                //sendDownUpKeyEvents(KeyEvent.KEYCODE_ENTER);
             }
         }
+        */
         else
         {
             // Input emoji.
