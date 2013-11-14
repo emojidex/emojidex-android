@@ -24,8 +24,8 @@ public class EmojiData
 
     @JsonProperty("moji")           private String moji = NOT_UNICODE_MOJI;
 //    @JsonProperty("alto")           private String[] alto;
-    @JsonProperty("name")           private String name;
-//    @JsonProperty("name-ja")        private String nameJa;
+    @JsonProperty("code")           private String name;
+//    @JsonProperty("code-ja")        private String nameJa;
 //    @JsonProperty("emoticon")       private String emoticon;
     @JsonProperty("category")       private String category;
 //    @JsonProperty("unicode")        private String unicode;

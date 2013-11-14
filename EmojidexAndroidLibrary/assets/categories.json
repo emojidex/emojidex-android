@@ -60,13 +60,8 @@
     "Japanese" : "抽象物"
   },
   {
-    "category" : "logos",
-    "English"  : "Logos",
-    "Japanese" : "ロゴ"
-  },
-  {
-    "category" : "individuals",
-    "English"  : "Individuals",
-    "Japanese" : "個人"
+    "category" : "symbol",
+    "English"  : "Symbol",
+    "Japanese" : "シンボル"
   }
 ]
