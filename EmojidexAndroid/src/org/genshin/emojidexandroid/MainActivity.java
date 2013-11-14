@@ -30,6 +30,50 @@ public class MainActivity extends Activity {
     }
 
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        if (viewFlipper.getCurrentView() == findViewById(R.id.emoji_layout))
+        {
+            outState.putCharSequence("text", emojiEditText.getText());
+            outState.putString("view", "center");
+        }
+        else if (viewFlipper.getCurrentView() == findViewById(R.id.text_layout))
+        {
+            outState.putCharSequence("text", textEditText.getText());
+            outState.putString("view", "right");
+        }
+        else
+        {
+            outState.putCharSequence("text", emojiHalfEditText.getText());
+            outState.putString("view", "left");
+        }
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        String nowView = savedInstanceState.getString("view");
+
+        if (nowView.equals("center"))
+        {
+            emojiEditText.setText(savedInstanceState.getCharSequence("text"));
+        }
+        else if (nowView.equals("right"))
+        {
+            viewFlipper.showNext();
+            textEditText.setText(savedInstanceState.getCharSequence("text"));
+        }
+        else
+        {
+            viewFlipper.showPrevious();
+            emojiHalfEditText.setText(savedInstanceState.getCharSequence("text"));
+            textHalfEditText.setText(deEmojify(savedInstanceState.getCharSequence("text")));
+        }
+    }
+
 
     /**
      * Emojidex
