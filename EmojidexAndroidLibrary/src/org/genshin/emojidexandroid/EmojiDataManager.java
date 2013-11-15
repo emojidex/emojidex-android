@@ -25,6 +25,7 @@ public class EmojiDataManager
     private final Map<String, List<EmojiData>> categorizedLists = new HashMap<String, List<EmojiData>>();
     private final Map<String, EmojiData> nameTable = new HashMap<String, EmojiData>();
     private final Map<Integer, EmojiData> codeTable = new HashMap<Integer, EmojiData>();
+    private final Map<Integer, Map<Integer, EmojiData>> flagTable = new HashMap<Integer, Map<Integer, EmojiData>>();
 
     private List<CategoryData> categories = null;
 
@@ -91,6 +92,27 @@ public class EmojiDataManager
     public EmojiData getEmojiData(int code)
     {
         return codeTable.get(code);
+    }
+
+    /**
+     * Get EmojiData object by emoji codes.
+     * @param codes     Emoji codes.
+     * @return          EmojiData object.
+     */
+    public EmojiData getEmojiData(int[] codes)
+    {
+        if (codes.length == 1)
+            return codeTable.get(codes[0]);
+
+        if (codes[1] == -1)
+        {
+            return codeTable.get(codes[0]);
+        }
+        else
+        {
+            Map<Integer, EmojiData> emoji = flagTable.get(codes[0]);
+            return emoji.get(codes[1]);
+        }
     }
 
     /**
@@ -162,8 +184,19 @@ public class EmojiDataManager
             // Add to name table.
             nameTable.put(emoji.getName(), emoji);
 
-            // Add to emoji code table
-            codeTable.put(emoji.getCode(), emoji);
+            if (emoji.getCodes().length == 1)
+            {
+                // Add to emoji code table
+                codeTable.put(emoji.getCode(), emoji);
+            }
+            else
+            {
+                // Add to flag table
+                int[] code = emoji.getCodes();
+                Map<Integer, EmojiData> second = new HashMap<Integer, EmojiData>();
+                second.put(code[1], emoji);
+                flagTable.put(code[0], second);
+            }
         }
 
         // Load category data from "categories.json".

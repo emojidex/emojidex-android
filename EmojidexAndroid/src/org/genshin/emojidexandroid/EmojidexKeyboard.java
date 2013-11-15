@@ -76,7 +76,9 @@ public class EmojidexKeyboard extends Keyboard {
         // Create new key and set parameters.
         Key newKey = new Key(row);
 
-        newKey.codes = new int[]{ emojiData.getCode() };
+        int len = emojiData.getCodes().length;
+        newKey.codes = new int[len];
+        newKey.codes = emojiData.getCodes();
         newKey.x = x;
         newKey.y = y;
 

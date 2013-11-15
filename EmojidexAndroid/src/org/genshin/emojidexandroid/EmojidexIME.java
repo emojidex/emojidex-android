@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -98,7 +99,6 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
 
     @Override
     public void onPress(int primaryCode) {
-
     }
 
     @Override
@@ -108,6 +108,11 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
 
     @Override
     public void onKey(int primaryCode, int[] keyCodes) {
+        Log.e("test", "in:" + Integer.toHexString(primaryCode) + " len:" + keyCodes.length);
+        for (int i = 0; i < keyCodes.length; i++)
+        {
+            Log.e("test", "codes:" + keyCodes[i]);
+        }
         android.util.Log.d("ime", "Click key : code = 0x" + Integer.toString(primaryCode, 16));
 
         // Input show ime picker.
@@ -137,7 +142,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         else
         {
             // Input emoji.
-            final EmojiData emoji = emojiDataManager.getEmojiData(primaryCode);
+            final EmojiData emoji = emojiDataManager.getEmojiData(keyCodes);
             if(emoji != null)
             {
                 getCurrentInputConnection().commitText(emoji.createImageString(), 1);
