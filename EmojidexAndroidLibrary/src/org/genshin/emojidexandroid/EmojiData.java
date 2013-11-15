@@ -34,7 +34,7 @@ public class EmojiData
 //    @JsonProperty("url")            private String url;
 
     private Drawable icon = null;
-    private int[] code = new int[1];
+    private int[] codes = new int[1];
     private boolean isUnicode = true;
 
 
@@ -46,17 +46,17 @@ public class EmojiData
     public void initialize(Resources res, String dir)
     {
         // Set emoji code.
-        // when moji is national flag
+        // Whether national flag.
         if (moji.length() > 2)
         {
-            code = new int[2];
-            code[0] = moji.codePointAt(0);
-            code[1] = moji.codePointAt(2);
+            codes = new int[2];
+            codes[0] = moji.codePointAt(0);
+            codes[1] = moji.codePointAt(2);
         }
         else
         {
-            code = new int[1];
-            code[0] = moji.codePointAt(0);
+            codes = new int[1];
+            codes[0] = moji.codePointAt(0);
         }
 
         // Load icon image.
@@ -138,17 +138,12 @@ public class EmojiData
     }
 
     /**
-     * Get emoji code.
-     * @return      Emoji code.
+     * Get emoji codes.
+     * @return      Emoji codes.
      */
-    public int getCode()
-    {
-        return code[0];
-    }
-
     public int[] getCodes()
     {
-        return code;
+        return codes;
     }
 
     /**
@@ -157,7 +152,7 @@ public class EmojiData
      */
     public boolean hasCode()
     {
-        return code[0] != 0 || !moji.equals(NOT_UNICODE_MOJI);
+        return codes[0] != 0 || !moji.equals(NOT_UNICODE_MOJI);
     }
 
     /**

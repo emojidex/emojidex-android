@@ -14,4 +14,6 @@
     <string name="share">Share</string>
     <string name="text_hint_emoji">Please enter the Emojis.</string>
     <string name="text_hint_text">Please enter the text.</string>
+
+    <string name="all_category">all</string>
 </resources>

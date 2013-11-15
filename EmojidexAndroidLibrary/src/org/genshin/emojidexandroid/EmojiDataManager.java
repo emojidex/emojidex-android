@@ -25,7 +25,7 @@ public class EmojiDataManager
     private final Map<String, List<EmojiData>> categorizedLists = new HashMap<String, List<EmojiData>>();
     private final Map<String, EmojiData> nameTable = new HashMap<String, EmojiData>();
     private final Map<Integer, EmojiData> codeTable = new HashMap<Integer, EmojiData>();
-    private final Map<Integer, Map<Integer, EmojiData>> flagTable = new HashMap<Integer, Map<Integer, EmojiData>>();
+    private final Map<Integer, Map<Integer, EmojiData>> flagEmojiTable = new HashMap<Integer, Map<Integer, EmojiData>>();
 
     private List<CategoryData> categories = null;
 
@@ -110,7 +110,7 @@ public class EmojiDataManager
         }
         else
         {
-            Map<Integer, EmojiData> emoji = flagTable.get(codes[0]);
+            Map<Integer, EmojiData> emoji = flagEmojiTable.get(codes[0]);
             return emoji.get(codes[1]);
         }
     }
@@ -186,16 +186,16 @@ public class EmojiDataManager
 
             if (emoji.getCodes().length == 1)
             {
-                // Add to emoji code table
-                codeTable.put(emoji.getCode(), emoji);
+                // Add to emoji code table.
+                codeTable.put(emoji.getCodes()[0], emoji);
             }
             else
             {
-                // Add to flag table
-                int[] code = emoji.getCodes();
+                // Add to flag emoji table.
+                int[] codes = emoji.getCodes();
                 Map<Integer, EmojiData> second = new HashMap<Integer, EmojiData>();
-                second.put(code[1], emoji);
-                flagTable.put(code[0], second);
+                second.put(codes[1], emoji);
+                flagEmojiTable.put(codes[0], second);
             }
         }
 

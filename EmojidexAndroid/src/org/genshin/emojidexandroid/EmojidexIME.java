@@ -99,6 +99,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
 
     @Override
     public void onPress(int primaryCode) {
+        Log.e("test", "onPress:" + Integer.toHexString(primaryCode));
     }
 
     @Override
@@ -108,11 +109,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
 
     @Override
     public void onKey(int primaryCode, int[] keyCodes) {
-        Log.e("test", "in:" + Integer.toHexString(primaryCode) + " len:" + keyCodes.length);
-        for (int i = 0; i < keyCodes.length; i++)
-        {
-            Log.e("test", "codes:" + keyCodes[i]);
-        }
+        Log.e("test", "code:" + Integer.toHexString(keyCodes[0]));
         android.util.Log.d("ime", "Click key : code = 0x" + Integer.toString(primaryCode, 16));
 
         // Input show ime picker.

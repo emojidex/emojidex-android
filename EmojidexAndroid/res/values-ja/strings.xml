@@ -14,4 +14,6 @@
     <string name="share">共有</string>
     <string name="text_hint_emoji">絵文字を入力してください。</string>
     <string name="text_hint_text">テキストを入力してください。</string>
+
+    <string name="all_category">all</string>
 </resources>
