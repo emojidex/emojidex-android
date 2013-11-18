@@ -14,7 +14,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
-import android.widget.ScrollView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 import java.util.HashMap;
@@ -33,9 +34,17 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
 
     private View layout;
     private HorizontalScrollView categoryScrollView;
-    private ScrollView keyboardScrollView;
+    //private ScrollView keyboardScrollView;
     private KeyboardView keyboardView;
     private KeyboardView subKeyboardView;
+    private LinearLayout baseKeyboardView;
+
+    private Map<String, CategoryView> categoryViews;
+    private ImageButton prevButton;
+    private ImageButton nextButton;
+    private TextView nowPage;
+    private TextView maxPage;
+    private String nowCategory;
 
     private ViewFlipper viewFlipper;
 
@@ -60,11 +69,14 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         // Create categorized keyboards.
         final int minHeight = (int)getResources().getDimension(R.dimen.ime_keyboard_area_height);
         keyboards = new HashMap<String, Keyboard>();
+        categoryViews = new HashMap<String, CategoryView>();
         for(CategoryData categoryData : emojiDataManager.getCategoryDatas())
         {
             final String categoryName = categoryData.getName();
-            Keyboard newKeyboard = EmojidexKeyboard.create(this, emojiDataManager.getCategorizedList(categoryName), minHeight);
-            keyboards.put(categoryName, newKeyboard);
+            categoryViews.put(categoryName,
+                              EmojidexKeyboard.create(this, emojiDataManager.getCategorizedList(categoryName), minHeight));
+            //Keyboard newKeyboard = EmojidexKeyboard.create(this, emojiDataManager.getCategorizedList(categoryName), minHeight);
+            //keyboards.put(categoryName, newKeyboard);
         }
     }
 
@@ -76,6 +88,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         createCategorySelector();
         createKeyboardView();
         createSubKeyboardView();
+        setPageControlView();
 
         // set viewFlipper action
         viewFlipper = (ViewFlipper)layout.findViewById(R.id.viewFlipper);
@@ -259,9 +272,11 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         keyboardView.setOnKeyboardActionListener(this);
         keyboardView.setPreviewEnabled(false);
 
+        baseKeyboardView = (LinearLayout)layout.findViewById(R.id.ime_keyboard);
+        baseKeyboardView.addView(keyboardView);
         // Add KeyboardView to IME layout.
-        keyboardScrollView = (ScrollView)layout.findViewById(R.id.ime_keyboard);
-        keyboardScrollView.addView(keyboardView);
+        //keyboardScrollView = (ScrollView)layout.findViewById(R.id.ime_keyboard);
+        //keyboardScrollView.addView(keyboardView);
     }
 
     /**
@@ -283,19 +298,80 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         targetView.addView(subKeyboardView);
     }
 
+    private void setPageControlView()
+    {
+        prevButton = (ImageButton)layout.findViewById(R.id.move_prev);
+        prevButton.setVisibility(View.INVISIBLE);
+        prevButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                prevKeyboard();
+            }
+        });
+        nextButton = (ImageButton)layout.findViewById(R.id.move_next);
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                nextKeyboard();;
+            }
+        });
+        nowPage = (TextView)layout.findViewById(R.id.now_page);
+        maxPage = (TextView)layout.findViewById(R.id.max_page);
+    }
+
     /**
      * Set categorized keyboard.
      * @param categoryID
      */
     private void setKeyboard(String categoryID)
     {
-        // Set categorized keyboard to KeyboardView.
-        keyboardView.setKeyboard(keyboards.get(categoryID));
+        nowCategory = categoryID;
 
+        // Set categorized keyboard to KeyboardView.
+        keyboardView.setKeyboard(categoryViews.get(categoryID).getKeyboards().get(0));
+        //keyboardView.setKeyboard(keyboards.get(categoryID));
+        nowPage.setText("1");
+        prevButton.setVisibility(View.INVISIBLE);
+        maxPage.setText(Integer.toString(categoryViews.get(categoryID).getMaxPage()));
+        if (categoryViews.get(categoryID).getMaxPage() == 1)
+            nextButton.setVisibility(View.INVISIBLE);
+        else
+            nextButton.setVisibility(View.VISIBLE);
         // Scroll to top.
-        keyboardScrollView.scrollTo(0, 0);
+        //keyboardScrollView.scrollTo(0, 0);
     }
 
+    private void nextKeyboard()
+    {
+        int now = Integer.parseInt(nowPage.getText().toString());
+        if (now == categoryViews.get(nowCategory).getMaxPage())
+            return;
+
+        // set next page
+        keyboardView.setKeyboard(categoryViews.get(nowCategory).getKeyboards().get(now));
+        nowPage.setText(Integer.toString(now + 1));
+
+        // update button state
+        if (now + 1 == categoryViews.get(nowCategory).getMaxPage())
+            nextButton.setVisibility(View.INVISIBLE);
+        prevButton.setVisibility(View.VISIBLE);
+    }
+
+    private void prevKeyboard()
+    {
+        int now = Integer.parseInt(nowPage.getText().toString());
+        if (now == 1)
+            return;
+
+        // set prev page
+        keyboardView.setKeyboard(categoryViews.get(nowCategory).getKeyboards().get(now - 2));
+        nowPage.setText(Integer.toString(now - 1));
+
+        // update button state
+        if (now - 1 == 1)
+            prevButton.setVisibility(View.INVISIBLE);
+        nextButton.setVisibility(View.VISIBLE);
+    }
 
     private float lastTouchX;
     private float currentX;

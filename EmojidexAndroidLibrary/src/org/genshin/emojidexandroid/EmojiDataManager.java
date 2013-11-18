@@ -199,6 +199,15 @@ public class EmojiDataManager
             }
         }
 
+        /*
+        ArrayList<EmojiData> testData = new ArrayList<EmojiData>();
+        for (int i = 0; i < 100; i++)
+        {
+            testData.add(newEmojiList.get(i));
+        }
+        categorizedLists.put(context.getString(R.string.all_category), testData);
+        */
+
         // Load category data from "categories.json".
         try
         {
