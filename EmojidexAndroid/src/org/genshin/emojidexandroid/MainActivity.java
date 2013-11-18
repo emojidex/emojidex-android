@@ -152,7 +152,7 @@ public class MainActivity extends Activity {
             // set share data
             if (viewFlipper.getCurrentView() == findViewById(R.id.emoji_layout))
             {
-                intent.putExtra(Intent.EXTRA_TEXT, emojiEditText.getText());
+                intent.putExtra(Intent.EXTRA_TEXT, toUnicodeString(emojiEditText.getText()));
             }
             else if (viewFlipper.getCurrentView() == findViewById(R.id.text_layout))
             {
@@ -160,7 +160,7 @@ public class MainActivity extends Activity {
             }
             else
             {
-                intent.putExtra(Intent.EXTRA_TEXT, textHalfEditText.getText());
+                intent.putExtra(Intent.EXTRA_TEXT, toUnicodeString(emojiHalfEditText.getText()));
             }
 
             intent.setType("text/plain");
