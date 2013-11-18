@@ -14,9 +14,11 @@ import java.util.List;
  */
 public class EmojidexKeyboard extends Keyboard {
     private static int emojiCount;
-    private static int rowCount;
     private static int columnCount = 0;
     private static int minHeight = 0;
+
+    private static final int ROW_COUNT = 3;
+    private int displayWidth;
 
     private final Row row;
 
@@ -43,19 +45,15 @@ public class EmojidexKeyboard extends Keyboard {
     {
         // Get display size.
         DisplayMetrics metrics = res.getDisplayMetrics();
-        int displayWidth = metrics.widthPixels;
+        displayWidth = metrics.widthPixels;
 
         // Set keyboard parameters.
         columnCount = displayWidth / getKeyWidth();
-        if (emojiCount % columnCount == 0)
-            rowCount = emojiCount / columnCount;
-        else
-            rowCount = emojiCount / columnCount + 1;
 
         // Create row.
         Row newRow = super.createRowFromXml(res, parser);
         newRow.defaultWidth = displayWidth;
-        newRow.defaultHeight = getKeyHeight() * 3;
+        newRow.defaultHeight = getKeyHeight() * ROW_COUNT;
         newRow.defaultHeight = Math.max(newRow.defaultHeight, minHeight);
 
         return newRow;
@@ -71,7 +69,8 @@ public class EmojidexKeyboard extends Keyboard {
 
         // Calculate key position.
         int keyCount = keys.size();
-        int x = keyCount % columnCount * (row.defaultWidth + row.defaultHorizontalGap);
+        int leftMargin = (displayWidth - columnCount * getKeyWidth()) / 2;
+        int x = keyCount % columnCount * (row.defaultWidth + row.defaultHorizontalGap) + leftMargin;
         int y = keyCount / columnCount * (row.defaultHeight + row.verticalGap);
 
         // Create new key and set parameters.
@@ -97,42 +96,34 @@ public class EmojidexKeyboard extends Keyboard {
      * @param context
      * @param emojiDatas
      * @param minHeight
-     * @return      New EmojidexKeyboard object.
+     * @return      New CategorizedKeyboard object.
      */
-    public static CategoryView create(Context context, List<EmojiData> emojiDatas, int minHeight)
+    public static CategorizedKeyboard create(Context context, List<EmojiData> emojiDatas, int minHeight)
     {
         // Set keyboard parameters.
         emojiCount = (emojiDatas != null) ? emojiDatas.size() : 0;
         EmojidexKeyboard.minHeight = minHeight;
 
         // Create keyboard.
-        /*
+        CategorizedKeyboard categorizedKeyboard = new CategorizedKeyboard();
         EmojidexKeyboard newKeyboard = new EmojidexKeyboard(context);
 
-        // Key add test.
-        for(int i = 0;  i < emojiCount;  ++i)
-        {
-            newKeyboard.addKey( emojiDatas.get(i) );
-        }
-        */
-
-        CategoryView view = new CategoryView();
-        EmojidexKeyboard newKeyboard = new EmojidexKeyboard(context);
-
+        // Create categorizedKeyboard's page.
         int num = 0;
         for(int i = 0; i < emojiCount; i++)
         {
+            // Create new page.
             if (num == columnCount * 3)
             {
-                view.setKeyboard(newKeyboard);
+                categorizedKeyboard.setKeyboard(newKeyboard);
                 newKeyboard = new EmojidexKeyboard(context);
                 num = 0;
             }
             newKeyboard.addKey(emojiDatas.get(i));
             num++;
         }
-        view.setKeyboard(newKeyboard);
+        categorizedKeyboard.setKeyboard(newKeyboard);
 
-        return view;
+        return categorizedKeyboard;
     }
 }

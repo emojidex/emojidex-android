@@ -5,7 +5,6 @@ import android.content.res.Configuration;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,19 +26,17 @@ import java.util.Map;
  */
 public class EmojidexIME extends InputMethodService implements KeyboardView.OnKeyboardActionListener {
     private EmojiDataManager emojiDataManager;
-    private Map<String, Keyboard> keyboards;
 
     private InputMethodManager inputMethodManager = null;
     private int showIMEPickerCode = 0;
 
     private View layout;
     private HorizontalScrollView categoryScrollView;
-    //private ScrollView keyboardScrollView;
     private KeyboardView keyboardView;
     private KeyboardView subKeyboardView;
     private LinearLayout baseKeyboardView;
 
-    private Map<String, CategoryView> categoryViews;
+    private Map<String, CategorizedKeyboard> categorizedKeyboards;
     private ImageButton prevButton;
     private ImageButton nextButton;
     private TextView nowPage;
@@ -68,29 +65,26 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
 
         // Create categorized keyboards.
         final int minHeight = (int)getResources().getDimension(R.dimen.ime_keyboard_area_height);
-        keyboards = new HashMap<String, Keyboard>();
-        categoryViews = new HashMap<String, CategoryView>();
+        categorizedKeyboards = new HashMap<String, CategorizedKeyboard>();
         for(CategoryData categoryData : emojiDataManager.getCategoryDatas())
         {
             final String categoryName = categoryData.getName();
-            categoryViews.put(categoryName,
-                              EmojidexKeyboard.create(this, emojiDataManager.getCategorizedList(categoryName), minHeight));
-            //Keyboard newKeyboard = EmojidexKeyboard.create(this, emojiDataManager.getCategorizedList(categoryName), minHeight);
-            //keyboards.put(categoryName, newKeyboard);
+            categorizedKeyboards.put(categoryName,
+                    EmojidexKeyboard.create(this, emojiDataManager.getCategorizedList(categoryName), minHeight));
         }
     }
 
     @Override
     public View onCreateInputView() {
         // Create IME layout.
-        layout = (View)getLayoutInflater().inflate(R.layout.ime, null);
+        layout = getLayoutInflater().inflate(R.layout.ime, null);
 
         createCategorySelector();
         createKeyboardView();
         createSubKeyboardView();
         setPageControlView();
 
-        // set viewFlipper action
+        // Set ViewFlipper action.
         viewFlipper = (ViewFlipper)layout.findViewById(R.id.viewFlipper);
         viewFlipper.setOnTouchListener(new FlickTouchListener());
 
@@ -112,7 +106,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
 
     @Override
     public void onPress(int primaryCode) {
-        Log.e("test", "onPress:" + Integer.toHexString(primaryCode));
+
     }
 
     @Override
@@ -122,7 +116,6 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
 
     @Override
     public void onKey(int primaryCode, int[] keyCodes) {
-        Log.e("test", "code:" + Integer.toHexString(keyCodes[0]));
         android.util.Log.d("ime", "Click key : code = 0x" + Integer.toString(primaryCode, 16));
 
         // Input show ime picker.
@@ -191,7 +184,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     }
 
     /**
-     * Create category selector..
+     * Create category selector.
      */
     private void createCategorySelector()
     {
@@ -272,11 +265,9 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         keyboardView.setOnKeyboardActionListener(this);
         keyboardView.setPreviewEnabled(false);
 
+        // Add KeyboardView to IME layout.
         baseKeyboardView = (LinearLayout)layout.findViewById(R.id.ime_keyboard);
         baseKeyboardView.addView(keyboardView);
-        // Add KeyboardView to IME layout.
-        //keyboardScrollView = (ScrollView)layout.findViewById(R.id.ime_keyboard);
-        //keyboardScrollView.addView(keyboardView);
     }
 
     /**
@@ -298,23 +289,13 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         targetView.addView(subKeyboardView);
     }
 
+    /**
+     * Set CategorizedKeyboard's page controll view.
+     */
     private void setPageControlView()
     {
         prevButton = (ImageButton)layout.findViewById(R.id.move_prev);
-        prevButton.setVisibility(View.INVISIBLE);
-        prevButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                prevKeyboard();
-            }
-        });
         nextButton = (ImageButton)layout.findViewById(R.id.move_next);
-        nextButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                nextKeyboard();;
-            }
-        });
         nowPage = (TextView)layout.findViewById(R.id.now_page);
         maxPage = (TextView)layout.findViewById(R.id.max_page);
     }
@@ -327,56 +308,68 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     {
         nowCategory = categoryID;
 
-        // Set categorized keyboard to KeyboardView.
-        keyboardView.setKeyboard(categoryViews.get(categoryID).getKeyboards().get(0));
-        //keyboardView.setKeyboard(keyboards.get(categoryID));
+        // Set categoryView to KeyboardView.
+        keyboardView.setKeyboard(categorizedKeyboards.get(categoryID).getKeyboards().get(0));
+
+        // Set CategorizedKeyboard's page control state
         nowPage.setText("1");
         prevButton.setVisibility(View.INVISIBLE);
-        maxPage.setText(Integer.toString(categoryViews.get(categoryID).getMaxPage()));
-        if (categoryViews.get(categoryID).getMaxPage() == 1)
+        maxPage.setText(Integer.toString(categorizedKeyboards.get(categoryID).getMaxPage()));
+        if (categorizedKeyboards.get(categoryID).getMaxPage() == 1)
             nextButton.setVisibility(View.INVISIBLE);
         else
             nextButton.setVisibility(View.VISIBLE);
-        // Scroll to top.
-        //keyboardScrollView.scrollTo(0, 0);
+
     }
 
-    private void nextKeyboard()
+    /**
+     * Move next CategorizedKeyboard's page.
+     */
+    public void nextPage(View v)
     {
-        int now = Integer.parseInt(nowPage.getText().toString());
-        if (now == categoryViews.get(nowCategory).getMaxPage())
+        int now = categorizedKeyboards.get(nowCategory).getNowPage();
+        if (now == categorizedKeyboards.get(nowCategory).getMaxPage())
             return;
 
-        // set next page
-        keyboardView.setKeyboard(categoryViews.get(nowCategory).getKeyboards().get(now));
+        // Set next page.
+        keyboardView.setKeyboard(categorizedKeyboards.get(nowCategory).getKeyboards().get(now));
+        categorizedKeyboards.get(nowCategory).setNowPage(now + 1);
         nowPage.setText(Integer.toString(now + 1));
 
-        // update button state
-        if (now + 1 == categoryViews.get(nowCategory).getMaxPage())
+        // Update button visibility.
+        if (now + 1 == categorizedKeyboards.get(nowCategory).getMaxPage())
             nextButton.setVisibility(View.INVISIBLE);
         prevButton.setVisibility(View.VISIBLE);
     }
 
-    private void prevKeyboard()
+    /**
+     * Move previous CategorizedKeyboard's page.
+     */
+    public void prevPage(View v)
     {
-        int now = Integer.parseInt(nowPage.getText().toString());
+        int now = categorizedKeyboards.get(nowCategory).getNowPage();
         if (now == 1)
             return;
 
-        // set prev page
-        keyboardView.setKeyboard(categoryViews.get(nowCategory).getKeyboards().get(now - 2));
+        // Set previous page.
+        keyboardView.setKeyboard(categorizedKeyboards.get(nowCategory).getKeyboards().get(now - 2));
+        categorizedKeyboards.get(nowCategory).setNowPage(now - 1);
         nowPage.setText(Integer.toString(now - 1));
 
-        // update button state
+        // Update button visibility.
         if (now - 1 == 1)
             prevButton.setVisibility(View.INVISIBLE);
         nextButton.setVisibility(View.VISIBLE);
     }
 
-    private float lastTouchX;
-    private float currentX;
+    /**
+     * ViewFlipper's touchListener
+     */
     private class FlickTouchListener implements View.OnTouchListener
     {
+        private float lastTouchX;
+        private float currentX;
+
         @Override
         public boolean onTouch(View view, MotionEvent event)
         {

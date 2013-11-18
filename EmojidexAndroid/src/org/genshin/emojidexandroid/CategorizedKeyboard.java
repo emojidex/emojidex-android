@@ -5,12 +5,12 @@ import java.util.ArrayList;
 /**
  * Created by nazuki on 2013/11/18.
  */
-public class CategoryView {
+public class CategorizedKeyboard {
     private ArrayList<EmojidexKeyboard> keyboards;
     private int nowPage;
     private int maxPage;
 
-    public CategoryView()
+    public CategorizedKeyboard()
     {
         keyboards = new ArrayList<EmojidexKeyboard>();
         nowPage = 1;
@@ -20,7 +20,7 @@ public class CategoryView {
     public void setKeyboard(EmojidexKeyboard keyboard)
     {
         keyboards.add(keyboard);
-        maxPage = keyboards.size();
+        setMaxPage(keyboards.size());
     }
 
     public ArrayList<EmojidexKeyboard> getKeyboards()

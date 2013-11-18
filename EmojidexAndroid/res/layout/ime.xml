@@ -6,8 +6,8 @@
     android:layout_height="wrap_content">
 
     <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/flipper_left_button"
@@ -41,37 +41,37 @@
     </LinearLayout>
 
     <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/ime_category_height">
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/ime_category_height">
 
         <ImageButton
-                android:id="@+id/ime_category_button_left"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:src="@drawable/arrow"
-                android:rotation="180"
-                android:contentDescription="@string/left"/>
+            android:id="@+id/ime_category_button_left"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/arrow"
+            android:rotation="180"
+            android:contentDescription="@string/left"/>
 
         <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:id="@+id/ime_category_scrollview"
+            style="@style/IMEHorizontalScrollViewStyle">
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:id="@+id/ime_category_scrollview"
-                style="@style/IMEHorizontalScrollViewStyle">
-            <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/ime_categories"
-                    android:orientation="horizontal" >
+                android:id="@+id/ime_categories"
+                android:orientation="horizontal" >
             </LinearLayout>
         </HorizontalScrollView>
 
         <ImageButton
-                android:id="@+id/ime_category_button_right"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:src="@drawable/arrow"
-                android:contentDescription="@string/right"/>
+            android:id="@+id/ime_category_button_right"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/arrow"
+            android:contentDescription="@string/right"/>
 
     </LinearLayout>
 
@@ -92,36 +92,43 @@
             android:layout_weight="1"/>
 
         <ImageButton
-            android:layout_height="match_parent"
-            android:layout_width="wrap_content"
-            android:src="@drawable/arrow"
+            android:layout_height="40dp"
+            android:layout_width="40dp"
+            android:background="@drawable/arrow"
             android:rotation="180"
-            android:id="@+id/move_prev"/>
+            android:id="@+id/move_prev"
+            android:onClick="prevPage"/>
         <TextView
             android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
+            android:gravity="center"
             android:textSize="18sp"
+            android:textColor="@color/white"
             android:id="@+id/now_page" />
         <TextView
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_gravity="center_vertical"
             android:textSize="18sp"
+            android:textColor="@color/white"
             android:text="/" />
         <TextView
             android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
+            android:gravity="center"
             android:textSize="18sp"
+            android:textColor="@color/white"
             android:id="@+id/max_page" />
         <ImageButton
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:src="@drawable/arrow"
-            android:id="@+id/move_next"/>
+            android:layout_height="40dp"
+            android:layout_width="40dp"
+            android:background="@drawable/arrow"
+            android:id="@+id/move_next"
+            android:onClick="nextPage"/>
 
         <TextView
             android:layout_height="match_parent"
@@ -130,8 +137,8 @@
     </LinearLayout>
 
     <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/ime_sub_keyboard"/>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/ime_sub_keyboard"/>
 
 </LinearLayout>
