@@ -13,7 +13,6 @@ import java.util.List;
  * Created by kou on 13/08/26.
  */
 public class EmojidexKeyboard extends Keyboard {
-    private static int emojiCount;
     private static int columnCount = 0;
     private static int minHeight = 0;
 
@@ -48,7 +47,7 @@ public class EmojidexKeyboard extends Keyboard {
         displayWidth = metrics.widthPixels;
 
         // Set keyboard parameters.
-        columnCount = displayWidth / getKeyWidth();
+        columnCount = displayWidth / (getKeyWidth() + getHorizontalGap());
 
         // Create row.
         Row newRow = super.createRowFromXml(res, parser);
@@ -69,7 +68,8 @@ public class EmojidexKeyboard extends Keyboard {
 
         // Calculate key position.
         int keyCount = keys.size();
-        int leftMargin = (displayWidth - columnCount * getKeyWidth()) / 2;
+        int leftMargin = (displayWidth - columnCount * getKeyWidth()
+                                          - (columnCount - 1) * getHorizontalGap() ) / 2;
         int x = keyCount % columnCount * (row.defaultWidth + row.defaultHorizontalGap) + leftMargin;
         int y = keyCount / columnCount * (row.defaultHeight + row.verticalGap);
 
@@ -84,7 +84,7 @@ public class EmojidexKeyboard extends Keyboard {
 
         Drawable icon = emojiData.getIcon();
         if(icon != null)
-            newKey.icon = emojiData.getIcon();
+            newKey.icon = icon;
         else
             newKey.label = emojiData.getMoji();
 
@@ -92,7 +92,7 @@ public class EmojidexKeyboard extends Keyboard {
     }
 
     /**
-     * Create EmojidexKeyboard object.
+     * Create CategorizedKeyboard object.
      * @param context
      * @param emojiDatas
      * @param minHeight
@@ -101,7 +101,7 @@ public class EmojidexKeyboard extends Keyboard {
     public static CategorizedKeyboard create(Context context, List<EmojiData> emojiDatas, int minHeight)
     {
         // Set keyboard parameters.
-        emojiCount = (emojiDatas != null) ? emojiDatas.size() : 0;
+        int emojiCount = (emojiDatas != null) ? emojiDatas.size() : 0;
         EmojidexKeyboard.minHeight = minHeight;
 
         // Create keyboard.

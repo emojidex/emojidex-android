@@ -7,7 +7,7 @@
 
     <LinearLayout
         android:layout_height="wrap_content"
-        android:layout_width="fill_parent">
+        android:layout_width="match_parent">
 
         <TextView
             android:layout_height="wrap_content"
@@ -18,12 +18,13 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:background="@drawable/button_arrow"
-            android:onClick="moveViewToRight" />
+            android:onClick="moveViewToRight"
+            android:contentDescription="@string/right" />
 
     </LinearLayout>
 
     <EditText
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:padding="10dp"
@@ -35,7 +36,7 @@
         android:hint="@string/text_hint_emoji" />
 
     <EditText
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:padding="10dp"

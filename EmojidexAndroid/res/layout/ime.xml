@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@drawable/background_gray">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,7 +19,7 @@
             android:contentDescription="@string/left"/>
 
         <ViewFlipper
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="@dimen/ime_view_flipper_height"
             android:id="@+id/viewFlipper"
             android:layout_weight="1">
@@ -53,13 +54,13 @@
             android:contentDescription="@string/left"/>
 
         <HorizontalScrollView
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:id="@+id/ime_category_scrollview"
             style="@style/IMEHorizontalScrollViewStyle">
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:id="@+id/ime_categories"
                 android:orientation="horizontal" >
@@ -92,26 +93,27 @@
             android:layout_weight="1"/>
 
         <ImageButton
-            android:layout_height="40dp"
-            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_width="32dp"
             android:background="@drawable/arrow"
             android:rotation="180"
             android:id="@+id/move_prev"
-            android:onClick="prevPage"/>
+            android:onClick="prevPage"
+            android:contentDescription="@string/left" />
         <TextView
             android:layout_height="wrap_content"
             android:layout_width="0dp"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:gravity="center"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textColor="@color/white"
             android:id="@+id/now_page" />
         <TextView
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_gravity="center_vertical"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textColor="@color/white"
             android:text="/" />
         <TextView
@@ -120,15 +122,16 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:gravity="center"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textColor="@color/white"
             android:id="@+id/max_page" />
         <ImageButton
-            android:layout_height="40dp"
-            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_width="32dp"
             android:background="@drawable/arrow"
             android:id="@+id/move_next"
-            android:onClick="nextPage"/>
+            android:onClick="nextPage"
+            android:contentDescription="@string/right" />
 
         <TextView
             android:layout_height="match_parent"

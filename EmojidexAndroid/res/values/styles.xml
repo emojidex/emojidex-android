@@ -5,8 +5,6 @@
     <attr name="subKeyboardViewStyle" format="reference" />
     <attr name="horizontalScrollViewStyle" format="reference" />
     <style name="IMETheme" parent="android:Theme.Holo.InputMethod">
-        <item name="android:background">#000000</item>
-
         <item name="android:buttonStyle">@style/IMEButtonStyle</item>
         <item name="android:imageButtonStyle">@style/IMEImageButtonStyle</item>
         <item name="android:scrollViewStyle">@style/IMEScrollViewStyle</item>
@@ -34,12 +32,13 @@
 
     <!-- IME KeyboardView -->
     <style name="IMEKeyboardViewStyle" parent="android:style/Widget.KeyboardView">
-        <item name="android:background">#FFFFFF</item>
+        <item name="android:background">@drawable/background_blank</item>
         <item name="android:keyBackground">@drawable/ime_keyboard_key_background</item>
     </style>
 
     <!-- IME Sub KeyboardView -->
     <style name="IMESubKeyboardViewStyle" parent="android:style/Widget.KeyboardView">
+        <item name="android:background">@drawable/background_blank</item>
     </style>
 
 </resources>

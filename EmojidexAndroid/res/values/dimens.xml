@@ -7,5 +7,5 @@
     <dimen name="ime_text_size">14sp</dimen>
     <dimen name="ime_category_height">40dp</dimen>
     <dimen name="ime_view_flipper_height">40dp</dimen>
-    <dimen name="ime_keyboard_area_height">144dp</dimen>    <!-- 48dp * 3row -->
+    <dimen name="ime_keyboard_area_height">145dp</dimen>    <!-- 48dp * 3row + 1 -->
 </resources>
