@@ -88,6 +88,26 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         viewFlipper = (ViewFlipper)layout.findViewById(R.id.viewFlipper);
         viewFlipper.setOnTouchListener(new FlickTouchListener());
 
+        /*
+        ImageView leftButton = (ImageView)layout.findViewById(R.id.flipper_left_button);
+        leftButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                moveViewToLeft();
+                return false;
+            }
+        });
+
+        ImageView rightButton = (ImageView)layout.findViewById(R.id.flipper_right_button);
+        rightButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                moveViewToRight();
+                return false;
+            }
+        });
+        */
+
         return layout;
     }
 
@@ -362,6 +382,20 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         nextButton.setVisibility(View.VISIBLE);
     }
 
+    public void moveToLeft(View v)
+    {
+        viewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_in));
+        viewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_out));
+        viewFlipper.showNext();
+    }
+
+    public void moveToRight(View v)
+    {
+        viewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_in));
+        viewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_out));
+        viewFlipper.showPrevious();
+    }
+
     /**
      * ViewFlipper's touchListener
      */
@@ -383,15 +417,11 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
                     currentX = event.getX();
                     if (lastTouchX < currentX)
                     {
-                        viewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_in));
-                        viewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_out));
-                        viewFlipper.showPrevious();
+                        moveToRight(null);
                     }
                     if (lastTouchX > currentX)
                     {
-                        viewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_in));
-                        viewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_out));
-                        viewFlipper.showNext();
+                        moveToLeft(null);
                     }
                     break;
             }

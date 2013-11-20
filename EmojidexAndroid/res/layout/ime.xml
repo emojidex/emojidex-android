@@ -10,13 +10,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/flipper_left_button"
+        <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:src="@android:drawable/arrow_down_float"
-            android:rotation="90"
-            android:contentDescription="@string/left"/>
+            android:src="@drawable/arrow"
+            android:rotation="180"
+            android:contentDescription="@string/left"
+            android:onClick="moveToRight"/>
 
         <ViewFlipper
             android:layout_width="0dp"
@@ -31,13 +31,12 @@
 
         </ViewFlipper>
 
-        <ImageView
-            android:id="@+id/flipper_right_button"
+        <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:src="@android:drawable/arrow_up_float"
-            android:rotation="90"
-            android:contentDescription="@string/right"/>
+            android:src="@drawable/arrow"
+            android:contentDescription="@string/right"
+            android:onClick="moveToLeft"/>
 
     </LinearLayout>
 
@@ -100,6 +99,7 @@
             android:id="@+id/move_prev"
             android:onClick="prevPage"
             android:contentDescription="@string/left" />
+
         <TextView
             android:layout_height="wrap_content"
             android:layout_width="0dp"
@@ -125,6 +125,7 @@
             android:textSize="16sp"
             android:textColor="@color/white"
             android:id="@+id/max_page" />
+
         <ImageButton
             android:layout_height="wrap_content"
             android:layout_width="32dp"
@@ -137,6 +138,7 @@
             android:layout_height="match_parent"
             android:layout_width="0dp"
             android:layout_weight="1"/>
+
     </LinearLayout>
 
     <FrameLayout
