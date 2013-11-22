@@ -10,5 +10,5 @@
     <!-- Pressed key. -->
     <item
             android:state_pressed="true"
-            android:drawable="@drawable/key_background_white" />
+            android:drawable="@drawable/background_white" />
 </selector>
