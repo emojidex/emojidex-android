@@ -13,6 +13,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by nazuki on 2013/08/28.
@@ -34,7 +36,7 @@ public class EmojiData
 //    @JsonProperty("url")            private String url;
 
     private Drawable icon = null;
-    private int[] codes = new int[1];
+    private List<Integer> codes = new ArrayList<Integer>();
     private boolean isUnicode = true;
 
 
@@ -47,17 +49,9 @@ public class EmojiData
     {
         // Set emoji code.
         // Whether national flag.
-        if (moji.length() > 2)
-        {
-            codes = new int[2];
-            codes[0] = moji.codePointAt(0);
-            codes[1] = moji.codePointAt(2);
-        }
-        else
-        {
-            codes = new int[1];
-            codes[0] = moji.codePointAt(0);
-        }
+        final int count = moji.codePointCount(0, moji.length());
+        for(int i = 0;  i < count;  ++i)
+            codes.add(moji.codePointAt(i));
 
         // Load icon image.
         try
@@ -141,7 +135,7 @@ public class EmojiData
      * Get emoji codes.
      * @return      Emoji codes.
      */
-    public int[] getCodes()
+    public List<Integer> getCodes()
     {
         return codes;
     }
@@ -152,7 +146,7 @@ public class EmojiData
      */
     public boolean hasCode()
     {
-        return codes[0] != 0 || !moji.equals(NOT_UNICODE_MOJI);
+        return !codes.isEmpty() || !moji.equals(NOT_UNICODE_MOJI);
     }
 
     /**

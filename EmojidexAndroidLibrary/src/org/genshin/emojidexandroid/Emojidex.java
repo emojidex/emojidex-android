@@ -87,31 +87,33 @@ public class Emojidex {
      */
     public CharSequence deEmojify(CharSequence text)
     {
-        final SpannableStringBuilder result = new SpannableStringBuilder();
+        final CharSequence result = text;
 
-        final int length = text.length();
-        int charCount = 0;
-        for(int i = 0;  i < length;  i += charCount)
-        {
-            final int codePoint = Character.codePointAt(text, i);
-            charCount = Character.charCount(codePoint);
-            if( !isEmoji(codePoint) )
-            {
-                result.append( text.subSequence(i, i + charCount) );
-                continue;
-            }
-
-            // Get EmojiData by code.
-            final EmojiData emojiData = emojiDataManager.getEmojiData(codePoint);
-            if(emojiData == null)
-            {
-                result.append( text.subSequence(i, i + charCount) );
-                continue;
-            }
-
-            // Replace emoji to emoji tag.
-            result.append(separator + emojiData.getName() + separator);
-        }
+//        final SpannableStringBuilder result = new SpannableStringBuilder();
+//
+//        final int length = text.length();
+//        int charCount = 0;
+//        for(int i = 0;  i < length;  i += charCount)
+//        {
+//            final int codePoint = Character.codePointAt(text, i);
+//            charCount = Character.charCount(codePoint);
+//            if( !isEmoji(codePoint) )
+//            {
+//                result.append( text.subSequence(i, i + charCount) );
+//                continue;
+//            }
+//
+//            // Get EmojiData by code.
+//            final EmojiData emojiData = emojiDataManager.getEmojiData(codePoint);
+//            if(emojiData == null)
+//            {
+//                result.append( text.subSequence(i, i + charCount) );
+//                continue;
+//            }
+//
+//            // Replace emoji to emoji tag.
+//            result.append(separator + emojiData.getName() + separator);
+//        }
 
         android.util.Log.d("lib", "deEmojify : " + text + " -> " + result);
 
@@ -120,35 +122,37 @@ public class Emojidex {
 
     public CharSequence toUnicodeString(CharSequence text)
     {
-        final CharSequence src = emojify(text);
-        final SpannableStringBuilder result = new SpannableStringBuilder();
+        final CharSequence result = text;
 
-        final int length = src.length();
-        int charCount = 0;
-        for(int i = 0;  i < length;  i += charCount)
-        {
-            final int codePoint = Character.codePointAt(src, i);
-            charCount = Character.charCount(codePoint);
-            if( !isEmoji(codePoint) )
-            {
-                result.append( src.subSequence(i, i + charCount) );
-                continue;
-            }
-
-            // Get EmojiData by code.
-            final EmojiData emojiData = emojiDataManager.getEmojiData(codePoint);
-            if(emojiData == null)
-            {
-                result.append( src.subSequence(i, i + charCount) );
-                continue;
-            }
-            if(emojiData.isUnicodeEmoji())
-            {
-                result.append(emojiData.getMoji());
-                continue;
-            }
-            result.append( separator + emojiData.getName() + separator );
-        }
+//        final CharSequence src = emojify(text);
+//        final SpannableStringBuilder result = new SpannableStringBuilder();
+//
+//        final int length = src.length();
+//        int charCount = 0;
+//        for(int i = 0;  i < length;  i += charCount)
+//        {
+//            final int codePoint = Character.codePointAt(src, i);
+//            charCount = Character.charCount(codePoint);
+//            if( !isEmoji(codePoint) )
+//            {
+//                result.append( src.subSequence(i, i + charCount) );
+//                continue;
+//            }
+//
+//            // Get EmojiData by code.
+//            final EmojiData emojiData = emojiDataManager.getEmojiData(codePoint);
+//            if(emojiData == null)
+//            {
+//                result.append( src.subSequence(i, i + charCount) );
+//                continue;
+//            }
+//            if(emojiData.isUnicodeEmoji())
+//            {
+//                result.append(emojiData.getMoji());
+//                continue;
+//            }
+//            result.append( separator + emojiData.getName() + separator );
+//        }
 
         android.util.Log.d("lib", "toUnicodeString : " + text + " -> " + result);
 

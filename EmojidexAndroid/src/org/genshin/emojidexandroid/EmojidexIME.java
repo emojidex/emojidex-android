@@ -17,7 +17,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -114,7 +117,15 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
 
     @Override
     public void onKey(int primaryCode, int[] keyCodes) {
-        android.util.Log.d("ime", "Click key : code = 0x" + Integer.toString(primaryCode, 16));
+        List<Integer> codes = new ArrayList<Integer>();
+        for(int i = 0;  keyCodes[i] != -1;  ++i)
+            codes.add(keyCodes[i]);
+
+        StringBuilder buf = new StringBuilder("Click key : primaryCode = 0x" + String.format("%1$08x", primaryCode) + ", keyCodes = 0x");
+        for(int i = 0;  i < codes.size();  ++i)
+            buf.append( String.format(" %1$08x", keyCodes[i]) );
+        buf.append(", length = " + codes.size());
+        android.util.Log.d("ime", buf.toString());
 
         // Input show ime picker.
         if(primaryCode == showIMEPickerCode)
@@ -143,7 +154,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         else
         {
             // Input emoji.
-            final EmojiData emoji = emojiDataManager.getEmojiData(keyCodes);
+            final EmojiData emoji = emojiDataManager.getEmojiData(codes);
             if(emoji != null)
             {
                 getCurrentInputConnection().commitText(emoji.createImageString(), 1);

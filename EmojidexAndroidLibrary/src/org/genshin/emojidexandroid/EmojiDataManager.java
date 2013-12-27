@@ -24,8 +24,7 @@ public class EmojiDataManager
 
     private final Map<String, List<EmojiData>> categorizedLists = new HashMap<String, List<EmojiData>>();
     private final Map<String, EmojiData> nameTable = new HashMap<String, EmojiData>();
-    private final Map<Integer, EmojiData> codeTable = new HashMap<Integer, EmojiData>();
-    private final Map<Integer, Map<Integer, EmojiData>> flagEmojiTable = new HashMap<Integer, Map<Integer, EmojiData>>();
+    private final Map<List<Integer>, EmojiData> codeTable = new HashMap<List<Integer>, EmojiData>();
 
     private List<CategoryData> categories = null;
 
@@ -85,34 +84,13 @@ public class EmojiDataManager
     }
 
     /**
-     * Get EmojiData object by emoji code.
-     * @param code      Emoji code.
-     * @return          EmojiData object.
-     */
-    public EmojiData getEmojiData(int code)
-    {
-        return codeTable.get(code);
-    }
-
-    /**
      * Get EmojiData object by emoji codes.
      * @param codes     Emoji codes.
      * @return          EmojiData object.
      */
-    public EmojiData getEmojiData(int[] codes)
+    public EmojiData getEmojiData(List<Integer> codes)
     {
-        if (codes.length == 1)
-            return codeTable.get(codes[0]);
-
-        if (codes[1] == -1)
-        {
-            return codeTable.get(codes[0]);
-        }
-        else
-        {
-            Map<Integer, EmojiData> emoji = flagEmojiTable.get(codes[0]);
-            return emoji.get(codes[1]);
-        }
+        return codeTable.get(codes);
     }
 
     /**
@@ -184,19 +162,8 @@ public class EmojiDataManager
             // Add to name table.
             nameTable.put(emoji.getName(), emoji);
 
-            if (emoji.getCodes().length == 1)
-            {
-                // Add to emoji code table.
-                codeTable.put(emoji.getCodes()[0], emoji);
-            }
-            else
-            {
-                // Add to flag emoji table.
-                int[] codes = emoji.getCodes();
-                Map<Integer, EmojiData> second = new HashMap<Integer, EmojiData>();
-                second.put(codes[1], emoji);
-                flagEmojiTable.put(codes[0], second);
-            }
+            // Add to emoji code table.
+            codeTable.put(emoji.getCodes(), emoji);
         }
 
         /*
