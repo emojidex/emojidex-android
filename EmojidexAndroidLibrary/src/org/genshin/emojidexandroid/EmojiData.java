@@ -51,7 +51,19 @@ public class EmojiData
         // Whether national flag.
         final int count = moji.codePointCount(0, moji.length());
         for(int i = 0;  i < count;  ++i)
-            codes.add(moji.codePointAt(i));
+        {
+            final int codePoint = moji.codePointAt(i);
+
+            // Ignore variation selectors.
+            if(Character.getType(codePoint) != Character.NON_SPACING_MARK)
+                codes.add(codePoint);
+        }
+        if(codes.size() < count)
+        {
+            moji = "";
+            for(Integer current : codes)
+                moji += String.valueOf(Character.toChars(current));
+        }
 
         // Load icon image.
         try
