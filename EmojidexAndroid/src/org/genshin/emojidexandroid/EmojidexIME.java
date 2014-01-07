@@ -13,13 +13,10 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -35,19 +32,12 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
 
     private View layout;
     private HorizontalScrollView categoryScrollView;
-    private KeyboardView keyboardView;
     private KeyboardView subKeyboardView;
-    private LinearLayout baseKeyboardView;
 
     private Map<String, CategorizedKeyboard> categorizedKeyboards;
-    private ImageButton prevButton;
-    private ImageButton nextButton;
-    private TextView nowPage;
-    private TextView maxPage;
-    private String nowCategory;
 
     private ViewFlipper viewFlipper;
-
+    private ViewFlipper keyboardViewFlipper;
 
     /**
      * Construct EmojidexIME object.
@@ -85,7 +75,6 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         createCategorySelector();
         createKeyboardView();
         createSubKeyboardView();
-        setPageControlView();
 
         // Set ViewFlipper action.
         viewFlipper = (ViewFlipper)layout.findViewById(R.id.viewFlipper);
@@ -173,10 +162,16 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
 
     @Override
     public void swipeLeft() {
+        keyboardViewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_in));
+        keyboardViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_out));
+        keyboardViewFlipper.showNext();
     }
 
     @Override
     public void swipeRight() {
+        keyboardViewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_in));
+        keyboardViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_out));
+        keyboardViewFlipper.showPrevious();
     }
 
     @Override
@@ -264,14 +259,9 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
      */
     private void createKeyboardView()
     {
-        // Create KeyboardView.
-        keyboardView = new KeyboardView(this, null, R.attr.keyboardViewStyle);
-        keyboardView.setOnKeyboardActionListener(this);
-        keyboardView.setPreviewEnabled(false);
-
-        // Add KeyboardView to IME layout.
-        baseKeyboardView = (LinearLayout)layout.findViewById(R.id.ime_keyboard);
-        baseKeyboardView.addView(keyboardView);
+        // Add KeyboardViewFlipper to IME layout.
+        keyboardViewFlipper = (ViewFlipper)layout.findViewById(R.id.keyboard_viewFlipper);
+        keyboardViewFlipper.setOnTouchListener(new FlickTouchListener());
     }
 
     /**
@@ -294,76 +284,20 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     }
 
     /**
-     * Set CategorizedKeyboard's page controll view.
-     */
-    private void setPageControlView()
-    {
-        prevButton = (ImageButton)layout.findViewById(R.id.move_prev);
-        nextButton = (ImageButton)layout.findViewById(R.id.move_next);
-        nowPage = (TextView)layout.findViewById(R.id.now_page);
-        maxPage = (TextView)layout.findViewById(R.id.max_page);
-    }
-
-    /**
      * Set categorized keyboard.
      * @param categoryID
      */
     private void setKeyboard(String categoryID)
     {
-        nowCategory = categoryID;
-
-        // Set categoryView to KeyboardView.
-        keyboardView.setKeyboard(categorizedKeyboards.get(categoryID).getKeyboards().get(0));
-
-        // Set CategorizedKeyboard's page control state
-        nowPage.setText("1");
-        prevButton.setVisibility(View.INVISIBLE);
-        maxPage.setText(Integer.toString(categorizedKeyboards.get(categoryID).getMaxPage()));
-        if (categorizedKeyboards.get(categoryID).getMaxPage() == 1)
-            nextButton.setVisibility(View.INVISIBLE);
-        else
-            nextButton.setVisibility(View.VISIBLE);
-
-    }
-
-    /**
-     * Move next CategorizedKeyboard's page.
-     */
-    public void nextPage(View v)
-    {
-        int now = categorizedKeyboards.get(nowCategory).getNowPage();
-        if (now == categorizedKeyboards.get(nowCategory).getMaxPage())
-            return;
-
-        // Set next page.
-        keyboardView.setKeyboard(categorizedKeyboards.get(nowCategory).getKeyboards().get(now));
-        categorizedKeyboards.get(nowCategory).setNowPage(now + 1);
-        nowPage.setText(Integer.toString(now + 1));
-
-        // Update button visibility.
-        if (now + 1 == categorizedKeyboards.get(nowCategory).getMaxPage())
-            nextButton.setVisibility(View.INVISIBLE);
-        prevButton.setVisibility(View.VISIBLE);
-    }
-
-    /**
-     * Move previous CategorizedKeyboard's page.
-     */
-    public void prevPage(View v)
-    {
-        int now = categorizedKeyboards.get(nowCategory).getNowPage();
-        if (now == 1)
-            return;
-
-        // Set previous page.
-        keyboardView.setKeyboard(categorizedKeyboards.get(nowCategory).getKeyboards().get(now - 2));
-        categorizedKeyboards.get(nowCategory).setNowPage(now - 1);
-        nowPage.setText(Integer.toString(now - 1));
-
-        // Update button visibility.
-        if (now - 1 == 1)
-            prevButton.setVisibility(View.INVISIBLE);
-        nextButton.setVisibility(View.VISIBLE);
+        keyboardViewFlipper.removeAllViews();
+        for (int i = 0; i < categorizedKeyboards.get(categoryID).getKeyboards().size(); i++)
+        {
+            KeyboardView keyboardView = new KeyboardView(this, null, R.attr.keyboardViewStyle);
+            keyboardView.setOnKeyboardActionListener(this);
+            keyboardView.setPreviewEnabled(false);
+            keyboardView.setKeyboard(categorizedKeyboards.get(categoryID).getKeyboards().get(i));
+            keyboardViewFlipper.addView(keyboardView);
+        }
     }
 
     public void moveToLeft(View v)
