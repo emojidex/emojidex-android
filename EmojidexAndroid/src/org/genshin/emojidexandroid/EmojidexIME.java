@@ -39,6 +39,8 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     private ViewFlipper viewFlipper;
     private ViewFlipper keyboardViewFlipper;
 
+    private ArrayList<List<Integer>> histories = new ArrayList<List<Integer>>();
+
     /**
      * Construct EmojidexIME object.
      */
@@ -146,6 +148,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
             final EmojiData emoji = emojiDataManager.getEmojiData(codes);
             if(emoji != null)
             {
+                android.util.Log.e("test", ""+getCurrentInputConnection());
                 getCurrentInputConnection().commitText(emoji.createImageString(), 1);
             }
             // Input other.
@@ -292,7 +295,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         keyboardViewFlipper.removeAllViews();
         for (int i = 0; i < categorizedKeyboards.get(categoryID).getKeyboards().size(); i++)
         {
-            KeyboardView keyboardView = new KeyboardView(this, null, R.attr.keyboardViewStyle);
+            EmojidexKeyboardView keyboardView = new EmojidexKeyboardView(this, null, R.attr.keyboardViewStyle);
             keyboardView.setOnKeyboardActionListener(this);
             keyboardView.setPreviewEnabled(false);
             keyboardView.setKeyboard(categorizedKeyboards.get(categoryID).getKeyboards().get(i));
@@ -345,5 +348,30 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
             }
             return true;
         }
+    }
+
+    public void showHistory(View v)
+    {
+        android.util.Log.e("test", "show_history");
+    }
+
+    public void showFavorite(View v)
+    {
+        android.util.Log.e("test", "show_favorite");
+    }
+
+    public void showSettings(View v)
+    {
+        android.util.Log.e("test", "show_settings");
+    }
+
+    private void loadHistories()
+    {
+
+    }
+
+    private void saveHistories()
+    {
+
     }
 }
