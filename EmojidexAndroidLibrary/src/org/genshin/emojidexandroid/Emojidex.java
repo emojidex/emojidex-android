@@ -3,6 +3,10 @@ package org.genshin.emojidexandroid;
 import android.content.Context;
 import android.text.SpannableStringBuilder;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * Created by kou on 13/09/09.
  */
@@ -87,33 +91,60 @@ public class Emojidex {
      */
     public CharSequence deEmojify(CharSequence text)
     {
-        final CharSequence result = text;
+        // Character.ENCLOSING_MARK
+        // Character.SURROGATE
 
-//        final SpannableStringBuilder result = new SpannableStringBuilder();
-//
-//        final int length = text.length();
-//        int charCount = 0;
-//        for(int i = 0;  i < length;  i += charCount)
-//        {
-//            final int codePoint = Character.codePointAt(text, i);
-//            charCount = Character.charCount(codePoint);
-//            if( !isEmoji(codePoint) )
-//            {
-//                result.append( text.subSequence(i, i + charCount) );
-//                continue;
-//            }
-//
-//            // Get EmojiData by code.
-//            final EmojiData emojiData = emojiDataManager.getEmojiData(codePoint);
-//            if(emojiData == null)
-//            {
-//                result.append( text.subSequence(i, i + charCount) );
-//                continue;
-//            }
-//
-//            // Replace emoji to emoji tag.
-//            result.append(separator + emojiData.getName() + separator);
-//        }
+        final SpannableStringBuilder result = new SpannableStringBuilder();
+
+        LinkedList<Integer> codes = new LinkedList<Integer>();
+        int start = 0;
+        int next = 0;
+
+        final int count = Character.codePointCount(text, 0, text.length());
+        for(int i = 0;  i < count;  ++i)
+        {
+            final int codePoint = Character.codePointAt(text, next);
+            final int cur = next;
+            next += Character.charCount(codePoint);
+            codes.addLast(codePoint);
+
+            if(codes.size() < 2)
+                continue;
+
+            // Find combining character emoji.
+            EmojiData emojiData = emojiDataManager.getEmojiData(codes);
+            if( emojiData != null )
+            {
+                start = next;
+                codes.clear();
+            }
+
+            // Find single character emoji.
+            else
+            {
+                emojiData = emojiDataManager.getEmojiData(codes.subList(0, 1));
+                codes.removeFirst();
+                start = cur;
+
+                // Not emoji.
+                if(emojiData == null)
+                {
+                    result.append( text.subSequence(start, cur) );
+                }
+            }
+
+            // Emoji to tag.
+            result.append(separator + emojiData.getName() + separator);
+        }
+        if( !codes.isEmpty() )
+        {
+            final EmojiData emojiData = emojiDataManager.getEmojiData(codes);
+
+            if(emojiData == null)
+                result.append( text.subSequence(start, next) );
+            else
+                result.append(separator + emojiData.getName() + separator);
+        }
 
         android.util.Log.d("lib", "deEmojify : " + text + " -> " + result);
 
