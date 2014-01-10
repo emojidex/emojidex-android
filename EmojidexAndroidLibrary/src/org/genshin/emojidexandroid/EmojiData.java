@@ -37,7 +37,7 @@ public class EmojiData
 
     private Drawable icon = null;
     private List<Integer> codes = new ArrayList<Integer>();
-    private boolean isUnicode = true;
+    private boolean isOriginal = false;
 
 
     /**
@@ -91,7 +91,7 @@ public class EmojiData
     {
         // Set fields.
         moji = new String(Character.toChars(code));
-        isUnicode = false;
+        isOriginal = true;
 
         // Initialize emoji data.
         initialize(res, dir);
@@ -164,11 +164,11 @@ public class EmojiData
     }
 
     /**
-     * Get flag of unicode emoji.
+     * Get flag of original emoji.
      * @return
      */
-    public boolean isUnicodeEmoji()
+    public boolean isOriginalEmoji()
     {
-        return isUnicode;
+        return isOriginal;
     }
 }
