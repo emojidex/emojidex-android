@@ -50,11 +50,11 @@ public class EmojiData
         // Set emoji code.
         // Whether national flag.
         final int count = moji.codePointCount(0, moji.length());
-        int cur = 0;
+        int next = 0;
         for(int i = 0;  i < count;  ++i)
         {
-            final int codePoint = moji.codePointAt(cur);
-            cur += Character.charCount(codePoint);
+            final int codePoint = moji.codePointAt(next);
+            next += Character.charCount(codePoint);
 
             // Ignore variation selectors.
             if(Character.getType(codePoint) != Character.NON_SPACING_MARK)
