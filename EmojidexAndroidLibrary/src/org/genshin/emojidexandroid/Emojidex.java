@@ -3,9 +3,7 @@ package org.genshin.emojidexandroid;
 import android.content.Context;
 import android.text.SpannableStringBuilder;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Created by kou on 13/09/09.
