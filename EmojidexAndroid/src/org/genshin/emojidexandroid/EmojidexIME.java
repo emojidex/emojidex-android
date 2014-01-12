@@ -17,7 +17,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -88,26 +90,6 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         viewFlipper = (ViewFlipper)layout.findViewById(R.id.viewFlipper);
         viewFlipper.setOnTouchListener(new FlickTouchListener());
 
-        /*
-        ImageView leftButton = (ImageView)layout.findViewById(R.id.flipper_left_button);
-        leftButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                moveViewToLeft();
-                return false;
-            }
-        });
-
-        ImageView rightButton = (ImageView)layout.findViewById(R.id.flipper_right_button);
-        rightButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                moveViewToRight();
-                return false;
-            }
-        });
-        */
-
         return layout;
     }
 
@@ -126,17 +108,23 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
 
     @Override
     public void onPress(int primaryCode) {
-
     }
 
     @Override
     public void onRelease(int primaryCode) {
-
     }
 
     @Override
     public void onKey(int primaryCode, int[] keyCodes) {
-        android.util.Log.d("ime", "Click key : code = 0x" + Integer.toString(primaryCode, 16));
+        List<Integer> codes = new ArrayList<Integer>();
+        for(int i = 0;  keyCodes[i] != -1;  ++i)
+            codes.add(keyCodes[i]);
+
+        StringBuilder buf = new StringBuilder("Click key : primaryCode = 0x" + String.format("%1$08x", primaryCode) + ", keyCodes = 0x");
+        for(int i = 0;  i < codes.size();  ++i)
+            buf.append( String.format(" %1$08x", keyCodes[i]) );
+        buf.append(", length = " + codes.size());
+        android.util.Log.d("ime", buf.toString());
 
         // Input show ime picker.
         if(primaryCode == showIMEPickerCode)
@@ -165,7 +153,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         else
         {
             // Input emoji.
-            final EmojiData emoji = emojiDataManager.getEmojiData(keyCodes);
+            final EmojiData emoji = emojiDataManager.getEmojiData(codes);
             if(emoji != null)
             {
                 getCurrentInputConnection().commitText(emoji.createImageString(), 1);
@@ -180,27 +168,22 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
 
     @Override
     public void onText(CharSequence text) {
-
     }
 
     @Override
     public void swipeLeft() {
-
     }
 
     @Override
     public void swipeRight() {
-
     }
 
     @Override
     public void swipeDown() {
-
     }
 
     @Override
     public void swipeUp() {
-
     }
 
     /**

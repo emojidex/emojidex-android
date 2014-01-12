@@ -13,6 +13,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by nazuki on 2013/08/28.
@@ -34,8 +36,8 @@ public class EmojiData
 //    @JsonProperty("url")            private String url;
 
     private Drawable icon = null;
-    private int[] codes = new int[1];
-    private boolean isUnicode = true;
+    private List<Integer> codes = new ArrayList<Integer>();
+    private boolean isOriginal = false;
 
 
     /**
@@ -47,16 +49,22 @@ public class EmojiData
     {
         // Set emoji code.
         // Whether national flag.
-        if (moji.length() > 2)
+        final int count = moji.codePointCount(0, moji.length());
+        int next = 0;
+        for(int i = 0;  i < count;  ++i)
         {
-            codes = new int[2];
-            codes[0] = moji.codePointAt(0);
-            codes[1] = moji.codePointAt(2);
+            final int codePoint = moji.codePointAt(next);
+            next += Character.charCount(codePoint);
+
+            // Ignore variation selectors.
+            if(Character.getType(codePoint) != Character.NON_SPACING_MARK)
+                codes.add(codePoint);
         }
-        else
+        if(codes.size() < count)
         {
-            codes = new int[1];
-            codes[0] = moji.codePointAt(0);
+            moji = "";
+            for(Integer current : codes)
+                moji += String.valueOf(Character.toChars(current));
         }
 
         // Load icon image.
@@ -83,7 +91,7 @@ public class EmojiData
     {
         // Set fields.
         moji = new String(Character.toChars(code));
-        isUnicode = false;
+        isOriginal = true;
 
         // Initialize emoji data.
         initialize(res, dir);
@@ -141,7 +149,7 @@ public class EmojiData
      * Get emoji codes.
      * @return      Emoji codes.
      */
-    public int[] getCodes()
+    public List<Integer> getCodes()
     {
         return codes;
     }
@@ -152,15 +160,15 @@ public class EmojiData
      */
     public boolean hasCode()
     {
-        return codes[0] != 0 || !moji.equals(NOT_UNICODE_MOJI);
+        return !codes.isEmpty() || !moji.equals(NOT_UNICODE_MOJI);
     }
 
     /**
-     * Get flag of unicode emoji.
+     * Get flag of original emoji.
      * @return
      */
-    public boolean isUnicodeEmoji()
+    public boolean isOriginalEmoji()
     {
-        return isUnicode;
+        return isOriginal;
     }
 }

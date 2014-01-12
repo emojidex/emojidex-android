@@ -1,5 +1,19 @@
 [
   {
+    "moji": "🀄",
+    "code": "mahjong_tile_red_dragon",
+    "code_ja": "麻雀",
+    "category": "object",
+    "unicode": "1f004"
+  },
+  {
+    "moji": "🃏",
+    "code": "playing_card_black_joker",
+    "code_ja": "ジョーカー",
+    "category": "object",
+    "unicode": "1f0cf"
+  },
+  {
     "moji": "🅰",
     "code": "negative_squared_latin_capital_letter_A",
     "code_ja": "A型",
@@ -12,6 +26,13 @@
     "code_ja": "B型",
     "category": "symbol",
     "unicode": "1f171"
+  },
+  {
+    "moji": "🅿",
+    "code": "negative_squared_latin_capital_letter_P",
+    "code_ja": "駐車場",
+    "category": "symbol",
+    "unicode": "1f17f"
   },
   {
     "moji": "🅾",
@@ -658,6 +679,13 @@
     "unicode": "1f355"
   },
   {
+    "moji": "🍘",
+    "code": "rice_cracker",
+    "code_ja": "せんべい",
+    "category": "food",
+    "unicode": "1f358"
+  },
+  {
     "moji": "🍙",
     "code": "rice_ball",
     "code_ja": "おにぎり",
@@ -665,11 +693,81 @@
     "unicode": "1f359"
   },
   {
+    "moji": "🍚",
+    "code": "cooked_rice",
+    "code_ja": "ごはん",
+    "category": "food",
+    "unicode": "1f35a"
+  },
+  {
+    "moji": "🍛",
+    "code": "curry_and_rice",
+    "code_ja": "カレーライス",
+    "category": "food",
+    "unicode": "1f35b"
+  },
+  {
+    "moji": "🍜",
+    "code": "steaming_bowl",
+    "code_ja": "ラーメン",
+    "category": "food",
+    "unicode": "1f35c"
+  },
+  {
+    "moji": "🍝",
+    "code": "spaghetti",
+    "code_ja": "スパゲッティ",
+    "category": "food",
+    "unicode": "1f35d"
+  },
+  {
+    "moji": "🍞",
+    "code": "bread",
+    "code_ja": "パン",
+    "category": "food",
+    "unicode": "1f35e"
+  },
+  {
+    "moji": "🍟",
+    "code": "french_fries",
+    "code_ja": "フライドポテト",
+    "category": "food",
+    "unicode": "1f35f"
+  },
+  {
+    "moji": "🍡",
+    "code": "dango",
+    "code_ja": "だんご",
+    "category": "food",
+    "unicode": "1f361"
+  },
+  {
+    "moji": "🍢",
+    "code": "oden",
+    "code_ja": "おでん",
+    "category": "food",
+    "unicode": "1f362"
+  },
+  {
+    "moji": "🍣",
+    "code": "sushi",
+    "code_ja": "すし",
+    "category": "food",
+    "unicode": "1f363"
+  },
+  {
     "moji": "🍥",
     "code": "fish_cake_with_swirl_design",
     "code_ja": "なると",
     "category": "food",
     "unicode": "1f365"
+  },
+  {
+    "moji": "🍦",
+    "code": "soft_ice_cream",
+    "code_ja": "ソフトクリーム",
+    "category": "food",
+    "unicode": "1f366"
   },
   {
     "moji": "🍰",
@@ -684,6 +782,13 @@
     "code_ja": "お弁当",
     "category": "food",
     "unicode": "1f371"
+  },
+  {
+    "moji": "🍳",
+    "code": "cooking",
+    "code_ja": "料理",
+    "category": "food",
+    "unicode": "1f373"
   },
   {
     "moji": "🍹",
@@ -709,7 +814,7 @@
   {
     "moji": "🎁",
     "code": "wrapped_present",
-    "code_ja": "プレゼント",
+    "code_ja": "プレゼント1",
     "category": "object",
     "unicode": "1f381"
   },
@@ -735,11 +840,207 @@
     "unicode": "1f384"
   },
   {
+    "moji": "🎅",
+    "code": "father_christmas",
+    "code_ja": "サンタクロース",
+    "category": "people",
+    "unicode": "1f385"
+  },
+  {
+    "moji": "🎆",
+    "code": "fireworks",
+    "code_ja": "花火",
+    "category": "object",
+    "unicode": "1f386"
+  },
+  {
+    "moji": "🎇",
+    "code": "firewark_sparkler",
+    "code_ja": "線香花火",
+    "category": "object",
+    "unicode": "1f387"
+  },
+  {
+    "moji": "🎈",
+    "code": "balloon",
+    "code_ja": "風船",
+    "category": "object",
+    "unicode": "1f388"
+  },
+  {
+    "moji": "🎉",
+    "code": "party_popper",
+    "code_ja": "クラッカー",
+    "category": "object",
+    "unicode": "1f389"
+  },
+  {
+    "moji": "🎊",
+    "code": "confetti_ball",
+    "code_ja": "くす玉",
+    "category": "object",
+    "unicode": "1f38a"
+  },
+  {
+    "moji": "🎋",
+    "code": "tanabata_tree",
+    "code_ja": "七夕",
+    "category": "object",
+    "unicode": "1f38b"
+  },
+  {
+    "moji": "🎌",
+    "code": "crossed_flags",
+    "code_ja": "祝日",
+    "category": "object",
+    "unicode": "1f38c"
+  },
+  {
+    "moji": "🎍",
+    "code": "pine_decoration",
+    "code_ja": "門松",
+    "category": "object",
+    "unicode": "1f38d"
+  },
+  {
+    "moji": "🎎",
+    "code": "japanese_dolls",
+    "code_ja": "ひな祭り",
+    "category": "object",
+    "unicode": "1f38e"
+  },
+  {
+    "moji": "🎏",
+    "code": "carp_streamer",
+    "code_ja": "こいのぼり",
+    "category": "object",
+    "unicode": "1f38f"
+  },
+  {
+    "moji": "🎐",
+    "code": "wind_chime",
+    "code_ja": "風鈴",
+    "category": "object",
+    "unicode": "1f390"
+  },
+  {
+    "moji": "🎑",
+    "code": "moon_viewing_ceremony",
+    "code_ja": "お月見",
+    "category": "object",
+    "unicode": "1f391"
+  },
+  {
+    "moji": "🎒",
+    "code": "school_sathel",
+    "code_ja": "ランドセル",
+    "category": "object",
+    "unicode": "1f392"
+  },
+  {
+    "moji": "🎓",
+    "code": "graduation_cap",
+    "code_ja": "卒業式",
+    "category": "object",
+    "unicode": "1f393"
+  },
+  {
+    "moji": "🎠",
+    "code": "carousel_horse",
+    "code_ja": "メリーゴーランド",
+    "category": "object",
+    "unicode": "1f3a0"
+  },
+  {
+    "moji": "🎡",
+    "code": "ferris_wheel",
+    "code_ja": "観覧車",
+    "category": "object",
+    "unicode": "1f3a1"
+  },
+  {
+    "moji": "🎢",
+    "code": "roller_coaster",
+    "code_ja": "ジェットコースター",
+    "category": "object",
+    "unicode": "1f3a2"
+  },
+  {
+    "moji": "🎣",
+    "code": "fishing_pole_and_fish",
+    "code_ja": "釣り",
+    "category": "object",
+    "unicode": "1f3a3"
+  },
+  {
     "moji": "🎤",
     "code": "microphone",
     "code_ja": "マイク",
     "category": "object",
     "unicode": "1f3a4"
+  },
+  {
+    "moji": "🎥",
+    "code": "movie_camera",
+    "code_ja": "ビデオカメラ",
+    "category": "object",
+    "unicode": "1f3a5"
+  },
+  {
+    "moji": "🎦",
+    "code": "cinema",
+    "code_ja": "映画",
+    "category": "object",
+    "unicode": "1f3a6"
+  },
+  {
+    "moji": "🎧",
+    "code": "headphone",
+    "code_ja": "ヘッドホン",
+    "category": "object",
+    "unicode": "1f3a7"
+  },
+  {
+    "moji": "🎨",
+    "code": "artist_palette",
+    "code_ja": "パレット",
+    "category": "object",
+    "unicode": "1f3a8"
+  },
+  {
+    "moji": "🎩",
+    "code": "top_hat",
+    "code_ja": "シルクハット",
+    "category": "object",
+    "unicode": "1f3a9"
+  },
+  {
+    "moji": "🎪",
+    "code": "circus_tent",
+    "code_ja": "サーカス",
+    "category": "object",
+    "unicode": "1f3aa"
+  },
+  {
+    "moji": "🎫",
+    "code": "ticket",
+    "code_ja": "チケット",
+    "category": "object",
+    "unicode": "1f3ab"
+  },
+  {
+    "moji": "🎬",
+    "code": "clapper_board",
+    "code_ja": "カチンコ",
+    "category": "object",
+    "unicode": "1f3ac"
+  },
+  {
+    "moji": "🎭",
+    "code": "performing_arts",
+    "code_ja": "演劇",
+    "category": "abstract",
+    "unicode": "1f3ad"
   },
   {
     "moji": "🎮",
@@ -749,11 +1050,109 @@
     "unicode": "1f3ae"
   },
   {
+    "moji": "🎯",
+    "code": "direct_hit",
+    "code_ja": "当たり",
+    "category": "abstract",
+    "unicode": "1f3af"
+  },
+  {
+    "moji": "🎰",
+    "code": "slot_machine",
+    "code_ja": "スロット",
+    "category": "object",
+    "unicode": "1f3b0"
+  },
+  {
+    "moji": "🎱",
+    "code": "billiards",
+    "code_ja": "ビリヤード",
+    "category": "object",
+    "unicode": "1f3b1"
+  },
+  {
+    "moji": "🎲",
+    "code": "game_die",
+    "code_ja": "サイコロ",
+    "category": "object",
+    "unicode": "1f3b2"
+  },
+  {
+    "moji": "🎳",
+    "code": "bowling",
+    "code_ja": "ボウリング",
+    "category": "object",
+    "unicode": "1f3b3"
+  },
+  {
+    "moji": "🎴",
+    "code": "flower_playing_cards",
+    "code_ja": "花札",
+    "category": "object",
+    "unicode": "1f3b4"
+  },
+  {
+    "moji": "🎵",
+    "code": "musical_note",
+    "code_ja": "音符",
+    "category": "abstract",
+    "unicode": "1f3b5"
+  },
+  {
+    "moji": "🎶",
+    "code": "multiple_musical_notes",
+    "code_ja": "メロディー",
+    "category": "abstract",
+    "unicode": "1f3b6"
+  },
+  {
+    "moji": "🎷",
+    "code": "saxophone",
+    "code_ja": "サックス",
+    "category": "object",
+    "unicode": "1f3b7"
+  },
+  {
     "moji": "🎸",
     "code": "guitar",
     "code_ja": "ギター",
     "category": "object",
     "unicode": "1f3b8"
+  },
+  {
+    "moji": "🎹",
+    "code": "musical_keyboard",
+    "code_ja": "ピアノ",
+    "category": "object",
+    "unicode": "1f3b9"
+  },
+  {
+    "moji": "🎺",
+    "code": "trumpet",
+    "code_ja": "トランペット",
+    "category": "object",
+    "unicode": "1f3ba"
+  },
+  {
+    "moji": "🎻",
+    "code": "violin",
+    "code_ja": "バイオリン",
+    "category": "object",
+    "unicode": "1f3bb"
+  },
+  {
+    "moji": "🎼",
+    "code": "musical_score",
+    "code_ja": "楽譜",
+    "category": "object",
+    "unicode": "1f3bc"
+  },
+  {
+    "moji": "🎽",
+    "code": "running_shirt_with_sash",
+    "code_ja": "ランニングシャツ",
+    "category": "object",
+    "unicode": "1f3bd"
   },
   {
     "moji": "🎾",
@@ -763,11 +1162,67 @@
     "unicode": "1f3be"
   },
   {
+    "moji": "🎿",
+    "code": "ski_and_ski_boot",
+    "code_ja": "スキー",
+    "category": "object",
+    "unicode": "1f3bf"
+  },
+  {
+    "moji": "🏀",
+    "code": "basketball_and_hoop",
+    "code_ja": "バスケットボール",
+    "category": "object",
+    "unicode": "1f3c0"
+  },
+  {
+    "moji": "🏁",
+    "code": "chequered_flag",
+    "code_ja": "チェッカーフラグ",
+    "category": "object",
+    "unicode": "1f3c1"
+  },
+  {
     "moji": "🏂",
     "code": "snowboarder",
     "code_ja": "スノーボード",
     "category": "people",
     "unicode": "1f3c2"
+  },
+  {
+    "moji": "🏃",
+    "code": "runner",
+    "code_ja": "ランニング",
+    "category": "people",
+    "unicode": "1f3c3"
+  },
+  {
+    "moji": "🏄",
+    "code": "surfer",
+    "code_ja": "サーフィン",
+    "category": "people",
+    "unicode": "1f3c4"
+  },
+  {
+    "moji": "🏆",
+    "code": "trophy",
+    "code_ja": "トロフィー",
+    "category": "object",
+    "unicode": "1f3c6"
+  },
+  {
+    "moji": "🏈",
+    "code": "american_football",
+    "code_ja": "フットボール",
+    "category": "object",
+    "unicode": "1f3c8"
+  },
+  {
+    "moji": "🏊",
+    "code": "swimmer",
+    "code_ja": "スイミング",
+    "category": "people",
+    "unicode": "1f3ca"
   },
   {
     "moji": "🏠",
@@ -1449,6 +1904,13 @@
     "unicode": "1f488"
   },
   {
+    "moji": "💉",
+    "code": "syringe",
+    "code_ja": "注射器",
+    "category": "object",
+    "unicode": "1f489"
+  },
+  {
     "moji": "💊",
     "code": "pill",
     "code_ja": "薬",
@@ -1456,11 +1918,39 @@
     "unicode": "1f48a"
   },
   {
+    "moji": "💌",
+    "code": "love_letter",
+    "code_ja": "ラブレター",
+    "category": "object",
+    "unicode": "1f48c"
+  },
+  {
+    "moji": "💍",
+    "code": "ring",
+    "code_ja": "指輪",
+    "category": "object",
+    "unicode": "1f48d"
+  },
+  {
+    "moji": "💎",
+    "code": "gem_stone",
+    "code_ja": "宝石",
+    "category": "object",
+    "unicode": "1f48e"
+  },
+  {
     "moji": "💏",
-    "code": "couple_kiss",
+    "code": "kiss",
     "code_ja": "カップルのキス",
     "category": "people",
     "unicode": "1f48f"
+  },
+  {
+    "moji": "💐",
+    "code": "bouquet",
+    "code_ja": "花束",
+    "category": "object",
+    "unicode": "1f490"
   },
   {
     "moji": "💑",
@@ -1468,6 +1958,13 @@
     "code_ja": "カップルとハート",
     "category": "people",
     "unicode": "1f491"
+  },
+  {
+    "moji": "💒",
+    "code": "wedding",
+    "code_ja": "結婚式",
+    "category": "abstract",
+    "unicode": "1f492"
   },
   {
     "moji": "💓",
@@ -1498,11 +1995,536 @@
     "unicode": "1f4ac"
   },
   {
+    "moji": "💰",
+    "code": "money_bag",
+    "code_ja": "ドル袋",
+    "category": "object",
+    "unicode": "1f4b0"
+  },
+  {
+    "moji": "💱",
+    "code": "currency_exchange",
+    "code_ja": "為替",
+    "category": "abstract",
+    "unicode": "1f4b1"
+  },
+  {
+    "moji": "💲",
+    "code": "heavy_dollar_sign",
+    "code_ja": "ドル",
+    "category": "abstract",
+    "unicode": "1f4b2"
+  },
+  {
+    "moji": "💳",
+    "code": "credit_card",
+    "code_ja": "クレジットカード",
+    "category": "object",
+    "unicode": "1f4b3"
+  },
+  {
+    "moji": "💴",
+    "code": "banknote_with_yen_sign",
+    "code_ja": "お札",
+    "category": "object",
+    "unicode": "1f4b4"
+  },
+  {
+    "moji": "💵",
+    "code": "banknote_with_dollar_sign",
+    "code_ja": "ドル札",
+    "category": "object",
+    "unicode": "1f4b5"
+  },
+  {
+    "moji": "💸",
+    "code": "money_with_wings",
+    "code_ja": "飛んでいくお金",
+    "category": "object",
+    "unicode": "1f4b8"
+  },
+  {
+    "moji": "💹",
+    "code": "chart_with_upwards_trend_and_yen_sign",
+    "code_ja": "株価",
+    "category": "abstract",
+    "unicode": "1f4b9"
+  },
+  {
+    "moji": "💺",
+    "code": "seat",
+    "code_ja": "イス",
+    "category": "object",
+    "unicode": "1f4ba"
+  },
+  {
+    "moji": "💻",
+    "code": "personal_computer",
+    "code_ja": "パソコン",
+    "category": "object",
+    "unicode": "1f4bb"
+  },
+  {
+    "moji": "💼",
+    "code": "briefcase",
+    "code_ja": "仕事カバン",
+    "category": "object",
+    "unicode": "1f4bc"
+  },
+  {
+    "moji": "💽",
+    "code": "minidisc",
+    "code_ja": "MD",
+    "category": "object",
+    "unicode": "1f4bd"
+  },
+  {
+    "moji": "💾",
+    "code": "floppy_disc",
+    "code_ja": "フロッピーディスク",
+    "category": "object",
+    "unicode": "1f4be"
+  },
+  {
+    "moji": "💿",
+    "code": "optical_disc",
+    "code_ja": "CD",
+    "category": "object",
+    "unicode": "1f4bf"
+  },
+  {
+    "moji": "📀",
+    "code": "dvd",
+    "code_ja": "DVD",
+    "category": "object",
+    "unicode": "1f4c0"
+  },
+  {
+    "moji": "📁",
+    "code": "file_folder",
+    "code_ja": "フォルダ(閉)",
+    "category": "object",
+    "unicode": "1f4c1"
+  },
+  {
+    "moji": "📂",
+    "code": "open_file_folder",
+    "code_ja": "フォルダ(開)",
+    "category": "object",
+    "unicode": "1f4c2"
+  },
+  {
+    "moji": "📃",
+    "code": "page_with_curl",
+    "code_ja": "文書1",
+    "category": "object",
+    "unicode": "1f4c3"
+  },
+  {
+    "moji": "📄",
+    "code": "page_facing_up",
+    "code_ja": "文書2",
+    "category": "object",
+    "unicode": "1f4c4"
+  },
+  {
+    "moji": "📅",
+    "code": "calendar",
+    "code_ja": "カレンダー",
+    "category": "object",
+    "unicode": "1f4c5"
+  },
+  {
+    "moji": "📆",
+    "code": "tear_off_calendar",
+    "code_ja": "日めくりカレンダー",
+    "category": "object",
+    "unicode": "1f4c6"
+  },
+  {
+    "moji": "📇",
+    "code": "card_index",
+    "code_ja": "インデックスカード",
+    "category": "object",
+    "unicode": "1f4c7"
+  },
+  {
+    "moji": "📈",
+    "code": "chart_with_upwards_trend",
+    "code_ja": "折れ線グラフ(右肩上がり)",
+    "category": "abstract",
+    "unicode": "1f4c8"
+  },
+  {
+    "moji": "📉",
+    "code": "chart_with_downwards_trend",
+    "code_ja": "折れ線グラフ(右肩下がり)",
+    "category": "abstract",
+    "unicode": "1f4c9"
+  },
+  {
+    "moji": "📊",
+    "code": "bar_chart",
+    "code_ja": "棒グラフ",
+    "category": "abstract",
+    "unicode": "1f4ca"
+  },
+  {
+    "moji": "📋",
+    "code": "clipboard",
+    "code_ja": "クリップボード",
+    "category": "object",
+    "unicode": "1f4cb"
+  },
+  {
+    "moji": "📌",
+    "code": "pushpin",
+    "code_ja": "画鋲",
+    "category": "object",
+    "unicode": "1f4cc"
+  },
+  {
+    "moji": "📍",
+    "code": "round_pushpin",
+    "code_ja": "プッシュピン",
+    "category": "object",
+    "unicode": "1f4cd"
+  },
+  {
+    "moji": "📎",
+    "code": "paperclip",
+    "code_ja": "クリップ",
+    "category": "object",
+    "unicode": "1f4ce"
+  },
+  {
+    "moji": "📏",
+    "code": "straight_ruler",
+    "code_ja": "定規",
+    "category": "object",
+    "unicode": "1f4cf"
+  },
+  {
+    "moji": "📐",
+    "code": "triangular_ruler",
+    "code_ja": "三角定規",
+    "category": "object",
+    "unicode": "1f4d0"
+  },
+  {
+    "moji": "📑",
+    "code": "bookmark_tabs",
+    "code_ja": "付箋",
+    "category": "object",
+    "unicode": "1f4d1"
+  },
+  {
+    "moji": "📒",
+    "code": "ledger",
+    "code_ja": "台帳",
+    "category": "object",
+    "unicode": "1f4d2"
+  },
+  {
+    "moji": "📓",
+    "code": "notebook",
+    "code_ja": "ノート1",
+    "category": "object",
+    "unicode": "1f4d3"
+  },
+  {
+    "moji": "📔",
+    "code": "notebook_with_decorative_cover",
+    "code_ja": "ノート2",
+    "category": "object",
+    "unicode": "1f4d4"
+  },
+  {
+    "moji": "📕",
+    "code": "closed_book",
+    "code_ja": "閉じられた本",
+    "category": "object",
+    "unicode": "1f4d5"
+  },
+  {
+    "moji": "📖",
+    "code": "open_book",
+    "code_ja": "開かれた本",
+    "category": "object",
+    "unicode": "1f4d6"
+  },
+  {
+    "moji": "📗",
+    "code": "green_book",
+    "code_ja": "本(緑)",
+    "category": "object",
+    "unicode": "1f4d7"
+  },
+  {
+    "moji": "📘",
+    "code": "blue_book",
+    "code_ja": "本(青)",
+    "category": "object",
+    "unicode": "1f4d8"
+  },
+  {
+    "moji": "📙",
+    "code": "orange_book",
+    "code_ja": "本(オレンジ)",
+    "category": "object",
+    "unicode": "1f4d9"
+  },
+  {
+    "moji": "📚",
+    "code": "books",
+    "code_ja": "本(複数)",
+    "category": "object",
+    "unicode": "1f4da"
+  },
+  {
+    "moji": "📛",
+    "code": "name_badge",
+    "code_ja": "名札",
+    "category": "object",
+    "unicode": "1f4db"
+  },
+  {
+    "moji": "📜",
+    "code": "scroll",
+    "code_ja": "スクロール",
+    "category": "object",
+    "unicode": "1f4dc"
+  },
+  {
+    "moji": "📝",
+    "code": "memo",
+    "code_ja": "メモ",
+    "category": "object",
+    "unicode": "1f4dd"
+  },
+  {
+    "moji": "📞",
+    "code": "telephone_receiver",
+    "code_ja": "受話器",
+    "category": "object",
+    "unicode": "1f4de"
+  },
+  {
+    "moji": "📟",
+    "code": "pager",
+    "code_ja": "ポケットベル",
+    "category": "object",
+    "unicode": "1f4df"
+  },
+  {
+    "moji": "📠",
+    "code": "fax_machine",
+    "code_ja": "FAX",
+    "category": "object",
+    "unicode": "1f4e0"
+  },
+  {
+    "moji": "📡",
+    "code": "satellite_antenna",
+    "code_ja": "アンテナ",
+    "category": "object",
+    "unicode": "1f4e1"
+  },
+  {
+    "moji": "📢",
+    "code": "public_address_loudspeaker",
+    "code_ja": "スピーカー",
+    "category": "object",
+    "unicode": "1f4e2"
+  },
+  {
+    "moji": "📤",
+    "code": "outbox_tray",
+    "code_ja": "送信BOX",
+    "category": "abstract",
+    "unicode": "1f4e4"
+  },
+  {
+    "moji": "📥",
+    "code": "inbox_tray",
+    "code_ja": "受信BOX",
+    "category": "abstract",
+    "unicode": "1f4e5"
+  },
+  {
+    "moji": "📦",
+    "code": "package",
+    "code_ja": "プレゼント2",
+    "category": "object",
+    "unicode": "1f4e6"
+  },
+  {
+    "moji": "📧",
+    "code": "e_mail_symbol",
+    "code_ja": "eメール",
+    "category": "abstract",
+    "unicode": "1f4e7"
+  },
+  {
+    "moji": "📨",
+    "code": "incoming_envelope",
+    "code_ja": "封筒2",
+    "category": "object",
+    "unicode": "1f4e8"
+  },
+  {
+    "moji": "📩",
+    "code": "envelope_with_downwards_arrow_above",
+    "code_ja": "メール送信",
+    "category": "abstract",
+    "unicode": "1f4e9"
+  },
+  {
+    "moji": "📪",
+    "code": "closed_mailbox_with_lowered_flag",
+    "code_ja": "メールボックス1",
+    "category": "object",
+    "unicode": "1f4ea"
+  },
+  {
+    "moji": "📫",
+    "code": "closed_mailbox_with_raised_flag",
+    "code_ja": "メールボックス2",
+    "category": "object",
+    "unicode": "1f4eb"
+  },
+  {
+    "moji": "📮",
+    "code": "postbox",
+    "code_ja": "メールボックス3",
+    "category": "object",
+    "unicode": "1f4ee"
+  },
+  {
+    "moji": "📰",
+    "code": "newspaper",
+    "code_ja": "新聞",
+    "category": "object",
+    "unicode": "1f4f0"
+  },
+  {
+    "moji": "📱",
+    "code": "mobile_phone",
+    "code_ja": "携帯電話",
+    "category": "object",
+    "unicode": "1f4f1"
+  },
+  {
+    "moji": "📲",
+    "code": "mobile_phone_with_rightwards_arrow_at_left",
+    "code_ja": "終了",
+    "category": "symbol",
+    "unicode": "1f4f2"
+  },
+  {
+    "moji": "📳",
+    "code": "vibration_mode",
+    "code_ja": "マナーモード",
+    "category": "symbol",
+    "unicode": "1f4f3"
+  },
+  {
+    "moji": "📴",
+    "code": "mobile_phone_off",
+    "code_ja": "電源OFF",
+    "category": "symbol",
+    "unicode": "1f4f4"
+  },
+  {
+    "moji": "📶",
+    "code": "antenna_with_bars",
+    "code_ja": "電波状況",
+    "category": "abstract",
+    "unicode": "1f4f6"
+  },
+  {
+    "moji": "📷",
+    "code": "camera",
+    "code_ja": "カメラ",
+    "category": "object",
+    "unicode": "1f4f7"
+  },
+  {
+    "moji": "📹",
+    "code": "video_camera",
+    "code_ja": "ハンディカム",
+    "category": "object",
+    "unicode": "1f4f9"
+  },
+  {
+    "moji": "📺",
+    "code": "television",
+    "code_ja": "テレビ",
+    "category": "object",
+    "unicode": "1f4fa"
+  },
+  {
+    "moji": "📻",
+    "code": "radio",
+    "code_ja": "ラジオ",
+    "category": "object",
+    "unicode": "1f4fb"
+  },
+  {
+    "moji": "📼",
+    "code": "videocassette",
+    "code_ja": "ビデオテープ",
+    "category": "object",
+    "unicode": "1f4fc"
+  },
+  {
     "moji": "🔞",
     "code": "no_one_under_eighteen_symbol",
     "code_ja": "18禁",
     "category": "abstract",
     "unicode": "1f51e"
+  },
+  {
+    "moji": "🔟",
+    "code": "keycap_ten",
+    "code_ja": "10",
+    "category": "symbol",
+    "unicode": "1f51f"
+  },
+  {
+    "moji": "🔠",
+    "code": "input_symbol_for_latin_capital_letters",
+    "code_ja": "大文字",
+    "category": "abstract",
+    "unicode": "1f520"
+  },
+  {
+    "moji": "🔡",
+    "code": "input_symbol_for_latin_small_letters",
+    "code_ja": "小文字",
+    "category": "abstract",
+    "unicode": "1f521"
+  },
+  {
+    "moji": "🔢",
+    "code": "input_symbol_for_numbers",
+    "code_ja": "数字",
+    "category": "abstract",
+    "unicode": "1f522"
+  },
+  {
+    "moji": "🔣",
+    "code": "input_symbol_for_symbols",
+    "code_ja": "記号",
+    "category": "abstract",
+    "unicode": "1f523"
+  },
+  {
+    "moji": "🔤",
+    "code": "input_symbol_for_latin_letters",
+    "code_ja": "ABC",
+    "category": "abstract",
+    "unicode": "1f524"
   },
   {
     "moji": "🔥",
@@ -1519,11 +2541,25 @@
     "unicode": "1f526"
   },
   {
+    "moji": "🔧",
+    "code": "wrench",
+    "code_ja": "レンチ",
+    "category": "tools",
+    "unicode": "1f527"
+  },
+  {
     "moji": "🔨",
     "code": "hammer",
     "code_ja": "ハンマー",
     "category": "tools",
     "unicode": "1f528"
+  },
+  {
+    "moji": "🔩",
+    "code": "nut_and_bolt",
+    "code_ja": "ボルト＆ナット",
+    "category": "tools",
+    "unicode": "1f529"
   },
   {
     "moji": "🔪",
@@ -1552,6 +2588,13 @@
     "code_ja": "六芒星",
     "category": "object",
     "unicode": "1f52f"
+  },
+  {
+    "moji": "🔰",
+    "code": "japanese_symbol_for_beginner",
+    "code_ja": "若葉マーク",
+    "category": "object",
+    "unicode": "1f530"
   },
   {
     "moji": "🔱",
@@ -2166,11 +3209,88 @@
     "unicode": "1f64f"
   },
   {
+    "moji": "🚀",
+    "code": "rocket",
+    "code_ja": "ロケット",
+    "category": "transportation",
+    "unicode": "1f680"
+  },
+  {
+    "moji": "🚃",
+    "code": "railway_car",
+    "code_ja": "電車",
+    "category": "transportation",
+    "unicode": "1f683"
+  },
+  {
+    "moji": "🚄",
+    "code": "high_speed_train",
+    "code_ja": "新幹線1",
+    "category": "transportation",
+    "unicode": "1f684"
+  },
+  {
+    "moji": "🚅",
+    "code": "high_speed_train_with_bullet_nose",
+    "code_ja": "新幹線2",
+    "category": "transportation",
+    "unicode": "1f685"
+  },
+  {
+    "moji": "🚇",
+    "code": "metro",
+    "code_ja": "地下鉄",
+    "category": "transportation",
+    "unicode": "1f687"
+  },
+  {
+    "moji": "🚉",
+    "code": "station",
+    "code_ja": "駅",
+    "category": "transportation",
+    "unicode": "1f689"
+  },
+  {
+    "moji": "🚌",
+    "code": "bus",
+    "code_ja": "バス",
+    "category": "transportation",
+    "unicode": "1f68c"
+  },
+  {
     "moji": "🚏",
     "code": "bus_stop",
     "code_ja": "バス停",
     "category": "transportation",
     "unicode": "1f68f"
+  },
+  {
+    "moji": "🚑",
+    "code": "ambulance",
+    "code_ja": "救急車",
+    "category": "transportation",
+    "unicode": "1f691"
+  },
+  {
+    "moji": "🚒",
+    "code": "fire_engine",
+    "code_ja": "消防車",
+    "category": "transportation",
+    "unicode": "1f692"
+  },
+  {
+    "moji": "🚓",
+    "code": "police_car",
+    "code_ja": "パトカー",
+    "category": "transportation",
+    "unicode": "1f693"
+  },
+  {
+    "moji": "🚕",
+    "code": "taxi",
+    "code_ja": "タクシー",
+    "category": "transportation",
+    "unicode": "1f695"
   },
   {
     "moji": "🚗",
@@ -2187,11 +3307,46 @@
     "unicode": "1f699"
   },
   {
+    "moji": "🚚",
+    "code": "delivery_truck",
+    "code_ja": "トラック",
+    "category": "transportation",
+    "unicode": "1f69a"
+  },
+  {
     "moji": "🚢",
     "code": "ship",
     "code_ja": "船",
     "category": "transportation",
     "unicode": "1f6a2"
+  },
+  {
+    "moji": "🚤",
+    "code": "speedboat",
+    "code_ja": "モーターボート",
+    "category": "transportation",
+    "unicode": "1f6a4"
+  },
+  {
+    "moji": "🚥",
+    "code": "horizontal_traffic_light",
+    "code_ja": "信号",
+    "category": "object",
+    "unicode": "1f6a5"
+  },
+  {
+    "moji": "🚧",
+    "code": "construction_sign",
+    "code_ja": "工事中",
+    "category": "object",
+    "unicode": "1f6a7"
+  },
+  {
+    "moji": "🚨",
+    "code": "police_cars_revolving_light",
+    "code_ja": "パトカーのランプ",
+    "category": "object",
+    "unicode": "1f6a8"
   },
   {
     "moji": "🚲",
@@ -2206,6 +3361,111 @@
     "code_ja": "男性マーク",
     "category": "abstract",
     "unicode": "1f6b9"
+  },
+  {
+    "moji": "#️⃣",
+    "code": "hash_key",
+    "code_ja": "#",
+    "category": "symbol",
+    "unicode": "002320e3"
+  },
+  {
+    "moji": "️1️⃣",
+    "code": "keycap_1",
+    "code_ja": "1",
+    "category": "symbol",
+    "unicode": "003120e3"
+  },
+  {
+    "moji": "️2️⃣",
+    "code": "keycap_2",
+    "code_ja": "2",
+    "category": "symbol",
+    "unicode": "003220e3"
+  },
+  {
+    "moji": "️3️⃣",
+    "code": "keycap_3",
+    "code_ja": "3",
+    "category": "symbol",
+    "unicode": "003320e3"
+  },
+  {
+    "moji": "️4️⃣",
+    "code": "keycap_4",
+    "code_ja": "4",
+    "category": "symbol",
+    "unicode": "003420e3"
+  },
+  {
+    "moji": "️5️⃣",
+    "code": "keycap_5",
+    "code_ja": "5",
+    "category": "symbol",
+    "unicode": "003520e3"
+  },
+  {
+    "moji": "️6️⃣",
+    "code": "keycap_6",
+    "code_ja": "6",
+    "category": "symbol",
+    "unicode": "003620e3"
+  },
+  {
+    "moji": "️7️⃣",
+    "code": "keycap_7",
+    "code_ja": "7",
+    "category": "symbol",
+    "unicode": "003720e3"
+  },
+  {
+    "moji": "️8️⃣",
+    "code": "keycap_8",
+    "code_ja": "8",
+    "category": "symbol",
+    "unicode": "003820e3"
+  },
+  {
+    "moji": "️9️⃣",
+    "code": "keycap_9",
+    "code_ja": "9",
+    "category": "symbol",
+    "unicode": "003920e3"
+  },
+  {
+    "moji": "️0️⃣",
+    "code": "keycap_0",
+    "code_ja": "0",
+    "category": "symbol",
+    "unicode": "003020e3"
+  },
+  {
+    "moji": "©",
+    "code": "copyright_sign",
+    "code_ja": "コピーライトマーク",
+    "category": "symbol",
+    "unicode": "00a9"
+  },
+  {
+    "moji": "®",
+    "code": "registered_sign",
+    "code_ja": "レジスタードマーク",
+    "category": "symbol",
+    "unicode": "00ae"
+  },
+  {
+    "moji": "™",
+    "code": "trade_mark_sign",
+    "code_ja": "トレードマーク",
+    "category": "symbol",
+    "unicode": "2122"
+  },
+  {
+    "moji": "ℹ",
+    "code": "information_source",
+    "code_ja": "インフォメーション",
+    "category": "symbol",
+    "unicode": "2139"
   },
   {
     "moji": "⏰",
@@ -2234,6 +3494,13 @@
     "code_ja": "曇り",
     "category": "abstract",
     "unicode": "2601"
+  },
+  {
+    "moji": "☎",
+    "code": "black_telephone",
+    "code_ja": "黒電話",
+    "category": "object",
+    "unicode": "260e"
   },
   {
     "moji": "☔",
@@ -2341,6 +3608,13 @@
     "unicode": "2653"
   },
   {
+    "moji": "♨",
+    "code": "hot_springs",
+    "code_ja": "温泉",
+    "category": "places",
+    "unicode": "2668"
+  },
+  {
     "moji": "♿",
     "code": "wheelchair",
     "code_ja": "車椅子マーク",
@@ -2360,6 +3634,20 @@
     "code_ja": "イナズマ",
     "category": "object",
     "unicode": "26a1"
+  },
+  {
+    "moji": "⚽",
+    "code": "soccer_ball",
+    "code_ja": "サッカー",
+    "category": "object",
+    "unicode": "26bd"
+  },
+  {
+    "moji": "⚾",
+    "code": "baseball",
+    "code_ja": "野球",
+    "category": "object",
+    "unicode": "26be"
   },
   {
     "moji": "⛄",
@@ -2390,11 +3678,67 @@
     "unicode": "26f2"
   },
   {
+    "moji": "⛳",
+    "code": "flag_in_hole",
+    "code_ja": "ゴルフ",
+    "category": "object",
+    "unicode": "26f3"
+  },
+  {
+    "moji": "⛵",
+    "code": "sailboat",
+    "code_ja": "ボート",
+    "category": "transportation",
+    "unicode": "26f5"
+  },
+  {
+    "moji": "⛺",
+    "code": "tent",
+    "code_ja": "テント",
+    "category": "object",
+    "unicode": "26fa"
+  },
+  {
+    "moji": "⛽",
+    "code": "fuel_pump",
+    "code_ja": "ガソリンスタンド",
+    "category": "places",
+    "unicode": "26fd"
+  },
+  {
+    "moji": "✈",
+    "code": "airplane",
+    "code_ja": "飛行機",
+    "category": "transportation",
+    "unicode": "2708"
+  },
+  {
+    "moji": "✉",
+    "code": "envelope",
+    "code_ja": "封筒1",
+    "category": "object",
+    "unicode": "2709"
+  },
+  {
     "moji": "✌",
     "code": "victory_hand",
     "code_ja": "チョキ",
     "category": "gesture",
     "unicode": "270c"
+  },
+  {
+    "moji": "✏",
+    "code": "pencil",
+    "code_ja": "鉛筆",
+    "category": "object",
+    "unicode": "270f"
+  },
+  {
+    "moji": "✒",
+    "code": "black_nib",
+    "code_ja": "ペン",
+    "category": "object",
+    "unicode": "2712"
   },
   {
     "moji": "❄",
