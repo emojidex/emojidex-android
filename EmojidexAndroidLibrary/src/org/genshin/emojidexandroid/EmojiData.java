@@ -37,7 +37,7 @@ public class EmojiData
 
     private Drawable icon = null;
     private List<Integer> codes = new ArrayList<Integer>();
-    private boolean isUnicode = true;
+    private boolean isOriginal = false;
 
 
     /**
@@ -50,8 +50,22 @@ public class EmojiData
         // Set emoji code.
         // Whether national flag.
         final int count = moji.codePointCount(0, moji.length());
+        int next = 0;
         for(int i = 0;  i < count;  ++i)
-            codes.add(moji.codePointAt(i));
+        {
+            final int codePoint = moji.codePointAt(next);
+            next += Character.charCount(codePoint);
+
+            // Ignore variation selectors.
+            if(Character.getType(codePoint) != Character.NON_SPACING_MARK)
+                codes.add(codePoint);
+        }
+        if(codes.size() < count)
+        {
+            moji = "";
+            for(Integer current : codes)
+                moji += String.valueOf(Character.toChars(current));
+        }
 
         // Load icon image.
         try
@@ -77,7 +91,7 @@ public class EmojiData
     {
         // Set fields.
         moji = new String(Character.toChars(code));
-        isUnicode = false;
+        isOriginal = true;
 
         // Initialize emoji data.
         initialize(res, dir);
@@ -150,11 +164,11 @@ public class EmojiData
     }
 
     /**
-     * Get flag of unicode emoji.
+     * Get flag of original emoji.
      * @return
      */
-    public boolean isUnicodeEmoji()
+    public boolean isOriginalEmoji()
     {
-        return isUnicode;
+        return isOriginal;
     }
 }

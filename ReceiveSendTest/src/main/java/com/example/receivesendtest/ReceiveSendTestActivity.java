@@ -1,8 +1,8 @@
 package com.example.receivesendtest;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.app.Activity;
 import android.text.Editable;
 import android.text.Spanned;
 import android.util.Log;
