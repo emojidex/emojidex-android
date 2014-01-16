@@ -4,11 +4,12 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/background_gray">
+    android:background="@drawable/background_blank">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="@dimen/ime_view_flipper_height"
+        android:background="@drawable/background_gray">
 
         <ImageButton
             android:layout_width="wrap_content"
@@ -25,6 +26,9 @@
             android:layout_weight="1">
 
             <include android:id="@+id/search_layout" layout="@layout/search" />
+            <!--
+            <include android:id="@+id/options_layout" layout="@layout/options" />
+            -->
             <include android:id="@+id/favorite_layout" layout="@layout/favorite" />
             <include android:id="@+id/history_layout" layout="@layout/history" />
             <include android:id="@+id/settings_layout" layout="@layout/settings" />
@@ -42,7 +46,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/ime_category_height">
+        android:layout_height="@dimen/ime_category_height"
+        android:background="@drawable/background_gray" >
 
         <ImageButton
             android:id="@+id/ime_category_button_left"
@@ -79,65 +84,15 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/ime_keyboard_area_height"
         android:id="@+id/ime_keyboard"
-        android:orientation="vertical"/>
+        android:orientation="vertical"
+        android:background="@drawable/background_white">
 
-    <LinearLayout
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:layout_gravity="center">
-
-        <TextView
+        <ViewFlipper
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_width="0dp"
-            android:layout_weight="1"/>
-
-        <ImageButton
-            android:layout_height="wrap_content"
-            android:layout_width="32dp"
-            android:background="@drawable/arrow"
-            android:rotation="180"
-            android:id="@+id/move_prev"
-            android:onClick="prevPage"
-            android:contentDescription="@string/left" />
-
-        <TextView
-            android:layout_height="wrap_content"
-            android:layout_width="0dp"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:textSize="16sp"
-            android:textColor="@color/white"
-            android:id="@+id/now_page" />
-        <TextView
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:textSize="16sp"
-            android:textColor="@color/white"
-            android:text="/" />
-        <TextView
-            android:layout_height="wrap_content"
-            android:layout_width="0dp"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:textSize="16sp"
-            android:textColor="@color/white"
-            android:id="@+id/max_page" />
-
-        <ImageButton
-            android:layout_height="wrap_content"
-            android:layout_width="32dp"
-            android:background="@drawable/arrow"
-            android:id="@+id/move_next"
-            android:onClick="nextPage"
-            android:contentDescription="@string/right" />
-
-        <TextView
-            android:layout_height="match_parent"
-            android:layout_width="0dp"
-            android:layout_weight="1"/>
+            android:id="@+id/keyboard_viewFlipper"
+            android:layout_weight="1">
+        </ViewFlipper>
 
     </LinearLayout>
 

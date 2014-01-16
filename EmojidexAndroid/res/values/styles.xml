@@ -38,7 +38,7 @@
 
     <!-- IME Sub KeyboardView -->
     <style name="IMESubKeyboardViewStyle" parent="android:style/Widget.KeyboardView">
-        <item name="android:background">@drawable/background_blank</item>
+        <item name="android:background">@drawable/background_gray</item>
     </style>
 
 </resources>
