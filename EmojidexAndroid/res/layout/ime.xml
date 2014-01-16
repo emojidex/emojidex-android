@@ -4,11 +4,12 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/background_gray">
+    android:background="@drawable/background_blank">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="@dimen/ime_view_flipper_height"
+        android:background="@drawable/background_gray">
 
         <ImageButton
             android:layout_width="wrap_content"
@@ -25,12 +26,12 @@
             android:layout_weight="1">
 
             <include android:id="@+id/search_layout" layout="@layout/search" />
-            <include android:id="@+id/options_layout" layout="@layout/options" />
             <!--
+            <include android:id="@+id/options_layout" layout="@layout/options" />
+            -->
             <include android:id="@+id/favorite_layout" layout="@layout/favorite" />
             <include android:id="@+id/history_layout" layout="@layout/history" />
             <include android:id="@+id/settings_layout" layout="@layout/settings" />
-            -->
 
         </ViewFlipper>
 
@@ -45,7 +46,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/ime_category_height">
+        android:layout_height="@dimen/ime_category_height"
+        android:background="@drawable/background_gray" >
 
         <ImageButton
             android:id="@+id/ime_category_button_left"
