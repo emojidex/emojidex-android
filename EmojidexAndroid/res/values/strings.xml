@@ -17,8 +17,8 @@
 
     <string name="all_category">all</string>
 
-    <string name="register_favorite_title">Register to favorites</string>
     <string name="register_favorite">Are you sure you want to register to your favorites?</string>
+    <string name="register_favorite_done">Registered.</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
 

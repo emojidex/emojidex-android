@@ -17,8 +17,8 @@
 
     <string name="all_category">all</string>
 
-    <string name="register_favorite_title">お気に入り</string>
     <string name="register_favorite">お気に入りに登録しますか？</string>
+    <string name="register_favorite_done">登録しました。</string>
     <string name="yes">はい</string>
     <string name="no">いいえ</string>
 

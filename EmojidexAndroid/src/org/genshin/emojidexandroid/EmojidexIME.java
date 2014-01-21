@@ -295,7 +295,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         keyboardViewFlipper.removeAllViews();
         for (int i = 0; i < categorizedKeyboards.get(categoryID).getKeyboards().size(); i++)
         {
-            KeyboardView keyboardView = new KeyboardView(this, null, R.attr.keyboardViewStyle);
+            EmojidexKeyboardView keyboardView = new EmojidexKeyboardView(this, null, R.attr.keyboardViewStyle, getLayoutInflater());
             keyboardView.setOnKeyboardActionListener(this);
             keyboardView.setPreviewEnabled(false);
             keyboardView.setKeyboard(categorizedKeyboards.get(categoryID).getKeyboards().get(i));
