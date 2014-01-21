@@ -32,7 +32,6 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
 
     private View layout;
     private HorizontalScrollView categoryScrollView;
-    private KeyboardView subKeyboardView;
 
     private Map<String, CategorizedKeyboard> categorizedKeyboards;
 
@@ -40,6 +39,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     private ViewFlipper keyboardViewFlipper;
 
     private ArrayList<List<Integer>> histories = new ArrayList<List<Integer>>();
+    private ArrayList<List<Integer>> favorites = new ArrayList<List<Integer>>();
 
     /**
      * Construct EmojidexIME object.
@@ -148,8 +148,8 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
             final EmojiData emoji = emojiDataManager.getEmojiData(codes);
             if(emoji != null)
             {
-                android.util.Log.e("test", ""+getCurrentInputConnection());
                 getCurrentInputConnection().commitText(emoji.createImageString(), 1);
+                saveHistories();
             }
             // Input other.
             else
@@ -273,7 +273,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     private void createSubKeyboardView()
     {
         // Create KeyboardView.
-        subKeyboardView = new KeyboardView(this, null, R.attr.subKeyboardViewStyle);
+        KeyboardView subKeyboardView = new KeyboardView(this, null, R.attr.subKeyboardViewStyle);
         subKeyboardView.setOnKeyboardActionListener(this);
         subKeyboardView.setPreviewEnabled(false);
 
@@ -350,28 +350,60 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         }
     }
 
+    /**
+     * show histories keyboard
+     * @param v
+     */
     public void showHistory(View v)
     {
+        // TODO implemented showHistories
         android.util.Log.e("test", "show_history");
     }
 
+    /**
+     * show favorites keyboard
+     * @param v
+     */
     public void showFavorite(View v)
     {
+        // TODO implemented showFavorites
         android.util.Log.e("test", "show_favorite");
     }
 
+    /**
+     * show settings
+     * @param v
+     */
     public void showSettings(View v)
     {
+        // TODO implemented showSettings
         android.util.Log.e("test", "show_settings");
     }
 
+    /**
+     * load histories from local data
+     */
     private void loadHistories()
     {
-
+        // TODO implemented loadHistories
+        android.util.Log.e("test", "load_histories");
     }
 
+    /**
+     * save histories to local data
+     */
     private void saveHistories()
     {
+        // TODO implemented saveHistories
+        android.util.Log.e("test", "save_histories");
+    }
 
+    /**
+     * load favorites from local data
+     */
+    private void loadFavorites()
+    {
+        // TODO implemented loadFavorites
+        android.util.Log.e("test", "load_favorites");
     }
 }
