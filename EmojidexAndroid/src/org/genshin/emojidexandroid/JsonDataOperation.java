@@ -32,8 +32,10 @@ public class JsonDataOperation
     public static final String FAVORITES = "favorites";
     public static final String HISTORIES = "histories";
 
+    public static int MAX_HISTORIES = 50;
+
     /**
-     * load data from local file
+     * load favorites/histories data from local file
      * @param context
      * @param mode  favorites or histories
      * @return keyCodes
@@ -91,13 +93,13 @@ public class JsonDataOperation
     }
 
     /**
-     * save data to local file
+     * save favorites/histories data to local file
      * @param context
      * @param keyCodes
      * @param mode favorites or histories
-     * @return success or failure or already registered(only favorites mode)
+     * @return success or failure or already registered (use only favorites mode)
      */
-    public static int save(Context context, int[] keyCodes, String mode)
+    public static int save(Context context, List<Integer> keyCodes, String mode)
     {
         // current list
         ArrayList<List<Integer>> data = load(context, mode);
@@ -109,12 +111,16 @@ public class JsonDataOperation
                 return DONE;
         }
 
+        // histories size check
+        if (mode == HISTORIES)
+            data = sizeCheck(data);
+
         // save data
         JSONArray array = new JSONArray();
-        for (List<Integer> list : data)
+        for (List<Integer> codes : data)
         {
             JSONArray tmp = new JSONArray();
-            for (int code : list)
+            for (int code : codes)
                 tmp.put(code);
             array.put(tmp);
         }
@@ -141,14 +147,20 @@ public class JsonDataOperation
         return SUCCESS;
     }
 
-    private static boolean duplicationCheck(ArrayList<List<Integer>> data, int[] keyCodes)
+    /**
+     * duplication check
+     * @param data
+     * @param keyCodes
+     * @return
+     */
+    private static boolean duplicationCheck(ArrayList<List<Integer>> data, List<Integer> keyCodes)
     {
         boolean check = false;
         for (List<Integer> list : data)
         {
             for (int i = 0; i < list.size(); i++)
             {
-                if (list.get(i) != keyCodes[i])
+                if (!list.get(i).equals(keyCodes.get(i)))
                     break;
                 if (i == list.size() - 1)
                     check = true;
@@ -156,5 +168,22 @@ public class JsonDataOperation
         }
 
         return check;
+    }
+
+    /**
+     * histories size check
+     * @param data
+     * @return
+     */
+    private static ArrayList<List<Integer>> sizeCheck(ArrayList<List<Integer>> data)
+    {
+        if (data.size() >= MAX_HISTORIES)
+        {
+            while (data.size() < MAX_HISTORIES)
+                data.remove(0);
+            return data;
+        }
+        else
+            return data;
     }
 }

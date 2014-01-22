@@ -12,6 +12,9 @@ import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by nazuki on 14/01/08.
  */
@@ -40,7 +43,11 @@ public class EmojidexKeyboardView extends KeyboardView {
     @Override
     public boolean onLongPress(android.inputmethodservice.Keyboard.Key popupKey)
     {
-        final int[] keyCodes = popupKey.codes;
+        final List<Integer> keyCodes = new ArrayList<Integer>();
+        for (int code : popupKey.codes)
+        {
+            keyCodes.add(code);
+        }
 
         // create popup_register window
         View view = inflater.inflate(R.layout.popup_register, null);

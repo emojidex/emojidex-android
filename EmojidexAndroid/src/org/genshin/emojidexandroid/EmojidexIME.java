@@ -149,7 +149,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
             if(emoji != null)
             {
                 getCurrentInputConnection().commitText(emoji.createImageString(), 1);
-                saveHistories();
+                saveHistories(codes);
             }
             // Input other.
             else
@@ -373,8 +373,9 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
      */
     public void showHistories(View v)
     {
-        // TODO implemented showHistories
-        android.util.Log.e("test", "show_history");
+        // load histories
+        ArrayList<List<Integer>> histories = JsonDataOperation.load(this, JsonDataOperation.HISTORIES);
+        createNewKeyboards(histories);
     }
 
     /**
@@ -384,14 +385,25 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     public void showFavorites(View v)
     {
         // load favorites
-        ArrayList<List<Integer>> favorites = FavoritesData.load(this);
+        ArrayList<List<Integer>> favorites = JsonDataOperation.load(this, JsonDataOperation.FAVORITES);
+        createNewKeyboards(favorites);
+    }
+
+    /**
+     * create favorites/histories keyboards
+     * @param data keys
+     */
+    private void createNewKeyboards(ArrayList<List<Integer>> data)
+    {
+
+        // get emoji
         List<EmojiData> emojiDatas = new ArrayList<EmojiData>();
-        for (List<Integer> codes : favorites)
+        for (List<Integer> codes : data)
         {
             emojiDatas.add(emojiDataManager.getEmojiData(codes));
         }
 
-        // create favorites keyboard
+        // create keyboards
         final int minHeight = (int)getResources().getDimension(R.dimen.ime_keyboard_area_height);
         CategorizedKeyboard keyboards = EmojidexKeyboard.create(this, emojiDatas, minHeight);
 
@@ -411,9 +423,8 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     /**
      * save histories to local data
      */
-    private void saveHistories()
+    private void saveHistories(List<Integer> keyCodes)
     {
-        // TODO implemented saveHistories
-        android.util.Log.e("test", "save_histories");
+        JsonDataOperation.save(this, keyCodes, JsonDataOperation.HISTORIES);
     }
 }
