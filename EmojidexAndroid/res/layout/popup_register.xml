@@ -11,7 +11,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="15dp" />
+        android:layout_marginTop="15dp"
+        android:background="@drawable/background_white"
+        android:padding="15dp" />
 
     <TextView
         android:layout_width="wrap_content"

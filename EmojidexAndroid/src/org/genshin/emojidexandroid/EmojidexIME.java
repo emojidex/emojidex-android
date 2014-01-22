@@ -39,7 +39,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     private ViewFlipper keyboardViewFlipper;
 
     private ArrayList<List<Integer>> histories = new ArrayList<List<Integer>>();
-    private ArrayList<List<Integer>> favorites = new ArrayList<List<Integer>>();
+    // private ArrayList<List<Integer>> favorites = new ArrayList<List<Integer>>();
 
     /**
      * Construct EmojidexIME object.
@@ -303,6 +303,23 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         }
     }
 
+    /**
+     * setKeyboard from keyboards
+     * @param keyboards
+     */
+    private void setKeyboard(CategorizedKeyboard keyboards)
+    {
+        keyboardViewFlipper.removeAllViews();
+        for (int i = 0; i < keyboards.getKeyboards().size(); i++)
+        {
+            EmojidexKeyboardView keyboardView = new EmojidexKeyboardView(this, null, R.attr.keyboardViewStyle, getLayoutInflater());
+            keyboardView.setOnKeyboardActionListener(this);
+            keyboardView.setPreviewEnabled(false);
+            keyboardView.setKeyboard(keyboards.getKeyboards().get(i));
+            keyboardViewFlipper.addView(keyboardView);
+        }
+    }
+
     public void moveToLeft(View v)
     {
         viewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_in));
@@ -354,7 +371,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
      * show histories keyboard
      * @param v
      */
-    public void showHistory(View v)
+    public void showHistories(View v)
     {
         // TODO implemented showHistories
         android.util.Log.e("test", "show_history");
@@ -364,10 +381,21 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
      * show favorites keyboard
      * @param v
      */
-    public void showFavorite(View v)
+    public void showFavorites(View v)
     {
-        // TODO implemented showFavorites
-        android.util.Log.e("test", "show_favorite");
+        // load favorites
+        ArrayList<List<Integer>> favorites = FavoritesData.load(this);
+        List<EmojiData> emojiDatas = new ArrayList<EmojiData>();
+        for (List<Integer> codes : favorites)
+        {
+            emojiDatas.add(emojiDataManager.getEmojiData(codes));
+        }
+
+        // create favorites keyboard
+        final int minHeight = (int)getResources().getDimension(R.dimen.ime_keyboard_area_height);
+        CategorizedKeyboard keyboards = EmojidexKeyboard.create(this, emojiDatas, minHeight);
+
+        setKeyboard(keyboards);
     }
 
     /**
@@ -381,29 +409,11 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     }
 
     /**
-     * load histories from local data
-     */
-    private void loadHistories()
-    {
-        // TODO implemented loadHistories
-        android.util.Log.e("test", "load_histories");
-    }
-
-    /**
      * save histories to local data
      */
     private void saveHistories()
     {
         // TODO implemented saveHistories
         android.util.Log.e("test", "save_histories");
-    }
-
-    /**
-     * load favorites from local data
-     */
-    private void loadFavorites()
-    {
-        // TODO implemented loadFavorites
-        android.util.Log.e("test", "load_favorites");
     }
 }

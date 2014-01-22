@@ -3,7 +3,6 @@ package org.genshin.emojidexandroid;
 import android.content.Context;
 import android.inputmethodservice.KeyboardView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,8 +42,8 @@ public class EmojidexKeyboardView extends KeyboardView {
     {
         final int[] keyCodes = popupKey.codes;
 
-        // create popup window
-        View view = inflater.inflate(R.layout.popup, null);
+        // create popup_register window
+        View view = inflater.inflate(R.layout.popup_register, null);
         final PopupWindow popup = new PopupWindow(this);
         popup.setContentView(view);
         popup.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
@@ -60,8 +59,19 @@ public class EmojidexKeyboardView extends KeyboardView {
         yesButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveFavorites(keyCodes);
-                Toast.makeText(context, R.string.register_favorite_done, Toast.LENGTH_LONG).show();
+                // save favorites
+                int result = JsonDataOperation.save(context, keyCodes, JsonDataOperation.FAVORITES);
+                switch (result) {
+                case JsonDataOperation.SUCCESS :
+                    Toast.makeText(context, R.string.register_favorite_success, Toast.LENGTH_LONG).show();
+                    break;
+                case JsonDataOperation.DONE :
+                    Toast.makeText(context, R.string.register_favorite_done, Toast.LENGTH_LONG).show();
+                    break;
+                case JsonDataOperation.FAILURE :
+                    Toast.makeText(context, R.string.register_favorite_failure, Toast.LENGTH_LONG).show();
+                    break;
+                }
                 popup.dismiss();
             }
         });
@@ -71,19 +81,12 @@ public class EmojidexKeyboardView extends KeyboardView {
             @Override
             public void onClick(View v) {
                 popup.dismiss();
+                // TODO 今だけ
+                context.deleteFile("favorites.json");
+                context.deleteFile("histories.json");
             }
         });
 
         return true;
-    }
-
-    public void saveFavorites(int[] keyCodes)
-    {
-        // TODO implemented saveFavorites
-        for (int i = 0; i < keyCodes.length; i++)
-        {
-            Log.e("test", "code : " + Integer.toHexString(keyCodes[i]));
-        }
-
     }
 }

@@ -17,20 +17,28 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by nazuki on 2014/01/21.
+ * Created by nazuki on 2014/01/22.
  */
-public class FavoritesData
+public class JsonDataOperation
 {
-    public static final int TRUE = 0;
-    public static final int FALSE = 1;
-    public static final int FAILED = 2;
+    public static final int SUCCESS = 0;
+    public static final int DONE = 1;
+    public static final int FAILURE = 2;
 
-    public static ArrayList<List<Integer>> load(Context context)
+    public static final String FAVORITES = "favorites";
+    public static final String HISTORIES = "histories";
+
+    /**
+     * load data from local file
+     * @param context
+     * @param mode  favorites or histories
+     * @return keyCodes
+     */
+    public static ArrayList<List<Integer>> load(Context context, String mode)
     {
         String str = "";
         StringBuilder builder = new StringBuilder();
@@ -39,12 +47,13 @@ public class FavoritesData
         // read json data
         try
         {
-            InputStream in = context.openFileInput("favorites.json");
+            InputStream in = context.openFileInput(mode + ".json");
             BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
             while ((str = reader.readLine()) != null)
                 builder.append(str);
             str = new String(builder);
             reader.close();
+            in.close();
         }
         catch (FileNotFoundException e)
         {
@@ -81,25 +90,24 @@ public class FavoritesData
         return data;
     }
 
-    public static int save(Context context, int[] keyCodes)
+    /**
+     * save data to local file
+     * @param context
+     * @param keyCodes
+     * @param mode favorites or histories
+     * @return success or failure or already registered(only favorites mode)
+     */
+    public static int save(Context context, int[] keyCodes, String mode)
     {
         // current list
-        ArrayList<List<Integer>> data = load(context);
+        ArrayList<List<Integer>> data = load(context, mode);
 
         // duplication check
-        boolean check = false;
-        for (List<Integer> list : data)
+        if (mode == FAVORITES)
         {
-            for (int i = 0; i < list.size(); i++)
-            {
-                if (list.get(i) != keyCodes[i])
-                    break;
-                if (i == list.size() - 1)
-                    check = true;
-            }
+            if (duplicationCheck(data, keyCodes))
+                return DONE;
         }
-        if (check)
-            return FALSE;
 
         // save data
         JSONArray array = new JSONArray();
@@ -118,22 +126,35 @@ public class FavoritesData
 
         try
         {
-            OutputStream out = context.openFileOutput("favorites.json", Context.MODE_PRIVATE);
+            OutputStream out = context.openFileOutput(mode + ".json", Context.MODE_PRIVATE);
             PrintWriter writer = new PrintWriter(new OutputStreamWriter(out, "UTF-8"));
             writer.append(array.toString());
             writer.close();
+            out.close();
         }
-        catch (UnsupportedEncodingException e)
+        catch (IOException e)
         {
             e.printStackTrace();
-            return FAILED;
-        }
-        catch (FileNotFoundException e)
-        {
-            e.printStackTrace();
-            return FAILED;
+            return FAILURE;
         }
 
-        return TRUE;
+        return SUCCESS;
+    }
+
+    private static boolean duplicationCheck(ArrayList<List<Integer>> data, int[] keyCodes)
+    {
+        boolean check = false;
+        for (List<Integer> list : data)
+        {
+            for (int i = 0; i < list.size(); i++)
+            {
+                if (list.get(i) != keyCodes[i])
+                    break;
+                if (i == list.size() - 1)
+                    check = true;
+            }
+        }
+
+        return check;
     }
 }

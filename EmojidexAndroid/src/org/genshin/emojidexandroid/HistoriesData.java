@@ -5,5 +5,5 @@ package org.genshin.emojidexandroid;
  */
 public class HistoriesData
 {
-    // TODO implemented save/load histories
+
 }
