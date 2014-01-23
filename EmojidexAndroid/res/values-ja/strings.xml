@@ -21,6 +21,10 @@
     <string name="register_favorite_success">登録しました。</string>
     <string name="register_favorite_done">すでに登録済です。</string>
     <string name="register_favorite_failure">登録に失敗しました。</string>
+    <string name="delete_favorite">お気に入りから削除しますか？</string>
+    <string name="delete_success">削除しました。</string>
+    <string name="delete_failure">削除に失敗しました。</string>
+
     <string name="yes">はい</string>
     <string name="no">いいえ</string>
 

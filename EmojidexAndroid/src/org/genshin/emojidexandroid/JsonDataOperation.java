@@ -37,10 +37,10 @@ public class JsonDataOperation
     /**
      * load favorites/histories data from local file
      * @param context
-     * @param mode  favorites or histories
+     * @param filename  favorites or histories
      * @return keyCodes
      */
-    public static ArrayList<List<Integer>> load(Context context, String mode)
+    public static ArrayList<List<Integer>> load(Context context, String filename)
     {
         String str = "";
         StringBuilder builder = new StringBuilder();
@@ -49,7 +49,7 @@ public class JsonDataOperation
         // read json data
         try
         {
-            InputStream in = context.openFileInput(mode + ".json");
+            InputStream in = context.openFileInput(filename + ".json");
             BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
             while ((str = reader.readLine()) != null)
                 builder.append(str);
@@ -96,26 +96,26 @@ public class JsonDataOperation
      * save favorites/histories data to local file
      * @param context
      * @param keyCodes
-     * @param mode favorites or histories
-     * @return success or failure or already registered (use only favorites mode)
+     * @param filename favorites or histories
+     * @return success or failure or already registered (use only favorites)
      */
-    public static int save(Context context, List<Integer> keyCodes, String mode)
+    public static int save(Context context, List<Integer> keyCodes, String filename)
     {
         // current list
-        ArrayList<List<Integer>> data = load(context, mode);
+        ArrayList<List<Integer>> data = load(context, filename);
 
         // duplication check
-        if (mode == FAVORITES)
+        if (filename == FAVORITES)
         {
             if (duplicationCheck(data, keyCodes))
                 return DONE;
         }
 
         // histories size check
-        if (mode == HISTORIES)
+        if (filename == HISTORIES)
             data = sizeCheck(data);
 
-        // save data
+        // add data
         JSONArray array = new JSONArray();
         for (List<Integer> codes : data)
         {
@@ -130,21 +130,91 @@ public class JsonDataOperation
             tmp.put(keyCode);
         array.put(tmp);
 
+        if (saveFile(context, filename, array))
+            return SUCCESS;
+        else
+            return  FAILURE;
+    }
+
+    /**
+     * save file
+     * @param context
+     * @param filename
+     * @param data
+     * @return
+     */
+    private static boolean saveFile(Context context, String filename, JSONArray data)
+    {
+        // save data
         try
         {
-            OutputStream out = context.openFileOutput(mode + ".json", Context.MODE_PRIVATE);
+            OutputStream out = context.openFileOutput(filename + ".json", Context.MODE_PRIVATE);
             PrintWriter writer = new PrintWriter(new OutputStreamWriter(out, "UTF-8"));
-            writer.append(array.toString());
+            writer.append(data.toString());
             writer.close();
             out.close();
         }
         catch (IOException e)
         {
             e.printStackTrace();
-            return FAILURE;
+            return false;
         }
 
-        return SUCCESS;
+        return true;
+    }
+
+    /**
+     * delete favorite
+     * @param context
+     * @param keyCodes
+     * @return
+     */
+    public static boolean delete(Context context, List<Integer> keyCodes)
+    {
+        // current list
+        ArrayList<List<Integer>> data = load(context, FAVORITES);
+
+        // delete data
+        for (List<Integer> list :data)
+        {
+            if (list.size() != keyCodes.size())
+                continue;
+
+            for (int i = 0; i < list.size(); i++)
+            {
+                if (!list.get(i).equals(keyCodes.get(i)))
+                    break;
+                if (i == list.size() - 1)
+                    data.remove(list);
+            }
+        }
+
+        // prepare json data
+        JSONArray array = new JSONArray();
+        for (List<Integer> codes : data)
+        {
+            JSONArray tmp = new JSONArray();
+            for (int code : codes)
+                tmp.put(code);
+            array.put(tmp);
+        }
+
+        // save data
+        if (saveFile(context, FAVORITES, array))
+            return true;
+        else
+            return  false;
+    }
+
+    /**
+     * delete al
+     * @param context
+     * @param filename favorites or histories
+     * @return
+     */
+    private static boolean deleteAll(Context context, String filename)
+    {
+        return true;
     }
 
     /**
@@ -158,6 +228,9 @@ public class JsonDataOperation
         boolean check = false;
         for (List<Integer> list : data)
         {
+            if (list.size() != keyCodes.size())
+                continue;
+
             for (int i = 0; i < list.size(); i++)
             {
                 if (!list.get(i).equals(keyCodes.get(i)))

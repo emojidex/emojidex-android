@@ -1,6 +1,7 @@
 package org.genshin.emojidexandroid;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.inputmethodservice.KeyboardView;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -10,6 +11,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -19,8 +21,13 @@ import java.util.List;
  * Created by nazuki on 14/01/08.
  */
 public class EmojidexKeyboardView extends KeyboardView {
-    private Context context;
-    private LayoutInflater inflater;
+    protected Context context;
+    protected LayoutInflater inflater;
+
+    protected PopupWindow popup;
+    protected List<Integer> keyCodes = new ArrayList<Integer>();
+
+    private int stringRes = R.string.register_favorite;
 
     /**
      * Construct EmojidexKeyboardView object.
@@ -43,15 +50,26 @@ public class EmojidexKeyboardView extends KeyboardView {
     @Override
     public boolean onLongPress(android.inputmethodservice.Keyboard.Key popupKey)
     {
-        final List<Integer> keyCodes = new ArrayList<Integer>();
+        keyCodes = new ArrayList<Integer>();
         for (int code : popupKey.codes)
         {
             keyCodes.add(code);
         }
 
-        // create popup_register window
-        View view = inflater.inflate(R.layout.popup_register, null);
-        final PopupWindow popup = new PopupWindow(this);
+        createPopupWindow(popupKey.icon);
+
+        return true;
+    }
+
+    /**
+     * create PopupWindow
+     * @param drawable
+     */
+    private void createPopupWindow(Drawable drawable)
+    {
+        // create popup window
+        View view = inflater.inflate(R.layout.popup, null);
+        popup = new PopupWindow(this);
         popup.setContentView(view);
         popup.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
         popup.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
@@ -59,29 +77,15 @@ public class EmojidexKeyboardView extends KeyboardView {
 
         // set emoji
         ImageView icon = (ImageView)view.findViewById(R.id.popup_image);
-        icon.setImageDrawable(popupKey.icon);
+        icon.setImageDrawable(drawable);
+
+        // set text
+        TextView textView = (TextView)view.findViewById(R.id.popup_text);
+        textView.setText(setTextViewText());
 
         // set button's ClickListener
         Button yesButton = (Button)view.findViewById(R.id.popup_yes_button);
-        yesButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // save favorites
-                int result = JsonDataOperation.save(context, keyCodes, JsonDataOperation.FAVORITES);
-                switch (result) {
-                case JsonDataOperation.SUCCESS :
-                    Toast.makeText(context, R.string.register_favorite_success, Toast.LENGTH_LONG).show();
-                    break;
-                case JsonDataOperation.DONE :
-                    Toast.makeText(context, R.string.register_favorite_done, Toast.LENGTH_LONG).show();
-                    break;
-                case JsonDataOperation.FAILURE :
-                    Toast.makeText(context, R.string.register_favorite_failure, Toast.LENGTH_LONG).show();
-                    break;
-                }
-                popup.dismiss();
-            }
-        });
+        yesButton.setOnClickListener(createListener());
         Button noButton = (Button)view.findViewById(R.id.popup_no_button);
         noButton.setOnClickListener(new OnClickListener()
         {
@@ -93,7 +97,41 @@ public class EmojidexKeyboardView extends KeyboardView {
                 context.deleteFile("histories.json");
             }
         });
+    }
 
-        return true;
+    /**
+     * set text to TextView
+     * @return
+     */
+    protected int setTextViewText()
+    {
+        return stringRes;
+    }
+
+    /**
+     * create onClickListener
+     * @return
+     */
+    protected OnClickListener createListener()
+    {
+        return new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // save favorites
+                int result = JsonDataOperation.save(context, keyCodes, JsonDataOperation.FAVORITES);
+                switch (result) {
+                    case JsonDataOperation.SUCCESS :
+                        Toast.makeText(context, R.string.register_favorite_success, Toast.LENGTH_SHORT).show();
+                        break;
+                    case JsonDataOperation.DONE :
+                        Toast.makeText(context, R.string.register_favorite_done, Toast.LENGTH_SHORT).show();
+                        break;
+                    case JsonDataOperation.FAILURE :
+                        Toast.makeText(context, R.string.register_favorite_failure, Toast.LENGTH_SHORT).show();
+                        break;
+                }
+                popup.dismiss();
+            }
+        };
     }
 }

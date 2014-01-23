@@ -307,12 +307,11 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
      * setKeyboard from keyboards
      * @param keyboards
      */
-    private void setKeyboard(CategorizedKeyboard keyboards)
+    private void setKeyboard(CategorizedKeyboard keyboards, KeyboardView keyboardView)
     {
         keyboardViewFlipper.removeAllViews();
         for (int i = 0; i < keyboards.getKeyboards().size(); i++)
         {
-            EmojidexKeyboardView keyboardView = new EmojidexKeyboardView(this, null, R.attr.keyboardViewStyle, getLayoutInflater());
             keyboardView.setOnKeyboardActionListener(this);
             keyboardView.setPreviewEnabled(false);
             keyboardView.setKeyboard(keyboards.getKeyboards().get(i));
@@ -375,7 +374,8 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     {
         // load histories
         ArrayList<List<Integer>> histories = JsonDataOperation.load(this, JsonDataOperation.HISTORIES);
-        createNewKeyboards(histories);
+        EmojidexKeyboardView keyboardView = new EmojidexKeyboardView(this, null, R.attr.keyboardViewStyle, getLayoutInflater());
+        createNewKeyboards(histories, keyboardView);
     }
 
     /**
@@ -386,14 +386,15 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     {
         // load favorites
         ArrayList<List<Integer>> favorites = JsonDataOperation.load(this, JsonDataOperation.FAVORITES);
-        createNewKeyboards(favorites);
+        FavoriteKeyboardView keyboardView = new FavoriteKeyboardView(this, null, R.attr.keyboardViewStyle, getLayoutInflater());
+        createNewKeyboards(favorites, keyboardView);
     }
 
     /**
      * create favorites/histories keyboards
      * @param data keys
      */
-    private void createNewKeyboards(ArrayList<List<Integer>> data)
+    private void createNewKeyboards(ArrayList<List<Integer>> data, KeyboardView keyboardView)
     {
 
         // get emoji
@@ -407,7 +408,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         final int minHeight = (int)getResources().getDimension(R.dimen.ime_keyboard_area_height);
         CategorizedKeyboard keyboards = EmojidexKeyboard.create(this, emojiDatas, minHeight);
 
-        setKeyboard(keyboards);
+        setKeyboard(keyboards, keyboardView);
     }
 
     /**

@@ -21,6 +21,10 @@
     <string name="register_favorite_success">Registered.</string>
     <string name="register_favorite_done">Already registered.</string>
     <string name="register_favorite_failure">Sorry, failed to register.</string>
+    <string name="delete_favorite">Are you sure you want to remove from your favorites?</string>
+    <string name="delete_success">Deleted.</string>
+    <string name="delete_failure">Sorry, failed to remove.</string>
+
     <string name="yes">Yes</string>
     <string name="no">No</string>
 
