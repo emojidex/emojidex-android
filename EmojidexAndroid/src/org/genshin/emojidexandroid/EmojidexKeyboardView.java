@@ -92,9 +92,6 @@ public class EmojidexKeyboardView extends KeyboardView {
             @Override
             public void onClick(View v) {
                 popup.dismiss();
-                // TODO 今だけ
-                context.deleteFile("favorites.json");
-                context.deleteFile("histories.json");
             }
         });
     }

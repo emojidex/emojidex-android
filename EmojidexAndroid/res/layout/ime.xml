@@ -27,11 +27,6 @@
 
             <include android:id="@+id/search_layout" layout="@layout/search" />
             <include android:id="@+id/options_layout" layout="@layout/options" />
-            <!--
-            <include android:id="@+id/favorite_layout" layout="@layout/favorite" />
-            <include android:id="@+id/history_layout" layout="@layout/history" />
-            <include android:id="@+id/settings_layout" layout="@layout/settings" />
-            -->
 
         </ViewFlipper>
 

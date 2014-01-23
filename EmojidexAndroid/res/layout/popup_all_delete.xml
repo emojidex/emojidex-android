@@ -7,20 +7,11 @@
     android:background="@drawable/background_gray"
     android:padding="15dp" >
 
-    <ImageView
-        android:id="@+id/popup_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="15dp"
-        android:background="@drawable/background_white"
-        android:padding="15dp" />
-
     <TextView
-        android:id="@+id/popup_text"
+        android:id="@+id/popup_all_delete_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/register_favorite"
+        android:text="@string/delete_favorites_all_confirm"
         android:textSize="20dp"
         android:textColor="@color/white"
         android:layout_margin="15dp"/>
@@ -37,13 +28,13 @@
         android:orientation="horizontal" >
 
         <Button
-            android:id="@+id/popup_yes_button"
+            android:id="@+id/popup_all_delete_yes_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/yes"
             android:layout_weight="1" />
         <Button
-            android:id="@+id/popup_no_button"
+            android:id="@+id/popup_all_delete_no_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/no"

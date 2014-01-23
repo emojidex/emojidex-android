@@ -5,14 +5,20 @@ import android.content.res.Configuration;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
+import android.widget.PopupWindow;
+import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import java.util.ArrayList;
@@ -38,8 +44,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     private ViewFlipper viewFlipper;
     private ViewFlipper keyboardViewFlipper;
 
-    private ArrayList<List<Integer>> histories = new ArrayList<List<Integer>>();
-    // private ArrayList<List<Integer>> favorites = new ArrayList<List<Integer>>();
+    private PopupWindow popup;
 
     /**
      * Construct EmojidexIME object.
@@ -96,6 +101,17 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         hideWindow();
+    }
+
+    @Override
+    public void hideWindow()
+    {
+        if (popup != null && popup.isShowing())
+        {
+            popup.dismiss();
+            popup = null;
+        }
+        super.hideWindow();
     }
 
     @Override
@@ -307,11 +323,16 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
      * setKeyboard from keyboards
      * @param keyboards
      */
-    private void setKeyboard(CategorizedKeyboard keyboards, KeyboardView keyboardView)
+    private void setKeyboard(CategorizedKeyboard keyboards, String type)
     {
         keyboardViewFlipper.removeAllViews();
         for (int i = 0; i < keyboards.getKeyboards().size(); i++)
         {
+            KeyboardView keyboardView;
+            if (type.equals("favorites"))
+                keyboardView = new FavoriteKeyboardView(this, null, R.attr.keyboardViewStyle, getLayoutInflater());
+            else
+                keyboardView = new EmojidexKeyboardView(this, null, R.attr.keyboardViewStyle, getLayoutInflater());
             keyboardView.setOnKeyboardActionListener(this);
             keyboardView.setPreviewEnabled(false);
             keyboardView.setKeyboard(keyboards.getKeyboards().get(i));
@@ -374,8 +395,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     {
         // load histories
         ArrayList<List<Integer>> histories = JsonDataOperation.load(this, JsonDataOperation.HISTORIES);
-        EmojidexKeyboardView keyboardView = new EmojidexKeyboardView(this, null, R.attr.keyboardViewStyle, getLayoutInflater());
-        createNewKeyboards(histories, keyboardView);
+        createNewKeyboards(histories, "histories");
     }
 
     /**
@@ -386,15 +406,14 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     {
         // load favorites
         ArrayList<List<Integer>> favorites = JsonDataOperation.load(this, JsonDataOperation.FAVORITES);
-        FavoriteKeyboardView keyboardView = new FavoriteKeyboardView(this, null, R.attr.keyboardViewStyle, getLayoutInflater());
-        createNewKeyboards(favorites, keyboardView);
+        createNewKeyboards(favorites, "favorites");
     }
 
     /**
      * create favorites/histories keyboards
      * @param data keys
      */
-    private void createNewKeyboards(ArrayList<List<Integer>> data, KeyboardView keyboardView)
+    private void createNewKeyboards(ArrayList<List<Integer>> data, String type)
     {
 
         // get emoji
@@ -408,7 +427,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         final int minHeight = (int)getResources().getDimension(R.dimen.ime_keyboard_area_height);
         CategorizedKeyboard keyboards = EmojidexKeyboard.create(this, emojiDatas, minHeight);
 
-        setKeyboard(keyboards, keyboardView);
+        setKeyboard(keyboards, type);
     }
 
     /**
@@ -417,8 +436,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
      */
     public void showSettings(View v)
     {
-        // TODO implemented showSettings
-        android.util.Log.e("test", "show_settings");
+        createPopupWindow(R.layout.settings);
     }
 
     /**
@@ -427,5 +445,138 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     private void saveHistories(List<Integer> keyCodes)
     {
         JsonDataOperation.save(this, keyCodes, JsonDataOperation.HISTORIES);
+    }
+
+    /**
+     * delete all favorites data
+     * @param v
+     */
+    public void deleteFavorites(View v)
+    {
+        popup.dismiss();
+        popup = null;
+        createAllDeletePopupWindow(R.string.delete_favorites_all_confirm, JsonDataOperation.FAVORITES);
+        //createPopupWindow(R.layout.popup_all_delete);
+        //setPopupWindow(R.string.delete_favorites_all_confirm, "favorites");
+
+    }
+
+    /**
+     * delete all histories data
+     * @param v
+     */
+    public void deleteHistories(View v)
+    {
+        popup.dismiss();
+        popup = null;
+        createAllDeletePopupWindow(R.string.delete_histories_all_confirm, JsonDataOperation.HISTORIES);
+        //createPopupWindow(R.layout.popup_all_delete);
+        //setPopupWindow(R.string.delete_histories_all_confirm, "histories");
+    }
+
+    /**
+     * close settings window
+     * @param v
+     */
+    public void settingsClose(View v)
+    {
+        popup.dismiss();
+        popup = null;
+    }
+
+    /**
+     * create popup window
+     * @param res
+     */
+    private void createPopupWindow(int res)
+    {
+        int height = (int)getResources().getDimension(R.dimen.ime_keyboard_area_height);
+
+        // create popup window
+        View view = getLayoutInflater().inflate(res, null);
+        popup = new PopupWindow(this);
+        popup.setContentView(view);
+        popup.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
+        popup.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
+        popup.showAtLocation(layout, Gravity.CENTER_HORIZONTAL, 0, -height);
+    }
+
+    /**
+     * set popup window
+     * @param  stringRes text resources
+     * @param filename favorites or histories
+     */
+    private void setPopupWindow(int stringRes, final String filename)
+    {
+        View root = getLayoutInflater().inflate(R.layout.popup_all_delete, null);
+        TextView textView = (TextView)root.findViewById(R.id.popup_all_delete_text);
+        Log.e("test", "root:" + root.getId() + "   " + R.layout.popup_all_delete);
+        textView.setText(stringRes);
+
+        Button yesButton = (Button)root.findViewById(R.id.popup_all_delete_yes_button);
+        yesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean result = JsonDataOperation.deleteAll(getApplicationContext(), filename);
+                if (result)
+                    Toast.makeText(getApplicationContext(), R.string.delete_success, Toast.LENGTH_SHORT);
+                else
+                    Toast.makeText(getApplicationContext(), R.string.delete_failure, Toast.LENGTH_SHORT);
+            }
+        });
+        Button noButton = (Button)root.findViewById(R.id.popup_all_delete_no_button);
+        noButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                popup.dismiss();
+                popup = null;
+                createPopupWindow(R.layout.settings);
+            }
+        });
+    }
+
+    public void createAllDeletePopupWindow(int stringRes, final String filename)
+    {
+        final Context context = this;
+        int height = (int)getResources().getDimension(R.dimen.ime_keyboard_area_height);
+
+        // create popup window
+        View view = getLayoutInflater().inflate(R.layout.popup_all_delete, null);
+        popup = new PopupWindow(this);
+        popup.setContentView(view);
+        popup.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
+        popup.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
+        popup.showAtLocation(layout, Gravity.CENTER_HORIZONTAL, 0, -height);
+
+        TextView textView = (TextView)view.findViewById(R.id.popup_all_delete_text);
+        Log.e("test", "root:" + view.getId() + "   " + R.layout.popup_all_delete);
+        textView.setText(stringRes);
+        Log.e("test", "text:" + textView.getText());
+
+        Button yesButton = (Button)view.findViewById(R.id.popup_all_delete_yes_button);
+        yesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popup.dismiss();
+                popup = null;
+                boolean result = JsonDataOperation.deleteAll(getApplicationContext(), filename);
+                if (result)
+                    Toast.makeText(context, R.string.delete_success, Toast.LENGTH_SHORT);
+                else
+                    Toast.makeText(context, R.string.delete_failure, Toast.LENGTH_SHORT);
+            }
+        });
+        Button noButton = (Button)view.findViewById(R.id.popup_all_delete_no_button);
+        noButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                popup.dismiss();
+                popup = null;
+                createPopupWindow(R.layout.settings);
+            }
+        });
+
     }
 }

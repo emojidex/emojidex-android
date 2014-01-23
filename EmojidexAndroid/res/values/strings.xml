@@ -21,9 +21,14 @@
     <string name="register_favorite_success">Registered.</string>
     <string name="register_favorite_done">Already registered.</string>
     <string name="register_favorite_failure">Sorry, failed to register.</string>
-    <string name="delete_favorite">Are you sure you want to remove from your favorites?</string>
+    <string name="delete_favorite">Are you sure you want to delete from your favorites?</string>
     <string name="delete_success">Deleted.</string>
-    <string name="delete_failure">Sorry, failed to remove.</string>
+    <string name="delete_failure">Sorry, failed to delete.</string>
+    <string name="delete_favorites_all">Delete all favorites.</string>
+    <string name="delete_histories_all">Delete all histories.</string>
+    <string name="delete_favorites_all_confirm">Are you sure you want to delete all the favorites?</string>
+    <string name="delete_histories_all_confirm">Are you sure you want to delete all the histories?</string>
+    <string name="close">Close</string>
 
     <string name="yes">Yes</string>
     <string name="no">No</string>

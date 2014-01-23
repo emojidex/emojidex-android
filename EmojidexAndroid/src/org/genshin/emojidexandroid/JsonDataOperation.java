@@ -1,6 +1,7 @@
 package org.genshin.emojidexandroid;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
@@ -42,7 +43,7 @@ public class JsonDataOperation
      */
     public static ArrayList<List<Integer>> load(Context context, String filename)
     {
-        String str = "";
+        String str;
         StringBuilder builder = new StringBuilder();
         ArrayList<List<Integer>> data = new ArrayList<List<Integer>>();
 
@@ -105,14 +106,14 @@ public class JsonDataOperation
         ArrayList<List<Integer>> data = load(context, filename);
 
         // duplication check
-        if (filename == FAVORITES)
+        if (filename.equals(FAVORITES))
         {
             if (duplicationCheck(data, keyCodes))
                 return DONE;
         }
 
         // histories size check
-        if (filename == HISTORIES)
+        if (filename.equals(HISTORIES))
             data = sizeCheck(data);
 
         // add data
@@ -212,9 +213,9 @@ public class JsonDataOperation
      * @param filename favorites or histories
      * @return
      */
-    private static boolean deleteAll(Context context, String filename)
+    public static boolean deleteAll(Context context, String filename)
     {
-        return true;
+        return context.deleteFile(filename + ".json");
     }
 
     /**
@@ -250,10 +251,11 @@ public class JsonDataOperation
      */
     private static ArrayList<List<Integer>> sizeCheck(ArrayList<List<Integer>> data)
     {
+        Log.e("test", "check:" + data.size());
         if (data.size() >= MAX_HISTORIES)
         {
-            while (data.size() < MAX_HISTORIES)
-                data.remove(0);
+            while (data.size() >= MAX_HISTORIES)
+                data.remove(data.get(0));
             return data;
         }
         else
