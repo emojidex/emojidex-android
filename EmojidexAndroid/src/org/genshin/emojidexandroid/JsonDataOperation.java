@@ -1,7 +1,6 @@
 package org.genshin.emojidexandroid;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
@@ -176,6 +175,7 @@ public class JsonDataOperation
         ArrayList<List<Integer>> data = load(context, FAVORITES);
 
         // delete data
+        boolean delete = false;
         for (List<Integer> list :data)
         {
             if (list.size() != keyCodes.size())
@@ -186,8 +186,14 @@ public class JsonDataOperation
                 if (!list.get(i).equals(keyCodes.get(i)))
                     break;
                 if (i == list.size() - 1)
+                {
+                    delete = true;
                     data.remove(list);
+                    break;
+                }
             }
+            if (delete)
+                break;
         }
 
         // prepare json data
@@ -251,7 +257,6 @@ public class JsonDataOperation
      */
     private static ArrayList<List<Integer>> sizeCheck(ArrayList<List<Integer>> data)
     {
-        Log.e("test", "check:" + data.size());
         if (data.size() >= MAX_HISTORIES)
         {
             while (data.size() >= MAX_HISTORIES)

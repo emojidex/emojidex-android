@@ -14,7 +14,7 @@
         android:layout_margin="15dp"
         android:text="@string/delete_favorites_all"
         android:layout_gravity="center_horizontal"
-        android:onClick="deleteFavorites"/>
+        android:onClick="createDeleteFavoritesWindow"/>
 
     <Button
         android:id="@+id/delete_histories_all"
@@ -23,7 +23,7 @@
         android:layout_margin="15dp"
         android:text="@string/delete_histories_all"
         android:layout_gravity="center_horizontal"
-        android:onClick="deleteHistories"/>
+        android:onClick="createDeleteHistoriesWindow"/>
 
     <Button
         android:id="@+id/settings_close"
@@ -32,6 +32,6 @@
         android:layout_margin="15dp"
         android:text="@string/close"
         android:layout_gravity="center_horizontal"
-        android:onClick="settingsClose"/>
+        android:onClick="closePopupWindow"/>
 
 </LinearLayout>

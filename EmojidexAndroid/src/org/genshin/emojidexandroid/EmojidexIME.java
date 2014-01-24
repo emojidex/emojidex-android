@@ -5,7 +5,6 @@ import android.content.res.Configuration;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -17,7 +16,6 @@ import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.PopupWindow;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
@@ -304,7 +302,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
 
     /**
      * Set categorized keyboard.
-     * @param categoryID
+     * @param categoryID category id
      */
     private void setKeyboard(String categoryID)
     {
@@ -321,7 +319,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
 
     /**
      * setKeyboard from keyboards
-     * @param keyboards
+     * @param keyboards categorized keyboards
      */
     private void setKeyboard(CategorizedKeyboard keyboards, String type)
     {
@@ -340,6 +338,10 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         }
     }
 
+    /**
+     * viewFlipper move to left
+     * @param v view
+     */
     public void moveToLeft(View v)
     {
         viewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_in));
@@ -347,6 +349,10 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         viewFlipper.showNext();
     }
 
+    /**
+     * viewFlipper move to right
+     * @param v view
+     */
     public void moveToRight(View v)
     {
         viewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_in));
@@ -374,13 +380,9 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
                 case MotionEvent.ACTION_CANCEL:
                     currentX = event.getX();
                     if (lastTouchX < currentX)
-                    {
                         moveToRight(null);
-                    }
                     if (lastTouchX > currentX)
-                    {
                         moveToLeft(null);
-                    }
                     break;
             }
             return true;
@@ -389,7 +391,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
 
     /**
      * show histories keyboard
-     * @param v
+     * @param v view
      */
     public void showHistories(View v)
     {
@@ -400,7 +402,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
 
     /**
      * show favorites keyboard
-     * @param v
+     * @param v view
      */
     public void showFavorites(View v)
     {
@@ -417,30 +419,31 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     {
 
         // get emoji
-        List<EmojiData> emojiDatas = new ArrayList<EmojiData>();
+        List<EmojiData> emojiData = new ArrayList<EmojiData>();
         for (List<Integer> codes : data)
-        {
-            emojiDatas.add(emojiDataManager.getEmojiData(codes));
-        }
+            emojiData.add(emojiDataManager.getEmojiData(codes));
 
         // create keyboards
         final int minHeight = (int)getResources().getDimension(R.dimen.ime_keyboard_area_height);
-        CategorizedKeyboard keyboards = EmojidexKeyboard.create(this, emojiDatas, minHeight);
+        CategorizedKeyboard keyboards = EmojidexKeyboard.create(this, emojiData, minHeight);
 
         setKeyboard(keyboards, type);
     }
 
     /**
      * show settings
-     * @param v
+     * @param v view
      */
     public void showSettings(View v)
     {
-        createPopupWindow(R.layout.settings);
+        closePopupWindow(v);
+        View view = getLayoutInflater().inflate(R.layout.settings, null);
+        createPopupWindow(view);
     }
 
     /**
      * save histories to local data
+     * @param keyCodes save keyCodes
      */
     private void saveHistories(List<Integer> keyCodes)
     {
@@ -448,52 +451,65 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     }
 
     /**
-     * delete all favorites data
-     * @param v
+     * create popup window
+     * @param v view
      */
-    public void deleteFavorites(View v)
+    public void createDeleteFavoritesWindow(View v)
     {
-        popup.dismiss();
-        popup = null;
-        createAllDeletePopupWindow(R.string.delete_favorites_all_confirm, JsonDataOperation.FAVORITES);
-        //createPopupWindow(R.layout.popup_all_delete);
-        //setPopupWindow(R.string.delete_favorites_all_confirm, "favorites");
+        closePopupWindow(v);
+        View view = getLayoutInflater().inflate(R.layout.popup_delete_all_favorites, null);
+        createPopupWindow(view);
+    }
 
+    /**
+     * delete all favorites data
+     * @param v view
+     */
+    public void deleteAllFavorites(View v)
+    {
+        closePopupWindow(v);
+
+        // delete
+        boolean result = JsonDataOperation.deleteAll(getApplicationContext(), JsonDataOperation.FAVORITES);
+        showResultToast(result);
+        setKeyboard("all");
+    }
+
+    /**
+     * create popup window
+     * @param v view
+     */
+    public void createDeleteHistoriesWindow(View v)
+    {
+        closePopupWindow(v);
+
+        View view = getLayoutInflater().inflate(R.layout.popup_delete_all_histories, null);
+        createPopupWindow(view);
     }
 
     /**
      * delete all histories data
      * @param v
      */
-    public void deleteHistories(View v)
+    public void deleteAllHistories(View v)
     {
-        popup.dismiss();
-        popup = null;
-        createAllDeletePopupWindow(R.string.delete_histories_all_confirm, JsonDataOperation.HISTORIES);
-        //createPopupWindow(R.layout.popup_all_delete);
-        //setPopupWindow(R.string.delete_histories_all_confirm, "histories");
-    }
+        closePopupWindow(v);
 
-    /**
-     * close settings window
-     * @param v
-     */
-    public void settingsClose(View v)
-    {
-        popup.dismiss();
-        popup = null;
+        // delete
+        boolean result = JsonDataOperation.deleteAll(getApplicationContext(), JsonDataOperation.HISTORIES);
+        showResultToast(result);
+        setKeyboard("all");
     }
 
     /**
      * create popup window
-     * @param res
+     * @param view view
      */
-    private void createPopupWindow(int res)
+    private void createPopupWindow(View view)
     {
         int height = (int)getResources().getDimension(R.dimen.ime_keyboard_area_height);
 
         // create popup window
-        View view = getLayoutInflater().inflate(res, null);
         popup = new PopupWindow(this);
         popup.setContentView(view);
         popup.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
@@ -502,81 +518,26 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     }
 
     /**
-     * set popup window
-     * @param  stringRes text resources
-     * @param filename favorites or histories
+     * close popup window
+     * @param v view
      */
-    private void setPopupWindow(int stringRes, final String filename)
+    public void closePopupWindow(View v)
     {
-        View root = getLayoutInflater().inflate(R.layout.popup_all_delete, null);
-        TextView textView = (TextView)root.findViewById(R.id.popup_all_delete_text);
-        Log.e("test", "root:" + root.getId() + "   " + R.layout.popup_all_delete);
-        textView.setText(stringRes);
-
-        Button yesButton = (Button)root.findViewById(R.id.popup_all_delete_yes_button);
-        yesButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                boolean result = JsonDataOperation.deleteAll(getApplicationContext(), filename);
-                if (result)
-                    Toast.makeText(getApplicationContext(), R.string.delete_success, Toast.LENGTH_SHORT);
-                else
-                    Toast.makeText(getApplicationContext(), R.string.delete_failure, Toast.LENGTH_SHORT);
-            }
-        });
-        Button noButton = (Button)root.findViewById(R.id.popup_all_delete_no_button);
-        noButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v) {
-                popup.dismiss();
-                popup = null;
-                createPopupWindow(R.layout.settings);
-            }
-        });
+        if (popup == null)
+            return;
+        popup.dismiss();
+        popup = null;
     }
 
-    public void createAllDeletePopupWindow(int stringRes, final String filename)
+    /**
+     * show toast
+     * @param result success or failure
+     */
+    private void showResultToast(boolean result)
     {
-        final Context context = this;
-        int height = (int)getResources().getDimension(R.dimen.ime_keyboard_area_height);
-
-        // create popup window
-        View view = getLayoutInflater().inflate(R.layout.popup_all_delete, null);
-        popup = new PopupWindow(this);
-        popup.setContentView(view);
-        popup.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
-        popup.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
-        popup.showAtLocation(layout, Gravity.CENTER_HORIZONTAL, 0, -height);
-
-        TextView textView = (TextView)view.findViewById(R.id.popup_all_delete_text);
-        Log.e("test", "root:" + view.getId() + "   " + R.layout.popup_all_delete);
-        textView.setText(stringRes);
-        Log.e("test", "text:" + textView.getText());
-
-        Button yesButton = (Button)view.findViewById(R.id.popup_all_delete_yes_button);
-        yesButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                popup.dismiss();
-                popup = null;
-                boolean result = JsonDataOperation.deleteAll(getApplicationContext(), filename);
-                if (result)
-                    Toast.makeText(context, R.string.delete_success, Toast.LENGTH_SHORT);
-                else
-                    Toast.makeText(context, R.string.delete_failure, Toast.LENGTH_SHORT);
-            }
-        });
-        Button noButton = (Button)view.findViewById(R.id.popup_all_delete_no_button);
-        noButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v) {
-                popup.dismiss();
-                popup = null;
-                createPopupWindow(R.layout.settings);
-            }
-        });
-
+        if (result)
+            Toast.makeText(this, R.string.delete_success, Toast.LENGTH_SHORT).show();
+        else
+            Toast.makeText(this, R.string.delete_failure, Toast.LENGTH_SHORT).show();
     }
 }

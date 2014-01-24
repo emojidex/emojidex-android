@@ -8,10 +8,9 @@
     android:padding="15dp" >
 
     <TextView
-        android:id="@+id/popup_all_delete_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/delete_favorites_all_confirm"
+        android:text="@string/delete_histories_all_confirm"
         android:textSize="20dp"
         android:textColor="@color/white"
         android:layout_margin="15dp"/>
@@ -28,17 +27,18 @@
         android:orientation="horizontal" >
 
         <Button
-            android:id="@+id/popup_all_delete_yes_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/yes"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:onClick="deleteAllHistories" />
         <Button
             android:id="@+id/popup_all_delete_no_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/no"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:onClick="showSettings" />
 
     </LinearLayout>
 

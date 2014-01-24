@@ -1,7 +1,7 @@
 package org.genshin.emojidexandroid;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
+import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -26,6 +26,7 @@ public class EmojidexKeyboardView extends KeyboardView {
 
     protected PopupWindow popup;
     protected List<Integer> keyCodes = new ArrayList<Integer>();
+    protected Keyboard.Key key;
 
     private int stringRes = R.string.register_favorite;
 
@@ -51,21 +52,21 @@ public class EmojidexKeyboardView extends KeyboardView {
     public boolean onLongPress(android.inputmethodservice.Keyboard.Key popupKey)
     {
         keyCodes = new ArrayList<Integer>();
-        for (int code : popupKey.codes)
+        key = popupKey;
+        for (int code : key.codes)
         {
             keyCodes.add(code);
         }
 
-        createPopupWindow(popupKey.icon);
+        createPopupWindow();
 
         return true;
     }
 
     /**
      * create PopupWindow
-     * @param drawable
      */
-    private void createPopupWindow(Drawable drawable)
+    private void createPopupWindow()
     {
         // create popup window
         View view = inflater.inflate(R.layout.popup, null);
@@ -77,7 +78,7 @@ public class EmojidexKeyboardView extends KeyboardView {
 
         // set emoji
         ImageView icon = (ImageView)view.findViewById(R.id.popup_image);
-        icon.setImageDrawable(drawable);
+        icon.setImageDrawable(key.icon);
 
         // set text
         TextView textView = (TextView)view.findViewById(R.id.popup_text);
