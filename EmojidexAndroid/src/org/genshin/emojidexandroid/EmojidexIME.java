@@ -385,10 +385,10 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL:
                     currentX = event.getX();
-                    if (lastTouchX < currentX)
-                        moveToRight(null);
-                    if (lastTouchX > currentX)
-                        moveToLeft(null);
+//                    if (lastTouchX < currentX)
+//                        moveToRight(null);
+//                    if (lastTouchX > currentX)
+//                        moveToLeft(null);
                     break;
             }
             return true;
