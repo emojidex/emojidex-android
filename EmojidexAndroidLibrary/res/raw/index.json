@@ -49,6 +49,76 @@
     "unicode": "1f18e"
   },
   {
+    "moji": "🆑",
+    "code": "squared_cl",
+    "code_ja": "クリアマーク",
+    "category": "symbol",
+    "unicode": "1f191"
+  },
+  {
+    "moji": "🆒",
+    "code": "squared_cool",
+    "code_ja": "クールマーク",
+    "category": "symbol",
+    "unicode": "1f192"
+  },
+  {
+    "moji": "🆓",
+    "code": "squared_free",
+    "code_ja": "フリーマーク",
+    "category": "symbol",
+    "unicode": "1f193"
+  },
+  {
+    "moji": "🆔",
+    "code": "squared_id",
+    "code_ja": "IDマーク",
+    "category": "symbol",
+    "unicode": "1f194"
+  },
+  {
+    "moji": "🆕",
+    "code": "squared_new",
+    "code_ja": "NEWマーク",
+    "category": "symbol",
+    "unicode": "1f195"
+  },
+  {
+    "moji": "🆖",
+    "code": "squared_ng",
+    "code_ja": "NGマーク",
+    "category": "symbol",
+    "unicode": "1f196"
+  },
+  {
+    "moji": "🆗",
+    "code": "squared_ok",
+    "code_ja": "OKマーク",
+    "category": "symbol",
+    "unicode": "1f197"
+  },
+  {
+    "moji": "🆘",
+    "code": "squared_sos",
+    "code_ja": "SOSマーク",
+    "category": "symbol",
+    "unicode": "1f198"
+  },
+  {
+    "moji": "🆙",
+    "code": "squared_up_with_exclamation_mark",
+    "code_ja": "UPマーク",
+    "category": "symbol",
+    "unicode": "1f199"
+  },
+  {
+    "moji": "🆚",
+    "code": "squared_vs",
+    "code_ja": "VSマーク",
+    "category": "symbol",
+    "unicode": "1f19a"
+  },
+  {
     "moji": "🇦",
     "code": "regional_indicator_symbol_letter_A",
     "code_ja": "A",
@@ -299,6 +369,111 @@
     "code_ja": "アメリカ国旗",
     "category": "symbol",
     "unicode": "1f1fa1f1f8"
+  },
+  {
+    "moji": "🈁",
+    "code": "squared_katakana_koko",
+    "code_ja": "ココマーク",
+    "category": "symbol",
+    "unicode": "1f201"
+  },
+  {
+    "moji": "🈂",
+    "code": "squared_katakana_sa",
+    "code_ja": "サービスマーク",
+    "category": "symbol",
+    "unicode": "1f202"
+  },
+  {
+    "moji": "🈚",
+    "code": "squared_cjk_unified_ideograph_7121",
+    "code_ja": "無料マーク",
+    "category": "symbol",
+    "unicode": "1f21a"
+  },
+  {
+    "moji": "🈯",
+    "code": "squared_cjk_unified_ideograph_6307",
+    "code_ja": "指定マーク",
+    "category": "symbol",
+    "unicode": "1f22f"
+  },
+  {
+    "moji": "🈲",
+    "code": "squared_cjk_unified_ideograph_7981",
+    "code_ja": "禁止マーク",
+    "category": "symbol",
+    "unicode": "1f232"
+  },
+  {
+    "moji": "🈳",
+    "code": "squared_cjk_unified_ideograph_7a7a",
+    "code_ja": "空マーク",
+    "category": "symbol",
+    "unicode": "1f233"
+  },
+  {
+    "moji": "🈴",
+    "code": "squared_cjk_unified_ideograph_5408",
+    "code_ja": "合格マーク",
+    "category": "symbol",
+    "unicode": "1f234"
+  },
+  {
+    "moji": "🈵",
+    "code": "squared_cjk_unified_ideograph_6e80",
+    "code_ja": "満マーク",
+    "category": "symbol",
+    "unicode": "1f235"
+  },
+  {
+    "moji": "🈶",
+    "code": "squared_cjk_unified_ideograph_6709",
+    "code_ja": "有料マーク",
+    "category": "symbol",
+    "unicode": "1f236"
+  },
+  {
+    "moji": "🈷",
+    "code": "squared_cjk_unified_ideograph_6708",
+    "code_ja": "月マーク",
+    "category": "symbol",
+    "unicode": "1f237"
+  },
+  {
+    "moji": "🈸",
+    "code": "squared_cjk_unified_ideograph_7533",
+    "code_ja": "申マーク",
+    "category": "symbol",
+    "unicode": "1f238"
+  },
+  {
+    "moji": "🈹",
+    "code": "squared_cjk_unified_ideograph_5272",
+    "code_ja": "割引マーク",
+    "category": "symbol",
+    "unicode": "1f239"
+  },
+  {
+    "moji": "🈺",
+    "code": "squared_cjk_unified_ideograph_55b6",
+    "code_ja": "営業中マーク",
+    "category": "symbol",
+    "unicode": "1f23a"
+  },
+  {
+    "moji": "🉐",
+    "code": "circled_ideograph_advantage",
+    "code_ja": "お得マーク",
+    "category": "symbol",
+    "unicode": "1f250"
+  },
+  {
+    "moji": "🉑",
+    "code": "circled_ideograph_accept",
+    "code_ja": "許可マーク",
+    "category": "symbol",
+    "unicode": "1f251"
   },
   {
     "moji": "🌀",
@@ -679,6 +854,20 @@
     "unicode": "1f355"
   },
   {
+    "moji": "🍖",
+    "code": "meat_on_bone",
+    "code_ja": "肉",
+    "category": "food",
+    "unicode": "1f356"
+  },
+  {
+    "moji": "🍗",
+    "code": "poultry_leg",
+    "code_ja": "チキン",
+    "category": "food",
+    "unicode": "1f357"
+  },
+  {
     "moji": "🍘",
     "code": "rice_cracker",
     "code_ja": "せんべい",
@@ -735,6 +924,13 @@
     "unicode": "1f35f"
   },
   {
+    "moji": "🍠",
+    "code": "roasted_sweet_potato",
+    "code_ja": "焼きいも",
+    "category": "food",
+    "unicode": "1f360"
+  },
+  {
     "moji": "🍡",
     "code": "dango",
     "code_ja": "だんご",
@@ -756,6 +952,13 @@
     "unicode": "1f363"
   },
   {
+    "moji": "🍤",
+    "code": "fried_shrimp",
+    "code_ja": "エビフライ",
+    "category": "food",
+    "unicode": "1f364"
+  },
+  {
     "moji": "🍥",
     "code": "fish_cake_with_swirl_design",
     "code_ja": "なると",
@@ -770,9 +973,72 @@
     "unicode": "1f366"
   },
   {
+    "moji": "🍧",
+    "code": "shaved_ice",
+    "code_ja": "かき氷",
+    "category": "food",
+    "unicode": "1f367"
+  },
+  {
+    "moji": "🍨",
+    "code": "ice_cream",
+    "code_ja": "アイスクリーム",
+    "category": "food",
+    "unicode": "1f368"
+  },
+  {
+    "moji": "🍩",
+    "code": "doughnut",
+    "code_ja": "ドーナツ",
+    "category": "food",
+    "unicode": "1f369"
+  },
+  {
+    "moji": "🍪",
+    "code": "cookie",
+    "code_ja": "クッキー",
+    "category": "food",
+    "unicode": "1f36a"
+  },
+  {
+    "moji": "🍫",
+    "code": "chocolate_bar",
+    "code_ja": "チョコレート",
+    "category": "food",
+    "unicode": "1f36b"
+  },
+  {
+    "moji": "🍬",
+    "code": "candy",
+    "code_ja": "キャンディ",
+    "category": "food",
+    "unicode": "1f36c"
+  },
+  {
+    "moji": "🍭",
+    "code": "lollipop",
+    "code_ja": "ペロペロキャンディ",
+    "category": "food",
+    "unicode": "1f36d"
+  },
+  {
+    "moji": "🍮",
+    "code": "custard",
+    "code_ja": "プリン",
+    "category": "food",
+    "unicode": "1f36e"
+  },
+  {
+    "moji": "🍯",
+    "code": "honey_pot",
+    "code_ja": "ハチミツ",
+    "category": "food",
+    "unicode": "1f36f"
+  },
+  {
     "moji": "🍰",
-    "code": "cake",
-    "code_ja": "ケーキ",
+    "code": "shortcake",
+    "code_ja": "ショートケーキ",
     "category": "food",
     "unicode": "1f370"
   },
@@ -784,11 +1050,25 @@
     "unicode": "1f371"
   },
   {
+    "moji": "🍲",
+    "code": "pot_of_food",
+    "code_ja": "鍋",
+    "category": "food",
+    "unicode": "1f372"
+  },
+  {
     "moji": "🍳",
     "code": "cooking",
     "code_ja": "料理",
     "category": "food",
     "unicode": "1f373"
+  },
+  {
+    "moji": "🍴",
+    "code": "fork_and_knife",
+    "code_ja": "食事",
+    "category": "food",
+    "unicode": "1f374"
   },
   {
     "moji": "🍹",
@@ -803,6 +1083,13 @@
     "code_ja": "ビールジョッキ",
     "category": "food",
     "unicode": "1f37a"
+  },
+  {
+    "moji": "🍻",
+    "code": "clinking_beer_mugs",
+    "code_ja": "乾杯",
+    "category": "food",
+    "unicode": "1f37b"
   },
   {
     "moji": "🎀",
@@ -855,7 +1142,7 @@
   },
   {
     "moji": "🎇",
-    "code": "firewark_sparkler",
+    "code": "firework_sparkler",
     "code_ja": "線香花火",
     "category": "object",
     "unicode": "1f387"
@@ -932,7 +1219,7 @@
   },
   {
     "moji": "🎒",
-    "code": "school_sathel",
+    "code": "school_satchel",
     "code_ja": "ランドセル",
     "category": "object",
     "unicode": "1f392"
@@ -1652,6 +1939,34 @@
     "unicode": "1f445"
   },
   {
+    "moji": "👆",
+    "code": "white_up_pointing_backhand_index",
+    "code_ja": "指さし(上)",
+    "category": "gesture",
+    "unicode": "1f446"
+  },
+  {
+    "moji": "👇",
+    "code": "white_down_pointing_backhand_index",
+    "code_ja": "指さし(下)",
+    "category": "gesture",
+    "unicode": "1f447"
+  },
+  {
+    "moji": "👈",
+    "code": "white_left_pointing_backhand_index",
+    "code_ja": "指さし(左)",
+    "category": "gesture",
+    "unicode": "1f448"
+  },
+  {
+    "moji": "👉",
+    "code": "white_right_pointing_backhand_index",
+    "code_ja": "指さし(右)",
+    "category": "gesture",
+    "unicode": "1f449"
+  },
+  {
     "moji": "👊",
     "code": "fisted_hand_sign",
     "code_ja": "パンチ",
@@ -1659,11 +1974,46 @@
     "unicode": "1f44a"
   },
   {
+    "moji": "👋",
+    "code": "waving_hand_sign",
+    "code_ja": "バイバイ",
+    "category": "gesture",
+    "unicode": "1f44b"
+  },
+  {
+    "moji": "👌",
+    "code": "ok_hand_sign",
+    "code_ja": "オーケー",
+    "category": "gesture",
+    "unicode": "1f44c"
+  },
+  {
     "moji": "👍",
     "code": "thumbs_up_sign",
-    "code_ja": "おやゆびサイン",
+    "code_ja": "グッド",
     "category": "gesture",
     "unicode": "1f44d"
+  },
+  {
+    "moji": "👎",
+    "code": "thumbs_down_sign",
+    "code_ja": "ブーイング",
+    "category": "gesture",
+    "unicode": "1f44e"
+  },
+  {
+    "moji": "👏",
+    "code": "clapping_hands_sign",
+    "code_ja": "拍手",
+    "category": "gesture",
+    "unicode": "1f44f"
+  },
+  {
+    "moji": "👐",
+    "code": "open_hands_sign",
+    "code_ja": "おっはー",
+    "category": "gesture",
+    "unicode": "1f450"
   },
   {
     "moji": "👤",
@@ -1918,6 +2268,13 @@
     "unicode": "1f48a"
   },
   {
+    "moji": "💋",
+    "code": "kiss_mark",
+    "code_ja": "キスマーク",
+    "category": "object",
+    "unicode": "1f48b"
+  },
+  {
     "moji": "💌",
     "code": "love_letter",
     "code_ja": "ラブレター",
@@ -1974,11 +2331,144 @@
     "unicode": "1f493"
   },
   {
+    "moji": "💔",
+    "code": "broken_heart",
+    "code_ja": "ハートブレイク",
+    "category": "abstract",
+    "unicode": "1f494"
+  },
+  {
+    "moji": "💕",
+    "code": "two_hearts",
+    "code_ja": "2つのハート",
+    "category": "abstract",
+    "unicode": "1f495"
+  },
+  {
+    "moji": "💖",
+    "code": "sparkling_heart",
+    "code_ja": "光るハート",
+    "category": "abstract",
+    "unicode": "1f496"
+  },
+  {
+    "moji": "💗",
+    "code": "growing_heart",
+    "code_ja": "ハート(ドキドキ)",
+    "category": "abstract",
+    "unicode": "1f497"
+  },
+  {
+    "moji": "💘",
+    "code": "heart_with_arrow",
+    "code_ja": "矢がささったハート",
+    "category": "abstract",
+    "unicode": "1f498"
+  },
+  {
+    "moji": "💙",
+    "code": "blue_heart",
+    "code_ja": "ハート(青)",
+    "category": "abstract",
+    "unicode": "1f499"
+  },
+  {
+    "moji": "💚",
+    "code": "green_heart",
+    "code_ja": "ハート(緑)",
+    "category": "abstract",
+    "unicode": "1f49a"
+  },
+  {
+    "moji": "💛",
+    "code": "yellow_heart",
+    "code_ja": "ハート(黄)",
+    "category": "abstract",
+    "unicode": "1f49b"
+  },
+  {
+    "moji": "💜",
+    "code": "purple_heart",
+    "code_ja": "ハート(紫)",
+    "category": "abstract",
+    "unicode": "1f49c"
+  },
+  {
+    "moji": "💝",
+    "code": "heart_with_ribbon",
+    "code_ja": "リボンがけのハート",
+    "category": "abstract",
+    "unicode": "1f49d"
+  },
+  {
+    "moji": "💞",
+    "code": "revolving_hearts",
+    "code_ja": "回るハート",
+    "category": "abstract",
+    "unicode": "1f49e"
+  },
+  {
+    "moji": "💟",
+    "code": "heart_decoration",
+    "code_ja": "ハートマーク",
+    "category": "abstract",
+    "unicode": "1f49f"
+  },
+  {
     "moji": "💡",
     "code": "electric_light_bulb",
     "code_ja": "電球",
     "category": "abstract",
     "unicode": "1f4a1"
+  },
+  {
+    "moji": "💢",
+    "code": "anger_symbol",
+    "code_ja": "怒りマーク",
+    "category": "abstract",
+    "unicode": "1f4a2"
+  },
+  {
+    "moji": "💣",
+    "code": "bomb",
+    "code_ja": "爆弾",
+    "category": "tools",
+    "unicode": "1f4a3"
+  },
+  {
+    "moji": "💤",
+    "code": "sleeping_symbol",
+    "code_ja": "睡眠マーク",
+    "category": "abstract",
+    "unicode": "1f4a4"
+  },
+  {
+    "moji": "💥",
+    "code": "collision_symbol",
+    "code_ja": "衝撃",
+    "category": "abstract",
+    "unicode": "1f4a5"
+  },
+  {
+    "moji": "💦",
+    "code": "splashing_sweat_symbol",
+    "code_ja": "焦りマーク",
+    "category": "abstract",
+    "unicode": "1f4a6"
+  },
+  {
+    "moji": "💧",
+    "code": "droplet",
+    "code_ja": "汗たらり",
+    "category": "abstract",
+    "unicode": "1f4a7"
+  },
+  {
+    "moji": "💨",
+    "code": "dash_symbol",
+    "code_ja": "ダッシュ",
+    "category": "abstract",
+    "unicode": "1f4a8"
   },
   {
     "moji": "💩",
@@ -1988,11 +2478,39 @@
     "unicode": "1f4a9"
   },
   {
+    "moji": "💪",
+    "code": "flexed_biceps",
+    "code_ja": "力こぶ",
+    "category": "abstract",
+    "unicode": "1f4aa"
+  },
+  {
+    "moji": "💫",
+    "code": "dizzy_symbol",
+    "code_ja": "目が回る",
+    "category": "abstract",
+    "unicode": "1f4ab"
+  },
+  {
     "moji": "💬",
     "code": "speech_balloon",
     "code_ja": "フキダシ",
     "category": "abstract",
     "unicode": "1f4ac"
+  },
+  {
+    "moji": "💮",
+    "code": "white_flower",
+    "code_ja": "よくできました",
+    "category": "abstract",
+    "unicode": "1f4ae"
+  },
+  {
+    "moji": "💯",
+    "code": "hundred_points_symbol",
+    "code_ja": "100点満点",
+    "category": "abstract",
+    "unicode": "1f4af"
   },
   {
     "moji": "💰",
@@ -2478,6 +2996,146 @@
     "unicode": "1f4fc"
   },
   {
+    "moji": "🔃",
+    "code": "clockwise_downwards_and_upwards_open_circle_arrows",
+    "code_ja": "再読み込み",
+    "category": "abstract",
+    "unicode": "1f503"
+  },
+  {
+    "moji": "🔊",
+    "code": "speaker_with_three_sound_waves",
+    "code_ja": "スピーカー",
+    "category": "object",
+    "unicode": "1f50a"
+  },
+  {
+    "moji": "🔋",
+    "code": "battery",
+    "code_ja": "バッテリー",
+    "category": "object",
+    "unicode": "1f50b"
+  },
+  {
+    "moji": "🔌",
+    "code": "electric_plug",
+    "code_ja": "コンセント",
+    "category": "object",
+    "unicode": "1f50c"
+  },
+  {
+    "moji": "🔍",
+    "code": "left_pointing_magnifying_glass",
+    "code_ja": "虫めがね",
+    "category": "object",
+    "unicode": "1f50d"
+  },
+  {
+    "moji": "🔎",
+    "code": "right_pointing_magnifying_glass",
+    "code_ja": "調べる",
+    "category": "object",
+    "unicode": "1f50e"
+  },
+  {
+    "moji": "🔏",
+    "code": "lock_with_ink_pen",
+    "code_ja": "ロック2",
+    "category": "object",
+    "unicode": "1f50f"
+  },
+  {
+    "moji": "🔐",
+    "code": "closed_lock_with_key",
+    "code_ja": "ロック3",
+    "category": "object",
+    "unicode": "1f510"
+  },
+  {
+    "moji": "🔑",
+    "code": "key",
+    "code_ja": "鍵",
+    "category": "object",
+    "unicode": "1f511"
+  },
+  {
+    "moji": "🔒",
+    "code": "lock",
+    "code_ja": "ロック1",
+    "category": "object",
+    "unicode": "1f512"
+  },
+  {
+    "moji": "🔓",
+    "code": "open_lock",
+    "code_ja": "ロック(解除)",
+    "category": "object",
+    "unicode": "1f513"
+  },
+  {
+    "moji": "🔔",
+    "code": "bell",
+    "code_ja": "ベル",
+    "category": "object",
+    "unicode": "1f514"
+  },
+  {
+    "moji": "🔖",
+    "code": "bookmark",
+    "code_ja": "ブックマーク",
+    "category": "abstract",
+    "unicode": "1f516"
+  },
+  {
+    "moji": "🔗",
+    "code": "link_symbol",
+    "code_ja": "リンク",
+    "category": "abstract",
+    "unicode": "1f517"
+  },
+  {
+    "moji": "🔘",
+    "code": "radio_button",
+    "code_ja": "ラジオボタン",
+    "category": "abstract",
+    "unicode": "1f518"
+  },
+  {
+    "moji": "🔙",
+    "code": "back_with_leftwards_arrow_above",
+    "code_ja": "BACK",
+    "category": "abstract",
+    "unicode": "1f519"
+  },
+  {
+    "moji": "🔚",
+    "code": "end_with_leftwards_arrow_above",
+    "code_ja": "END",
+    "category": "abstract",
+    "unicode": "1f51a"
+  },
+  {
+    "moji": "🔛",
+    "code": "on_with_exclamation_mark_with_left_right_arrow_above",
+    "code_ja": "ON",
+    "category": "abstract",
+    "unicode": "1f51b"
+  },
+  {
+    "moji": "🔜",
+    "code": "soon_with_rightwards_arrow_above",
+    "code_ja": "SOON",
+    "category": "abstract",
+    "unicode": "1f51c"
+  },
+  {
+    "moji": "🔝",
+    "code": "top_with_upwards_arrow_above",
+    "code_ja": "TOP",
+    "category": "abstract",
+    "unicode": "1f51d"
+  },
+  {
     "moji": "🔞",
     "code": "no_one_under_eighteen_symbol",
     "code_ja": "18禁",
@@ -2602,6 +3260,90 @@
     "code_ja": "王冠",
     "category": "object",
     "unicode": "1f531"
+  },
+  {
+    "moji": "🔲",
+    "code": "black_square_button",
+    "code_ja": "四角ボタン(黒)",
+    "category": "abstract",
+    "unicode": "1f532"
+  },
+  {
+    "moji": "🔳",
+    "code": "white_square_button",
+    "code_ja": "四角ボタン(白)",
+    "category": "abstract",
+    "unicode": "1f533"
+  },
+  {
+    "moji": "🔴",
+    "code": "large_red_circle",
+    "code_ja": "大丸(赤)",
+    "category": "abstract",
+    "unicode": "1f534"
+  },
+  {
+    "moji": "🔵",
+    "code": "large_blue_circle",
+    "code_ja": "大丸(青)",
+    "category": "abstract",
+    "unicode": "1f535"
+  },
+  {
+    "moji": "🔶",
+    "code": "large_orange_diamond",
+    "code_ja": "大菱形(オレンジ)",
+    "category": "abstract",
+    "unicode": "1f536"
+  },
+  {
+    "moji": "🔷",
+    "code": "large_blue_diamond",
+    "code_ja": "大菱形(青)",
+    "category": "abstract",
+    "unicode": "1f537"
+  },
+  {
+    "moji": "🔸",
+    "code": "small_orange_diamond",
+    "code_ja": "小菱形(オレンジ)",
+    "category": "abstract",
+    "unicode": "1f538"
+  },
+  {
+    "moji": "🔹",
+    "code": "small_blue_diamond",
+    "code_ja": "小菱形(青)",
+    "category": "abstract",
+    "unicode": "1f539"
+  },
+  {
+    "moji": "🔺",
+    "code": "up_pointing_red_triangle",
+    "code_ja": "上向き三角3",
+    "category": "abstract",
+    "unicode": "1f53a"
+  },
+  {
+    "moji": "🔻",
+    "code": "down_pointing_red_triangle",
+    "code_ja": "下向き三角3",
+    "category": "abstract",
+    "unicode": "1f53b"
+  },
+  {
+    "moji": "🔼",
+    "code": "up_pointing_small_red_triangle",
+    "code_ja": "上向き三角1",
+    "category": "abstract",
+    "unicode": "1f53c"
+  },
+  {
+    "moji": "🔽",
+    "code": "down_pointing_small_red_triangle",
+    "code_ja": "下向き三角1",
+    "category": "abstract",
+    "unicode": "1f53d"
   },
   {
     "moji": "🕐",
@@ -2738,7 +3480,7 @@
   },
   {
     "moji": "😂",
-    "code": "face_with_tear_of_joy",
+    "code": "face_with_tears_of_joy",
     "code_ja": "泣き笑い",
     "emoticon": ";D",
     "category": "faces",
@@ -2773,6 +3515,13 @@
     "emoticon": ":D",
     "category": "faces",
     "unicode": "1f606"
+  },
+  {
+    "moji": "😇",
+    "code": "smiling_face_with_halo",
+    "code_ja": "天使の笑顔",
+    "category": "faces",
+    "unicode": "1f607"
   },
   {
     "moji": "😉",
@@ -2810,6 +3559,13 @@
     "code_ja": "目がハート",
     "category": "faces",
     "unicode": "1f60d"
+  },
+  {
+    "moji": "😎",
+    "code": "smiling_face_with_sunglasses",
+    "code_ja": "キリッ",
+    "category": "faces",
+    "unicode": "1f60e"
   },
   {
     "moji": "😏",
@@ -3033,6 +3789,13 @@
     "unicode": "1f630"
   },
   {
+    "moji": "😱",
+    "code": "face_screaming_in_fear",
+    "code_ja": "ショッキング",
+    "category": "faces",
+    "unicode": "1f631"
+  },
+  {
     "moji": "😲",
     "code": "astonished_face",
     "code_ja": "びっくり",
@@ -3141,7 +3904,7 @@
   {
     "moji": "🙆",
     "code": "face_with_ok_gesture",
-    "code_ja": "OK!",
+    "code_ja": "OK",
     "category": "gesture",
     "unicode": "1f646"
   },
@@ -3349,6 +4112,41 @@
     "unicode": "1f6a8"
   },
   {
+    "moji": "🚩",
+    "code": "triangular_flag_on_post",
+    "code_ja": "位置情報",
+    "category": "symbol",
+    "unicode": "1f6a9"
+  },
+  {
+    "moji": "🚪",
+    "code": "door",
+    "code_ja": "ドア",
+    "category": "object",
+    "unicode": "1f6aa"
+  },
+  {
+    "moji": "🚫",
+    "code": "no_entry_sign",
+    "code_ja": "禁止",
+    "category": "abstract",
+    "unicode": "1f6ab"
+  },
+  {
+    "moji": "🚬",
+    "code": "smoking_symbol",
+    "code_ja": "喫煙",
+    "category": "symbol",
+    "unicode": "1f6ac"
+  },
+  {
+    "moji": "🚭",
+    "code": "no_smoking_symbol",
+    "code_ja": "禁煙",
+    "category": "symbol",
+    "unicode": "1f6ad"
+  },
+  {
     "moji": "🚲",
     "code": "bicycle",
     "code_ja": "自転車",
@@ -3356,11 +4154,60 @@
     "unicode": "1f6b2"
   },
   {
+    "moji": "🚶",
+    "code": "pedestrian",
+    "code_ja": "歩く人",
+    "category": "people",
+    "unicode": "1f6b6"
+  },
+  {
     "moji": "🚹",
     "code": "mens_symbol",
     "code_ja": "男性マーク",
-    "category": "abstract",
+    "category": "symbol",
     "unicode": "1f6b9"
+  },
+  {
+    "moji": "🚺",
+    "code": "womens_symbol",
+    "code_ja": "女性マーク",
+    "category": "symbol",
+    "unicode": "1f6ba"
+  },
+  {
+    "moji": "🚻",
+    "code": "restroom",
+    "code_ja": "公衆トイレ",
+    "category": "symbol",
+    "unicode": "1f6bb"
+  },
+  {
+    "moji": "🚼",
+    "code": "baby_symbol",
+    "code_ja": "赤ちゃんマーク",
+    "category": "symbol",
+    "unicode": "1f6bc"
+  },
+  {
+    "moji": "🚽",
+    "code": "toilet",
+    "code_ja": "トイレ",
+    "category": "object",
+    "unicode": "1f6bd"
+  },
+  {
+    "moji": "🚾",
+    "code": "water_closet",
+    "code_ja": "トイレマーク",
+    "category": "symbol",
+    "unicode": "1f6be"
+  },
+  {
+    "moji": "🛀",
+    "code": "bath",
+    "code_ja": "お風呂",
+    "category": "object",
+    "unicode": "1f6c0"
   },
   {
     "moji": "#️⃣",
@@ -3454,6 +4301,20 @@
     "unicode": "00ae"
   },
   {
+    "moji": "‼",
+    "code": "double_exclamation_mark",
+    "code_ja": "！！",
+    "category": "abstract",
+    "unicode": "203c"
+  },
+  {
+    "moji": "⁉",
+    "code": "exclamation_question_mark",
+    "code_ja": "！？",
+    "category": "abstract",
+    "unicode": "2049"
+  },
+  {
     "moji": "™",
     "code": "trade_mark_sign",
     "code_ja": "トレードマーク",
@@ -3466,6 +4327,90 @@
     "code_ja": "インフォメーション",
     "category": "symbol",
     "unicode": "2139"
+  },
+  {
+    "moji": "↔",
+    "code": "left_right_arrow",
+    "code_ja": "左右向き矢印",
+    "category": "abstract",
+    "unicode": "2194"
+  },
+  {
+    "moji": "↕",
+    "code": "up_down_arrow",
+    "code_ja": "上下向き矢印",
+    "category": "abstract",
+    "unicode": "2195"
+  },
+  {
+    "moji": "↖",
+    "code": "north_west_arrow",
+    "code_ja": "左斜め上向き矢印",
+    "category": "abstract",
+    "unicode": "2196"
+  },
+  {
+    "moji": "↗",
+    "code": "north_east_arrow",
+    "code_ja": "右斜め上向き矢印",
+    "category": "abstract",
+    "unicode": "2197"
+  },
+  {
+    "moji": "↘",
+    "code": "south_east_arrow",
+    "code_ja": "右斜め下向き矢印",
+    "category": "abstract",
+    "unicode": "2198"
+  },
+  {
+    "moji": "↙",
+    "code": "south_west_arrow",
+    "code_ja": "左斜め下向き矢印",
+    "category": "abstract",
+    "unicode": "2199"
+  },
+  {
+    "moji": "↩",
+    "code": "leftwards_arrow_with_hook",
+    "code_ja": "回り矢印1",
+    "category": "abstract",
+    "unicode": "21a9"
+  },
+  {
+    "moji": "↪",
+    "code": "rightwards_arrow_with_hook",
+    "code_ja": "回り矢印2",
+    "category": "abstract",
+    "unicode": "21aa"
+  },
+  {
+    "moji": "⏩",
+    "code": "black_right_pointing_double_triangle",
+    "code_ja": "右向き三角2",
+    "category": "abstract",
+    "unicode": "23e9"
+  },
+  {
+    "moji": "⏪",
+    "code": "black_left_pointing_double_triangle",
+    "code_ja": "左向き三角2",
+    "category": "abstract",
+    "unicode": "23ea"
+  },
+  {
+    "moji": "⏫",
+    "code": "black_up_pointing_double_triangle",
+    "code_ja": "上向き三角2",
+    "category": "abstract",
+    "unicode": "23eb"
+  },
+  {
+    "moji": "⏬",
+    "code": "black_down_pointing_double_triangle",
+    "code_ja": "下向き三角2",
+    "category": "abstract",
+    "unicode": "23ec"
   },
   {
     "moji": "⏰",
@@ -3482,17 +4427,73 @@
     "unicode": "23f3"
   },
   {
+    "moji": "▪",
+    "code": "black_small_square",
+    "code_ja": "小四角(黒)",
+    "category": "abstract",
+    "unicode": "25aa"
+  },
+  {
+    "moji": "▫",
+    "code": "white_small_square",
+    "code_ja": "小四角(白)",
+    "category": "abstract",
+    "unicode": "25ab"
+  },
+  {
+    "moji": "▶",
+    "code": "black_right_pointing_triangle",
+    "code_ja": "右向き三角1",
+    "category": "abstract",
+    "unicode": "25b6"
+  },
+  {
+    "moji": "◀",
+    "code": "black_left_pointing_triangle",
+    "code_ja": "左向き三角1",
+    "category": "abstract",
+    "unicode": "25c0"
+  },
+  {
+    "moji": "◻",
+    "code": "white_medium_square",
+    "code_ja": "大四角(白)",
+    "category": "abstract",
+    "unicode": "25fb"
+  },
+  {
+    "moji": "◼",
+    "code": "black_medium_square",
+    "code_ja": "大四角(黒)",
+    "category": "abstract",
+    "unicode": "25fc"
+  },
+  {
+    "moji": "◽",
+    "code": "white_medium_small_square",
+    "code_ja": "中四角(白)",
+    "category": "abstract",
+    "unicode": "25fd"
+  },
+  {
+    "moji": "◾",
+    "code": "black_medium_small_square",
+    "code_ja": "中四角(黒)",
+    "category": "abstract",
+    "unicode": "25fe"
+  },
+  {
     "moji": "☀",
     "code": "sun",
     "code_ja": "晴れ",
-    "category": "abstract",
+    "category": "nature",
     "unicode": "2600"
   },
   {
     "moji": "☁",
     "code": "cloud",
     "code_ja": "曇り",
-    "category": "abstract",
+    "category": "nature",
     "unicode": "2601"
   },
   {
@@ -3503,10 +4504,17 @@
     "unicode": "260e"
   },
   {
+    "moji": "☑",
+    "code": "ballot_box_with_check",
+    "code_ja": "チェックボックス",
+    "category": "abstract",
+    "unicode": "2611"
+  },
+  {
     "moji": "☔",
     "code": "umbrella_with_rain_drops",
     "code_ja": "雨",
-    "category": "abstract",
+    "category": "nature",
     "unicode": "2614"
   },
   {
@@ -3515,6 +4523,13 @@
     "code_ja": "コーヒー",
     "category": "object",
     "unicode": "2615"
+  },
+  {
+    "moji": "☝",
+    "code": "white_up_pointing_index",
+    "code_ja": "指さし",
+    "category": "gesture",
+    "unicode": "261d"
   },
   {
     "moji": "☺",
@@ -3527,85 +4542,113 @@
     "moji": "♈",
     "code": "Aries",
     "code_ja": "牡羊座",
-    "category": "abstract",
+    "category": "symbol",
     "unicode": "2648"
   },
   {
     "moji": "♉",
     "code": "Taurus",
     "code_ja": "牡牛座",
-    "category": "abstract",
+    "category": "symbol",
     "unicode": "2649"
   },
   {
     "moji": "♊",
     "code": "Gemini",
     "code_ja": "双子座",
-    "category": "abstract",
+    "category": "symbol",
     "unicode": "264a"
   },
   {
     "moji": "♋",
     "code": "Cancer",
     "code_ja": "蟹座",
-    "category": "abstract",
+    "category": "symbol",
     "unicode": "264b"
   },
   {
     "moji": "♌",
     "code": "Leo",
     "code_ja": "獅子座",
-    "category": "abstract",
+    "category": "symbol",
     "unicode": "264c"
   },
   {
     "moji": "♍",
     "code": "Virgo",
     "code_ja": "乙女座",
-    "category": "abstract",
+    "category": "symbol",
     "unicode": "264d"
   },
   {
     "moji": "♎",
     "code": "Libra",
     "code_ja": "天秤座",
-    "category": "abstract",
+    "category": "symbol",
     "unicode": "264e"
   },
   {
     "moji": "♏",
     "code": "Scorpius",
     "code_ja": "蠍座",
-    "category": "abstract",
+    "category": "symbol",
     "unicode": "264f"
   },
   {
     "moji": "♐",
     "code": "Sagittarius",
     "code_ja": "射手座",
-    "category": "abstract",
+    "category": "symbol",
     "unicode": "2650"
   },
   {
     "moji": "♑",
     "code": "Capricorn",
     "code_ja": "山羊座",
-    "category": "abstract",
+    "category": "symbol",
     "unicode": "2651"
   },
   {
     "moji": "♒",
     "code": "Aquarius",
     "code_ja": "水瓶座",
-    "category": "abstract",
+    "category": "symbol",
     "unicode": "2652"
   },
   {
     "moji": "♓",
     "code": "Pisces",
     "code_ja": "魚座",
-    "category": "abstract",
+    "category": "symbol",
     "unicode": "2653"
+  },
+  {
+    "moji": "♠",
+    "code": "black_spade_suit",
+    "code_ja": "スペード",
+    "category": "symbol",
+    "unicode": "2660"
+  },
+  {
+    "moji": "♣",
+    "code": "black_club_suit",
+    "code_ja": "クラブ",
+    "category": "symbol",
+    "unicode": "2663"
+  },
+  {
+    "moji": "♥",
+    "code": "black_heart_suit",
+    "code_ja": "ハート",
+    "category": "symbol",
+    "unicode": "2665"
+  },
+  {
+    "moji": "♦",
+    "code": "black_diamond_suit",
+    "code_ja": "ダイヤ",
+    "category": "symbol",
+    "unicode": "2666"
   },
   {
     "moji": "♨",
@@ -3615,10 +4658,17 @@
     "unicode": "2668"
   },
   {
+    "moji": "♻",
+    "code": "black_universal_recycling_symbol",
+    "code_ja": "リサイクルマーク",
+    "category": "symbol",
+    "unicode": "267b"
+  },
+  {
     "moji": "♿",
     "code": "wheelchair",
     "code_ja": "車椅子マーク",
-    "category": "abstract",
+    "category": "symbol",
     "unicode": "267f"
   },
   {
@@ -3629,11 +4679,32 @@
     "unicode": "2693"
   },
   {
+    "moji": "⚠",
+    "code": "warning_sign",
+    "code_ja": "注意",
+    "category": "symbol",
+    "unicode": "26a0"
+  },
+  {
     "moji": "⚡",
     "code": "high_voltage_sign",
     "code_ja": "イナズマ",
-    "category": "object",
+    "category": "nature",
     "unicode": "26a1"
+  },
+  {
+    "moji": "⚪",
+    "code": "medium_white_circle",
+    "code_ja": "中丸(白)",
+    "category": "abstract",
+    "unicode": "26aa"
+  },
+  {
+    "moji": "⚫",
+    "code": "medium_black_circle",
+    "code_ja": "中丸(黒)",
+    "category": "abstract",
+    "unicode": "26ab"
   },
   {
     "moji": "⚽",
@@ -3662,6 +4733,20 @@
     "code_ja": "晴れときどき曇り",
     "category": "nature",
     "unicode": "26c5"
+  },
+  {
+    "moji": "⛎",
+    "code": "ophiuchus",
+    "code_ja": "蛇使い座",
+    "category": "symbol",
+    "unicode": "26ce"
+  },
+  {
+    "moji": "⛔",
+    "code": "no_entry",
+    "code_ja": "立ち入り禁止",
+    "category": "abstract",
+    "unicode": "26d4"
   },
   {
     "moji": "⛪",
@@ -3706,6 +4791,20 @@
     "unicode": "26fd"
   },
   {
+    "moji": "✂",
+    "code": "black_scissors",
+    "code_ja": "はさみ",
+    "category": "object",
+    "unicode": "2702"
+  },
+  {
+    "moji": "✅",
+    "code": "white_heavy_check_mark",
+    "code_ja": "チェックマーク2",
+    "category": "abstract",
+    "unicode": "2705"
+  },
+  {
     "moji": "✈",
     "code": "airplane",
     "code_ja": "飛行機",
@@ -3718,6 +4817,20 @@
     "code_ja": "封筒1",
     "category": "object",
     "unicode": "2709"
+  },
+  {
+    "moji": "✊",
+    "code": "raised_fist",
+    "code_ja": "グー",
+    "category": "gesture",
+    "unicode": "270a"
+  },
+  {
+    "moji": "✋",
+    "code": "raised_hand",
+    "code_ja": "パー",
+    "category": "gesture",
+    "unicode": "270b"
   },
   {
     "moji": "✌",
@@ -3741,11 +4854,95 @@
     "unicode": "2712"
   },
   {
+    "moji": "✔",
+    "code": "heavy_check_mark",
+    "code_ja": "チェックマーク1",
+    "category": "abstract",
+    "unicode": "2714"
+  },
+  {
+    "moji": "✖",
+    "code": "heavy_multiplication_x",
+    "code_ja": "×",
+    "category": "abstract",
+    "unicode": "2716"
+  },
+  {
+    "moji": "✨",
+    "code": "sparkles",
+    "code_ja": "キラキラ",
+    "category": "abstract",
+    "unicode": "2728"
+  },
+  {
+    "moji": "✳",
+    "code": "eight_spoked_asterisk",
+    "code_ja": "キラリ1",
+    "category": "abstract",
+    "unicode": "2733"
+  },
+  {
+    "moji": "✴",
+    "code": "eight_pointed_black_star",
+    "code_ja": "キラリ2",
+    "category": "abstract",
+    "unicode": "2734"
+  },
+  {
     "moji": "❄",
     "code": "snowflake",
     "code_ja": "雪の結晶",
     "category": "nature",
     "unicode": "2744"
+  },
+  {
+    "moji": "❇",
+    "code": "sparkle",
+    "code_ja": "スパーク",
+    "category": "abstract",
+    "unicode": "2747"
+  },
+  {
+    "moji": "❌",
+    "code": "cross_mark",
+    "code_ja": "×1",
+    "category": "abstract",
+    "unicode": "274c"
+  },
+  {
+    "moji": "❎",
+    "code": "negative_squared_cross_mark",
+    "code_ja": "×2",
+    "category": "abstract",
+    "unicode": "274e"
+  },
+  {
+    "moji": "❓",
+    "code": "black_question_mark_ornament",
+    "code_ja": "？2",
+    "category": "abstract",
+    "unicode": "2753"
+  },
+  {
+    "moji": "❔",
+    "code": "white_question_mark_ornament",
+    "code_ja": "？1",
+    "category": "abstract",
+    "unicode": "2754"
+  },
+  {
+    "moji": "❕",
+    "code": "white_exclamation_mark_ornament",
+    "code_ja": "！1",
+    "category": "abstract",
+    "unicode": "2755"
+  },
+  {
+    "moji": "❗",
+    "code": "heavy_exclamation_mark_symbol",
+    "code_ja": "！2",
+    "category": "abstract",
+    "unicode": "2757"
   },
   {
     "moji": "❤",
@@ -3755,24 +4952,122 @@
     "unicode": "2764"
   },
   {
+    "moji": "➕",
+    "code": "heavy_plus_sign",
+    "code_ja": "＋",
+    "category": "abstract",
+    "unicode": "2795"
+  },
+  {
+    "moji": "➖",
+    "code": "heavy_minus_sign",
+    "code_ja": "−",
+    "category": "abstract",
+    "unicode": "2796"
+  },
+  {
+    "moji": "➗",
+    "code": "heavy_division_sign",
+    "code_ja": "÷",
+    "category": "abstract",
+    "unicode": "2797"
+  },
+  {
     "moji": "➡",
     "code": "black_rightwards_arrow",
-    "code_ja": "右矢印",
+    "code_ja": "右向き矢印",
     "category": "abstract",
     "unicode": "27a1"
   },
   {
+    "moji": "➰",
+    "code": "curly_loop",
+    "code_ja": "くるり",
+    "category": "abstract",
+    "unicode": "27b0"
+  },
+  {
+    "moji": "➿",
+    "code": "double_curly_loop",
+    "code_ja": "フリーダイヤル",
+    "category": "symbol",
+    "unicode": "27bf"
+  },
+    {
+    "moji": "⤴",
+    "code": "arrow_pointing_rightwards_then_curving_upwards",
+    "code_ja": "上向きカーブ矢印",
+    "category": "abstract",
+    "unicode": "2934"
+  },
+  {
+    "moji": "⤵",
+    "code": "arrow_pointing_rightwards_then_curving_downwards",
+    "code_ja": "下向きカーブ矢印",
+    "category": "abstract",
+    "unicode": "2935"
+  },
+  {
     "moji": "⬅",
     "code": "leftwards_black_arrow",
-    "code_ja": "左矢印",
+    "code_ja": "左向き矢印",
     "category": "abstract",
     "unicode": "2b05"
+  },
+  {
+    "moji": "⬆",
+    "code": "upwards_black_arrow",
+    "code_ja": "上向き矢印",
+    "category": "abstract",
+    "unicode": "2b06"
+  },
+  {
+    "moji": "⬇",
+    "code": "downwards_black_arrow",
+    "code_ja": "下向き矢印",
+    "category": "abstract",
+    "unicode": "2b07"
+  },
+  {
+    "moji": "⬛",
+    "code": "black_large_square",
+    "code_ja": "特大四角(黒)",
+    "category": "abstract",
+    "unicode": "2b1b"
+  },
+  {
+    "moji": "⬜",
+    "code": "white_large_square",
+    "code_ja": "特大四角(白)",
+    "category": "abstract",
+    "unicode": "2b1c"
+  },
+  {
+    "moji": "⭐",
+    "code": "white_medium_star",
+    "code_ja": "中星(白)",
+    "category": "abstract",
+    "unicode": "2b50"
+  },
+  {
+    "moji": "⭕",
+    "code": "heavy_large_circle",
+    "code_ja": "○",
+    "category": "abstract",
+    "unicode": "2b55"
+  },
+  {
+    "moji": "㊗",
+    "code": "circled_ideograph_congratulation",
+    "code_ja": "祝マーク",
+    "category": "symbol",
+    "unicode": "3297"
   },
   {
     "moji": "㊙",
     "code": "circled_ideograph_secret",
     "code_ja": "マル秘",
-    "category": "abstract",
+    "category": "symbol",
     "unicode": "3299"
   }
 ]

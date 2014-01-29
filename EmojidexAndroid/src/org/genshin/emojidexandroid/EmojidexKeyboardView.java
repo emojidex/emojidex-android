@@ -1,53 +1,135 @@
 package org.genshin.emojidexandroid;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
+import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.MenuInflater;
-import android.widget.PopupMenu;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.PopupWindow;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Created by R on 14/01/08.
+ * Created by nazuki on 14/01/08.
  */
 public class EmojidexKeyboardView extends KeyboardView {
-    private Context context;
+    protected Context context;
+    protected LayoutInflater inflater;
 
-    public EmojidexKeyboardView(Context context, AttributeSet attrs, int defStyle) {
+    protected PopupWindow popup;
+    protected List<Integer> keyCodes = new ArrayList<Integer>();
+    protected Keyboard.Key key;
+
+    private int stringRes = R.string.register_favorite;
+
+    /**
+     * Construct EmojidexKeyboardView object.
+     * @param context
+     * @param attrs
+     * @param defStyle
+     * @param inflater
+     */
+    public EmojidexKeyboardView(Context context, AttributeSet attrs, int defStyle, LayoutInflater inflater) {
         super(context, attrs, defStyle);
         this.context = context;
+        this.inflater = inflater;
     }
 
+    /**
+     * Behavior when long pressed
+     * @param popupKey
+     * @return
+     */
     @Override
     public boolean onLongPress(android.inputmethodservice.Keyboard.Key popupKey)
     {
-        PopupMenu popup = new PopupMenu(context, this);
-        MenuInflater inflater = popup.getMenuInflater();
-        inflater.inflate(R.menu.main, popup.getMenu());
-        popup.show();
+        keyCodes = new ArrayList<Integer>();
+        key = popupKey;
+        for (int code : key.codes)
+        {
+            keyCodes.add(code);
+        }
 
-//        AlertDialog.Builder alert = new AlertDialog.Builder(context);
-//        alert.setTitle(R.string.register_favorite_title);
-//        alert.setMessage(R.string.register_favorite);
-//        alert.setPositiveButton(R.string.yes,
-//                new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        Log.e("test", "yes");
-//                    }
-//                });
-//        alert.setNegativeButton(R.string.no,
-//                new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        Log.e("test", "no");
-//                    }
-//                });
-//
-//        alert.show();
+        createPopupWindow();
 
         return true;
+    }
+
+    /**
+     * create PopupWindow
+     */
+    private void createPopupWindow()
+    {
+        // create popup window
+        View view = inflater.inflate(R.layout.popup, null);
+        popup = new PopupWindow(this);
+        popup.setContentView(view);
+        popup.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
+        popup.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
+        popup.showAtLocation(this, Gravity.CENTER_HORIZONTAL, 0, -this.getHeight());
+
+        // set emoji
+        ImageView icon = (ImageView)view.findViewById(R.id.popup_image);
+        icon.setImageDrawable(key.icon);
+
+        // set text
+        TextView textView = (TextView)view.findViewById(R.id.popup_text);
+        textView.setText(setTextViewText());
+
+        // set button's ClickListener
+        Button yesButton = (Button)view.findViewById(R.id.popup_yes_button);
+        yesButton.setOnClickListener(createListener());
+        Button noButton = (Button)view.findViewById(R.id.popup_no_button);
+        noButton.setOnClickListener(new OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                popup.dismiss();
+            }
+        });
+    }
+
+    /**
+     * set text to TextView
+     * @return
+     */
+    protected int setTextViewText()
+    {
+        return stringRes;
+    }
+
+    /**
+     * create onClickListener
+     * @return
+     */
+    protected OnClickListener createListener()
+    {
+        return new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // save favorites
+                int result = JsonDataOperation.save(context, keyCodes, JsonDataOperation.FAVORITES);
+                switch (result) {
+                    case JsonDataOperation.SUCCESS :
+                        Toast.makeText(context, R.string.register_favorite_success, Toast.LENGTH_SHORT).show();
+                        break;
+                    case JsonDataOperation.DONE :
+                        Toast.makeText(context, R.string.register_favorite_done, Toast.LENGTH_SHORT).show();
+                        break;
+                    case JsonDataOperation.FAILURE :
+                        Toast.makeText(context, R.string.register_favorite_failure, Toast.LENGTH_SHORT).show();
+                        break;
+                }
+                popup.dismiss();
+            }
+        };
     }
 }

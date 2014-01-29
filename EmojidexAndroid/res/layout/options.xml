@@ -13,7 +13,7 @@
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:src="@android:drawable/ic_menu_recent_history"
-        android:onClick="showHistory"/>
+        android:onClick="showHistories"/>
 
     <ImageButton
         android:layout_width="match_parent"
@@ -22,7 +22,7 @@
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:src="@android:drawable/btn_star_big_on"
-        android:onClick="showFavorite" />
+        android:onClick="showFavorites" />
 
     <ImageButton
         android:layout_width="match_parent"

@@ -1,24 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_blank">
+    android:background="@drawable/background_blank"
+    android:padding="15dp" >
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:src="@android:drawable/ic_menu_manage"
-        android:contentDescription="@string/settings" />
-
-    <TextView
+    <Button
+        android:id="@+id/delete_favorites_all"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:text="setting function (coming soon)"
-        android:textColor="@color/white" />
+        android:layout_margin="15dp"
+        android:text="@string/delete_favorites_all"
+        android:layout_gravity="center_horizontal"
+        android:onClick="createDeleteFavoritesWindow"/>
+
+    <Button
+        android:id="@+id/delete_histories_all"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:text="@string/delete_histories_all"
+        android:layout_gravity="center_horizontal"
+        android:onClick="createDeleteHistoriesWindow"/>
+
+    <Button
+        android:id="@+id/settings_close"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:text="@string/close"
+        android:layout_gravity="center_horizontal"
+        android:onClick="closePopupWindow"/>
 
 </LinearLayout>
