@@ -44,6 +44,9 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
 
     private PopupWindow popup;
 
+    private final String emojidexImeId = "org.genshin.emojidexandroid/.EmojidexIME";
+    private String imeId;
+
     /**
      * Construct EmojidexIME object.
      */
@@ -127,13 +130,13 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
             codes.add(keyCodes[i]);
 
         StringBuilder buf = new StringBuilder("Click key : primaryCode = 0x" + String.format("%1$08x", primaryCode) + ", keyCodes = 0x");
-        for(int i = 0;  i < codes.size();  ++i)
+        for (int i = 0;  i < codes.size();  ++i)
             buf.append( String.format(" %1$08x", keyCodes[i]) );
         buf.append(", length = " + codes.size());
         android.util.Log.d("ime", buf.toString());
 
         // Input show ime picker.
-        if(primaryCode == showIMEPickerCode)
+        if (primaryCode == showIMEPickerCode)
         {
             inputMethodManager.showInputMethodPicker();
         }

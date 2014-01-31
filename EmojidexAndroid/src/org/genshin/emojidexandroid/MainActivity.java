@@ -310,4 +310,14 @@ public class MainActivity extends Activity {
             }
         }
     }
+
+    /**
+     * open settings view
+     * @param v
+     */
+    public void openSettings(View v)
+    {
+        Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+        startActivity(intent);
+    }
 }

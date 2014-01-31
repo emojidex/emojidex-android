@@ -33,4 +33,8 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
 
+    <string name="keyboard_button">Setting the keyboard icon button</string>
+    <string name="keyboard_button_text">You can set the keyboard to be changed when you press the keyboard icon button.</string>
+    <string name="back">Back</string>
+
 </resources>

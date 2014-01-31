@@ -33,4 +33,8 @@
     <string name="yes">はい</string>
     <string name="no">いいえ</string>
 
+    <string name="keyboard_button">キーボードアイコンボタンの設定</string>
+    <string name="keyboard_button_text">キーボードアイコンボタンを押した時に変更されるキーボードを設定します。</string>
+    <string name="back">戻る</string>
+
 </resources>
