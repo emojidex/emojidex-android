@@ -18,9 +18,9 @@
     <string name="all_category">all</string>
 
     <string name="register_favorite">Are you sure you want to register to your favorites?</string>
-    <string name="register_favorite_success">Registered.</string>
-    <string name="register_favorite_done">Already registered.</string>
-    <string name="register_favorite_failure">Sorry, failed to register.</string>
+    <string name="register_success">Registered.</string>
+    <string name="register_done">Already registered.</string>
+    <string name="register_failure">Sorry, failed to register.</string>
     <string name="delete_favorite">Are you sure you want to delete from your favorites?</string>
     <string name="delete_success">Deleted.</string>
     <string name="delete_failure">Sorry, failed to delete.</string>
@@ -36,5 +36,8 @@
     <string name="keyboard_button">Setting the keyboard icon button</string>
     <string name="keyboard_button_text">You can set the keyboard to be changed when you press the keyboard icon button.</string>
     <string name="back">Back</string>
+
+    <string name="set">Set</string>
+    <string name="cancel">Cancel</string>
 
 </resources>

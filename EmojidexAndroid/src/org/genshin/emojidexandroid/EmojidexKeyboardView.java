@@ -119,13 +119,13 @@ public class EmojidexKeyboardView extends KeyboardView {
                 int result = JsonDataOperation.save(context, keyCodes, JsonDataOperation.FAVORITES);
                 switch (result) {
                     case JsonDataOperation.SUCCESS :
-                        Toast.makeText(context, R.string.register_favorite_success, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, R.string.register_success, Toast.LENGTH_SHORT).show();
                         break;
                     case JsonDataOperation.DONE :
-                        Toast.makeText(context, R.string.register_favorite_done, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, R.string.register_done, Toast.LENGTH_SHORT).show();
                         break;
                     case JsonDataOperation.FAILURE :
-                        Toast.makeText(context, R.string.register_favorite_failure, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, R.string.register_failure, Toast.LENGTH_SHORT).show();
                         break;
                 }
                 popup.dismiss();

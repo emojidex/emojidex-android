@@ -1,6 +1,7 @@
 package org.genshin.emojidexandroid;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
@@ -160,6 +161,7 @@ public class JsonDataOperation
             return false;
         }
 
+        Log.e("test", "data: " + data.toString());
         return true;
     }
 
@@ -265,5 +267,60 @@ public class JsonDataOperation
         }
         else
             return data;
+    }
+
+    /**
+     * set keyboard
+     * @param context
+     * @param id keyboard's id
+     * @return
+     */
+    public static boolean saveKeyboard(Context context, String id)
+    {
+        JSONArray array = new JSONArray();
+        array.put(id);
+        boolean result = saveFile(context, "keyboard", array);
+
+        return result;
+    }
+
+    public static String loadKeyboard()
+    {
+        String id = "";
+
+
+
+        return id;
+    }
+
+    private static String readFile(Context context, String filename)
+    {
+        String str = "";
+        StringBuilder builder = new StringBuilder();
+        ArrayList<List<Integer>> data = new ArrayList<List<Integer>>();
+
+        // read json data
+        try
+        {
+            InputStream in = context.openFileInput(filename + ".json");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+            while ((str = reader.readLine()) != null)
+                builder.append(str);
+            str = new String(builder);
+            reader.close();
+            in.close();
+        }
+        catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+            return str;
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            return  str;
+        }
+
+        return str;
     }
 }
