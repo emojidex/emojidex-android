@@ -84,24 +84,37 @@ public class SettingsActivity extends Activity {
         keyboardIds = new ArrayList<String>();
         InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
         List<InputMethodInfo> inputMethodInfoList = imm.getEnabledInputMethodList();
-        for (int i = 0; i < inputMethodInfoList.size(); ++i)
+        for (InputMethodInfo info : inputMethodInfoList)
         {
-            InputMethodInfo inputMethodInfo = inputMethodInfoList.get(i);
-            keyboardNames.add(String.valueOf(inputMethodInfo.loadLabel(getPackageManager())));
-            keyboardIds.add(inputMethodInfo.getId());
+            keyboardNames.add(String.valueOf(info.loadLabel(getPackageManager())));
+            keyboardIds.add(info.getId());
         }
+//        for (int i = 0; i < inputMethodInfoList.size(); ++i)
+//        {
+//            InputMethodInfo inputMethodInfo = inputMethodInfoList.get(i);
+//            keyboardNames.add(String.valueOf(inputMethodInfo.loadLabel(getPackageManager())));
+//            keyboardIds.add(inputMethodInfo.getId());
+//        }
 
         // current keyboard
         int current = 0;
         String name = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.DEFAULT_INPUT_METHOD);
-        for (int i = 0; i < keyboardIds.size(); i++)
+        for (String id : keyboardIds)
         {
-            if (name.equals(keyboardIds.get(i)))
+            if (name.equals(id))
             {
-                current = i;
+                current = keyboardIds.indexOf(id);
                 break;
             }
         }
+//        for (int i = 0; i < keyboardIds.size(); i++)
+//        {
+//            if (name.equals(keyboardIds.get(i)))
+//            {
+//                current = i;
+//                break;
+//            }
+//        }
 
         // set listView
         listView.setAdapter(new ArrayAdapter<String>(
