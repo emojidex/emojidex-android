@@ -1,7 +1,6 @@
 package org.genshin.emojidexandroid;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
@@ -161,7 +160,6 @@ public class JsonDataOperation
             return false;
         }
 
-        Log.e("test", "data: " + data.toString());
         return true;
     }
 
@@ -277,32 +275,38 @@ public class JsonDataOperation
      */
     public static boolean saveKeyboard(Context context, String id)
     {
-        JSONArray array = new JSONArray();
-        array.put(id);
-        boolean result = saveFile(context, "keyboard", array);
+        // save data
+        try
+        {
+            OutputStream out = context.openFileOutput("keyboard.txt", Context.MODE_PRIVATE);
+            PrintWriter writer = new PrintWriter(new OutputStreamWriter(out, "UTF-8"));
+            writer.append(id);
+            writer.close();
+            out.close();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            return false;
+        }
 
-        return result;
+        return true;
     }
 
-    public static String loadKeyboard()
-    {
-        String id = "";
-
-
-
-        return id;
-    }
-
-    private static String readFile(Context context, String filename)
+    /**
+     * load keyboard
+     * @param context
+     * @return
+     */
+    public static String loadKeyboard(Context context)
     {
         String str = "";
         StringBuilder builder = new StringBuilder();
-        ArrayList<List<Integer>> data = new ArrayList<List<Integer>>();
 
-        // read json data
+        // read data
         try
         {
-            InputStream in = context.openFileInput(filename + ".json");
+            InputStream in = context.openFileInput("keyboard.txt");
             BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
             while ((str = reader.readLine()) != null)
                 builder.append(str);
@@ -313,12 +317,10 @@ public class JsonDataOperation
         catch (FileNotFoundException e)
         {
             e.printStackTrace();
-            return str;
         }
         catch (IOException e)
         {
             e.printStackTrace();
-            return  str;
         }
 
         return str;

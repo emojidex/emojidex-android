@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
@@ -43,9 +44,6 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     private ViewFlipper keyboardViewFlipper;
 
     private PopupWindow popup;
-
-    private final String emojidexImeId = "org.genshin.emojidexandroid/.EmojidexIME";
-    private String imeId;
 
     /**
      * Construct EmojidexIME object.
@@ -135,10 +133,23 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         buf.append(", length = " + codes.size());
         android.util.Log.d("ime", buf.toString());
 
-        // Input show ime picker.
+        // Input show ime picker or default keyboard.
         if (primaryCode == showIMEPickerCode)
         {
-            inputMethodManager.showInputMethodPicker();
+            boolean result = false;
+            String id = JsonDataOperation.loadKeyboard(this);
+
+            List<InputMethodInfo> inputMethodInfoList = inputMethodManager.getEnabledInputMethodList();
+            for (int i = 0; i < inputMethodInfoList.size(); ++i) {
+                InputMethodInfo inputMethodInfo = inputMethodInfoList.get(i);
+                if (inputMethodInfo.getId().equals(id))
+                    result = true;
+            }
+
+            if (result)
+                switchInputMethod(id);
+            else
+                inputMethodManager.showInputMethodPicker();
         }
         /*
         else if (primaryCode == KeyEvent.KEYCODE_ENTER)
@@ -296,7 +307,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     private void createSubKeyboardView()
     {
         // Create KeyboardView.
-        KeyboardView subKeyboardView = new KeyboardView(this, null, R.attr.subKeyboardViewStyle);
+        EmojidexSubKeyboardView subKeyboardView = new EmojidexSubKeyboardView(this, null, R.attr.subKeyboardViewStyle);
         subKeyboardView.setOnKeyboardActionListener(this);
         subKeyboardView.setPreviewEnabled(false);
 

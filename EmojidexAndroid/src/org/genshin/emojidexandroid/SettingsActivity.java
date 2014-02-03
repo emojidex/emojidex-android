@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,7 +57,6 @@ public class SettingsActivity extends Activity {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     int position = listView.getCheckedItemPosition();
-                    Log.e("test", "checked: " + keyboardIds.get(position));
                     boolean result = JsonDataOperation.saveKeyboard(context, keyboardIds.get(position));
                     if (result)
                         Toast.makeText(context, R.string.register_success, Toast.LENGTH_SHORT).show();
@@ -74,21 +72,6 @@ public class SettingsActivity extends Activity {
                 }
             });
         dialog.show();
-
-
-//        // TODO test
-//        Log.e("test", "" + Settings.Secure.getString(this.getContentResolver(),
-//                Settings.Secure.DEFAULT_INPUT_METHOD));
-//        InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
-//        List<InputMethodInfo> inputMethodInfoList = imm.getEnabledInputMethodList();
-//        for (int i = 0; i < inputMethodInfoList.size(); ++i) {
-//            InputMethodInfo inputMethodInfo = inputMethodInfoList.get(i);
-//            CharSequence label = inputMethodInfo.loadLabel(getPackageManager());
-//            Log.v("label", String.valueOf(label));
-//            Log.e("test", "id:" + inputMethodInfo.getId());
-//        }
-//        // switchInputMethod(imeId);
-
     }
 
     /**
@@ -146,7 +129,6 @@ public class SettingsActivity extends Activity {
      */
     public void deleteAllFavorites(View v)
     {
-        // create dialog
         createDeleteDialog(R.string.delete_favorites_all_confirm, JsonDataOperation.FAVORITES);
     }
 
@@ -156,7 +138,6 @@ public class SettingsActivity extends Activity {
      */
     public void deleteAllHistories(View v)
     {
-        // create dialog
         createDeleteDialog(R.string.delete_histories_all_confirm, JsonDataOperation.HISTORIES);
     }
 
