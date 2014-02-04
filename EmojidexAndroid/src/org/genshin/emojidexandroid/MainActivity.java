@@ -7,6 +7,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AnimationUtils;
@@ -29,6 +30,15 @@ public class MainActivity extends Activity {
         return true;
     }
 
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId())
+        {
+            case R.id.action_settings:
+                openSettings(null);
+                return true;
+        }
+        return false;
+    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -309,5 +319,15 @@ public class MainActivity extends Activity {
                 textHalfEditText.setSelection(newPos);
             }
         }
+    }
+
+    /**
+     * open settings view
+     * @param v
+     */
+    public void openSettings(View v)
+    {
+        Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+        startActivity(intent);
     }
 }

@@ -266,4 +266,63 @@ public class JsonDataOperation
         else
             return data;
     }
+
+    /**
+     * set keyboard
+     * @param context
+     * @param id keyboard's id
+     * @return
+     */
+    public static boolean saveKeyboard(Context context, String id)
+    {
+        // save data
+        try
+        {
+            OutputStream out = context.openFileOutput("keyboard.txt", Context.MODE_PRIVATE);
+            PrintWriter writer = new PrintWriter(new OutputStreamWriter(out, "UTF-8"));
+            writer.append(id);
+            writer.close();
+            out.close();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * load keyboard
+     * @param context
+     * @return
+     */
+    public static String loadKeyboard(Context context)
+    {
+        String str = "";
+        StringBuilder builder = new StringBuilder();
+
+        // read data
+        try
+        {
+            InputStream in = context.openFileInput("keyboard.txt");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+            while ((str = reader.readLine()) != null)
+                builder.append(str);
+            str = new String(builder);
+            reader.close();
+            in.close();
+        }
+        catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
+        return str;
+    }
 }
