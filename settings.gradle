@@ -1,1 +1,1 @@
-include ':EmojidexAndroid', ':EmojidexAndroidLibrary', ':LibraryTest', ':ReceiveSendTest'
+include ':EmojidexAndroid', ':EmojidexAndroidLibrary'
