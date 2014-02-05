@@ -158,23 +158,23 @@ public class MainActivity extends Activity {
         try
         {
             Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("text/plain");
 
             // set share data
             if (viewFlipper.getCurrentView() == findViewById(R.id.emoji_layout))
             {
-                intent.putExtra(Intent.EXTRA_TEXT, toUnicodeString(emojiEditText.getText()));
+                intent.putExtra(Intent.EXTRA_TEXT, toUnicodeString(emojiEditText.getText()).toString());
             }
             else if (viewFlipper.getCurrentView() == findViewById(R.id.text_layout))
             {
-                intent.putExtra(Intent.EXTRA_TEXT, textEditText.getText());
+                intent.putExtra(Intent.EXTRA_TEXT, textEditText.getText().toString());
             }
             else
             {
-                intent.putExtra(Intent.EXTRA_TEXT, toUnicodeString(emojiHalfEditText.getText()));
+                intent.putExtra(Intent.EXTRA_TEXT, toUnicodeString(emojiHalfEditText.getText()).toString());
             }
 
-            intent.setType("text/plain");
-            startActivity(Intent.createChooser(intent, "Send to"));
+            startActivity(Intent.createChooser(intent, getResources().getString(R.string.share)));
         }
         catch(Exception e)
         {

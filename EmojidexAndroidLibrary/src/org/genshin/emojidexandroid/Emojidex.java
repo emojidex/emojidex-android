@@ -159,13 +159,15 @@ public class Emojidex {
             {
                 emojiData = emojiDataManager.getEmojiData(codes.subList(0, 1));
                 codes.removeFirst();
-                start = cur;
 
                 // Not emoji.
                 if(emojiData == null)
                 {
                     result.append( text.subSequence(start, cur) );
+                    start = cur;
+                    continue;
                 }
+                start = cur;
             }
 
             // Emoji to tag.
