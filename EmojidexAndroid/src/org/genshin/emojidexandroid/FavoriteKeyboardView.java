@@ -45,7 +45,7 @@ public class FavoriteKeyboardView extends EmojidexKeyboardView {
             @Override
             public void onClick(View v) {
                 // delete favorites
-                boolean result = JsonDataOperation.delete(context, keyCodes);
+                boolean result = FileOperation.delete(context, keyCodes);
                 if (result)
                     Toast.makeText(context, R.string.delete_success, Toast.LENGTH_SHORT).show();
                 else

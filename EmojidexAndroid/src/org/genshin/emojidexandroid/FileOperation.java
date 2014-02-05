@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Created by nazuki on 2014/01/22.
  */
-public class JsonDataOperation
+public class FileOperation
 {
     public static final int SUCCESS = 0;
     public static final int DONE = 1;

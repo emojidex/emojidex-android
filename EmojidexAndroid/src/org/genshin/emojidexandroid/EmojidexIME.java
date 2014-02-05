@@ -137,7 +137,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         if (primaryCode == showIMEPickerCode)
         {
             boolean result = false;
-            String id = JsonDataOperation.loadKeyboard(this);
+            String id = FileOperation.loadKeyboard(this);
 
             List<InputMethodInfo> inputMethodInfoList = inputMethodManager.getEnabledInputMethodList();
             for (int i = 0; i < inputMethodInfoList.size(); ++i) {
@@ -416,7 +416,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     public void showHistories(View v)
     {
         // load histories
-        ArrayList<List<Integer>> histories = JsonDataOperation.load(this, JsonDataOperation.HISTORIES);
+        ArrayList<List<Integer>> histories = FileOperation.load(this, FileOperation.HISTORIES);
         createNewKeyboards(histories, "histories");
     }
 
@@ -427,7 +427,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     public void showFavorites(View v)
     {
         // load favorites
-        ArrayList<List<Integer>> favorites = JsonDataOperation.load(this, JsonDataOperation.FAVORITES);
+        ArrayList<List<Integer>> favorites = FileOperation.load(this, FileOperation.FAVORITES);
         createNewKeyboards(favorites, "favorites");
     }
 
@@ -467,7 +467,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
      */
     private void saveHistories(List<Integer> keyCodes)
     {
-        JsonDataOperation.save(this, keyCodes, JsonDataOperation.HISTORIES);
+        FileOperation.save(this, keyCodes, FileOperation.HISTORIES);
     }
 
     /**
@@ -490,7 +490,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         closePopupWindow(v);
 
         // delete
-        boolean result = JsonDataOperation.deleteAll(getApplicationContext(), JsonDataOperation.FAVORITES);
+        boolean result = FileOperation.deleteAll(getApplicationContext(), FileOperation.FAVORITES);
         showResultToast(result);
         setKeyboard("all");
     }
@@ -516,7 +516,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         closePopupWindow(v);
 
         // delete
-        boolean result = JsonDataOperation.deleteAll(getApplicationContext(), JsonDataOperation.HISTORIES);
+        boolean result = FileOperation.deleteAll(getApplicationContext(), FileOperation.HISTORIES);
         showResultToast(result);
         setKeyboard("all");
     }

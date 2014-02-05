@@ -57,7 +57,7 @@ public class SettingsActivity extends Activity {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     int position = listView.getCheckedItemPosition();
-                    boolean result = JsonDataOperation.saveKeyboard(context, keyboardIds.get(position));
+                    boolean result = FileOperation.saveKeyboard(context, keyboardIds.get(position));
                     if (result)
                         Toast.makeText(context, R.string.register_success, Toast.LENGTH_SHORT).show();
                     else
@@ -142,7 +142,7 @@ public class SettingsActivity extends Activity {
      */
     public void deleteAllFavorites(View v)
     {
-        createDeleteDialog(R.string.delete_favorites_all_confirm, JsonDataOperation.FAVORITES);
+        createDeleteDialog(R.string.delete_favorites_all_confirm, FileOperation.FAVORITES);
     }
 
     /**
@@ -151,7 +151,7 @@ public class SettingsActivity extends Activity {
      */
     public void deleteAllHistories(View v)
     {
-        createDeleteDialog(R.string.delete_histories_all_confirm, JsonDataOperation.HISTORIES);
+        createDeleteDialog(R.string.delete_histories_all_confirm, FileOperation.HISTORIES);
     }
 
     /**
@@ -168,7 +168,7 @@ public class SettingsActivity extends Activity {
             new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    boolean result = JsonDataOperation.deleteAll(context, mode);
+                    boolean result = FileOperation.deleteAll(context, mode);
                     if (result)
                         Toast.makeText(context, R.string.delete_success, Toast.LENGTH_SHORT).show();
                     else

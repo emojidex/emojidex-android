@@ -116,15 +116,15 @@ public class EmojidexKeyboardView extends KeyboardView {
             @Override
             public void onClick(View v) {
                 // save favorites
-                int result = JsonDataOperation.save(context, keyCodes, JsonDataOperation.FAVORITES);
+                int result = FileOperation.save(context, keyCodes, FileOperation.FAVORITES);
                 switch (result) {
-                    case JsonDataOperation.SUCCESS :
+                    case FileOperation.SUCCESS :
                         Toast.makeText(context, R.string.register_success, Toast.LENGTH_SHORT).show();
                         break;
-                    case JsonDataOperation.DONE :
+                    case FileOperation.DONE :
                         Toast.makeText(context, R.string.register_done, Toast.LENGTH_SHORT).show();
                         break;
-                    case JsonDataOperation.FAILURE :
+                    case FileOperation.FAILURE :
                         Toast.makeText(context, R.string.register_failure, Toast.LENGTH_SHORT).show();
                         break;
                 }
