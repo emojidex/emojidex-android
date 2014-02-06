@@ -57,7 +57,7 @@ public class SettingsActivity extends Activity {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     int position = listView.getCheckedItemPosition();
-                    boolean result = FileOperation.saveKeyboard(context, keyboardIds.get(position));
+                    boolean result = FileOperation.savePreferences(context, keyboardIds.get(position), FileOperation.KEYBOARD);
                     if (result)
                         Toast.makeText(context, R.string.register_success, Toast.LENGTH_SHORT).show();
                     else

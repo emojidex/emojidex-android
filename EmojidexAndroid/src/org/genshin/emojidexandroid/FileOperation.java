@@ -31,6 +31,8 @@ public class FileOperation
 
     public static final String FAVORITES = "favorites";
     public static final String HISTORIES = "histories";
+    public static final String KEYBOARD = "keyboard";
+    public static final String SHARE = "share";
 
     public static int MAX_HISTORIES = 50;
 
@@ -268,19 +270,19 @@ public class FileOperation
     }
 
     /**
-     * set keyboard
+     * set preferences
      * @param context
-     * @param id keyboard's id
+     * @param param keyboard's id or packageName
      * @return
      */
-    public static boolean saveKeyboard(Context context, String id)
+    public static boolean savePreferences(Context context, String param, String filename)
     {
         // save data
         try
         {
-            OutputStream out = context.openFileOutput("keyboard.txt", Context.MODE_PRIVATE);
+            OutputStream out = context.openFileOutput(filename + ".txt", Context.MODE_PRIVATE);
             PrintWriter writer = new PrintWriter(new OutputStreamWriter(out, "UTF-8"));
-            writer.append(id);
+            writer.append(param);
             writer.close();
             out.close();
         }
@@ -294,11 +296,11 @@ public class FileOperation
     }
 
     /**
-     * load keyboard
+     * load preferences
      * @param context
      * @return
      */
-    public static String loadKeyboard(Context context)
+    public static String loadPreferences(Context context, String filename)
     {
         String str = "";
         StringBuilder builder = new StringBuilder();
@@ -306,7 +308,7 @@ public class FileOperation
         // read data
         try
         {
-            InputStream in = context.openFileInput("keyboard.txt");
+            InputStream in = context.openFileInput(filename + ".txt");
             BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
             while ((str = reader.readLine()) != null)
                 builder.append(str);

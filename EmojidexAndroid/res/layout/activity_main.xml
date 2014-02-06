@@ -36,6 +36,15 @@
             android:onClick="shareData"/>
 
         <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:background="@android:drawable/ic_menu_send"
+            android:contentDescription="@string/share"
+            android:layout_marginLeft="15dp"
+            android:onClick="shareDataLastSelected" />
+
+        <ImageButton
             android:id="@+id/settings_button"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"

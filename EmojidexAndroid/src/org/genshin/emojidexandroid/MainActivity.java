@@ -9,6 +9,7 @@ import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -181,17 +182,20 @@ public class MainActivity extends Activity {
      */
     public void shareDataLastSelected(View v)
     {
-        String packageName = "";
+        String packageName = FileOperation.loadPreferences(getApplicationContext(), FileOperation.SHARE);
         if (packageName.equals(""))
             shareData(v);
+        else
+        {
+            // set share data
+            String data = setShareData();
 
-        // set share data
-        String data = setShareData();
-
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setPackage(packageName);
-        intent.putExtra(Intent.EXTRA_TEXT, data);
-        startActivity(intent);
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            intent.setPackage(packageName);
+            intent.putExtra(Intent.EXTRA_TEXT, data);
+            startActivity(intent);
+        }
     }
 
     /**
@@ -395,6 +399,7 @@ public class MainActivity extends Activity {
                 dialog.dismiss();
 
                 ResolveInfo info = appInfo.get(position);
+                FileOperation.savePreferences(getApplicationContext(), info.activityInfo.packageName, FileOperation.SHARE);
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 intent.setType("text/plain");
                 intent.setPackage(info.activityInfo.packageName);

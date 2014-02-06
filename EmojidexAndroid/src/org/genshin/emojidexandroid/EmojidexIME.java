@@ -137,7 +137,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         if (primaryCode == showIMEPickerCode)
         {
             boolean result = false;
-            String id = FileOperation.loadKeyboard(this);
+            String id = FileOperation.loadPreferences(this, FileOperation.KEYBOARD);
 
             List<InputMethodInfo> inputMethodInfoList = inputMethodManager.getEnabledInputMethodList();
             for (int i = 0; i < inputMethodInfoList.size(); ++i) {
