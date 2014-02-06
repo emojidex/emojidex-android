@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="Gradle: jackson-core-2.1.2">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/LibraryTest/build/exploded-bundles/EmojidexAndroidEmojidexAndroidLibraryUnspecified.aar/libs/jackson-core-2.1.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/EmojidexAndroid/build/exploded-bundles/EmojidexAndroidEmojidexAndroidLibraryUnspecified.aar/libs/jackson-core-2.1.2.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

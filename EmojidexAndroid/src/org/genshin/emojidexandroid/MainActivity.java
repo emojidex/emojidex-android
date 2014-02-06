@@ -1,18 +1,30 @@
 package org.genshin.emojidexandroid;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.ViewFlipper;
+
+import java.util.List;
 
 public class MainActivity extends Activity {
 
@@ -153,34 +165,56 @@ public class MainActivity extends Activity {
         return emojidex.toUnicodeString(cs);
     }
 
+    /**
+     * share
+     * @param v
+     */
     public void shareData(View v)
     {
-        try
-        {
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.setType("text/plain");
+        String data = setShareData();
+        createList(data);
+    }
 
-            // set share data
-            if (viewFlipper.getCurrentView() == findViewById(R.id.emoji_layout))
-            {
-                intent.putExtra(Intent.EXTRA_TEXT, toUnicodeString(emojiEditText.getText()).toString());
-            }
-            else if (viewFlipper.getCurrentView() == findViewById(R.id.text_layout))
-            {
-                intent.putExtra(Intent.EXTRA_TEXT, textEditText.getText().toString());
-            }
-            else
-            {
-                intent.putExtra(Intent.EXTRA_TEXT, toUnicodeString(emojiHalfEditText.getText()).toString());
-            }
+    /**
+     * share to last selected application
+     * @param v
+     */
+    public void shareDataLastSelected(View v)
+    {
+        String packageName = "";
+        if (packageName.equals(""))
+            shareData(v);
 
-            startActivity(Intent.createChooser(intent, getResources().getString(R.string.share)));
-        }
-        catch(Exception e)
+        // set share data
+        String data = setShareData();
+
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setPackage(packageName);
+        intent.putExtra(Intent.EXTRA_TEXT, data);
+        startActivity(intent);
+    }
+
+    /**
+     * set share data
+     * @return data
+     */
+    private String setShareData()
+    {
+        String text;
+        if (viewFlipper.getCurrentView() == findViewById(R.id.emoji_layout))
         {
-            e.printStackTrace();
-            Log.d("hoge", "send error.");
+            text = toUnicodeString(emojiEditText.getText()).toString();
         }
+        else if (viewFlipper.getCurrentView() == findViewById(R.id.text_layout))
+        {
+            text = textEditText.getText().toString();
+        }
+        else
+        {
+            text = toUnicodeString(emojiHalfEditText.getText()).toString();
+        }
+
+        return  text;
     }
 
     public void moveViewToRight(View v)
@@ -329,5 +363,75 @@ public class MainActivity extends Activity {
     {
         Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
         startActivity(intent);
+    }
+
+    /**
+     * create application list for sharing.
+     * @param data
+     */
+    private void createList(final String data)
+    {
+        // get destination application list
+        PackageManager packageManager = getPackageManager();
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        final List<ResolveInfo> appInfo = packageManager.queryIntentActivities(intent, 0);
+
+        // create listView
+        ListView listView = new ListView(this);
+        listView.setAdapter(new appInfoAdapter(this, R.layout.applicationlist_view, appInfo));
+
+        // create dialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(getResources().getString(R.string.share));
+        builder.setView(listView);
+        builder.setPositiveButton(R.string.cancel, null);
+        final AlertDialog dialog = builder.show();
+
+        // when click a listView's item
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                dialog.dismiss();
+
+                ResolveInfo info = appInfo.get(position);
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("text/plain");
+                intent.setPackage(info.activityInfo.packageName);
+                intent.putExtra(Intent.EXTRA_TEXT, data);
+                startActivity(intent);
+            }
+        });
+    }
+
+    /**
+     * application list adapter for sharing.
+     */
+    private class appInfoAdapter extends ArrayAdapter<ResolveInfo>
+    {
+        private LayoutInflater inflater;
+        private int layout;
+
+        public appInfoAdapter(Context context, int resource, List<ResolveInfo> objects) {
+            super(context, resource, objects);
+
+            inflater = (LayoutInflater)context.getSystemService(LAYOUT_INFLATER_SERVICE);
+            layout = resource;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View view = convertView;
+            if (convertView == null)
+                view = this.inflater.inflate(this.layout, null);
+
+            PackageManager packageManager = getPackageManager();
+            ResolveInfo info = getItem(position);
+            ImageView icon = (ImageView)view.findViewById(R.id.application_list_icon);
+            icon.setImageDrawable(info.loadIcon(packageManager));
+            TextView textView = (TextView)view.findViewById(R.id.application_list_name);
+            textView.setText(info.loadLabel(packageManager));
+            return view;
+        }
     }
 }
