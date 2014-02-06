@@ -9,7 +9,6 @@ import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,6 +19,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -35,6 +35,8 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         initEmojidexEditor();
+        setShareButtonIcon();
+        preLoadImage();
     }
 
     @Override
@@ -108,7 +110,8 @@ public class MainActivity extends Activity {
     private EditText emojiHalfEditText;
     private EditText textHalfEditText;
     private CustomTextWatcher emojiTextWatcher;
-    private CustomTextWatcher textTextWatcher;
+    private CustomTextWatcher emojiHalfTextWatcher;
+    private CustomTextWatcher textHalfTextWatcher;
     private ViewFlipper viewFlipper;
 
     private void initEmojidexEditor()
@@ -122,24 +125,26 @@ public class MainActivity extends Activity {
         textHalfEditText = (EditText)findViewById(R.id.text_half_edittext);
 
         // detects input
-        emojiTextWatcher = new CustomTextWatcher(emojiHalfEditText.getId());
-        textTextWatcher = new CustomTextWatcher(textHalfEditText.getId());
-        emojiHalfEditText.addTextChangedListener(emojiTextWatcher);
+        emojiTextWatcher = new CustomTextWatcher(emojiEditText.getId());
+        emojiHalfTextWatcher = new CustomTextWatcher(emojiHalfEditText.getId());
+        textHalfTextWatcher = new CustomTextWatcher(textHalfEditText.getId());
+        emojiEditText.addTextChangedListener(emojiTextWatcher);
+        emojiHalfEditText.addTextChangedListener(emojiHalfTextWatcher);
         emojiHalfEditText.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                emojiHalfEditText.removeTextChangedListener(emojiTextWatcher);
-                emojiHalfEditText.addTextChangedListener(emojiTextWatcher);
-                textHalfEditText.removeTextChangedListener(textTextWatcher);
+                emojiHalfEditText.removeTextChangedListener(emojiHalfTextWatcher);
+                emojiHalfEditText.addTextChangedListener(emojiHalfTextWatcher);
+                textHalfEditText.removeTextChangedListener(textHalfTextWatcher);
                 return false;
             }
         });
         textHalfEditText.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                textHalfEditText.removeTextChangedListener(textTextWatcher);
-                textHalfEditText.addTextChangedListener(textTextWatcher);
-                emojiHalfEditText.removeTextChangedListener(emojiTextWatcher);
+                textHalfEditText.removeTextChangedListener(textHalfTextWatcher);
+                textHalfEditText.addTextChangedListener(textHalfTextWatcher);
+                emojiHalfEditText.removeTextChangedListener(emojiHalfTextWatcher);
                 return false;
             }
         });
@@ -320,41 +325,63 @@ public class MainActivity extends Activity {
                 if(span.getClass().getName().equals("android.view.inputmethod.ComposingText"))
                     return;
 
-            // conversion while input emoji
-            if (inputEditTextId == R.id.emoji_half_edittext )
+            int oldPos = 0;
+            int oldTextLength = 0;
+            int addTextLength = 0;
+            int newPos = 0;
+
+            switch (inputEditTextId)
             {
-                int oldPos = emojiHalfEditText.getSelectionStart();
-                int oldTextLength = emojiHalfEditText.getText().length();
+                // conversion text -> emoji in emojiEditText
+                case R.id.emoji_edittext :
+                    oldPos = emojiEditText.getSelectionStart();
+                    oldTextLength = emojiEditText.getText().length();
 
-                emojiHalfEditText.removeTextChangedListener(emojiTextWatcher);
-                emojiHalfEditText.setText(emojify(s));
-                textHalfEditText.setText(deEmojify(s));
-                emojiHalfEditText.addTextChangedListener(emojiTextWatcher);
+                    emojiEditText.removeTextChangedListener(emojiTextWatcher);
+                    emojiEditText.setText(emojify(deEmojify(emojiEditText.getText())));
+                    emojiEditText.addTextChangedListener(emojiTextWatcher);
 
-                // adjustment cursor position
-                int addTextLength = emojiHalfEditText.getText().length() - oldTextLength;
-                int newPos = oldPos + addTextLength;
-                if (newPos > emojiHalfEditText.getText().length())
-                    newPos = emojiHalfEditText.getText().length();
-                emojiHalfEditText.setSelection(newPos);
-            }
-            // conversion while input text
-            else
-            {
-                int oldPos = textHalfEditText.getSelectionStart();
-                int oldTextLength = textHalfEditText.getText().length();
+                    // adjustment cursor position
+                    addTextLength = emojiEditText.getText().length() - oldTextLength;
+                    newPos = oldPos + addTextLength;
+                    if (newPos > emojiEditText.getText().length())
+                        newPos = emojiEditText.getText().length();
+                    emojiEditText.setSelection(newPos);
+                    break;
+                // conversion while input emoji
+                case R.id.emoji_half_edittext :
+                    oldPos = emojiHalfEditText.getSelectionStart();
+                    oldTextLength = emojiHalfEditText.getText().length();
 
-                textHalfEditText.removeTextChangedListener(textTextWatcher);
-                emojiHalfEditText.setText(emojify(s));
-                textHalfEditText.setText(deEmojify(s));
-                textHalfEditText.addTextChangedListener(textTextWatcher);
+                    emojiHalfEditText.removeTextChangedListener(emojiHalfTextWatcher);
+                    emojiHalfEditText.setText(emojify(s));
+                    textHalfEditText.setText(deEmojify(s));
+                    emojiHalfEditText.addTextChangedListener(emojiHalfTextWatcher);
 
-                // adjustment cursor position
-                int addTextLength = textHalfEditText.getText().length() - oldTextLength;
-                int newPos = oldPos + addTextLength;
-                if (newPos > textHalfEditText.getText().length())
-                    newPos = textHalfEditText.getText().length();
-                textHalfEditText.setSelection(newPos);
+                    // adjustment cursor position
+                    addTextLength = emojiHalfEditText.getText().length() - oldTextLength;
+                    newPos = oldPos + addTextLength;
+                    if (newPos > emojiHalfEditText.getText().length())
+                        newPos = emojiHalfEditText.getText().length();
+                    emojiHalfEditText.setSelection(newPos);
+                    break;
+                // conversion while input text
+                case R.id.text_half_edittext :
+                    oldPos = textHalfEditText.getSelectionStart();
+                    oldTextLength = textHalfEditText.getText().length();
+
+                    textHalfEditText.removeTextChangedListener(textHalfTextWatcher);
+                    emojiHalfEditText.setText(emojify(s));
+                    textHalfEditText.setText(deEmojify(s));
+                    textHalfEditText.addTextChangedListener(textHalfTextWatcher);
+
+                    // adjustment cursor position
+                    addTextLength = textHalfEditText.getText().length() - oldTextLength;
+                    newPos = oldPos + addTextLength;
+                    if (newPos > textHalfEditText.getText().length())
+                        newPos = textHalfEditText.getText().length();
+                    textHalfEditText.setSelection(newPos);
+                    break;
             }
         }
     }
@@ -399,12 +426,15 @@ public class MainActivity extends Activity {
                 dialog.dismiss();
 
                 ResolveInfo info = appInfo.get(position);
-                FileOperation.savePreferences(getApplicationContext(), info.activityInfo.packageName, FileOperation.SHARE);
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 intent.setType("text/plain");
                 intent.setPackage(info.activityInfo.packageName);
                 intent.putExtra(Intent.EXTRA_TEXT, data);
                 startActivity(intent);
+
+                // save settings and set icon
+                FileOperation.savePreferences(getApplicationContext(), info.activityInfo.packageName, FileOperation.SHARE);
+                setShareButtonIcon();
             }
         });
     }
@@ -438,5 +468,47 @@ public class MainActivity extends Activity {
             textView.setText(info.loadLabel(packageManager));
             return view;
         }
+    }
+
+    /**
+     * set the last selected application's icon to share button
+     */
+    private void setShareButtonIcon()
+    {
+        ImageButton button = (ImageButton)findViewById(R.id.last_share_button);
+
+        // set image
+        String packageName = FileOperation.loadPreferences(getApplicationContext(), FileOperation.SHARE);
+        if (packageName.equals(""))
+        {
+            // default
+            button.setImageResource(android.R.drawable.ic_menu_send);
+        }
+        else
+        {
+            boolean set = false;
+            PackageManager packageManager = getPackageManager();
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            List<ResolveInfo> appInfo = packageManager.queryIntentActivities(intent, 0);
+            for (ResolveInfo info : appInfo)
+            {
+                // get application's icon
+                if (info.activityInfo.packageName.equals(packageName))
+                {
+                    button.setImageDrawable(info.loadIcon(packageManager));
+                    set = true;
+                    break;
+                }
+            }
+            // set default icon when could not get icon
+            if (!set)
+                button.setImageResource(android.R.drawable.ic_menu_send);
+        }
+    }
+
+    private void preLoadImage()
+    {
+
     }
 }

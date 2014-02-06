@@ -12,14 +12,25 @@
     <LinearLayout
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginBottom="20dp" >
 
         <ImageView
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:background="@drawable/emojidex_logo"
-            android:layout_marginBottom="24dp"
+            android:layout_gravity="center_vertical"
             android:contentDescription="@string/app_name" />
+
+        <ImageButton
+            android:id="@+id/settings_button"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@android:drawable/ic_menu_preferences"
+            android:contentDescription="@string/settings"
+            android:layout_marginLeft="5dp"
+            android:onClick="openSettings"/>
 
         <TextView
             android:layout_height="wrap_content"
@@ -30,29 +41,20 @@
             android:id="@+id/share_button"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:gravity="center_vertical"
+            android:layout_gravity="center_vertical"
             android:background="@android:drawable/ic_menu_share"
             android:contentDescription="@string/share"
             android:onClick="shareData"/>
 
         <ImageButton
+            android:id="@+id/last_share_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
+            android:layout_gravity="center_vertical"
             android:background="@android:drawable/ic_menu_send"
             android:contentDescription="@string/share"
-            android:layout_marginLeft="15dp"
+            android:layout_marginLeft="10dp"
             android:onClick="shareDataLastSelected" />
-
-        <ImageButton
-            android:id="@+id/settings_button"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:gravity="center_vertical"
-            android:background="@android:drawable/ic_menu_preferences"
-            android:contentDescription="@string/settings"
-            android:layout_marginLeft="15dp"
-            android:onClick="openSettings"/>
 
     </LinearLayout>
 
