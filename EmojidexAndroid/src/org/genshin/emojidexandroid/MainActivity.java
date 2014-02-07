@@ -25,6 +25,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends Activity {
@@ -103,12 +104,15 @@ public class MainActivity extends Activity {
      * Emojidex
      */
     private Emojidex emojidex = null;
+    private EmojiDataManager emojiDataManager;
+    private List<EmojiData> emojiDataList;
 
     private EditText emojiEditText;
     private EditText textEditText;
     private EditText emojiHalfEditText;
     private EditText textHalfEditText;
     private CustomTextWatcher emojiTextWatcher;
+    private CustomTextWatcher textTextWatcher;
     private CustomTextWatcher emojiHalfTextWatcher;
     private CustomTextWatcher textHalfTextWatcher;
     private ViewFlipper viewFlipper;
@@ -118,6 +122,9 @@ public class MainActivity extends Activity {
         if (emojidex == null)
             emojidex = new Emojidex(getApplicationContext());
 
+        emojiDataManager = emojidex.getEmojiDataManager();
+        emojiDataList = emojiDataManager.getCategorizedList("all");
+
         emojiEditText = (EditText)findViewById(R.id.emoji_edittext);
         textEditText = (EditText) findViewById(R.id.text_edittext);
         emojiHalfEditText = (EditText)findViewById(R.id.emoji_half_edittext);
@@ -125,9 +132,12 @@ public class MainActivity extends Activity {
 
         // detects input
         emojiTextWatcher = new CustomTextWatcher(emojiEditText.getId(), emojiEditText);
+        textTextWatcher = new CustomTextWatcher(textEditText.getId(), textEditText);
         emojiHalfTextWatcher = new CustomTextWatcher(emojiHalfEditText.getId(), emojiHalfEditText);
         textHalfTextWatcher = new CustomTextWatcher(textHalfEditText.getId(), textHalfEditText);
+
         emojiEditText.addTextChangedListener(emojiTextWatcher);
+        textEditText.addTextChangedListener(textTextWatcher);
         emojiHalfEditText.addTextChangedListener(emojiHalfTextWatcher);
         emojiHalfEditText.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -327,12 +337,20 @@ public class MainActivity extends Activity {
 
             switch (inputEditTextId)
             {
-                // conversion text -> emoji in emojiEditText
+                // convert to emoji in emojiEditText
                 case R.id.emoji_edittext :
                     editText.removeTextChangedListener(emojiTextWatcher);
                     editText.setText(emojify(deEmojify(editText.getText())));
                     editText.addTextChangedListener(emojiTextWatcher);
                     break;
+
+                // convert to unicode in emojiEditText
+                case R.id.text_edittext :
+                    editText.removeTextChangedListener(textTextWatcher);
+                    editText.setText(toUnicodeString(editText.getText()));
+                    editText.addTextChangedListener(textTextWatcher);
+                    break;
+
                 // conversion while input emoji
                 case R.id.emoji_half_edittext :
                     editText.removeTextChangedListener(emojiHalfTextWatcher);
@@ -340,6 +358,7 @@ public class MainActivity extends Activity {
                     textHalfEditText.setText(deEmojify(s));
                     editText.addTextChangedListener(emojiHalfTextWatcher);
                     break;
+
                 // conversion while input text
                 case R.id.text_half_edittext :
                     editText.removeTextChangedListener(textHalfTextWatcher);
@@ -355,6 +374,12 @@ public class MainActivity extends Activity {
             if (newPos > editText.getText().length())
                 newPos = editText.getText().length();
             editText.setSelection(newPos);
+
+            // load image
+            ArrayList<String> emojiNames = new ArrayList<String>();
+            emojiNames = emojidex.getEmojiNames();
+            for (String emojiName : emojiNames)
+                loadImage(emojiName);
         }
     }
 
@@ -432,6 +457,7 @@ public class MainActivity extends Activity {
             if (convertView == null)
                 view = this.inflater.inflate(this.layout, null);
 
+            // set application icon & name
             PackageManager packageManager = getPackageManager();
             ResolveInfo info = getItem(position);
             ImageView icon = (ImageView)view.findViewById(R.id.application_list_icon);
@@ -477,5 +503,16 @@ public class MainActivity extends Activity {
             if (!set)
                 button.setImageResource(android.R.drawable.ic_menu_send);
         }
+    }
+
+    /**
+     * load image
+     * @param name emoji name
+     */
+    private void loadImage(String name)
+    {
+        EmojiData emoji = emojiDataManager.getEmojiData(name);
+        ImageView blank = (ImageView)findViewById(R.id.blank);
+        blank.setImageDrawable(emoji.getIcon());
     }
 }

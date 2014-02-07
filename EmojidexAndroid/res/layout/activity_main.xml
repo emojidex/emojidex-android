@@ -32,10 +32,12 @@
             android:layout_marginLeft="5dp"
             android:onClick="openSettings"/>
 
-        <TextView
+        <ImageView
+            android:id="@+id/blank"
             android:layout_height="wrap_content"
             android:layout_width="0dp"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:visibility="invisible" />
 
         <ImageButton
             android:id="@+id/share_button"
@@ -51,7 +53,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:background="@android:drawable/ic_menu_send"
+            android:background="@drawable/background_blank"
             android:contentDescription="@string/share"
             android:layout_marginLeft="10dp"
             android:onClick="shareDataLastSelected" />
