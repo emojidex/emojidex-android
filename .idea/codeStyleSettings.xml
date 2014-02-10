@@ -31,9 +31,6 @@
           </value>
         </option>
         <option name="RIGHT_MARGIN" value="100" />
-        <AndroidXmlCodeStyleSettings>
-          <option name="USE_CUSTOM_SETTINGS" value="true" />
-        </AndroidXmlCodeStyleSettings>
         <XML>
           <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
         </XML>

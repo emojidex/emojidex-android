@@ -41,6 +41,8 @@ public class EmojidexKeyboardView extends KeyboardView {
         super(context, attrs, defStyle);
         this.context = context;
         this.inflater = inflater;
+
+        closePopup();
     }
 
     /**
@@ -68,6 +70,8 @@ public class EmojidexKeyboardView extends KeyboardView {
      */
     private void createPopupWindow()
     {
+        closePopup();
+
         // create popup window
         View view = inflater.inflate(R.layout.popup, null);
         popup = new PopupWindow(this);
@@ -128,8 +132,20 @@ public class EmojidexKeyboardView extends KeyboardView {
                         Toast.makeText(context, R.string.register_failure, Toast.LENGTH_SHORT).show();
                         break;
                 }
-                popup.dismiss();
+                closePopup();
             }
         };
+    }
+
+    /**
+     * close popup window
+     */
+    public void closePopup()
+    {
+        if (popup != null)
+        {
+            popup.dismiss();
+            popup = null;
+        }
     }
 }

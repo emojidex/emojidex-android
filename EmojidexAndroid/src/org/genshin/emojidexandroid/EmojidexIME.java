@@ -5,6 +5,8 @@ import android.content.res.Configuration;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
+import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -29,7 +31,8 @@ import java.util.Map;
 /**
  * Created by kou on 13/08/11.
  */
-public class EmojidexIME extends InputMethodService implements KeyboardView.OnKeyboardActionListener {
+public class EmojidexIME extends InputMethodService
+        implements KeyboardView.OnKeyboardActionListener, GestureDetector.OnGestureListener {
     private EmojiDataManager emojiDataManager;
 
     private InputMethodManager inputMethodManager = null;
@@ -42,6 +45,8 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
 
     private ViewFlipper viewFlipper;
     private ViewFlipper keyboardViewFlipper;
+    private GestureDetector detector;
+    private boolean swipeFlag = false;
 
     private PopupWindow popup;
 
@@ -71,6 +76,9 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
             categorizedKeyboards.put(categoryName,
                     EmojidexKeyboard.create(this, emojiDataManager.getCategorizedList(categoryName), minHeight));
         }
+
+        // Create GestureDetector
+        detector = new GestureDetector(getApplicationContext(), this);
     }
 
     @Override
@@ -110,6 +118,12 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
             popup.dismiss();
             popup = null;
         }
+
+        for (int i = 0; i < keyboardViewFlipper.getChildCount(); i++)
+        {
+            EmojidexKeyboardView view = (EmojidexKeyboardView)keyboardViewFlipper.getChildAt(i);
+            view.closePopup();
+        }
         super.hideWindow();
     }
 
@@ -123,6 +137,13 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
 
     @Override
     public void onKey(int primaryCode, int[] keyCodes) {
+        Log.e("test", "flag:" + swipeFlag);
+        if (swipeFlag)
+        {
+            swipeFlag = false;
+            return;
+        }
+
         List<Integer> codes = new ArrayList<Integer>();
         for(int i = 0;  keyCodes[i] != -1;  ++i)
             codes.add(keyCodes[i]);
@@ -193,30 +214,18 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
 
     @Override
     public void swipeLeft() {
-        keyboardViewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_in));
-        keyboardViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_out));
-        keyboardViewFlipper.showNext();
     }
 
     @Override
     public void swipeRight() {
-        keyboardViewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_in));
-        keyboardViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_out));
-        keyboardViewFlipper.showPrevious();
     }
 
     @Override
     public void swipeDown() {
-        keyboardViewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.up_in));
-        keyboardViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.down_out));
-        keyboardViewFlipper.showPrevious();
     }
 
     @Override
     public void swipeUp() {
-        keyboardViewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.down_in));
-        keyboardViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.up_out));
-        keyboardViewFlipper.showNext();
     }
 
     /**
@@ -330,6 +339,13 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         for (int i = 0; i < categorizedKeyboards.get(categoryID).getKeyboards().size(); i++)
         {
             EmojidexKeyboardView keyboardView = new EmojidexKeyboardView(this, null, R.attr.keyboardViewStyle, getLayoutInflater());
+            keyboardView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    boolean result = detector.onTouchEvent(event);
+                    return result;
+                }
+            });
             keyboardView.setOnKeyboardActionListener(this);
             keyboardView.setPreviewEnabled(false);
             keyboardView.setKeyboard(categorizedKeyboards.get(categoryID).getKeyboards().get(i));
@@ -378,6 +394,111 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         viewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_in));
         viewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_out));
         viewFlipper.showPrevious();
+    }
+
+    /**
+     * move to the next keyboard view
+     * @param direction left or down
+     */
+    public void moveToNextKeyboard(String direction)
+    {
+        if (direction.equals("left"))
+        {
+            keyboardViewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_in));
+            keyboardViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_out));
+            keyboardViewFlipper.showNext();
+        }
+        else
+        {
+            keyboardViewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.down_in));
+            keyboardViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.up_out));
+            keyboardViewFlipper.showNext();
+        }
+    }
+
+    /**
+     * move to the prev keyboard view
+     * @param direction right or up
+     */
+    public void moveToPrevKeyboard(String direction)
+    {
+        if (direction.equals("right"))
+        {
+            keyboardViewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_in));
+            keyboardViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_out));
+            keyboardViewFlipper.showPrevious();
+        }
+        else
+        {
+            keyboardViewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.up_in));
+            keyboardViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.down_out));
+            keyboardViewFlipper.showPrevious();
+        }
+    }
+
+
+    @Override
+    public boolean onDown(MotionEvent e) {
+        Log.e("test", "down:" + e.getX() + "   " + e.getY());
+        swipeFlag = false;
+        return false;
+    }
+
+    @Override
+    public void onShowPress(MotionEvent e) {
+        Log.e("test", "show:" + e.getX() + "   " + e.getY());
+        swipeFlag = false;
+    }
+
+    @Override
+    public boolean onSingleTapUp(MotionEvent e) {
+        Log.e("test", "up:" + e.getX() + "   " + e.getY());
+        swipeFlag = false;
+        return false;
+    }
+
+    @Override
+    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+        Log.e("test", "scroll1:" + e1.getX() + "   " + e1.getY());
+        Log.e("test", "scroll2:" + e2.getX() + "   " + e2.getY());
+        swipeFlag = false;
+        return false;
+    }
+
+    @Override
+    public void onLongPress(MotionEvent e) {
+        swipeFlag = false;
+    }
+
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        Log.e("test", "fling1:" + e1.getX() + "   " + e1.getY());
+        Log.e("test", "fling2:" + e2.getX() + "   " + e2.getY());
+        float disX = e1.getX() - e2.getX();
+        float disY = e1.getY() - e2.getY();
+        if ((Math.abs(disX) < 50) && (Math.abs(disY) < 50))
+            return true;
+
+        // TODO
+        // left or right
+        if (Math.abs(disX) > Math.abs(disY))
+        {
+            if (disX > 0)
+                moveToNextKeyboard("left");
+            else
+                moveToPrevKeyboard("right");
+        }
+        // up or down
+        else
+        {
+            if (disY > 0)
+                moveToNextKeyboard("down");
+            else
+                moveToPrevKeyboard("up");
+
+        }
+        swipeFlag = true;
+        return false;
     }
 
     /**

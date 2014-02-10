@@ -35,6 +35,8 @@
 
     <string name="keyboard_button">Setting the keyboard icon button</string>
     <string name="keyboard_button_text">You can set the keyboard to be changed when you press the keyboard icon button.</string>
+    <string name="realtime">real-time convert</string>
+    <string name="realtime-text">Convert in real time as you type.</string>
     <string name="back">Back</string>
 
     <string name="set">Set</string>
