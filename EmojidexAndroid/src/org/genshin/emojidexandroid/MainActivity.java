@@ -117,6 +117,8 @@ public class MainActivity extends Activity {
     private CustomTextWatcher textHalfTextWatcher;
     private ViewFlipper viewFlipper;
 
+    private boolean realTime;
+
     private void initEmojidexEditor()
     {
         if (emojidex == null)
@@ -339,16 +341,22 @@ public class MainActivity extends Activity {
             {
                 // convert to emoji in emojiEditText
                 case R.id.emoji_edittext :
-                    editText.removeTextChangedListener(emojiTextWatcher);
-                    editText.setText(emojify(deEmojify(editText.getText())));
-                    editText.addTextChangedListener(emojiTextWatcher);
+                    if (realTime)
+                    {
+                        editText.removeTextChangedListener(emojiTextWatcher);
+                        editText.setText(emojify(deEmojify(editText.getText())));
+                        editText.addTextChangedListener(emojiTextWatcher);
+                    }
                     break;
 
                 // convert to unicode in emojiEditText
                 case R.id.text_edittext :
-                    editText.removeTextChangedListener(textTextWatcher);
-                    editText.setText(toUnicodeString(editText.getText()));
-                    editText.addTextChangedListener(textTextWatcher);
+                    if (realTime)
+                    {
+                        editText.removeTextChangedListener(textTextWatcher);
+                        editText.setText(toUnicodeString(editText.getText()));
+                        editText.addTextChangedListener(textTextWatcher);
+                    }
                     break;
 
                 // conversion while input emoji
@@ -373,13 +381,18 @@ public class MainActivity extends Activity {
             int newPos = oldPos + addTextLength;
             if (newPos > editText.getText().length())
                 newPos = editText.getText().length();
+            else if (newPos < 0)
+                newPos = 0;
             editText.setSelection(newPos);
 
             // load image
             ArrayList<String> emojiNames = new ArrayList<String>();
             emojiNames = emojidex.getEmojiNames();
-            for (String emojiName : emojiNames)
-                loadImage(emojiName);
+            if (emojiNames != null)
+            {
+                for (String emojiName : emojiNames)
+                    loadImage(emojiName);
+            }
         }
     }
 
@@ -389,6 +402,8 @@ public class MainActivity extends Activity {
      */
     public void openSettings(View v)
     {
+        String text;
+
         Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
         startActivity(intent);
     }
@@ -514,5 +529,27 @@ public class MainActivity extends Activity {
         EmojiData emoji = emojiDataManager.getEmojiData(name);
         ImageView blank = (ImageView)findViewById(R.id.blank);
         blank.setImageDrawable(emoji.getIcon());
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+
+        loadRealTimeConvertSettings();
+        CharSequence text = emojiEditText.getText();
+        if (text != null)
+            emojiEditText.setText(text);
+    }
+
+    /**
+     * Whether to the real-time conversion
+     */
+    private void loadRealTimeConvertSettings()
+    {
+        if (FileOperation.loadPreferences(getApplicationContext(), FileOperation.REALTIME).equals("false"))
+            realTime = false;
+        else
+            realTime = true;
     }
 }

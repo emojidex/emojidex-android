@@ -41,8 +41,6 @@ public class EmojidexKeyboardView extends KeyboardView {
         super(context, attrs, defStyle);
         this.context = context;
         this.inflater = inflater;
-
-        closePopup();
     }
 
     /**

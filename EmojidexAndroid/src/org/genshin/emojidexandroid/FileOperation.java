@@ -33,6 +33,7 @@ public class FileOperation
     public static final String HISTORIES = "histories";
     public static final String KEYBOARD = "keyboard";
     public static final String SHARE = "share";
+    public static final String REALTIME = "real_time";
 
     public static int MAX_HISTORIES = 50;
 
@@ -272,7 +273,7 @@ public class FileOperation
     /**
      * set preferences
      * @param context
-     * @param param keyboard's id or packageName
+     * @param param keyboard's id or packageName or real-time
      * @return
      */
     public static boolean savePreferences(Context context, String param, String filename)

@@ -55,7 +55,7 @@
             android:layout_gravity="center_vertical"
             android:background="@drawable/background_blank"
             android:contentDescription="@string/share"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="5dp"
             android:onClick="shareDataLastSelected" />
 
     </LinearLayout>

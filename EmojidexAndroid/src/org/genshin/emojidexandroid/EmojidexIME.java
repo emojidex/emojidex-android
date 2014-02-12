@@ -5,7 +5,6 @@ import android.content.res.Configuration;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -113,12 +112,6 @@ public class EmojidexIME extends InputMethodService
     @Override
     public void hideWindow()
     {
-        if (popup != null && popup.isShowing())
-        {
-            popup.dismiss();
-            popup = null;
-        }
-
         for (int i = 0; i < keyboardViewFlipper.getChildCount(); i++)
         {
             EmojidexKeyboardView view = (EmojidexKeyboardView)keyboardViewFlipper.getChildAt(i);
@@ -137,7 +130,6 @@ public class EmojidexIME extends InputMethodService
 
     @Override
     public void onKey(int primaryCode, int[] keyCodes) {
-        Log.e("test", "flag:" + swipeFlag);
         if (swipeFlag)
         {
             swipeFlag = false;
@@ -439,47 +431,38 @@ public class EmojidexIME extends InputMethodService
 
     @Override
     public boolean onDown(MotionEvent e) {
-        Log.e("test", "down:" + e.getX() + "   " + e.getY());
-        swipeFlag = false;
         return false;
     }
 
     @Override
     public void onShowPress(MotionEvent e) {
-        Log.e("test", "show:" + e.getX() + "   " + e.getY());
-        swipeFlag = false;
     }
 
     @Override
     public boolean onSingleTapUp(MotionEvent e) {
-        Log.e("test", "up:" + e.getX() + "   " + e.getY());
-        swipeFlag = false;
         return false;
     }
 
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        Log.e("test", "scroll1:" + e1.getX() + "   " + e1.getY());
-        Log.e("test", "scroll2:" + e2.getX() + "   " + e2.getY());
-        swipeFlag = false;
         return false;
     }
 
     @Override
     public void onLongPress(MotionEvent e) {
-        swipeFlag = false;
     }
 
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-        Log.e("test", "fling1:" + e1.getX() + "   " + e1.getY());
-        Log.e("test", "fling2:" + e2.getX() + "   " + e2.getY());
         float disX = e1.getX() - e2.getX();
         float disY = e1.getY() - e2.getY();
-        if ((Math.abs(disX) < 50) && (Math.abs(disY) < 50))
+        if ((Math.abs(disX) < 100) && (Math.abs(disY) < 50))
             return true;
 
-        // TODO
+        // closing the popup window.
+        EmojidexKeyboardView view = (EmojidexKeyboardView)keyboardViewFlipper.getCurrentView();
+        view.closePopup();
+
         // left or right
         if (Math.abs(disX) > Math.abs(disY))
         {
@@ -495,7 +478,6 @@ public class EmojidexIME extends InputMethodService
                 moveToNextKeyboard("down");
             else
                 moveToPrevKeyboard("up");
-
         }
         swipeFlag = true;
         return false;
@@ -664,10 +646,11 @@ public class EmojidexIME extends InputMethodService
      */
     public void closePopupWindow(View v)
     {
-        if (popup == null)
-            return;
-        popup.dismiss();
-        popup = null;
+        if (popup != null)
+        {
+            popup.dismiss();
+            popup = null;
+        }
     }
 
     /**

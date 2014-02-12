@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.LayoutInflater;
@@ -13,6 +12,8 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -27,6 +28,7 @@ public class SettingsActivity extends Activity {
 
     private ListView listView;
     private ArrayList<String> keyboardIds;
+    private CheckBox checkBox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +36,21 @@ public class SettingsActivity extends Activity {
         setContentView(R.layout.activity_settings);
 
         context = getApplicationContext();
+
+        // checkbox settings
+        checkBox = (CheckBox)findViewById(R.id.settings_checkbox);
+        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // save checkbox statement
+                FileOperation.savePreferences(getApplicationContext(), String.valueOf(isChecked), FileOperation.REALTIME);
+            }
+        });
+        // load checkbox statement
+        if (FileOperation.loadPreferences(getApplicationContext(), FileOperation.REALTIME).equals("false"))
+            checkBox.setChecked(false);
+        else
+            checkBox.setChecked(true);
     }
 
     /**
@@ -89,12 +106,6 @@ public class SettingsActivity extends Activity {
             keyboardNames.add(String.valueOf(info.loadLabel(getPackageManager())));
             keyboardIds.add(info.getId());
         }
-//        for (int i = 0; i < inputMethodInfoList.size(); ++i)
-//        {
-//            InputMethodInfo inputMethodInfo = inputMethodInfoList.get(i);
-//            keyboardNames.add(String.valueOf(inputMethodInfo.loadLabel(getPackageManager())));
-//            keyboardIds.add(inputMethodInfo.getId());
-//        }
 
         // current keyboard
         int current = 0;
@@ -107,14 +118,6 @@ public class SettingsActivity extends Activity {
                 break;
             }
         }
-//        for (int i = 0; i < keyboardIds.size(); i++)
-//        {
-//            if (name.equals(keyboardIds.get(i)))
-//            {
-//                current = i;
-//                break;
-//            }
-//        }
 
         // set listView
         listView.setAdapter(new ArrayAdapter<String>(
@@ -132,8 +135,7 @@ public class SettingsActivity extends Activity {
      */
     public void backToMainActivity(View v)
     {
-        Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
-        startActivity(intent);
+        super.onBackPressed();
     }
 
     /**

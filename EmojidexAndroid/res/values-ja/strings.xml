@@ -36,7 +36,7 @@
     <string name="keyboard_button">キーボードアイコンボタンの設定</string>
     <string name="keyboard_button_text">キーボードアイコンボタンを押した時に変更されるキーボードを設定します。</string>
     <string name="realtime">リアルタイム変換</string>
-    <string name="realtime-text">入力中にリアルタイムに変換します。</string>
+    <string name="realtime_text">入力中にリアルタイムに変換します。</string>
     <string name="back">戻る</string>
 
     <string name="set">設定する</string>

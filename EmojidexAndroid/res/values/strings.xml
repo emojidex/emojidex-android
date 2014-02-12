@@ -5,38 +5,38 @@
     <string name="action_settings">Settings</string>
 
     <string name="search">Search</string>
-    <string name="favorite">Favorite</string>
+    <string name="favorite">Favorites</string>
     <string name="history">History</string>
     <string name="settings">Settings</string>
     <string name="left">Left</string>
     <string name="right">Right</string>
 
     <string name="share">Share</string>
-    <string name="text_hint_emoji">Please enter the Emojis.</string>
-    <string name="text_hint_text">Please enter the text.</string>
+    <string name="text_hint_emoji">You can preview or convert emoji + text here.</string>
+    <string name="text_hint_text">Enter or paste text with emoji here.</string>
 
-    <string name="all_category">all</string>
+    <string name="all_category">All</string>
 
-    <string name="register_favorite">Are you sure you want to register to your favorites?</string>
+    <string name="register_favorite">Favorite this emoji?</string>
     <string name="register_success">Registered.</string>
     <string name="register_done">Already registered.</string>
-    <string name="register_failure">Sorry, failed to register.</string>
-    <string name="delete_favorite">Are you sure you want to delete from your favorites?</string>
-    <string name="delete_success">Deleted.</string>
-    <string name="delete_failure">Sorry, failed to delete.</string>
-    <string name="delete_favorites_all">Delete all favorites.</string>
-    <string name="delete_histories_all">Delete all histories.</string>
-    <string name="delete_favorites_all_confirm">Are you sure you want to delete all the favorites?</string>
-    <string name="delete_histories_all_confirm">Are you sure you want to delete all the histories?</string>
+    <string name="register_failure">Registration failed.</string>
+    <string name="delete_favorite">Remove this emoji from your favorites?</string>
+    <string name="delete_success">Emoji removed.</string>
+    <string name="delete_failure">Emoji removal failed.</string>
+    <string name="delete_favorites_all">Clear favorites</string>
+    <string name="delete_histories_all">Clear history</string>
+    <string name="delete_favorites_all_confirm">Clear all favorites?</string>
+    <string name="delete_histories_all_confirm">Clear all history?</string>
     <string name="close">Close</string>
 
     <string name="yes">Yes</string>
     <string name="no">No</string>
 
-    <string name="keyboard_button">Setting the keyboard icon button</string>
-    <string name="keyboard_button_text">You can set the keyboard to be changed when you press the keyboard icon button.</string>
-    <string name="realtime">real-time convert</string>
-    <string name="realtime-text">Convert in real time as you type.</string>
+    <string name="keyboard_button">Keyboard settings</string>
+    <string name="keyboard_button_text">Set your default keyboard here</string>
+    <string name="realtime">Real-time convert</string>
+    <string name="realtime_text">Convert in real time as you type.</string>
     <string name="back">Back</string>
 
     <string name="set">Set</string>
