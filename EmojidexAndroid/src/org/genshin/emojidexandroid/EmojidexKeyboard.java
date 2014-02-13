@@ -91,6 +91,9 @@ public class EmojidexKeyboard extends Keyboard {
         else
             newKey.label = emojiData.getMoji();
 
+        newKey.popupCharacters = emojiData.getName();
+
+
         keys.add(newKey);
     }
 

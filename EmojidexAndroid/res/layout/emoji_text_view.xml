@@ -17,7 +17,8 @@
         <ImageButton
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:background="@drawable/button_arrow"
+            android:src="@drawable/button_arrow"
+            android:background="@drawable/background_blank"
             android:onClick="moveViewToRight"
             android:contentDescription="@string/right" />
 

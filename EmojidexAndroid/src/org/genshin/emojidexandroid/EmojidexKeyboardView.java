@@ -1,5 +1,8 @@
 package org.genshin.emojidexandroid;
 
+import android.content.ClipData;
+import android.content.ClipDescription;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
@@ -9,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -27,8 +31,6 @@ public class EmojidexKeyboardView extends KeyboardView {
     protected PopupWindow popup;
     protected List<Integer> keyCodes = new ArrayList<Integer>();
     protected Keyboard.Key key;
-
-    private int stringRes = R.string.register_favorite;
 
     /**
      * Construct EmojidexKeyboardView object.
@@ -66,46 +68,50 @@ public class EmojidexKeyboardView extends KeyboardView {
     /**
      * create PopupWindow
      */
-    private void createPopupWindow()
+    protected void createPopupWindow()
     {
         closePopup();
 
         // create popup window
-        View view = inflater.inflate(R.layout.popup, null);
+        View view = inflater.inflate(R.layout.popup_favorite, null);
         popup = new PopupWindow(this);
         popup.setContentView(view);
         popup.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
         popup.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
         popup.showAtLocation(this, Gravity.CENTER_HORIZONTAL, 0, -this.getHeight());
 
-        // set emoji
-        ImageView icon = (ImageView)view.findViewById(R.id.popup_image);
+        // set emoji data
+        TextView textView = (TextView)view.findViewById(R.id.favorite_name);
+        textView.setText(":" + key.popupCharacters + ":");
+        textView.setOnLongClickListener(new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                ClipboardManager manager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData.Item item = new ClipData.Item(":" + key.popupCharacters + ":");
+                String[] mimeType = new String[1];
+                mimeType[0] = ClipDescription.MIMETYPE_TEXT_PLAIN;
+                ClipData data = new ClipData(new ClipDescription("text_data", mimeType), item);
+                manager.setPrimaryClip(data);
+                Toast.makeText(context, R.string.clipboard, Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
+        ImageView icon = (ImageView)view.findViewById(R.id.popup_favorite_image);
         icon.setImageDrawable(key.icon);
 
-        // set text
-        TextView textView = (TextView)view.findViewById(R.id.popup_text);
-        textView.setText(setTextViewText());
+        // register button
+        ImageButton imageButton = (ImageButton)view.findViewById(R.id.favorite_register_button);
+        imageButton.setOnClickListener(createListener());
 
-        // set button's ClickListener
-        Button yesButton = (Button)view.findViewById(R.id.popup_yes_button);
-        yesButton.setOnClickListener(createListener());
-        Button noButton = (Button)view.findViewById(R.id.popup_no_button);
-        noButton.setOnClickListener(new OnClickListener()
+        // cancel button
+        Button cancelButton = (Button)view.findViewById(R.id.popup_cancel_button);
+        cancelButton.setOnClickListener(new OnClickListener()
         {
             @Override
             public void onClick(View v) {
-                popup.dismiss();
+                closePopup();
             }
         });
-    }
-
-    /**
-     * set text to TextView
-     * @return
-     */
-    protected int setTextViewText()
-    {
-        return stringRes;
     }
 
     /**

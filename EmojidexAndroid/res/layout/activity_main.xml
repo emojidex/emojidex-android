@@ -27,7 +27,8 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_gravity="center_vertical"
-            android:background="@android:drawable/ic_menu_preferences"
+            android:src="@android:drawable/ic_menu_preferences"
+            android:background="@drawable/background_blank"
             android:contentDescription="@string/settings"
             android:layout_marginLeft="5dp"
             android:onClick="openSettings"/>
@@ -44,7 +45,8 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_gravity="center_vertical"
-            android:background="@android:drawable/ic_menu_share"
+            android:src="@android:drawable/ic_menu_share"
+            android:background="@drawable/background_blank"
             android:contentDescription="@string/share"
             android:onClick="shareData"/>
 
