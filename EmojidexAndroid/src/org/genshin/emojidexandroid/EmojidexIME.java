@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -595,7 +596,7 @@ public class EmojidexIME extends InputMethodService
         // delete
         boolean result = FileOperation.deleteAll(getApplicationContext(), FileOperation.FAVORITES);
         showResultToast(result);
-        setKeyboard("all");
+        setKeyboard(getString(R.string.all_category));
     }
 
     /**
@@ -621,7 +622,7 @@ public class EmojidexIME extends InputMethodService
         // delete
         boolean result = FileOperation.deleteAll(getApplicationContext(), FileOperation.HISTORIES);
         showResultToast(result);
-        setKeyboard("all");
+        setKeyboard(getString(R.string.all_category));
     }
 
     /**
