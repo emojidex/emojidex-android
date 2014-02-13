@@ -3,7 +3,6 @@ package org.genshin.emojidexandroid;
 import android.content.Context;
 import android.text.SpannableStringBuilder;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**
@@ -12,8 +11,6 @@ import java.util.LinkedList;
 public class Emojidex {
     private final String separator = ":";
     private final EmojiDataManager emojiDataManager;
-
-    private ArrayList<String> emojiNames;
 
     /**
      * Construct Emojidex object.
@@ -66,10 +63,9 @@ public class Emojidex {
      * @param useImage  If false use unicode emoji.
      * @return          Emojidex text.
      */
-    private CharSequence emojifyImpl(CharSequence text, boolean useImage)
+    protected CharSequence emojifyImpl(CharSequence text, boolean useImage)
     {
         final SpannableStringBuilder result = new SpannableStringBuilder();
-        emojiNames = new ArrayList<String>();
 
         final int length = text.length();
         int charCount = 0;
@@ -108,7 +104,6 @@ public class Emojidex {
                 // This string is emoji tag !!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 if(useImage)
                 {
-                    emojiNames.add(emojiData.getName());
                     result.append(emojiData.createImageString());
                 }
                 else if(emojiData.isOriginalEmoji())
@@ -135,7 +130,7 @@ public class Emojidex {
      * @param text      Emojidex text.
      * @return          Normal text.
      */
-    private CharSequence deEmojifyImpl(CharSequence text)
+    protected CharSequence deEmojifyImpl(CharSequence text)
     {
         final SpannableStringBuilder result = new SpannableStringBuilder();
 
@@ -196,10 +191,5 @@ public class Emojidex {
     public EmojiDataManager getEmojiDataManager()
     {
         return emojiDataManager;
-    }
-
-    public ArrayList<String> getEmojiNames()
-    {
-        return emojiNames;
     }
 }

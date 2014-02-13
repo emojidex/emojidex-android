@@ -103,7 +103,7 @@ public class MainActivity extends Activity {
     /**
      * Emojidex
      */
-    private Emojidex emojidex = null;
+    private EmojidexEditor emojidex = null;
     private EmojiDataManager emojiDataManager;
     private List<EmojiData> emojiDataList;
 
@@ -122,7 +122,7 @@ public class MainActivity extends Activity {
     private void initEmojidexEditor()
     {
         if (emojidex == null)
-            emojidex = new Emojidex(getApplicationContext());
+            emojidex = new EmojidexEditor(getApplicationContext());
 
         emojiDataManager = emojidex.getEmojiDataManager();
         emojiDataList = emojiDataManager.getCategorizedList("all");
