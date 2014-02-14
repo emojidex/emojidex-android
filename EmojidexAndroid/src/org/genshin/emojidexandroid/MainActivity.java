@@ -37,6 +37,7 @@ public class MainActivity extends Activity {
 
         initEmojidexEditor();
         setShareButtonIcon();
+        getIntentData();
     }
 
     @Override
@@ -551,5 +552,21 @@ public class MainActivity extends Activity {
             realTime = false;
         else
             realTime = true;
+    }
+
+    /**
+     * When sent other application's text(intent).
+     */
+    private void getIntentData()
+    {
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        String type = intent.getType();
+
+        if (action.equals(Intent.ACTION_SEND) && type != null) {
+            if (type.equals("text/plain")) {
+                emojiEditText.setText(intent.getStringExtra(Intent.EXTRA_TEXT));
+            }
+        }
     }
 }
