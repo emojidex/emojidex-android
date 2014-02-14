@@ -111,9 +111,20 @@ public class EmojiDataManager
 
         android.util.Log.d("lib", "Device DPI = " + dpi + ", Assets directory = " + dpiDir);
 
+        // Load category data from "categories.json".
+        try
+        {
+            InputStream is = res.getAssets().open("categories.json");
+            ObjectMapper objectMapper = new ObjectMapper();
+            categories = objectMapper.readValue(is, new TypeReference<ArrayList<CategoryData>>(){});
+            is.close();
+        }
+        catch (JsonParseException e) { e.printStackTrace(); }
+        catch (JsonMappingException e) { e.printStackTrace(); }
+        catch (IOException e) { e.printStackTrace(); }
+
         // Load emoji data from "index.json".
         List<EmojiData> newEmojiList = null;
-
         try
         {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -125,7 +136,8 @@ public class EmojiDataManager
         catch (JsonMappingException e) { e.printStackTrace(); }
         catch (IOException e) { e.printStackTrace(); }
 
-        categorizedLists.put(context.getString(R.string.all_category), newEmojiList);
+        // All category
+        categorizedLists.put(categories.get(0).getName(), newEmojiList);
 
         // Initialize emoji.
         int nextCode = res.getInteger(R.integer.original_code_start);
@@ -165,26 +177,5 @@ public class EmojiDataManager
             // Add to emoji code table.
             codeTable.put(emoji.getCodes(), emoji);
         }
-
-        /*
-        ArrayList<EmojiData> testData = new ArrayList<EmojiData>();
-        for (int i = 0; i < 100; i++)
-        {
-            testData.add(newEmojiList.get(i));
-        }
-        categorizedLists.put(context.getString(R.string.all_category), testData);
-        */
-
-        // Load category data from "categories.json".
-        try
-        {
-            InputStream is = res.getAssets().open("categories.json");
-            ObjectMapper objectMapper = new ObjectMapper();
-            categories = objectMapper.readValue(is, new TypeReference<ArrayList<CategoryData>>(){});
-            is.close();
-        }
-        catch (JsonParseException e) { e.printStackTrace(); }
-        catch (JsonMappingException e) { e.printStackTrace(); }
-        catch (IOException e) { e.printStackTrace(); }
     }
 }
