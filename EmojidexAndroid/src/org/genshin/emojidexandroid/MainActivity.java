@@ -126,7 +126,7 @@ public class MainActivity extends Activity {
             emojidex = new EmojidexEditor(getApplicationContext());
 
         emojiDataManager = emojidex.getEmojiDataManager();
-        emojiDataList = emojiDataManager.getCategorizedList("all");
+        emojiDataList = emojiDataManager.getCategorizedList(getString(R.string.all_category));
 
         emojiEditText = (EditText)findViewById(R.id.emoji_edittext);
         textEditText = (EditText) findViewById(R.id.text_edittext);
