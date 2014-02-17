@@ -12,22 +12,23 @@
     <string name="right">Right</string>
 
     <string name="share">Share</string>
-    <string name="text_hint_emoji">You can preview or convert emoji + text here</string>
-    <string name="text_hint_text">Enter or paste text with emoji here</string>
+    <string name="text_hint_emoji">You can preview or convert emoji + text here.</string>
+    <string name="text_hint_text">Enter or paste text with emoji here.</string>
 
     <string name="all_category">All</string>
 
     <string name="register_favorite">Favorite this emoji?</string>
-    <string name="register_success">Registered</string>
-    <string name="register_done">Already registered</string>
-    <string name="register_failure">Registration failed</string>
+    <string name="register_success">Registered.</string>
+    <string name="register_done">Already registered.</string>
+    <string name="register_failure">Registration failed.</string>
     <string name="delete_favorite">Remove this emoji from your favorites?</string>
-    <string name="delete_success">Emoji removed</string>
-    <string name="delete_failure">Emoji removal failed</string>
+    <string name="delete_success">Emoji removed.</string>
+    <string name="delete_failure">Emoji removal failed.</string>
     <string name="delete_favorites_all">Clear favorites</string>
     <string name="delete_histories_all">Clear history</string>
     <string name="delete_favorites_all_confirm">Clear all favorites?</string>
     <string name="delete_histories_all_confirm">Clear all history?</string>
+    <string name="clipboard">Copied to the clipboard.</string>
     <string name="close">Close</string>
 
     <string name="yes">Yes</string>
@@ -35,6 +36,8 @@
 
     <string name="keyboard_button">Keyboard settings</string>
     <string name="keyboard_button_text">Set your default keyboard here</string>
+    <string name="realtime">Real-time convert</string>
+    <string name="realtime_text">Convert in real time as you type.</string>
     <string name="back">Back</string>
 
     <string name="set">Set</string>

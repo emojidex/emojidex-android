@@ -8,7 +8,7 @@
     android:padding="15dp" >
 
     <ImageView
-        android:id="@+id/popup_image"
+        android:id="@+id/popup_delete_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
@@ -20,7 +20,7 @@
         android:id="@+id/popup_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/register_favorite"
+        android:text="@string/delete_favorite"
         android:textSize="20dp"
         android:textColor="@color/white"
         android:layout_margin="15dp"/>

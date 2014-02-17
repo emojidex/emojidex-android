@@ -38,7 +38,7 @@
         android:paddingRight="20dp"
         android:paddingBottom="20dp"
         android:text="@string/keyboard_button_text"
-        android:textColor="@color/gray"/>
+        android:textColor="@color/gray" />
 
     <View
         android:layout_width="match_parent"
@@ -76,6 +76,47 @@
 
     <View
         android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/white"
+        android:layout_margin = "15dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/background_blank"
+            android:paddingLeft="20dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="10dp"
+            android:gravity="left"
+            android:text="@string/realtime"
+            android:textSize="20dp"
+            android:textColor="@color/white" />
+
+        <CheckBox
+            android:id="@+id/settings_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="20dp" />
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingBottom="20dp"
+        android:text="@string/realtime_text"
+        android:textColor="@color/gray"/>
+
+    <View
+        android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="@color/white"
         android:layout_marginTop="15dp"
@@ -85,7 +126,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:background="@android:drawable/ic_menu_revert"
+        android:src="@android:drawable/ic_menu_revert"
+        android:background="@drawable/background_blank"
         android:paddingLeft="30dp"
         android:paddingRight="30dp"
         android:onClick="backToMainActivity" />

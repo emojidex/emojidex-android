@@ -15,7 +15,7 @@
     <string name="text_hint_emoji">絵文字を入力してください。</string>
     <string name="text_hint_text">テキストを入力してください。</string>
 
-    <string name="all_category">all</string>
+    <string name="all_category">All</string>
 
     <string name="register_favorite">お気に入りに登録しますか？</string>
     <string name="register_success">登録しました。</string>
@@ -28,6 +28,7 @@
     <string name="delete_histories_all">履歴を全て削除</string>
     <string name="delete_favorites_all_confirm">お気に入りを全て削除しますか？</string>
     <string name="delete_histories_all_confirm">履歴を全て削除しますか？</string>
+    <string name="clipboard">クリップボードにコピーしました。</string>
     <string name="close">閉じる</string>
 
     <string name="yes">はい</string>
@@ -35,6 +36,8 @@
 
     <string name="keyboard_button">キーボードアイコンボタンの設定</string>
     <string name="keyboard_button_text">キーボードアイコンボタンを押した時に変更されるキーボードを設定します。</string>
+    <string name="realtime">リアルタイム変換</string>
+    <string name="realtime_text">入力中にリアルタイムに変換します。</string>
     <string name="back">戻る</string>
 
     <string name="set">設定する</string>

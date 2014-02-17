@@ -5,6 +5,8 @@ import android.content.res.Configuration;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
+import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -29,7 +31,8 @@ import java.util.Map;
 /**
  * Created by kou on 13/08/11.
  */
-public class EmojidexIME extends InputMethodService implements KeyboardView.OnKeyboardActionListener {
+public class EmojidexIME extends InputMethodService
+        implements KeyboardView.OnKeyboardActionListener, GestureDetector.OnGestureListener {
     private EmojiDataManager emojiDataManager;
 
     private InputMethodManager inputMethodManager = null;
@@ -42,6 +45,8 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
 
     private ViewFlipper viewFlipper;
     private ViewFlipper keyboardViewFlipper;
+    private GestureDetector detector;
+    private boolean swipeFlag = false;
 
     private PopupWindow popup;
 
@@ -71,6 +76,9 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
             categorizedKeyboards.put(categoryName,
                     EmojidexKeyboard.create(this, emojiDataManager.getCategorizedList(categoryName), minHeight));
         }
+
+        // Create GestureDetector
+        detector = new GestureDetector(getApplicationContext(), this);
     }
 
     @Override
@@ -105,10 +113,10 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     @Override
     public void hideWindow()
     {
-        if (popup != null && popup.isShowing())
+        for (int i = 0; i < keyboardViewFlipper.getChildCount(); i++)
         {
-            popup.dismiss();
-            popup = null;
+            EmojidexKeyboardView view = (EmojidexKeyboardView)keyboardViewFlipper.getChildAt(i);
+            view.closePopup();
         }
         super.hideWindow();
     }
@@ -123,6 +131,12 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
 
     @Override
     public void onKey(int primaryCode, int[] keyCodes) {
+        if (swipeFlag)
+        {
+            swipeFlag = false;
+            return;
+        }
+
         List<Integer> codes = new ArrayList<Integer>();
         for(int i = 0;  keyCodes[i] != -1;  ++i)
             codes.add(keyCodes[i]);
@@ -137,7 +151,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         if (primaryCode == showIMEPickerCode)
         {
             boolean result = false;
-            String id = JsonDataOperation.loadKeyboard(this);
+            String id = FileOperation.loadPreferences(this, FileOperation.KEYBOARD);
 
             List<InputMethodInfo> inputMethodInfoList = inputMethodManager.getEnabledInputMethodList();
             for (int i = 0; i < inputMethodInfoList.size(); ++i) {
@@ -193,30 +207,18 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
 
     @Override
     public void swipeLeft() {
-        keyboardViewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_in));
-        keyboardViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_out));
-        keyboardViewFlipper.showNext();
     }
 
     @Override
     public void swipeRight() {
-        keyboardViewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_in));
-        keyboardViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_out));
-        keyboardViewFlipper.showPrevious();
     }
 
     @Override
     public void swipeDown() {
-        keyboardViewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.up_in));
-        keyboardViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.down_out));
-        keyboardViewFlipper.showPrevious();
     }
 
     @Override
     public void swipeUp() {
-        keyboardViewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.down_in));
-        keyboardViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.up_out));
-        keyboardViewFlipper.showNext();
     }
 
     /**
@@ -330,6 +332,13 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         for (int i = 0; i < categorizedKeyboards.get(categoryID).getKeyboards().size(); i++)
         {
             EmojidexKeyboardView keyboardView = new EmojidexKeyboardView(this, null, R.attr.keyboardViewStyle, getLayoutInflater());
+            keyboardView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    boolean result = detector.onTouchEvent(event);
+                    return result;
+                }
+            });
             keyboardView.setOnKeyboardActionListener(this);
             keyboardView.setPreviewEnabled(false);
             keyboardView.setKeyboard(categorizedKeyboards.get(categoryID).getKeyboards().get(i));
@@ -381,6 +390,101 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     }
 
     /**
+     * move to the next keyboard view
+     * @param direction left or down
+     */
+    public void moveToNextKeyboard(String direction)
+    {
+        if (direction.equals("left"))
+        {
+            keyboardViewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_in));
+            keyboardViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_out));
+            keyboardViewFlipper.showNext();
+        }
+        else
+        {
+            keyboardViewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.down_in));
+            keyboardViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.up_out));
+            keyboardViewFlipper.showNext();
+        }
+    }
+
+    /**
+     * move to the prev keyboard view
+     * @param direction right or up
+     */
+    public void moveToPrevKeyboard(String direction)
+    {
+        if (direction.equals("right"))
+        {
+            keyboardViewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_in));
+            keyboardViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_out));
+            keyboardViewFlipper.showPrevious();
+        }
+        else
+        {
+            keyboardViewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.up_in));
+            keyboardViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.down_out));
+            keyboardViewFlipper.showPrevious();
+        }
+    }
+
+
+    @Override
+    public boolean onDown(MotionEvent e) {
+        return false;
+    }
+
+    @Override
+    public void onShowPress(MotionEvent e) {
+    }
+
+    @Override
+    public boolean onSingleTapUp(MotionEvent e) {
+        return false;
+    }
+
+    @Override
+    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+        return false;
+    }
+
+    @Override
+    public void onLongPress(MotionEvent e) {
+    }
+
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        float disX = e1.getX() - e2.getX();
+        float disY = e1.getY() - e2.getY();
+        if ((Math.abs(disX) < 100) && (Math.abs(disY) < 50))
+            return true;
+
+        // closing the popup window.
+        EmojidexKeyboardView view = (EmojidexKeyboardView)keyboardViewFlipper.getCurrentView();
+        view.closePopup();
+
+        // left or right
+        if (Math.abs(disX) > Math.abs(disY))
+        {
+            if (disX > 0)
+                moveToNextKeyboard("left");
+            else
+                moveToPrevKeyboard("right");
+        }
+        // up or down
+        else
+        {
+            if (disY > 0)
+                moveToNextKeyboard("down");
+            else
+                moveToPrevKeyboard("up");
+        }
+        swipeFlag = true;
+        return false;
+    }
+
+    /**
      * ViewFlipper's touchListener
      */
     private class FlickTouchListener implements View.OnTouchListener
@@ -416,7 +520,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     public void showHistories(View v)
     {
         // load histories
-        ArrayList<List<Integer>> histories = JsonDataOperation.load(this, JsonDataOperation.HISTORIES);
+        ArrayList<List<Integer>> histories = FileOperation.load(this, FileOperation.HISTORIES);
         createNewKeyboards(histories, "histories");
     }
 
@@ -427,7 +531,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
     public void showFavorites(View v)
     {
         // load favorites
-        ArrayList<List<Integer>> favorites = JsonDataOperation.load(this, JsonDataOperation.FAVORITES);
+        ArrayList<List<Integer>> favorites = FileOperation.load(this, FileOperation.FAVORITES);
         createNewKeyboards(favorites, "favorites");
     }
 
@@ -467,7 +571,7 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
      */
     private void saveHistories(List<Integer> keyCodes)
     {
-        JsonDataOperation.save(this, keyCodes, JsonDataOperation.HISTORIES);
+        FileOperation.save(this, keyCodes, FileOperation.HISTORIES);
     }
 
     /**
@@ -490,9 +594,9 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         closePopupWindow(v);
 
         // delete
-        boolean result = JsonDataOperation.deleteAll(getApplicationContext(), JsonDataOperation.FAVORITES);
+        boolean result = FileOperation.deleteAll(getApplicationContext(), FileOperation.FAVORITES);
         showResultToast(result);
-        setKeyboard("all");
+        setKeyboard(getString(R.string.all_category));
     }
 
     /**
@@ -516,9 +620,9 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
         closePopupWindow(v);
 
         // delete
-        boolean result = JsonDataOperation.deleteAll(getApplicationContext(), JsonDataOperation.HISTORIES);
+        boolean result = FileOperation.deleteAll(getApplicationContext(), FileOperation.HISTORIES);
         showResultToast(result);
-        setKeyboard("all");
+        setKeyboard(getString(R.string.all_category));
     }
 
     /**
@@ -543,10 +647,11 @@ public class EmojidexIME extends InputMethodService implements KeyboardView.OnKe
      */
     public void closePopupWindow(View v)
     {
-        if (popup == null)
-            return;
-        popup.dismiss();
-        popup = null;
+        if (popup != null)
+        {
+            popup.dismiss();
+            popup = null;
+        }
     }
 
     /**

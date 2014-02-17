@@ -63,7 +63,7 @@ public class Emojidex {
      * @param useImage  If false use unicode emoji.
      * @return          Emojidex text.
      */
-    private CharSequence emojifyImpl(CharSequence text, boolean useImage)
+    protected CharSequence emojifyImpl(CharSequence text, boolean useImage)
     {
         final SpannableStringBuilder result = new SpannableStringBuilder();
 
@@ -103,13 +103,16 @@ public class Emojidex {
 
                 // This string is emoji tag !!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 if(useImage)
+                {
                     result.append(emojiData.createImageString());
+                }
                 else if(emojiData.isOriginalEmoji())
                     result.append( text.subSequence(startIndex, endIndex) );
                 else
                     result.append(emojiData.getMoji());
                 startIndex = endIndex + charCount;
                 startIsSeparator = false;
+                android.util.Log.d("lib", "result -> " + result);
             }
         }
 
@@ -127,7 +130,7 @@ public class Emojidex {
      * @param text      Emojidex text.
      * @return          Normal text.
      */
-    private CharSequence deEmojifyImpl(CharSequence text)
+    protected CharSequence deEmojifyImpl(CharSequence text)
     {
         final SpannableStringBuilder result = new SpannableStringBuilder();
 
@@ -159,13 +162,15 @@ public class Emojidex {
             {
                 emojiData = emojiDataManager.getEmojiData(codes.subList(0, 1));
                 codes.removeFirst();
-                start = cur;
 
                 // Not emoji.
                 if(emojiData == null)
                 {
                     result.append( text.subSequence(start, cur) );
+                    start = cur;
+                    continue;
                 }
+                start = cur;
             }
 
             // Emoji to tag.
@@ -181,5 +186,10 @@ public class Emojidex {
                 result.append(separator + emojiData.getName() + separator);
         }
          return result;
+    }
+
+    public EmojiDataManager getEmojiDataManager()
+    {
+        return emojiDataManager;
     }
 }

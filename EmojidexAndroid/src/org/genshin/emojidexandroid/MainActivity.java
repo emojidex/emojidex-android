@@ -1,18 +1,32 @@
 package org.genshin.emojidexandroid;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.ViewFlipper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends Activity {
 
@@ -22,6 +36,8 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         initEmojidexEditor();
+        setShareButtonIcon();
+        getIntentData();
     }
 
     @Override
@@ -88,7 +104,9 @@ public class MainActivity extends Activity {
     /**
      * Emojidex
      */
-    private Emojidex emojidex = null;
+    private EmojidexEditor emojidex = null;
+    private EmojiDataManager emojiDataManager;
+    private List<EmojiData> emojiDataList;
 
     private EditText emojiEditText;
     private EditText textEditText;
@@ -96,12 +114,19 @@ public class MainActivity extends Activity {
     private EditText textHalfEditText;
     private CustomTextWatcher emojiTextWatcher;
     private CustomTextWatcher textTextWatcher;
+    private CustomTextWatcher emojiHalfTextWatcher;
+    private CustomTextWatcher textHalfTextWatcher;
     private ViewFlipper viewFlipper;
+
+    private boolean realTime;
 
     private void initEmojidexEditor()
     {
         if (emojidex == null)
-            emojidex = new Emojidex(getApplicationContext());
+            emojidex = new EmojidexEditor(getApplicationContext());
+
+        emojiDataManager = emojidex.getEmojiDataManager();
+        emojiDataList = emojiDataManager.getCategorizedList("all");
 
         emojiEditText = (EditText)findViewById(R.id.emoji_edittext);
         textEditText = (EditText) findViewById(R.id.text_edittext);
@@ -109,24 +134,29 @@ public class MainActivity extends Activity {
         textHalfEditText = (EditText)findViewById(R.id.text_half_edittext);
 
         // detects input
-        emojiTextWatcher = new CustomTextWatcher(emojiHalfEditText.getId());
-        textTextWatcher = new CustomTextWatcher(textHalfEditText.getId());
-        emojiHalfEditText.addTextChangedListener(emojiTextWatcher);
+        emojiTextWatcher = new CustomTextWatcher(emojiEditText.getId(), emojiEditText);
+        textTextWatcher = new CustomTextWatcher(textEditText.getId(), textEditText);
+        emojiHalfTextWatcher = new CustomTextWatcher(emojiHalfEditText.getId(), emojiHalfEditText);
+        textHalfTextWatcher = new CustomTextWatcher(textHalfEditText.getId(), textHalfEditText);
+
+        emojiEditText.addTextChangedListener(emojiTextWatcher);
+        textEditText.addTextChangedListener(textTextWatcher);
+        emojiHalfEditText.addTextChangedListener(emojiHalfTextWatcher);
         emojiHalfEditText.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                emojiHalfEditText.removeTextChangedListener(emojiTextWatcher);
-                emojiHalfEditText.addTextChangedListener(emojiTextWatcher);
-                textHalfEditText.removeTextChangedListener(textTextWatcher);
+                emojiHalfEditText.removeTextChangedListener(emojiHalfTextWatcher);
+                emojiHalfEditText.addTextChangedListener(emojiHalfTextWatcher);
+                textHalfEditText.removeTextChangedListener(textHalfTextWatcher);
                 return false;
             }
         });
         textHalfEditText.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                textHalfEditText.removeTextChangedListener(textTextWatcher);
-                textHalfEditText.addTextChangedListener(textTextWatcher);
-                emojiHalfEditText.removeTextChangedListener(emojiTextWatcher);
+                textHalfEditText.removeTextChangedListener(textHalfTextWatcher);
+                textHalfEditText.addTextChangedListener(textHalfTextWatcher);
+                emojiHalfEditText.removeTextChangedListener(emojiHalfTextWatcher);
                 return false;
             }
         });
@@ -153,34 +183,59 @@ public class MainActivity extends Activity {
         return emojidex.toUnicodeString(cs);
     }
 
+    /**
+     * share
+     * @param v
+     */
     public void shareData(View v)
     {
-        try
-        {
-            Intent intent = new Intent(Intent.ACTION_SEND);
+        String data = setShareData();
+        createList(data);
+    }
 
+    /**
+     * share to last selected application
+     * @param v
+     */
+    public void shareDataLastSelected(View v)
+    {
+        String packageName = FileOperation.loadPreferences(getApplicationContext(), FileOperation.SHARE);
+        if (packageName.equals(""))
+            shareData(v);
+        else
+        {
             // set share data
-            if (viewFlipper.getCurrentView() == findViewById(R.id.emoji_layout))
-            {
-                intent.putExtra(Intent.EXTRA_TEXT, toUnicodeString(emojiEditText.getText()));
-            }
-            else if (viewFlipper.getCurrentView() == findViewById(R.id.text_layout))
-            {
-                intent.putExtra(Intent.EXTRA_TEXT, textEditText.getText());
-            }
-            else
-            {
-                intent.putExtra(Intent.EXTRA_TEXT, toUnicodeString(emojiHalfEditText.getText()));
-            }
+            String data = setShareData();
 
+            Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("text/plain");
-            startActivity(Intent.createChooser(intent, "Send to"));
+            intent.setPackage(packageName);
+            intent.putExtra(Intent.EXTRA_TEXT, data);
+            startActivity(intent);
         }
-        catch(Exception e)
+    }
+
+    /**
+     * set share data
+     * @return data
+     */
+    private String setShareData()
+    {
+        String text;
+        if (viewFlipper.getCurrentView() == findViewById(R.id.emoji_layout))
         {
-            e.printStackTrace();
-            Log.d("hoge", "send error.");
+            text = toUnicodeString(emojiEditText.getText()).toString();
         }
+        else if (viewFlipper.getCurrentView() == findViewById(R.id.text_layout))
+        {
+            text = textEditText.getText().toString();
+        }
+        else
+        {
+            text = toUnicodeString(emojiHalfEditText.getText()).toString();
+        }
+
+        return  text;
     }
 
     public void moveViewToRight(View v)
@@ -257,21 +312,19 @@ public class MainActivity extends Activity {
     private class CustomTextWatcher implements TextWatcher
     {
         private int inputEditTextId;
+        private EditText editText;
 
-        public CustomTextWatcher(int id)
+        public CustomTextWatcher(int id, EditText editText)
         {
             inputEditTextId = id;
+            this.editText = editText;
         }
 
         @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after)
-        {
-        }
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
 
         @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count)
-        {
-        }
+        public void onTextChanged(CharSequence s, int start, int before, int count) { }
 
         @Override
         public void afterTextChanged(Editable s)
@@ -282,41 +335,64 @@ public class MainActivity extends Activity {
                 if(span.getClass().getName().equals("android.view.inputmethod.ComposingText"))
                     return;
 
-            // conversion while input emoji
-            if (inputEditTextId == R.id.emoji_half_edittext )
+            int oldPos = editText.getSelectionStart();
+            int oldTextLength = editText.getText().length();
+
+            switch (inputEditTextId)
             {
-                int oldPos = emojiHalfEditText.getSelectionStart();
-                int oldTextLength = emojiHalfEditText.getText().length();
+                // convert to emoji in emojiEditText
+                case R.id.emoji_edittext :
+                    if (realTime)
+                    {
+                        editText.removeTextChangedListener(emojiTextWatcher);
+                        editText.setText(emojify(deEmojify(editText.getText())));
+                        editText.addTextChangedListener(emojiTextWatcher);
+                    }
+                    break;
 
-                emojiHalfEditText.removeTextChangedListener(emojiTextWatcher);
-                emojiHalfEditText.setText(emojify(s));
-                textHalfEditText.setText(deEmojify(s));
-                emojiHalfEditText.addTextChangedListener(emojiTextWatcher);
+                // convert to unicode in emojiEditText
+                case R.id.text_edittext :
+                    if (realTime)
+                    {
+                        editText.removeTextChangedListener(textTextWatcher);
+                        editText.setText(toUnicodeString(editText.getText()));
+                        editText.addTextChangedListener(textTextWatcher);
+                    }
+                    break;
 
-                // adjustment cursor position
-                int addTextLength = emojiHalfEditText.getText().length() - oldTextLength;
-                int newPos = oldPos + addTextLength;
-                if (newPos > emojiHalfEditText.getText().length())
-                    newPos = emojiHalfEditText.getText().length();
-                emojiHalfEditText.setSelection(newPos);
+                // conversion while input emoji
+                case R.id.emoji_half_edittext :
+                    editText.removeTextChangedListener(emojiHalfTextWatcher);
+                    editText.setText(emojify(s));
+                    textHalfEditText.setText(deEmojify(s));
+                    editText.addTextChangedListener(emojiHalfTextWatcher);
+                    break;
+
+                // conversion while input text
+                case R.id.text_half_edittext :
+                    editText.removeTextChangedListener(textHalfTextWatcher);
+                    emojiHalfEditText.setText(emojify(s));
+                    editText.setText(deEmojify(s));
+                    editText.addTextChangedListener(textHalfTextWatcher);
+                    break;
             }
-            // conversion while input text
-            else
+
+            // adjustment cursor position
+            int addTextLength = editText.getText().length() - oldTextLength;
+            int newPos = oldPos + addTextLength;
+            if (newPos > editText.getText().length())
+                newPos = editText.getText().length();
+            else if (newPos < 0)
+                newPos = 0;
+            editText.setSelection(newPos);
+
+            // load image
+            ArrayList<String> emojiNames = new ArrayList<String>();
+            emojiNames = emojidex.getEmojiNames();
+            if (emojiNames != null)
             {
-                int oldPos = textHalfEditText.getSelectionStart();
-                int oldTextLength = textHalfEditText.getText().length();
-
-                textHalfEditText.removeTextChangedListener(textTextWatcher);
-                emojiHalfEditText.setText(emojify(s));
-                textHalfEditText.setText(deEmojify(s));
-                textHalfEditText.addTextChangedListener(textTextWatcher);
-
-                // adjustment cursor position
-                int addTextLength = textHalfEditText.getText().length() - oldTextLength;
-                int newPos = oldPos + addTextLength;
-                if (newPos > textHalfEditText.getText().length())
-                    newPos = textHalfEditText.getText().length();
-                textHalfEditText.setSelection(newPos);
+                for (String emojiName : emojiNames)
+                    loadImage(emojiName);
             }
         }
     }
@@ -327,7 +403,170 @@ public class MainActivity extends Activity {
      */
     public void openSettings(View v)
     {
+        String text;
+
         Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
         startActivity(intent);
+    }
+
+    /**
+     * create application list for sharing.
+     * @param data
+     */
+    private void createList(final String data)
+    {
+        // get destination application list
+        PackageManager packageManager = getPackageManager();
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        final List<ResolveInfo> appInfo = packageManager.queryIntentActivities(intent, 0);
+
+        // create listView
+        ListView listView = new ListView(this);
+        listView.setAdapter(new appInfoAdapter(this, R.layout.applicationlist_view, appInfo));
+
+        // create dialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(getResources().getString(R.string.share));
+        builder.setView(listView);
+        builder.setPositiveButton(R.string.cancel, null);
+        final AlertDialog dialog = builder.show();
+
+        // when click a listView's item
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                dialog.dismiss();
+
+                ResolveInfo info = appInfo.get(position);
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("text/plain");
+                intent.setPackage(info.activityInfo.packageName);
+                intent.putExtra(Intent.EXTRA_TEXT, data);
+                startActivity(intent);
+
+                // save settings and set icon
+                FileOperation.savePreferences(getApplicationContext(), info.activityInfo.packageName, FileOperation.SHARE);
+                setShareButtonIcon();
+            }
+        });
+    }
+
+    /**
+     * application list adapter for sharing.
+     */
+    private class appInfoAdapter extends ArrayAdapter<ResolveInfo>
+    {
+        private LayoutInflater inflater;
+        private int layout;
+
+        public appInfoAdapter(Context context, int resource, List<ResolveInfo> objects) {
+            super(context, resource, objects);
+
+            inflater = (LayoutInflater)context.getSystemService(LAYOUT_INFLATER_SERVICE);
+            layout = resource;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View view = convertView;
+            if (convertView == null)
+                view = this.inflater.inflate(this.layout, null);
+
+            // set application icon & name
+            PackageManager packageManager = getPackageManager();
+            ResolveInfo info = getItem(position);
+            ImageView icon = (ImageView)view.findViewById(R.id.application_list_icon);
+            icon.setImageDrawable(info.loadIcon(packageManager));
+            TextView textView = (TextView)view.findViewById(R.id.application_list_name);
+            textView.setText(info.loadLabel(packageManager));
+            return view;
+        }
+    }
+
+    /**
+     * set the last selected application's icon to share button
+     */
+    private void setShareButtonIcon()
+    {
+        ImageButton button = (ImageButton)findViewById(R.id.last_share_button);
+
+        // set image
+        String packageName = FileOperation.loadPreferences(getApplicationContext(), FileOperation.SHARE);
+        if (packageName.equals(""))
+        {
+            // default
+            button.setImageResource(android.R.drawable.ic_menu_send);
+        }
+        else
+        {
+            boolean set = false;
+            PackageManager packageManager = getPackageManager();
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            List<ResolveInfo> appInfo = packageManager.queryIntentActivities(intent, 0);
+            for (ResolveInfo info : appInfo)
+            {
+                // get application's icon
+                if (info.activityInfo.packageName.equals(packageName))
+                {
+                    button.setImageDrawable(info.loadIcon(packageManager));
+                    set = true;
+                    break;
+                }
+            }
+            // set default icon when could not get icon
+            if (!set)
+                button.setImageResource(android.R.drawable.ic_menu_send);
+        }
+    }
+
+    /**
+     * load image
+     * @param name emoji name
+     */
+    private void loadImage(String name)
+    {
+        EmojiData emoji = emojiDataManager.getEmojiData(name);
+        ImageView blank = (ImageView)findViewById(R.id.blank);
+        blank.setImageDrawable(emoji.getIcon());
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+
+        loadRealTimeConvertSettings();
+        CharSequence text = emojiEditText.getText();
+        if (text != null)
+            emojiEditText.setText(text);
+    }
+
+    /**
+     * Whether to the real-time conversion
+     */
+    private void loadRealTimeConvertSettings()
+    {
+        if (FileOperation.loadPreferences(getApplicationContext(), FileOperation.REALTIME).equals("false"))
+            realTime = false;
+        else
+            realTime = true;
+    }
+
+    /**
+     * When sent other application's text(intent).
+     */
+    private void getIntentData()
+    {
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        String type = intent.getType();
+
+        if (action.equals(Intent.ACTION_SEND) && type != null) {
+            if (type.equals("text/plain")) {
+                emojiEditText.setText(intent.getStringExtra(Intent.EXTRA_TEXT));
+            }
+        }
     }
 }
