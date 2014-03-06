@@ -25,12 +25,15 @@ import java.util.List;
  * Created by nazuki on 14/01/08.
  */
 public class EmojidexKeyboardView extends KeyboardView {
-    protected Context context;
-    protected LayoutInflater inflater;
+    private Context context;
+    private LayoutInflater inflater;
 
-    protected PopupWindow popup;
-    protected List<Integer> keyCodes = new ArrayList<Integer>();
-    protected Keyboard.Key key;
+    private PopupWindow popup;
+    private List<Integer> keyCodes = new ArrayList<Integer>();
+    private Keyboard.Key key;
+
+    private ImageButton imageButton;
+    private boolean register;
 
     /**
      * Construct EmojidexKeyboardView object.
@@ -100,12 +103,22 @@ public class EmojidexKeyboardView extends KeyboardView {
         icon.setImageDrawable(key.icon);
 
         // register button
-        ImageButton imageButton = (ImageButton)view.findViewById(R.id.favorite_register_button);
+        imageButton = (ImageButton)view.findViewById(R.id.favorite_register_button);
         imageButton.setOnClickListener(createListener());
+        if (FileOperation.searchFavorite(context, keyCodes))
+        {
+            imageButton.setImageResource(android.R.drawable.star_big_on);
+            register = true;
+        }
+        else
+        {
+            imageButton.setImageResource(android.R.drawable.star_big_on);
+            register = false;
+        }
 
-        // cancel button
-        Button cancelButton = (Button)view.findViewById(R.id.popup_cancel_button);
-        cancelButton.setOnClickListener(new OnClickListener()
+        // close button
+        Button closeButton = (Button)view.findViewById(R.id.popup_close_button);
+        closeButton.setOnClickListener(new OnClickListener()
         {
             @Override
             public void onClick(View v) {
@@ -123,20 +136,30 @@ public class EmojidexKeyboardView extends KeyboardView {
         return new OnClickListener() {
             @Override
             public void onClick(View v) {
-                // save favorites
-                int result = FileOperation.save(context, keyCodes, FileOperation.FAVORITES);
-                switch (result) {
-                    case FileOperation.SUCCESS :
-                        Toast.makeText(context, R.string.register_success, Toast.LENGTH_SHORT).show();
-                        break;
-                    case FileOperation.DONE :
-                        Toast.makeText(context, R.string.register_done, Toast.LENGTH_SHORT).show();
-                        break;
-                    case FileOperation.FAILURE :
-                        Toast.makeText(context, R.string.register_failure, Toast.LENGTH_SHORT).show();
-                        break;
+                // save or delete favorites
+                if (register)
+                {
+                    FileOperation.delete(context, keyCodes);
+                    imageButton.setImageResource(android.R.drawable.star_big_on);
+                    register = false;
                 }
-                closePopup();
+                else
+                {
+                    FileOperation.save(context, keyCodes, FileOperation.FAVORITES);
+                    imageButton.setImageResource(android.R.drawable.star_big_on);
+                    register = true;
+                }
+//                switch (result) {
+//                    case FileOperation.SUCCESS :
+//                        Toast.makeText(context, R.string.register_success, Toast.LENGTH_SHORT).show();
+//                        break;
+//                    case FileOperation.DONE :
+//                        Toast.makeText(context, R.string.register_done, Toast.LENGTH_SHORT).show();
+//                        break;
+//                    case FileOperation.FAILURE :
+//                        Toast.makeText(context, R.string.register_failure, Toast.LENGTH_SHORT).show();
+//                        break;
+//                }
             }
         };
     }

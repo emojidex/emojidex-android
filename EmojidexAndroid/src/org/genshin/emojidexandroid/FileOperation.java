@@ -327,4 +327,20 @@ public class FileOperation
 
         return str;
     }
+
+    /**
+     * Whether already registered.
+     * @param context
+     * @param keyCodes
+     * @return
+     */
+    public static boolean searchFavorite(Context context, List<Integer> keyCodes)
+    {
+        ArrayList<List<Integer>> data = load(context, FAVORITES);
+
+        if (duplicationCheck(data, keyCodes))
+            return true;
+        else
+            return false;
+    }
 }
