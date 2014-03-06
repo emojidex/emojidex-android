@@ -2,6 +2,8 @@ package org.genshin.emojidexandroid;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,10 +14,8 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -23,7 +23,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.ViewFlipper;
+import android.widget.ToggleButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,44 +60,17 @@ public class MainActivity extends Activity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        if (viewFlipper.getCurrentView() == findViewById(R.id.emoji_layout))
-        {
-            outState.putCharSequence("text", emojiEditText.getText());
-            outState.putString("view", "center");
-        }
-        else if (viewFlipper.getCurrentView() == findViewById(R.id.text_layout))
-        {
-            outState.putCharSequence("text", textEditText.getText());
-            outState.putString("view", "right");
-        }
-        else
-        {
-            outState.putCharSequence("text", emojiHalfEditText.getText());
-            outState.putString("view", "left");
-        }
+        outState.putCharSequence("text", editText.getText().toString());
+        outState.putBoolean("toggle", toggleState);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
-        String nowView = savedInstanceState.getString("view");
-
-        if (nowView.equals("center"))
-        {
-            emojiEditText.setText(savedInstanceState.getCharSequence("text"));
-        }
-        else if (nowView.equals("right"))
-        {
-            viewFlipper.showNext();
-            textEditText.setText(savedInstanceState.getCharSequence("text"));
-        }
-        else
-        {
-            viewFlipper.showPrevious();
-            emojiHalfEditText.setText(savedInstanceState.getCharSequence("text"));
-            textHalfEditText.setText(deEmojify(savedInstanceState.getCharSequence("text")));
-        }
+        toggleButton.setChecked(savedInstanceState.getBoolean("toggle"));
+        toggleState = savedInstanceState.getBoolean("toggle");
+        editText.setText(savedInstanceState.getCharSequence("text"));
     }
 
 
@@ -108,17 +81,13 @@ public class MainActivity extends Activity {
     private EmojiDataManager emojiDataManager;
     private List<EmojiData> emojiDataList;
 
-    private EditText emojiEditText;
-    private EditText textEditText;
-    private EditText emojiHalfEditText;
-    private EditText textHalfEditText;
-    private CustomTextWatcher emojiTextWatcher;
-    private CustomTextWatcher textTextWatcher;
-    private CustomTextWatcher emojiHalfTextWatcher;
-    private CustomTextWatcher textHalfTextWatcher;
-    private ViewFlipper viewFlipper;
+    private EditText editText;
+    private CustomTextWatcher textWatcher;
 
-    private boolean realTime;
+    private ToggleButton toggleButton;
+    private boolean toggleState = true;
+
+    // private boolean realTime;
 
     private void initEmojidexEditor()
     {
@@ -128,44 +97,15 @@ public class MainActivity extends Activity {
         emojiDataManager = emojidex.getEmojiDataManager();
         emojiDataList = emojiDataManager.getCategorizedList(getString(R.string.all_category));
 
-        emojiEditText = (EditText)findViewById(R.id.emoji_edittext);
-        textEditText = (EditText) findViewById(R.id.text_edittext);
-        emojiHalfEditText = (EditText)findViewById(R.id.emoji_half_edittext);
-        textHalfEditText = (EditText)findViewById(R.id.text_half_edittext);
+        editText = (EditText)findViewById(R.id.edit_text);
 
         // detects input
-        emojiTextWatcher = new CustomTextWatcher(emojiEditText.getId(), emojiEditText);
-        textTextWatcher = new CustomTextWatcher(textEditText.getId(), textEditText);
-        emojiHalfTextWatcher = new CustomTextWatcher(emojiHalfEditText.getId(), emojiHalfEditText);
-        textHalfTextWatcher = new CustomTextWatcher(textHalfEditText.getId(), textHalfEditText);
+        textWatcher = new CustomTextWatcher();
+        editText.addTextChangedListener(textWatcher);
 
-        emojiEditText.addTextChangedListener(emojiTextWatcher);
-        textEditText.addTextChangedListener(textTextWatcher);
-        emojiHalfEditText.addTextChangedListener(emojiHalfTextWatcher);
-        emojiHalfEditText.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                emojiHalfEditText.removeTextChangedListener(emojiHalfTextWatcher);
-                emojiHalfEditText.addTextChangedListener(emojiHalfTextWatcher);
-                textHalfEditText.removeTextChangedListener(textHalfTextWatcher);
-                return false;
-            }
-        });
-        textHalfEditText.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                textHalfEditText.removeTextChangedListener(textHalfTextWatcher);
-                textHalfEditText.addTextChangedListener(textHalfTextWatcher);
-                emojiHalfEditText.removeTextChangedListener(emojiHalfTextWatcher);
-                return false;
-            }
-        });
-
-        // set viewFlipper action
-        viewFlipper = (ViewFlipper)findViewById(R.id.viewFlipper_editor);
-        viewFlipper.setOnTouchListener(new FlickTouchListener());
-        // set default view
-        viewFlipper.showNext();
+        // toggle button state
+        toggleButton = (ToggleButton)findViewById(R.id.toggle_button);
+        toggleState = toggleButton.isChecked();
     }
 
     private CharSequence emojify(final CharSequence cs)
@@ -189,6 +129,9 @@ public class MainActivity extends Activity {
      */
     public void shareData(View v)
     {
+        if (editText.getText().toString().equals(""))
+            return;
+
         String data = setShareData();
         createList(data);
     }
@@ -199,6 +142,9 @@ public class MainActivity extends Activity {
      */
     public void shareDataLastSelected(View v)
     {
+        if (editText.getText().toString().equals(""))
+            return;
+
         String packageName = FileOperation.loadPreferences(getApplicationContext(), FileOperation.SHARE);
         if (packageName.equals(""))
             shareData(v);
@@ -222,103 +168,18 @@ public class MainActivity extends Activity {
     private String setShareData()
     {
         String text;
-        if (viewFlipper.getCurrentView() == findViewById(R.id.emoji_layout))
-        {
-            text = toUnicodeString(emojiEditText.getText()).toString();
-        }
-        else if (viewFlipper.getCurrentView() == findViewById(R.id.text_layout))
-        {
-            text = textEditText.getText().toString();
-        }
+
+        if (toggleState)
+            text = toUnicodeString(editText.getText()).toString();
         else
-        {
-            text = toUnicodeString(emojiHalfEditText.getText()).toString();
-        }
+            text = editText.getText().toString();
 
         return  text;
     }
 
-    public void moveViewToRight(View v)
-    {
-        // right edge of the screen
-        if (viewFlipper.getCurrentView() == findViewById(R.id.text_layout))
-            return;
-
-        // move emoji
-        if (viewFlipper.getCurrentView() == findViewById(R.id.emoji_text_layout))
-        {
-            emojiEditText.setText(emojiHalfEditText.getText());
-        }
-        // move text and toUnicodeString
-        else
-        {
-            textEditText.setText(toUnicodeString(emojiEditText.getText()));
-        }
-
-        viewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_in));
-        viewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_out));
-        viewFlipper.showNext();
-}
-
-    public void moveViewToLeft(View v)
-    {
-        // left edge of the screen
-        if (viewFlipper.getCurrentView() == findViewById(R.id.emoji_text_layout))
-            return;
-
-        // move text and emojify
-        if (viewFlipper.getCurrentView() == findViewById(R.id.text_layout))
-        {
-            emojiEditText.setText(emojify(deEmojify(textEditText.getText())));
-        }
-        // move emoji and deEmojify
-        else
-        {
-            emojiHalfEditText.setText(emojiEditText.getText());
-            textHalfEditText.setText(deEmojify(emojiEditText.getText()));
-        }
-
-        viewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_in));
-        viewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_out));
-        viewFlipper.showPrevious();
-    }
-
-    private class FlickTouchListener implements View.OnTouchListener
-    {
-        private float lastTouchX;
-        private float currentX;
-
-        @Override
-        public boolean onTouch(View view, MotionEvent event)
-        {
-            switch (event.getAction())
-            {
-                case MotionEvent.ACTION_DOWN:
-                    lastTouchX = event.getX();
-                    break;
-                case MotionEvent.ACTION_UP:
-                case MotionEvent.ACTION_CANCEL:
-                    currentX = event.getX();
-                    if (lastTouchX + 30 < currentX)
-                        moveViewToLeft(null);
-                    if (lastTouchX > currentX + 30)
-                        moveViewToRight(null);
-                    break;
-            }
-            return true;
-        }
-    }
-
     private class CustomTextWatcher implements TextWatcher
     {
-        private int inputEditTextId;
-        private EditText editText;
-
-        public CustomTextWatcher(int id, EditText editText)
-        {
-            inputEditTextId = id;
-            this.editText = editText;
-        }
+        public CustomTextWatcher() { }
 
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
@@ -338,43 +199,11 @@ public class MainActivity extends Activity {
             int oldPos = editText.getSelectionStart();
             int oldTextLength = editText.getText().length();
 
-            switch (inputEditTextId)
+            if (toggleState)
             {
-                // convert to emoji in emojiEditText
-                case R.id.emoji_edittext :
-                    if (realTime)
-                    {
-                        editText.removeTextChangedListener(emojiTextWatcher);
-                        editText.setText(emojify(deEmojify(editText.getText())));
-                        editText.addTextChangedListener(emojiTextWatcher);
-                    }
-                    break;
-
-                // convert to unicode in emojiEditText
-                case R.id.text_edittext :
-                    if (realTime)
-                    {
-                        editText.removeTextChangedListener(textTextWatcher);
-                        editText.setText(toUnicodeString(editText.getText()));
-                        editText.addTextChangedListener(textTextWatcher);
-                    }
-                    break;
-
-                // conversion while input emoji
-                case R.id.emoji_half_edittext :
-                    editText.removeTextChangedListener(emojiHalfTextWatcher);
-                    editText.setText(emojify(s));
-                    textHalfEditText.setText(deEmojify(s));
-                    editText.addTextChangedListener(emojiHalfTextWatcher);
-                    break;
-
-                // conversion while input text
-                case R.id.text_half_edittext :
-                    editText.removeTextChangedListener(textHalfTextWatcher);
-                    emojiHalfEditText.setText(emojify(s));
-                    editText.setText(deEmojify(s));
-                    editText.addTextChangedListener(textHalfTextWatcher);
-                    break;
+                editText.removeTextChangedListener(textWatcher);
+                editText.setText(emojify(deEmojify(editText.getText())));
+                editText.addTextChangedListener(textWatcher);
             }
 
             // adjustment cursor position
@@ -403,8 +232,6 @@ public class MainActivity extends Activity {
      */
     public void openSettings(View v)
     {
-        String text;
-
         Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
         startActivity(intent);
     }
@@ -532,28 +359,6 @@ public class MainActivity extends Activity {
         blank.setImageDrawable(emoji.getIcon());
     }
 
-    @Override
-    protected void onResume()
-    {
-        super.onResume();
-
-        loadRealTimeConvertSettings();
-        CharSequence text = emojiEditText.getText();
-        if (text != null)
-            emojiEditText.setText(text);
-    }
-
-    /**
-     * Whether to the real-time conversion
-     */
-    private void loadRealTimeConvertSettings()
-    {
-        if (FileOperation.loadPreferences(getApplicationContext(), FileOperation.REALTIME).equals("false"))
-            realTime = false;
-        else
-            realTime = true;
-    }
-
     /**
      * When sent other application's text(intent).
      */
@@ -563,10 +368,46 @@ public class MainActivity extends Activity {
         String action = intent.getAction();
         String type = intent.getType();
 
-        if (action.equals(Intent.ACTION_SEND) && type != null) {
-            if (type.equals("text/plain")) {
-                emojiEditText.setText(intent.getStringExtra(Intent.EXTRA_TEXT));
-            }
+        if (action.equals(Intent.ACTION_SEND) && type != null)
+        {
+            if (type.equals("text/plain"))
+                editText.setText(intent.getStringExtra(Intent.EXTRA_TEXT));
         }
+    }
+
+    /**
+     * Clear the text
+     * @param v
+     */
+    public void ClearText(View v)
+    {
+        editText.setText("");
+    }
+
+    /**
+     * Clear and Paste the text(clipboard data).
+     * @param v
+     */
+    public void ClearAndPaste(View v)
+    {
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clipData = clipboard.getPrimaryClip();
+        ClipData.Item item = clipData.getItemAt(0);
+        editText.setText(item.getText());
+    }
+
+    /**
+     * When click the toggle button, put the state and convert the text.
+     * @param v
+     */
+    public void ClickToggleButton(View v)
+    {
+        toggleState = toggleButton.isChecked();
+
+        // convert text
+        if (toggleState)
+            editText.setText(emojify(editText.getText()));
+        else
+            editText.setText(deEmojify(editText.getText()));
     }
 }

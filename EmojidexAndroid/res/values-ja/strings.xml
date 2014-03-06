@@ -14,6 +14,8 @@
     <string name="share">共有</string>
     <string name="text_hint_emoji">絵文字を入力してください。</string>
     <string name="text_hint_text">テキストを入力してください。</string>
+    <string name="clear">クリア</string>
+    <string name="clear_and_paste">クリア &amp; 貼り付け</string>
 
     <string name="all_category">All</string>
 
@@ -36,8 +38,6 @@
 
     <string name="keyboard_button">キーボードアイコンボタンの設定</string>
     <string name="keyboard_button_text">キーボードアイコンボタンを押した時に変更されるキーボードを設定します。</string>
-    <string name="realtime">リアルタイム変換</string>
-    <string name="realtime_text">入力中にリアルタイムに変換します。</string>
     <string name="back">戻る</string>
 
     <string name="set">設定する</string>

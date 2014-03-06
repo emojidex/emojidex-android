@@ -14,6 +14,8 @@
     <string name="share">Share</string>
     <string name="text_hint_emoji">You can preview or convert emoji + text here.</string>
     <string name="text_hint_text">Enter or paste text with emoji here.</string>
+    <string name="clear">Clear</string>
+    <string name="clear_and_paste">Clear &amp; Paste</string>
 
     <string name="all_category">All</string>
 
@@ -36,8 +38,6 @@
 
     <string name="keyboard_button">Keyboard settings</string>
     <string name="keyboard_button_text">Set your default keyboard here</string>
-    <string name="realtime">Real-time convert</string>
-    <string name="realtime_text">Convert in real time as you type.</string>
     <string name="back">Back</string>
 
     <string name="set">Set</string>
