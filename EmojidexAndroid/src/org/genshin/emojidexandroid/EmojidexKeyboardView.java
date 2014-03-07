@@ -33,7 +33,8 @@ public class EmojidexKeyboardView extends KeyboardView {
     private Keyboard.Key key;
 
     private ImageButton imageButton;
-    private boolean register;
+    private boolean first;
+    private boolean registered;
 
     /**
      * Construct EmojidexKeyboardView object.
@@ -49,7 +50,7 @@ public class EmojidexKeyboardView extends KeyboardView {
     }
 
     /**
-     * Behavior when long pressed
+     * Behavior when long pressed.
      * @param popupKey
      * @return
      */
@@ -69,13 +70,13 @@ public class EmojidexKeyboardView extends KeyboardView {
     }
 
     /**
-     * create PopupWindow
+     * Create PopupWindow.
      */
     protected void createPopupWindow()
     {
         closePopup();
 
-        // create popup window
+        // Create popup window.
         View view = inflater.inflate(R.layout.popup_favorite, null);
         popup = new PopupWindow(this);
         popup.setContentView(view);
@@ -83,7 +84,7 @@ public class EmojidexKeyboardView extends KeyboardView {
         popup.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
         popup.showAtLocation(this, Gravity.CENTER_HORIZONTAL, 0, -this.getHeight());
 
-        // set emoji data
+        // Set emoji data.
         TextView textView = (TextView)view.findViewById(R.id.favorite_name);
         textView.setText(":" + key.popupCharacters + ":");
         textView.setOnLongClickListener(new OnLongClickListener() {
@@ -102,21 +103,23 @@ public class EmojidexKeyboardView extends KeyboardView {
         ImageView icon = (ImageView)view.findViewById(R.id.popup_favorite_image);
         icon.setImageDrawable(key.icon);
 
-        // register button
+        // Set register button.
         imageButton = (ImageButton)view.findViewById(R.id.favorite_register_button);
         imageButton.setOnClickListener(createListener());
         if (FileOperation.searchFavorite(context, keyCodes))
         {
             imageButton.setImageResource(android.R.drawable.star_big_on);
-            register = true;
+            first = true;
+            registered = true;
         }
         else
         {
-            imageButton.setImageResource(android.R.drawable.star_big_on);
-            register = false;
+            imageButton.setImageResource(android.R.drawable.star_big_off);
+            first = false;
+            registered = false;
         }
 
-        // close button
+        // Set close button.
         Button closeButton = (Button)view.findViewById(R.id.popup_close_button);
         closeButton.setOnClickListener(new OnClickListener()
         {
@@ -128,7 +131,7 @@ public class EmojidexKeyboardView extends KeyboardView {
     }
 
     /**
-     * create onClickListener
+     * Create onClickListener.
      * @return
      */
     protected OnClickListener createListener()
@@ -136,39 +139,35 @@ public class EmojidexKeyboardView extends KeyboardView {
         return new OnClickListener() {
             @Override
             public void onClick(View v) {
-                // save or delete favorites
-                if (register)
+                // Change icon.
+                if (registered)
                 {
-                    FileOperation.delete(context, keyCodes);
-                    imageButton.setImageResource(android.R.drawable.star_big_on);
-                    register = false;
+                    imageButton.setImageResource(android.R.drawable.star_big_off);
+                    registered = false;
                 }
                 else
                 {
-                    FileOperation.save(context, keyCodes, FileOperation.FAVORITES);
                     imageButton.setImageResource(android.R.drawable.star_big_on);
-                    register = true;
+                    registered = true;
                 }
-//                switch (result) {
-//                    case FileOperation.SUCCESS :
-//                        Toast.makeText(context, R.string.register_success, Toast.LENGTH_SHORT).show();
-//                        break;
-//                    case FileOperation.DONE :
-//                        Toast.makeText(context, R.string.register_done, Toast.LENGTH_SHORT).show();
-//                        break;
-//                    case FileOperation.FAILURE :
-//                        Toast.makeText(context, R.string.register_failure, Toast.LENGTH_SHORT).show();
-//                        break;
-//                }
             }
         };
     }
 
     /**
-     * close popup window
+     * Close popup window.
      */
     public void closePopup()
     {
+        // If changed favorite state, save current state.
+        if (registered != first)
+        {
+            if (registered)
+                FileOperation.save(context, keyCodes, FileOperation.FAVORITES);
+            else
+                FileOperation.delete(context, keyCodes);
+        }
+
         if (popup != null)
         {
             popup.dismiss();
