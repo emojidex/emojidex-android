@@ -16,6 +16,7 @@
     <string name="text_hint_text">Enter or paste text with emoji here.</string>
     <string name="clear">Clear</string>
     <string name="clear_and_paste">Clear &amp; Paste</string>
+    <string name="convert">Convert</string>
 
     <string name="all_category">All</string>
 

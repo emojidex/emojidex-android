@@ -16,6 +16,7 @@
     <string name="text_hint_text">テキストを入力してください。</string>
     <string name="clear">クリア</string>
     <string name="clear_and_paste">クリア &amp; 貼り付け</string>
+    <string name="convert">変換</string>
 
     <string name="all_category">All</string>
 

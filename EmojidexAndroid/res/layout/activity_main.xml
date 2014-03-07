@@ -88,6 +88,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:textOn="@string/convert"
+            android:textOff="@string/convert"
             android:checked="true"
             android:onClick="ClickToggleButton"/>
 
