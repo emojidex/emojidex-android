@@ -8,9 +8,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,8 +28,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends Activity {
 
@@ -38,6 +48,8 @@ public class MainActivity extends Activity {
         initEmojidexEditor();
         setShareButtonIcon();
         getIntentData();
+
+        testApi();
     }
 
     @Override
@@ -409,5 +421,61 @@ public class MainActivity extends Activity {
             editText.setText(emojify(editText.getText()));
         else
             editText.setText(deEmojify(editText.getText()));
+    }
+
+    /**
+     * emojidex API test.
+     */
+    private void testApi()
+    {
+        // Get the json data from emojidex site.
+        String jsonUri = "https://www.emojidex.com/api/v1/emoji";
+        Uri.Builder jsonUriBuilder = new Uri.Builder();
+        AsyncHttpRequestForGetJson getJsonTask = new AsyncHttpRequestForGetJson(this, jsonUri);
+        getJsonTask.execute(jsonUriBuilder);
+        String resultJson = "";
+        try
+        {
+            resultJson = getJsonTask.get();
+        }
+        catch (InterruptedException e) { e.printStackTrace(); }
+        catch (ExecutionException e) { e.printStackTrace(); }
+
+        if (!resultJson.equals(""))
+            parse(resultJson);
+
+        // Get the image from emojidex site.
+        String imgUri = "http://assets.emojidex.com/emoji/virgo/px128.png";
+        Uri.Builder imgUriBuilder = new Uri.Builder();
+        AsyncHttpRequestForGetImage getImgTask = new AsyncHttpRequestForGetImage(this, imgUri);
+        getImgTask.execute(imgUriBuilder);
+        Drawable resultImg;
+        try
+        {
+            resultImg = getImgTask.get();
+            ImageView imageView = (ImageView)findViewById(R.id.image_view);
+            imageView.setImageDrawable(resultImg);
+        }
+        catch (InterruptedException e) { e.printStackTrace(); }
+        catch (ExecutionException e) { e.printStackTrace(); }
+    }
+
+    /**
+     * Parse the json data.
+     * @param json json data from emojidex site.
+     */
+    private void parse(String json)
+    {
+        ObjectMapper mapper = new ObjectMapper();
+        try
+        {
+            JsonNode rootNode = mapper.readTree(json);
+            JsonNode emojiNode = rootNode.path("emoji");
+            List<EmojidexEmojiData> res = mapper.readValue(emojiNode.toString(),
+                                                           new TypeReference<ArrayList<EmojidexEmojiData>>(){});
+            Log.e("test", "data0:   " + res.get(0).getId());
+        }
+        catch (JsonProcessingException e) { e.printStackTrace(); }
+        catch (IOException e) { e.printStackTrace(); }
     }
 }
