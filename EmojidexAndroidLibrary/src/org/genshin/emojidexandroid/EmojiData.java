@@ -22,22 +22,22 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class EmojiData
 {
-    private static final String NOT_UNICODE_MOJI = "\uFFFC";
+    protected static final String NOT_UNICODE_MOJI = "\uFFFC";
 
-    @JsonProperty("moji")           private String moji = NOT_UNICODE_MOJI;
+    @JsonProperty("moji")           protected String moji = NOT_UNICODE_MOJI;
 //    @JsonProperty("alto")           private String[] alto;
-    @JsonProperty("code")           private String name;
+    @JsonProperty("code")           protected String name;
 //    @JsonProperty("code-ja")        private String nameJa;
 //    @JsonProperty("emoticon")       private String emoticon;
-    @JsonProperty("category")       private String category;
+    @JsonProperty("category")       protected String category;
 //    @JsonProperty("unicode")        private String unicode;
 //    @JsonProperty("attribution")    private String attribution;
 //    @JsonProperty("contributor")    private String contributor;
 //    @JsonProperty("url")            private String url;
 
-    private Drawable icon = null;
-    private List<Integer> codes = new ArrayList<Integer>();
-    private boolean isOriginal = false;
+    protected Drawable icon = null;
+    protected List<Integer> codes = new ArrayList<Integer>();
+    protected boolean isOriginal = false;
 
 
     /**
