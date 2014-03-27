@@ -13,7 +13,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -445,7 +444,7 @@ public class MainActivity extends Activity {
             parse(resultJson);
 
         // Get the image from emojidex site.
-        String imgUri = "http://assets.emojidex.com/emoji/virgo/px128.png";
+        String imgUri = "http://assets.emojidex.com/emoji/virgo/px64.png";
         Uri.Builder imgUriBuilder = new Uri.Builder();
         AsyncHttpRequestForGetImage getImgTask = new AsyncHttpRequestForGetImage(imgUri);
         getImgTask.execute(imgUriBuilder);
@@ -473,9 +472,6 @@ public class MainActivity extends Activity {
             JsonNode emojiNode = rootNode.path("emoji");
             List<EmojidexEmojiData> res = mapper.readValue(((Object)emojiNode).toString(),
                                                            new TypeReference<ArrayList<EmojidexEmojiData>>(){});
-            EmojidexEmojiData emoji = res.get(0);
-            Log.e("test", "      id: " + emoji.getId());
-            Log.e("test", "emoji_id: " + emoji.getEmojiId(0));
         }
         catch (JsonProcessingException e) { e.printStackTrace(); }
         catch (IOException e) { e.printStackTrace(); }

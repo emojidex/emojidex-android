@@ -5,6 +5,8 @@ import android.net.Uri;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
@@ -54,6 +56,12 @@ public class EmojidexEmojiData extends EmojiData
         isOriginal = true;
 
         // Get the image from emojidex site.
+        try
+        {
+            id = URLEncoder.encode(id, "UTF-8");
+        }
+        catch (UnsupportedEncodingException e) { e.printStackTrace(); }
+
         String imgUri = "http://assets.emojidex.com/emoji/" + id + "/px128.png";
         Uri.Builder imgUriBuilder = new Uri.Builder();
         AsyncHttpRequestForGetImage getImgTask = new AsyncHttpRequestForGetImage(imgUri);

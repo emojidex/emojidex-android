@@ -2,10 +2,13 @@ package org.genshin.emojidexandroid;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.net.Uri;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -14,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by nazuki on 2013/08/28.
@@ -177,5 +181,72 @@ public class EmojiDataManager
             // Add to emoji code table.
             codeTable.put(emoji.getCodes(), emoji);
         }
+
+        // original emoji from emojidex site.
+        String jsonData = getJsonFromEmojidexSite();
+        List<EmojidexEmojiData> downloadEmojiList = parse(jsonData);
+        for (EmojidexEmojiData emoji : downloadEmojiList)
+        {
+            emoji.initialize(nextCode++);
+        }
+
+        // When there is no image, remove emoji.
+        for (int i = downloadEmojiList.size() - 1; i >= 0; i--)
+        {
+            if (downloadEmojiList.get(i).getIcon() == null)
+                downloadEmojiList.remove(i);
+        }
+
+        List<EmojiData> convertList = new ArrayList<EmojiData>();
+        for (EmojidexEmojiData emoji : downloadEmojiList)
+        {
+            convertList.add(emoji);
+        }
+
+        // TODO
+        categorizedLists.put("Download", convertList);
+        for(EmojiData emoji : convertList)
+        {
+            nameTable.put(emoji.getName(), emoji);
+            codeTable.put(emoji.getCodes(), emoji);
+        }
+    }
+
+    private String getJsonFromEmojidexSite()
+    {
+        // Get the json data from emojidex site.
+        String jsonUri = "https://www.emojidex.com/api/v1/emoji";
+        Uri.Builder jsonUriBuilder = new Uri.Builder();
+        AsyncHttpRequestForGetJson getJsonTask = new AsyncHttpRequestForGetJson(jsonUri);
+        getJsonTask.execute(jsonUriBuilder);
+        String result = "";
+        try
+        {
+            result = getJsonTask.get();
+        }
+        catch (InterruptedException e) { e.printStackTrace(); }
+        catch (ExecutionException e) { e.printStackTrace(); }
+        return result;
+    }
+
+    /**
+     * Parse the json data.
+     * @param json json data from emojidex site.
+     */
+    private List<EmojidexEmojiData> parse(String json)
+    {
+        List<EmojidexEmojiData> res = new ArrayList<EmojidexEmojiData>();
+        ObjectMapper mapper = new ObjectMapper();
+        try
+        {
+            JsonNode rootNode = mapper.readTree(json);
+            JsonNode emojiNode = rootNode.path("emoji");
+            res = mapper.readValue(((Object)emojiNode).toString(),
+                    new TypeReference<ArrayList<EmojidexEmojiData>>(){});
+        }
+        catch (JsonProcessingException e) { e.printStackTrace(); }
+        catch (IOException e) { e.printStackTrace(); }
+
+        return res;
     }
 }

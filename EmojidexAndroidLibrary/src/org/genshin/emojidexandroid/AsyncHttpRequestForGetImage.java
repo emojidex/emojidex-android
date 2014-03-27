@@ -24,15 +24,22 @@ public class AsyncHttpRequestForGetImage extends AsyncTask<Uri.Builder, Void, Dr
     protected Drawable doInBackground(Uri.Builder... params) {
         Drawable result = null;
 
+        InputStream is = null;
         try
         {
+
             URL url = new URL(uri);
-            InputStream is = url.openStream();
+            is = url.openStream();
             result = Drawable.createFromStream(is, "pngImg");
             is.close();
         }
         catch (MalformedURLException e) { e.printStackTrace(); }
         catch (IOException e) { e.printStackTrace(); }
+        finally {
+            if (is != null)
+                try { is.close(); }
+                catch (IOException e) { e.printStackTrace(); }
+        }
 
         return result;
     }
