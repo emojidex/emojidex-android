@@ -16,14 +16,27 @@ public class EmojidexEmojiData
     @JsonProperty("link")           private String link;
     @JsonProperty("is_wide")        private boolean isWide;
     @JsonProperty("loops")          private int loops;
-    @JsonProperty("frames")         private ArrayList<?> frames;
+    @JsonProperty("frames")         private ArrayList<EmojidexEmojiData> frames;
     @JsonProperty("frames_delay")   private ArrayList<Integer> framesDelay;
     @JsonProperty("category")       private String category;
     @JsonProperty("tags")           private ArrayList<String> tags;
-    @JsonProperty("url")            private String url;
+
+    // for frames
+    @JsonProperty("emoji_id")       private String emojiId;
+    @JsonProperty("delay")          private int delay;
 
     public String getId()
     {
         return id;
+    }
+
+    private String getEmojiId()
+    {
+        return emojiId;
+    }
+
+    public String getEmojiId(int index)
+    {
+        return frames.get(index).getEmojiId();
     }
 }

@@ -1,6 +1,5 @@
 package org.genshin.emojidexandroid;
 
-import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -14,11 +13,10 @@ import java.net.URL;
  * Created by nazuki on 2014/03/26.
  */
 public class AsyncHttpRequestForGetImage extends AsyncTask<Uri.Builder, Void, Drawable> {
-    private Activity activity;
     private String uri;
 
-    public AsyncHttpRequestForGetImage(Activity activity, String uri) {
-        this.activity = activity;
+    public AsyncHttpRequestForGetImage(String uri) {
+        super();
         this.uri = uri;
     }
 

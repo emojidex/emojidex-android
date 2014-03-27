@@ -1,6 +1,5 @@
 package org.genshin.emojidexandroid;
 
-import android.app.Activity;
 import android.net.Uri;
 import android.os.AsyncTask;
 
@@ -20,11 +19,10 @@ import java.io.IOException;
  * Created by nazuki on 2014/03/26.
  */
 public class AsyncHttpRequestForGetJson extends AsyncTask<Uri.Builder, Void, String> {
-    private Activity activity;
     private String uri;
 
-    public AsyncHttpRequestForGetJson(Activity activity, String uri) {
-        this.activity = activity;
+    public AsyncHttpRequestForGetJson(String uri) {
+        super();
         this.uri = uri;
     }
 

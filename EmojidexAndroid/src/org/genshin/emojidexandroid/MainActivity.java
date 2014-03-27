@@ -431,7 +431,7 @@ public class MainActivity extends Activity {
         // Get the json data from emojidex site.
         String jsonUri = "https://www.emojidex.com/api/v1/emoji";
         Uri.Builder jsonUriBuilder = new Uri.Builder();
-        AsyncHttpRequestForGetJson getJsonTask = new AsyncHttpRequestForGetJson(this, jsonUri);
+        AsyncHttpRequestForGetJson getJsonTask = new AsyncHttpRequestForGetJson(jsonUri);
         getJsonTask.execute(jsonUriBuilder);
         String resultJson = "";
         try
@@ -447,7 +447,7 @@ public class MainActivity extends Activity {
         // Get the image from emojidex site.
         String imgUri = "http://assets.emojidex.com/emoji/virgo/px128.png";
         Uri.Builder imgUriBuilder = new Uri.Builder();
-        AsyncHttpRequestForGetImage getImgTask = new AsyncHttpRequestForGetImage(this, imgUri);
+        AsyncHttpRequestForGetImage getImgTask = new AsyncHttpRequestForGetImage(imgUri);
         getImgTask.execute(imgUriBuilder);
         Drawable resultImg;
         try
@@ -471,9 +471,11 @@ public class MainActivity extends Activity {
         {
             JsonNode rootNode = mapper.readTree(json);
             JsonNode emojiNode = rootNode.path("emoji");
-            List<EmojidexEmojiData> res = mapper.readValue(emojiNode.toString(),
+            List<EmojidexEmojiData> res = mapper.readValue(((Object)emojiNode).toString(),
                                                            new TypeReference<ArrayList<EmojidexEmojiData>>(){});
-            Log.e("test", "data0:   " + res.get(0).getId());
+            EmojidexEmojiData emoji = res.get(0);
+            Log.e("test", "      id: " + emoji.getId());
+            Log.e("test", "emoji_id: " + emoji.getEmojiId(0));
         }
         catch (JsonProcessingException e) { e.printStackTrace(); }
         catch (IOException e) { e.printStackTrace(); }
