@@ -93,12 +93,6 @@
             android:checked="true"
             android:onClick="ClickToggleButton"/>
 
-        <ImageView
-            android:id="@+id/image_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"/>
-
     </LinearLayout>
 
     <EditText
