@@ -34,6 +34,8 @@ public class EmojiDataManager
 
     private boolean isInitialized = false;
 
+    private int nextCode;
+
 
     /**
      * Create EmojiDataManager object.
@@ -144,7 +146,7 @@ public class EmojiDataManager
         categorizedLists.put(categories.get(0).getName(), newEmojiList);
 
         // Initialize emoji.
-        int nextCode = res.getInteger(R.integer.original_code_start);
+        nextCode = res.getInteger(R.integer.original_code_start);
         for(EmojiData emoji : newEmojiList)
         {
             if(emoji.hasCode())
@@ -182,34 +184,34 @@ public class EmojiDataManager
             codeTable.put(emoji.getCodes(), emoji);
         }
 
-        // original emoji from emojidex site.
-        String jsonData = getJsonFromEmojidexSite();
-        List<EmojidexEmojiData> downloadEmojiList = parse(jsonData);
-        for (EmojidexEmojiData emoji : downloadEmojiList)
-        {
-            emoji.initialize(nextCode++);
-        }
-
-        // When there is no image, remove emoji.
-        for (int i = downloadEmojiList.size() - 1; i >= 0; i--)
-        {
-            if (downloadEmojiList.get(i).getIcon() == null)
-                downloadEmojiList.remove(i);
-        }
-
-        List<EmojiData> convertList = new ArrayList<EmojiData>();
-        for (EmojidexEmojiData emoji : downloadEmojiList)
-        {
-            convertList.add(emoji);
-        }
-
-        // TODO
-        categorizedLists.put("Download", convertList);
-        for(EmojiData emoji : convertList)
-        {
-            nameTable.put(emoji.getName(), emoji);
-            codeTable.put(emoji.getCodes(), emoji);
-        }
+//        // original emoji from emojidex site.
+//        String jsonData = getJsonFromEmojidexSite();
+//        List<EmojidexEmojiData> downloadEmojiList = parse(jsonData);
+//        for (EmojidexEmojiData emoji : downloadEmojiList)
+//        {
+//            emoji.initialize(nextCode++);
+//        }
+//
+//        // When there is no image, remove emoji.
+//        for (int i = downloadEmojiList.size() - 1; i >= 0; i--)
+//        {
+//            if (downloadEmojiList.get(i).getIcon() == null)
+//                downloadEmojiList.remove(i);
+//        }
+//
+//        List<EmojiData> convertList = new ArrayList<EmojiData>();
+//        for (EmojidexEmojiData emoji : downloadEmojiList)
+//        {
+//            convertList.add(emoji);
+//        }
+//
+//        // TODO
+//        categorizedLists.put("Download", convertList);
+//        for(EmojiData emoji : convertList)
+//        {
+//            nameTable.put(emoji.getName(), emoji);
+//            codeTable.put(emoji.getCodes(), emoji);
+//        }
     }
 
     private String getJsonFromEmojidexSite()
@@ -248,5 +250,51 @@ public class EmojiDataManager
         catch (IOException e) { e.printStackTrace(); }
 
         return res;
+    }
+
+    /**
+     * Download emoji list.
+     * @param json
+     */
+    public void setDownloadEmojiList(String json)
+    {
+        // delete old keyboard
+        List<EmojiData> oldList = categorizedLists.get("Download");
+        if (oldList.size() != 0)
+            {
+            for (EmojiData emoji : oldList)
+            {
+                nameTable.remove(emoji.getName());
+                codeTable.remove(emoji.getCodes());
+            }
+            categorizedLists.remove("Donload");
+        }
+
+        // create new keyboard
+        List<EmojidexEmojiData> downloadEmojiList = parse(json);
+        for (EmojidexEmojiData emoji : downloadEmojiList)
+        {
+            emoji.initialize(nextCode++);
+        }
+
+        // When there is no image, remove emoji.
+        for (int i = downloadEmojiList.size() - 1; i >= 0; i--)
+        {
+            if (downloadEmojiList.get(i).getIcon() == null)
+                downloadEmojiList.remove(i);
+        }
+
+        List<EmojiData> convertList = new ArrayList<EmojiData>();
+        for (EmojidexEmojiData emoji : downloadEmojiList)
+        {
+            convertList.add(emoji);
+        }
+
+        categorizedLists.put("Download", convertList);
+        for(EmojiData emoji : convertList)
+        {
+            nameTable.put(emoji.getName(), emoji);
+            codeTable.put(emoji.getCodes(), emoji);
+        }
     }
 }

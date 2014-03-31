@@ -43,5 +43,10 @@
 
     <string name="set">設定する</string>
     <string name="cancel">キャンセル</string>
+    
+    <string name="newest">最新</string>
+    <string name="popular">人気</string>
+    <string name="category">カテゴリー</string>
+    <string name="emoji">絵文字</string>
 
 </resources>

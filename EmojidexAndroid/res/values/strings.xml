@@ -44,4 +44,9 @@
     <string name="set">Set</string>
     <string name="cancel">Cancel</string>
 
+    <string name="newest">Newest</string>
+    <string name="popular">Popular</string>
+    <string name="category">Category</string>
+    <string name="emoji">Emoji</string>
+
 </resources>

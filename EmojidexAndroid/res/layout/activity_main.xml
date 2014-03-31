@@ -70,28 +70,47 @@
         android:layout_margin="10dp">
 
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="@string/clear"
-            android:onClick="ClearText"/>
+            android:onClick="clearText"/>
 
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
             android:text="@string/clear_and_paste"
-            android:onClick="ClearAndPaste"/>
+            android:onClick="clearAndPaste"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_margin="10dp">
 
         <ToggleButton
             android:id="@+id/toggle_button"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:layout_gravity="center_vertical"
             android:textOn="@string/convert"
             android:textOff="@string/convert"
             android:checked="true"
-            android:onClick="ClickToggleButton"/>
+            android:onClick="clickToggleButton"/>
+
+        <Button
+            android:id="@+id/search_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginLeft="10dp"
+            android:text="@string/search"
+            android:onClick="createSearchWindow"/>
 
     </LinearLayout>
 

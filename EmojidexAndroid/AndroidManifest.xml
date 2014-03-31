@@ -35,6 +35,10 @@
             android:name="org.genshin.emojidexandroid.SettingsActivity"
             android:label="@string/app_name">
         </activity>
+        <activity
+            android:name="org.genshin.emojidexandroid.ListActivity"
+            android:label="@string/app_name">
+        </activity>
         <service
                 android:name=".EmojidexIME"
                 android:label="@string/app_name"

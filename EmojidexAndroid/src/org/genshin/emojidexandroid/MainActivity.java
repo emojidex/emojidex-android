@@ -8,25 +8,34 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends Activity {
 
@@ -379,7 +388,7 @@ public class MainActivity extends Activity {
      * Clear the text
      * @param v
      */
-    public void ClearText(View v)
+    public void clearText(View v)
     {
         editText.setText("");
     }
@@ -388,7 +397,7 @@ public class MainActivity extends Activity {
      * Clear and Paste the text(clipboard data).
      * @param v
      */
-    public void ClearAndPaste(View v)
+    public void clearAndPaste(View v)
     {
         ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clipData = clipboard.getPrimaryClip();
@@ -400,7 +409,7 @@ public class MainActivity extends Activity {
      * When click the toggle button, put the state and convert the text.
      * @param v
      */
-    public void ClickToggleButton(View v)
+    public void clickToggleButton(View v)
     {
         toggleState = toggleButton.isChecked();
 
@@ -409,5 +418,104 @@ public class MainActivity extends Activity {
             editText.setText(emojify(editText.getText()));
         else
             editText.setText(deEmojify(editText.getText()));
+    }
+
+    /**
+     * Create the window(dialog) for emoji search
+     * @param v
+     */
+    public void createSearchWindow(View v)
+    {
+        // set view
+        View view = getLayoutInflater().inflate(R.layout.search_window, null);
+        final EditText editText = (EditText)view.findViewById(R.id.search_edittext);
+
+        // set spinner
+        final Spinner spinner = (Spinner)view.findViewById(R.id.spinner);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        adapter.add(getString(R.string.newest));
+        adapter.add(getString(R.string.popular));
+        adapter.add(getString(R.string.category));
+        adapter.add(getString(R.string.emoji));
+        spinner.setAdapter(adapter);
+
+        // set dialog
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(view);
+        final AlertDialog dialog = builder.show();
+        dialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+
+        Button searchButton = (Button)view.findViewById(R.id.emoji_search_button);
+        searchButton.setOnClickListener( new View.OnClickListener() {
+            public void onClick( View v ) {
+                if (spinner.getSelectedItemPosition() == 2 && editText.getText().toString().equals(""))
+                    return;
+                if (spinner.getSelectedItemPosition() == 3 && editText.getText().toString().equals(""))
+                    return;
+
+                searchEmoji(spinner.getSelectedItemPosition(), editText.getText().toString());
+                dialog.dismiss();
+            }
+        });
+
+        Button closeButton = (Button)view.findViewById(R.id.window_close_button);
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.cancel();
+            }
+        });
+    }
+
+    /**
+     * Search emoji from emojidex site.
+     * @param selected  selectedItem from spinner
+     * @param str       string from edittext
+     */
+    private void searchEmoji(int selected, String str)
+    {
+        String text = str;
+        if (!text.equals(""))
+        {
+            try
+            {
+                text = URLEncoder.encode(text, "UTF-8");
+            }
+            catch (UnsupportedEncodingException e) { e.printStackTrace(); }
+        }
+
+        String uri = "";
+        switch (selected)
+        {
+            // newest
+            case 0:
+                uri = "https://www.emojidex.com/api/v1/newest";
+                break;
+            // popular
+            case 1:
+                uri = "https://www.emojidex.com/api/v1/popular";
+                break;
+            // category
+            case 2:
+                uri = "https://www.emojidex.com/api/v1/search/categories?[q][name_cont]=" + text;
+                break;
+            // emoji
+            case 3:
+                uri = "https://www.emojidex.com/api/v1/search/emoji?[q][code_cont]=" + text;
+                break;
+        }
+
+        Uri.Builder builder = new Uri.Builder();
+        AsyncHttpRequestForGetJson getJsonTask = new AsyncHttpRequestForGetJson(uri);
+        getJsonTask.execute(builder);
+        String result = "";
+        try
+        {
+            result = getJsonTask.get();
+        }
+        catch (InterruptedException e) { e.printStackTrace(); }
+        catch (ExecutionException e) { e.printStackTrace(); }
+        Log.e("test", "result:" + result);
     }
 }
