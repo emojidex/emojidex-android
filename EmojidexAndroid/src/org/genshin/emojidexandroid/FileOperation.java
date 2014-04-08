@@ -37,41 +37,17 @@ public class FileOperation
     public static int MAX_SIZE = 50;
 
     /**
-     * load favorites/histories data from local file
+     * load data -> array list
      * @param context
-     * @param filename  favorites or histories
+     * @param filename
      * @return keyCodes
      */
     public static ArrayList<List<Integer>> load(Context context, String filename)
     {
-        String str;
-        StringBuilder builder = new StringBuilder();
         ArrayList<List<Integer>> data = new ArrayList<List<Integer>>();
-
-        // read json data
-        try
-        {
-            InputStream in = context.openFileInput(filename + ".json");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            while ((str = reader.readLine()) != null)
-                builder.append(str);
-            str = new String(builder);
-            reader.close();
-            in.close();
-        }
-        catch (FileNotFoundException e)
-        {
-            e.printStackTrace();
-            return data;
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-            return  data;
-        }
-
+        String str = loadFileFromLocal(context, filename);
         if (str.equals(""))
-            return  data;
+            return data;
 
         // convert array data
         JsonFactory factory = new JsonFactory();
@@ -92,6 +68,42 @@ public class FileOperation
         }
 
         return data;
+    }
+
+    /**
+     * load data from local file
+     * @param context
+     * @param filename
+     * @return
+     */
+    public static String loadFileFromLocal(Context context, String filename)
+    {
+        String str;
+        StringBuilder builder = new StringBuilder();
+
+        // read json data
+        try
+        {
+            InputStream in = context.openFileInput(filename + ".json");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+            while ((str = reader.readLine()) != null)
+                builder.append(str);
+            str = new String(builder);
+            reader.close();
+            in.close();
+        }
+        catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+            return "";
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            return "";
+        }
+
+        return str;
     }
 
     /**
@@ -132,7 +144,7 @@ public class FileOperation
             array.put(tmp);
         }
 
-        if (saveFile(context, filename, array))
+        if (saveFileToLocal(context, filename, array.toString()))
             return SUCCESS;
         else
             return  FAILURE;
@@ -145,14 +157,14 @@ public class FileOperation
      * @param data
      * @return
      */
-    private static boolean saveFile(Context context, String filename, JSONArray data)
+    public static boolean saveFileToLocal(Context context, String filename, String data)
     {
         // save data
         try
         {
             OutputStream out = context.openFileOutput(filename + ".json", Context.MODE_PRIVATE);
             PrintWriter writer = new PrintWriter(new OutputStreamWriter(out, "UTF-8"));
-            writer.append(data.toString());
+            writer.append(data);
             writer.close();
             out.close();
         }
@@ -209,19 +221,19 @@ public class FileOperation
         }
 
         // save data
-        if (saveFile(context, FAVORITES, array))
+        if (saveFileToLocal(context, FAVORITES, array.toString()))
             return true;
         else
             return  false;
     }
 
     /**
-     * delete al
+     * delete file
      * @param context
-     * @param filename favorites or histories
+     * @param filename
      * @return
      */
-    public static boolean deleteAll(Context context, String filename)
+    public static boolean deleteFile(Context context, String filename)
     {
         return context.deleteFile(filename + ".json");
     }

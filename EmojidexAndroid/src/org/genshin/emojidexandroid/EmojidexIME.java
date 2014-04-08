@@ -76,6 +76,16 @@ public class EmojidexIME extends InputMethodService
                     EmojidexKeyboard.create(this, emojiDataManager.getCategorizedList(categoryName), minHeight));
         }
 
+        // Create search result keyboard.
+        String categoryName = getString(R.string.search_result);
+        String data = FileOperation.loadFileFromLocal(getApplicationContext(), categoryName);
+        if (!data.equals(""))
+        {
+            emojiDataManager.addCategorizedEmoji(data, categoryName);
+            categorizedKeyboards.put(categoryName,
+                    EmojidexKeyboard.create(this, emojiDataManager.getCategorizedList(categoryName), minHeight));
+        }
+
         // Create GestureDetector
         detector = new GestureDetector(getApplicationContext(), this);
     }
@@ -589,7 +599,7 @@ public class EmojidexIME extends InputMethodService
         closePopupWindow(v);
 
         // delete
-        boolean result = FileOperation.deleteAll(getApplicationContext(), FileOperation.FAVORITES);
+        boolean result = FileOperation.deleteFile(getApplicationContext(), FileOperation.FAVORITES);
         showResultToast(result);
         setKeyboard(getString(R.string.all_category));
     }
@@ -615,7 +625,7 @@ public class EmojidexIME extends InputMethodService
         closePopupWindow(v);
 
         // delete
-        boolean result = FileOperation.deleteAll(getApplicationContext(), FileOperation.HISTORIES);
+        boolean result = FileOperation.deleteFile(getApplicationContext(), FileOperation.HISTORIES);
         showResultToast(result);
         setKeyboard(getString(R.string.all_category));
     }

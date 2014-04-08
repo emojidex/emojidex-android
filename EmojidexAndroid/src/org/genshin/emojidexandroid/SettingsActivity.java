@@ -152,7 +152,7 @@ public class SettingsActivity extends Activity {
             new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    boolean result = FileOperation.deleteAll(context, mode);
+                    boolean result = FileOperation.deleteFile(context, mode);
                     if (result)
                         Toast.makeText(context, R.string.delete_success, Toast.LENGTH_SHORT).show();
                     else

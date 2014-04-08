@@ -68,5 +68,10 @@
     "category" : "Download",
     "English"  : "Download",
     "Japanese" : "ダウンロード"
+  },
+  {
+    "category" : "Search result",
+    "English"  : "Search result",
+    "Japanese" : "検索結果"
   }
 ]

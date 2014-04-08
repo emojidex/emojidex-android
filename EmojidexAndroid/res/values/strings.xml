@@ -48,5 +48,12 @@
     <string name="popular">Popular</string>
     <string name="category">Category</string>
     <string name="emoji">Emoji</string>
+    <string name="search_category">Please enter the category name you want to search.</string>
+    <string name="search_emoji">Please enter the emoji name you want to search.</string>
+    <string name="hit"> hits.</string>
+
+    <!-- Japanese not needed -->
+    <string name="download">Download</string>
+    <string name="search_result">Search result</string>
 
 </resources>

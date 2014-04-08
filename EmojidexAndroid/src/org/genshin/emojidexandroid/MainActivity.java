@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -428,7 +429,18 @@ public class MainActivity extends Activity {
     {
         // set view
         View view = getLayoutInflater().inflate(R.layout.search_window, null);
+
+        // set edittext and keyboard
         final EditText editText = (EditText)view.findViewById(R.id.search_edittext);
+        boolean result = false;
+        String id = FileOperation.loadPreferences(this, FileOperation.KEYBOARD);
+        InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        List<InputMethodInfo> inputMethodInfoList = inputMethodManager.getEnabledInputMethodList();
+        for (int i = 0; i < inputMethodInfoList.size(); ++i) {
+            InputMethodInfo inputMethodInfo = inputMethodInfoList.get(i);
+            if (inputMethodInfo.getId().equals(id))
+                result = true;
+        }
 
         // set spinner
         final Spinner spinner = (Spinner)view.findViewById(R.id.spinner);
@@ -439,6 +451,27 @@ public class MainActivity extends Activity {
         adapter.add(getString(R.string.category));
         adapter.add(getString(R.string.emoji));
         spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 2)
+                {
+                    editText.setEnabled(true);
+                    editText.setHint(getString(R.string.search_category));
+                }
+                else if (position == 3)
+                {
+                    editText.setEnabled(true);
+                    editText.setHint(getString(R.string.search_emoji));
+                }
+                else
+                    editText.setEnabled(false);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
 
         // set dialog
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -466,6 +499,21 @@ public class MainActivity extends Activity {
                 dialog.cancel();
             }
         });
+
+        Log.e("test", "1:" + editText.getWindowToken());
+        Log.e("test", "2:" + view.getWindowToken());
+        Log.e("test", "3:" + getCurrentFocus().getWindowToken());
+        editText.setFocusable(true);
+        editText.setFocusableInTouchMode(true);
+        editText.requestFocus();
+        Log.e("test", "1:" + editText.getWindowToken());
+        Log.e("test", "4:" + getCurrentFocus().getWindowToken());
+        if (result)
+            inputMethodManager.setInputMethod(getCurrentFocus().getWindowToken(), id);
+            //switchInputMethod(id);[
+            // InputMethodService
+        else
+            inputMethodManager.showInputMethodPicker();
     }
 
     /**
@@ -509,13 +557,22 @@ public class MainActivity extends Activity {
         Uri.Builder builder = new Uri.Builder();
         AsyncHttpRequestForGetJson getJsonTask = new AsyncHttpRequestForGetJson(uri);
         getJsonTask.execute(builder);
-        String result = "";
         try
         {
-            result = getJsonTask.get();
+            String result = getJsonTask.get();
+            FileOperation.saveFileToLocal(getApplicationContext(),
+                                          getString(R.string.search_result), result);
         }
         catch (InterruptedException e) { e.printStackTrace(); }
         catch (ExecutionException e) { e.printStackTrace(); }
-        Log.e("test", "result:" + result);
+    }
+
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+
+        // Delete the search results file.
+        FileOperation.deleteFile(getApplicationContext(), getString(R.string.search_result));
     }
 }

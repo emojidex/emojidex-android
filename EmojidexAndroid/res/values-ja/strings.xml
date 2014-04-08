@@ -48,5 +48,8 @@
     <string name="popular">人気</string>
     <string name="category">カテゴリー</string>
     <string name="emoji">絵文字</string>
+    <string name="search_category">検索したいカテゴリー名を入力してください。</string>
+    <string name="search_emoji">検索したい絵文字名を入力してください。</string>
+    <string name="hit">件ヒットしました。</string>
 
 </resources>

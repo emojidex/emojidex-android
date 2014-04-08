@@ -2,7 +2,7 @@ package org.genshin.emojidexandroid;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.net.Uri;
+import android.util.Log;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by nazuki on 2013/08/28.
@@ -32,6 +31,7 @@ public class EmojiDataManager
 
     private List<CategoryData> categories = null;
 
+    private Context context;
     private boolean isInitialized = false;
 
     private int nextCode;
@@ -105,6 +105,7 @@ public class EmojiDataManager
      */
     private void initialize(Context context)
     {
+        this.context = context;
         Resources res = context.getResources();
 
         // Get device dpi.
@@ -183,52 +184,6 @@ public class EmojiDataManager
             // Add to emoji code table.
             codeTable.put(emoji.getCodes(), emoji);
         }
-
-//        // original emoji from emojidex site.
-//        String jsonData = getJsonFromEmojidexSite();
-//        List<EmojidexEmojiData> downloadEmojiList = parse(jsonData);
-//        for (EmojidexEmojiData emoji : downloadEmojiList)
-//        {
-//            emoji.initialize(nextCode++);
-//        }
-//
-//        // When there is no image, remove emoji.
-//        for (int i = downloadEmojiList.size() - 1; i >= 0; i--)
-//        {
-//            if (downloadEmojiList.get(i).getIcon() == null)
-//                downloadEmojiList.remove(i);
-//        }
-//
-//        List<EmojiData> convertList = new ArrayList<EmojiData>();
-//        for (EmojidexEmojiData emoji : downloadEmojiList)
-//        {
-//            convertList.add(emoji);
-//        }
-//
-//        // TODO
-//        categorizedLists.put("Download", convertList);
-//        for(EmojiData emoji : convertList)
-//        {
-//            nameTable.put(emoji.getName(), emoji);
-//            codeTable.put(emoji.getCodes(), emoji);
-//        }
-    }
-
-    private String getJsonFromEmojidexSite()
-    {
-        // Get the json data from emojidex site.
-        String jsonUri = "https://www.emojidex.com/api/v1/emoji";
-        Uri.Builder jsonUriBuilder = new Uri.Builder();
-        AsyncHttpRequestForGetJson getJsonTask = new AsyncHttpRequestForGetJson(jsonUri);
-        getJsonTask.execute(jsonUriBuilder);
-        String result = "";
-        try
-        {
-            result = getJsonTask.get();
-        }
-        catch (InterruptedException e) { e.printStackTrace(); }
-        catch (ExecutionException e) { e.printStackTrace(); }
-        return result;
     }
 
     /**
@@ -253,29 +208,18 @@ public class EmojiDataManager
     }
 
     /**
-     * Download emoji list.
-     * @param json
+     * Add categorized emoji.
+     * @param jsonData
+     * @param categoryName
      */
-    public void setDownloadEmojiList(String json)
+    public void addCategorizedEmoji(String jsonData, String categoryName)
     {
-        // delete old keyboard
-        List<EmojiData> oldList = categorizedLists.get("Download");
-        if (oldList.size() != 0)
-            {
-            for (EmojiData emoji : oldList)
-            {
-                nameTable.remove(emoji.getName());
-                codeTable.remove(emoji.getCodes());
-            }
-            categorizedLists.remove("Donload");
-        }
-
-        // create new keyboard
-        List<EmojidexEmojiData> downloadEmojiList = parse(json);
+        List<EmojidexEmojiData> downloadEmojiList = parse(jsonData);
         for (EmojidexEmojiData emoji : downloadEmojiList)
         {
             emoji.initialize(nextCode++);
         }
+        Log.e("test", "size: " + downloadEmojiList.size());
 
         // When there is no image, remove emoji.
         for (int i = downloadEmojiList.size() - 1; i >= 0; i--)
@@ -290,11 +234,30 @@ public class EmojiDataManager
             convertList.add(emoji);
         }
 
-        categorizedLists.put("Download", convertList);
+        categorizedLists.put(categoryName, convertList);
         for(EmojiData emoji : convertList)
         {
             nameTable.put(emoji.getName(), emoji);
             codeTable.put(emoji.getCodes(), emoji);
+        }
+    }
+
+    /**
+     * Delete categorized emoji.
+     * @param categoryName
+     */
+    public void deleteCategorizedEmoji(String categoryName)
+    {
+        // delete old keyboard
+        List<EmojiData> oldList = categorizedLists.get(categoryName);
+        if (oldList.size() != 0)
+            {
+            for (EmojiData emoji : oldList)
+            {
+                nameTable.remove(emoji.getName());
+                codeTable.remove(emoji.getCodes());
+            }
+            categorizedLists.remove(categoryName);
         }
     }
 }
