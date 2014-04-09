@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -39,6 +40,7 @@ public class EmojidexIME extends InputMethodService
 
     private View layout;
     private HorizontalScrollView categoryScrollView;
+    private int minHeight;
 
     private Map<String, CategorizedKeyboard> categorizedKeyboards;
 
@@ -67,7 +69,7 @@ public class EmojidexIME extends InputMethodService
         emojiDataManager = EmojiDataManager.create(this);
 
         // Create categorized keyboards.
-        final int minHeight = (int)getResources().getDimension(R.dimen.ime_keyboard_area_height);
+        minHeight = (int)getResources().getDimension(R.dimen.ime_keyboard_area_height);
         categorizedKeyboards = new HashMap<String, CategorizedKeyboard>();
         for(CategoryData categoryData : emojiDataManager.getCategoryDatas())
         {
@@ -76,15 +78,16 @@ public class EmojidexIME extends InputMethodService
                     EmojidexKeyboard.create(this, emojiDataManager.getCategorizedList(categoryName), minHeight));
         }
 
+        // TODO download keyboard
         // Create search result keyboard.
-        String categoryName = getString(R.string.search_result);
-        String data = FileOperation.loadFileFromLocal(getApplicationContext(), categoryName);
-        if (!data.equals(""))
-        {
-            emojiDataManager.addCategorizedEmoji(data, categoryName);
-            categorizedKeyboards.put(categoryName,
-                    EmojidexKeyboard.create(this, emojiDataManager.getCategorizedList(categoryName), minHeight));
-        }
+//        String categoryName = getString(R.string.search_result);
+//        String data = FileOperation.loadFileFromLocal(getApplicationContext(), categoryName);
+//        if (!data.equals(""))
+//        {
+//            emojiDataManager.addCategorizedEmoji(data, categoryName);
+//            categorizedKeyboards.put(categoryName,
+//                    EmojidexKeyboard.create(this, emojiDataManager.getCategorizedList(categoryName), minHeight));
+//        }
 
         // Create GestureDetector
         detector = new GestureDetector(getApplicationContext(), this);
@@ -111,6 +114,17 @@ public class EmojidexIME extends InputMethodService
         // Reset IME.
         setKeyboard(getString(R.string.all_category));
         categoryScrollView.scrollTo(0, 0);
+
+        // Recreate search result keyboard.
+        String categoryName = getString(R.string.search_result);
+        String data = FileOperation.loadFileFromLocal(getApplicationContext(), categoryName);
+        if (!data.equals(""))
+        {
+            emojiDataManager.deleteCategorizedEmoji(categoryName);
+            emojiDataManager.addCategorizedEmoji(data, categoryName);
+            categorizedKeyboards.put(categoryName,
+                    EmojidexKeyboard.create(this, emojiDataManager.getCategorizedList(categoryName), minHeight));
+        }
     }
 
     @Override

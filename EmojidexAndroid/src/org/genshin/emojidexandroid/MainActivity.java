@@ -97,7 +97,7 @@ public class MainActivity extends Activity {
     private ToggleButton toggleButton;
     private boolean toggleState = true;
 
-    // private boolean realTime;
+    private InputMethodManager inputMethodManager;
 
     private void initEmojidexEditor()
     {
@@ -433,12 +433,12 @@ public class MainActivity extends Activity {
         // set edittext and keyboard
         final EditText editText = (EditText)view.findViewById(R.id.search_edittext);
         boolean result = false;
-        String id = FileOperation.loadPreferences(this, FileOperation.KEYBOARD);
-        InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        final String keyboardId = FileOperation.loadPreferences(this, FileOperation.KEYBOARD);
+        inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
         List<InputMethodInfo> inputMethodInfoList = inputMethodManager.getEnabledInputMethodList();
         for (int i = 0; i < inputMethodInfoList.size(); ++i) {
             InputMethodInfo inputMethodInfo = inputMethodInfoList.get(i);
-            if (inputMethodInfo.getId().equals(id))
+            if (inputMethodInfo.getId().equals(keyboardId))
                 result = true;
         }
 
@@ -458,11 +458,20 @@ public class MainActivity extends Activity {
                 {
                     editText.setEnabled(true);
                     editText.setHint(getString(R.string.search_category));
+                    WindowManager.LayoutParams lp = getWindow().getAttributes();
+                    inputMethodManager.setInputMethod(lp.token, keyboardId);
+                    inputMethodManager.showInputMethodAndSubtypeEnabler(keyboardId);
+                    inputMethodManager.showInputMethodPicker();
+                    Log.e("test", "pos2: " + lp.token);
                 }
                 else if (position == 3)
                 {
                     editText.setEnabled(true);
                     editText.setHint(getString(R.string.search_emoji));
+                    inputMethodManager.setInputMethod(getWindow().getAttributes().token, keyboardId);
+                    inputMethodManager.showSoftInput(editText, 0);
+//                    inputMethodManager.setInputMethod(editText.getWindowToken(), keyboardId);
+                    Log.e("test", "pos3: " + getWindow().getAttributes().token);
                 }
                 else
                     editText.setEnabled(false);
@@ -501,15 +510,28 @@ public class MainActivity extends Activity {
         });
 
         Log.e("test", "1:" + editText.getWindowToken());
+        Log.e("test", "5:" + editText.getApplicationWindowToken());
         Log.e("test", "2:" + view.getWindowToken());
         Log.e("test", "3:" + getCurrentFocus().getWindowToken());
         editText.setFocusable(true);
         editText.setFocusableInTouchMode(true);
         editText.requestFocus();
         Log.e("test", "1:" + editText.getWindowToken());
+        Log.e("test", "6:" + editText.getApplicationWindowToken());
         Log.e("test", "4:" + getCurrentFocus().getWindowToken());
+        Log.e("test", "0:" + getCurrentFocus().getApplicationWindowToken());
         if (result)
-            inputMethodManager.setInputMethod(getCurrentFocus().getWindowToken(), id);
+        {
+            List<InputMethodInfo> infolist = inputMethodManager.getEnabledInputMethodList();
+            InputMethodInfo info = infolist.get(0);
+
+
+            //InputMethodService service = (InputMethodService)getApplicationContext().getSystemService(INPUT_METHOD_SERVICE);
+            //service.switchInputMethod(id);
+            //inputMethodManager.setInputMethod(getCurrentFocus().getWindowToken(), id);
+            //inputMethodManager.showSoftInput(editText, 0);
+        }
+            //inputMethodManager.setInputMethod(getCurrentFocus().getWindowToken(), id);
             //switchInputMethod(id);[
             // InputMethodService
         else

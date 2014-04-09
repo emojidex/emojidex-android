@@ -250,7 +250,7 @@ public class EmojiDataManager
     {
         // delete old keyboard
         List<EmojiData> oldList = categorizedLists.get(categoryName);
-        if (oldList.size() != 0)
+        if (oldList != null && oldList.size() != 0)
             {
             for (EmojiData emoji : oldList)
             {
