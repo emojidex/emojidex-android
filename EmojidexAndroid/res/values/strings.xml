@@ -33,6 +33,9 @@
     <string name="delete_histories_all_confirm">Clear all history?</string>
     <string name="clipboard">Copied to the clipboard.</string>
     <string name="close">Close</string>
+    <string name="download_done">Already downloaded.</string>
+    <string name="download_success">Downloaded.</string>
+    <string name="download_failure">Downloading failed.</string>
 
     <string name="yes">Yes</string>
     <string name="no">No</string>

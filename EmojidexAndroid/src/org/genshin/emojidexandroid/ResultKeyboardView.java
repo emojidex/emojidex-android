@@ -5,14 +5,12 @@ import android.content.ClipDescription;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.inputmethodservice.Keyboard;
-import android.inputmethodservice.KeyboardView;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -21,17 +19,8 @@ import android.widget.Toast;
 /**
  * Created by nazuki on 14/01/08.
  */
-public class EmojidexKeyboardView extends KeyboardView {
-    protected Context context;
-    protected LayoutInflater inflater;
-
-    protected PopupWindow popup;
-    protected Keyboard.Key key;
-    protected String emojiName;
-
-    private ImageButton imageButton;
-    private boolean first;
-    private boolean registered;
+public class ResultKeyboardView extends EmojidexKeyboardView {
+    private Button downloadButton;
 
     /**
      * Construct EmojidexKeyboardView object.
@@ -40,10 +29,8 @@ public class EmojidexKeyboardView extends KeyboardView {
      * @param defStyle
      * @param inflater
      */
-    public EmojidexKeyboardView(Context context, AttributeSet attrs, int defStyle, LayoutInflater inflater) {
-        super(context, attrs, defStyle);
-        this.context = context;
-        this.inflater = inflater;
+    public ResultKeyboardView(Context context, AttributeSet attrs, int defStyle, LayoutInflater inflater) {
+        super(context, attrs, defStyle, inflater);
     }
 
     /**
@@ -52,7 +39,7 @@ public class EmojidexKeyboardView extends KeyboardView {
      * @return
      */
     @Override
-    public boolean onLongPress(android.inputmethodservice.Keyboard.Key popupKey)
+    public boolean onLongPress(Keyboard.Key popupKey)
     {
         key = popupKey;
         emojiName = String.valueOf(key.popupCharacters);
@@ -64,12 +51,13 @@ public class EmojidexKeyboardView extends KeyboardView {
     /**
      * Create PopupWindow.
      */
+    @Override
     protected void createPopupWindow()
     {
         closePopup();
 
         // Create popup window.
-        View view = inflater.inflate(R.layout.popup_favorite, null);
+        View view = inflater.inflate(R.layout.popup_download, null);
         popup = new PopupWindow(this);
         popup.setContentView(view);
         popup.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
@@ -77,7 +65,7 @@ public class EmojidexKeyboardView extends KeyboardView {
         popup.showAtLocation(this, Gravity.CENTER_HORIZONTAL, 0, -this.getHeight());
 
         // Set emoji data.
-        TextView textView = (TextView)view.findViewById(R.id.favorite_name);
+        TextView textView = (TextView)view.findViewById(R.id.download_name);
         textView.setText(":" + key.popupCharacters + ":");
         textView.setOnLongClickListener(new OnLongClickListener() {
             @Override
@@ -92,27 +80,31 @@ public class EmojidexKeyboardView extends KeyboardView {
                 return true;
             }
         });
-        ImageView icon = (ImageView)view.findViewById(R.id.popup_favorite_image);
+        ImageView icon = (ImageView)view.findViewById(R.id.popup_download_image);
         icon.setImageDrawable(key.icon);
 
         // Set register button.
-        imageButton = (ImageButton)view.findViewById(R.id.favorite_register_button);
-        imageButton.setOnClickListener(createListener());
-        if (FileOperation.searchEmoji(context, FileOperation.FAVORITES, emojiName))
-        {
-            imageButton.setImageResource(android.R.drawable.star_big_on);
-            first = true;
-            registered = true;
-        }
-        else
-        {
-            imageButton.setImageResource(android.R.drawable.star_big_off);
-            first = false;
-            registered = false;
-        }
+        downloadButton = (Button)view.findViewById(R.id.download_button);
+        downloadButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (FileOperation.saveEmoji(context, emojiName, key.icon))
+                {
+                    case FileOperation.SUCCESS :
+                        Toast.makeText(context, context.getString(R.string.download_success), Toast.LENGTH_SHORT).show();
+                        break;
+                    case FileOperation.DONE :
+                        Toast.makeText(context, context.getString(R.string.download_done), Toast.LENGTH_SHORT).show();
+                        break;
+                    case FileOperation.FAILURE :
+                        Toast.makeText(context, context.getString(R.string.download_failure), Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            }
+        });
 
         // Set close button.
-        Button closeButton = (Button)view.findViewById(R.id.popup_close_button);
+        Button closeButton = (Button)view.findViewById(R.id.download_close_button);
         closeButton.setOnClickListener(new OnClickListener()
         {
             @Override
@@ -123,43 +115,11 @@ public class EmojidexKeyboardView extends KeyboardView {
     }
 
     /**
-     * Create onClickListener.
-     * @return
-     */
-    protected OnClickListener createListener()
-    {
-        return new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Change icon.
-                if (registered)
-                {
-                    imageButton.setImageResource(android.R.drawable.star_big_off);
-                    registered = false;
-                }
-                else
-                {
-                    imageButton.setImageResource(android.R.drawable.star_big_on);
-                    registered = true;
-                }
-            }
-        };
-    }
-
-    /**
      * Close popup window.
      */
+    @Override
     public void closePopup()
     {
-        // If changed favorite state, save current state.
-        if (registered != first)
-        {
-            if (registered)
-                FileOperation.save(context, emojiName, FileOperation.FAVORITES);
-            else
-                FileOperation.delete(context, emojiName);
-        }
-
         if (popup != null)
         {
             popup.dismiss();

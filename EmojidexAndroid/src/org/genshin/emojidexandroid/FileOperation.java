@@ -1,6 +1,9 @@
 package org.genshin.emojidexandroid;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
@@ -30,6 +33,7 @@ public class FileOperation
 
     public static final String FAVORITES = "favorites";
     public static final String HISTORIES = "histories";
+    public static final String DOWNLOAD = "download";
     public static final String KEYBOARD = "keyboard";
     public static final String SHARE = "share";
 
@@ -309,16 +313,59 @@ public class FileOperation
     /**
      * Whether already registered.
      * @param context
+     * @param filename
      * @param emojiName
      * @return
      */
-    public static boolean searchFavorite(Context context, String emojiName)
+    public static boolean searchEmoji(Context context, String filename, String emojiName)
     {
-        ArrayList<String> data = load(context, FAVORITES);
+        ArrayList<String> data = load(context, filename);
 
         if (duplicationCheck(data, emojiName))
             return true;
         else
             return false;
+    }
+
+    /**
+     * Save emoji data(json) and image to local.
+     * @param context
+     * @param emojiName
+     * @return
+     */
+    public static int saveEmoji(Context context, String emojiName, Drawable emoji)
+    {
+        // duplicate check.
+       if (searchEmoji(context, DOWNLOAD, emojiName))
+           return DONE;
+
+        // save data.
+        save(context, emojiName, DOWNLOAD);
+
+        // save image.
+        try
+        {
+            OutputStream out = context.openFileOutput(emojiName + ".png", Context.MODE_PRIVATE);
+            Bitmap bitmap = ((BitmapDrawable)emoji).getBitmap();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            out.close();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            return FAILURE;
+        }
+
+        return SUCCESS;
+    }
+
+    /**
+     * Delete downloaded emoji.
+     * @param context
+     * @param emojiName
+     */
+    public static void deleteEmoji(Context context, String emojiName)
+    {
+
     }
 }

@@ -348,10 +348,15 @@ public class EmojidexIME extends InputMethodService
      */
     private void setKeyboard(String categoryID)
     {
+        KeyboardView keyboardView;
         keyboardViewFlipper.removeAllViews();
         for (int i = 0; i < categorizedKeyboards.get(categoryID).getKeyboards().size(); i++)
         {
-            EmojidexKeyboardView keyboardView = new EmojidexKeyboardView(this, null, R.attr.keyboardViewStyle, getLayoutInflater());
+            if (categoryID.equals(getString(R.string.search_result)))
+                keyboardView = new ResultKeyboardView(this, null, R.attr.keyboardViewStyle, getLayoutInflater());
+            else
+                keyboardView = new EmojidexKeyboardView(this, null, R.attr.keyboardViewStyle, getLayoutInflater());
+
             keyboardView.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
