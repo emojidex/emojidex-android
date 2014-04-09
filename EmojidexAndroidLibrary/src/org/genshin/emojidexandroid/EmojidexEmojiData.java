@@ -1,10 +1,14 @@
 package org.genshin.emojidexandroid;
 
+import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -30,8 +34,12 @@ public class EmojidexEmojiData extends EmojiData
     @JsonProperty("emoji_id")       private String emojiId;
     @JsonProperty("delay")          private int delay;
 
-    public void initialize(int code)
+    private Context context;
+
+    public void initialize(int code, Context context)
     {
+        this.context = context;
+
         moji = new String(Character.toChars(code));
         final int count = moji.codePointCount(0, moji.length());
         int next = 0;
@@ -55,6 +63,37 @@ public class EmojidexEmojiData extends EmojiData
         category = tmpCategory;
         isOriginal = true;
 
+        // Get the icon from local.
+        boolean exist = getIconFromLocalFile();
+
+        // When the icon does not exist in the local, get the icon from emojidex site.
+        if (!exist)
+            getIconFromEmojidexSite();
+    }
+
+    /**
+     * Get the icon form local.
+     * @return
+     */
+    private boolean getIconFromLocalFile()
+    {
+        boolean exist = false;
+        try
+        {
+            InputStream in = context.openFileInput(name + ".png");
+            icon = Drawable.createFromStream(in, name);
+            exist = true;
+        }
+        catch (FileNotFoundException e) { e.printStackTrace(); }
+
+        return exist;
+    }
+
+    /**
+     * Get the icon from emojidex site.
+     */
+    private void getIconFromEmojidexSite()
+    {
         // Get the image from emojidex site.
         try
         {

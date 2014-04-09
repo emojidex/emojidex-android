@@ -217,7 +217,7 @@ public class EmojiDataManager
         List<EmojidexEmojiData> downloadEmojiList = parse(jsonData);
         for (EmojidexEmojiData emoji : downloadEmojiList)
         {
-            emoji.initialize(nextCode++);
+            emoji.initialize(nextCode++, context);
         }
         Log.e("test", "size: " + downloadEmojiList.size());
 

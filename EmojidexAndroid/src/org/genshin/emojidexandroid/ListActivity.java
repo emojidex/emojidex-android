@@ -141,7 +141,7 @@ public class ListActivity extends Activity {
     {
         for (EmojidexEmojiData emoji : emojiList)
         {
-            emoji.initialize(0);
+            emoji.initialize(0, getApplicationContext());
         }
         for (int i = emojiList.size() - 1; i >= 0; i--)
         {

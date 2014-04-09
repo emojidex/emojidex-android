@@ -101,9 +101,8 @@ public class EmojidexIME extends InputMethodService
         createKeyboardView();
         createSubKeyboardView();
 
-        // Set ViewFlipper action.
+        // Set ViewFlipper.
         viewFlipper = (ViewFlipper)layout.findViewById(R.id.viewFlipper);
-        viewFlipper.setOnTouchListener(new FlickTouchListener());
 
         return layout;
     }
@@ -322,7 +321,6 @@ public class EmojidexIME extends InputMethodService
     {
         // Add KeyboardViewFlipper to IME layout.
         keyboardViewFlipper = (ViewFlipper)layout.findViewById(R.id.keyboard_viewFlipper);
-        keyboardViewFlipper.setOnTouchListener(new FlickTouchListener());
     }
 
     /**
@@ -377,7 +375,14 @@ public class EmojidexIME extends InputMethodService
         keyboardViewFlipper.removeAllViews();
         for (int i = 0; i < keyboards.getKeyboards().size(); i++)
         {
-            KeyboardView keyboardView = new EmojidexKeyboardView(this, null, R.attr.keyboardViewStyle, getLayoutInflater());
+            EmojidexKeyboardView keyboardView = new EmojidexKeyboardView(this, null, R.attr.keyboardViewStyle, getLayoutInflater());
+            keyboardView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    boolean result = detector.onTouchEvent(event);
+                    return result;
+                }
+            });
             keyboardView.setOnKeyboardActionListener(this);
             keyboardView.setPreviewEnabled(false);
             keyboardView.setKeyboard(keyboards.getKeyboards().get(i));
@@ -500,35 +505,6 @@ public class EmojidexIME extends InputMethodService
         }
         swipeFlag = true;
         return false;
-    }
-
-    /**
-     * ViewFlipper's touchListener
-     */
-    private class FlickTouchListener implements View.OnTouchListener
-    {
-        private float lastTouchX;
-        private float currentX;
-
-        @Override
-        public boolean onTouch(View view, MotionEvent event)
-        {
-            switch (event.getAction())
-            {
-                case MotionEvent.ACTION_DOWN:
-                    lastTouchX = event.getX();
-                    break;
-                case MotionEvent.ACTION_UP:
-                case MotionEvent.ACTION_CANCEL:
-                    currentX = event.getX();
-//                    if (lastTouchX < currentX)
-//                        moveToRight(null);
-//                    if (lastTouchX > currentX)
-//                        moveToLeft(null);
-                    break;
-            }
-            return true;
-        }
     }
 
     /**
