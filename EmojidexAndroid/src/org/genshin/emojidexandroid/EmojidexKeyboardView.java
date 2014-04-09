@@ -18,9 +18,6 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by nazuki on 14/01/08.
  */
@@ -29,8 +26,8 @@ public class EmojidexKeyboardView extends KeyboardView {
     private LayoutInflater inflater;
 
     private PopupWindow popup;
-    private List<Integer> keyCodes = new ArrayList<Integer>();
     private Keyboard.Key key;
+    private String emojiName;
 
     private ImageButton imageButton;
     private boolean first;
@@ -57,13 +54,8 @@ public class EmojidexKeyboardView extends KeyboardView {
     @Override
     public boolean onLongPress(android.inputmethodservice.Keyboard.Key popupKey)
     {
-        keyCodes = new ArrayList<Integer>();
         key = popupKey;
-        for (int code : key.codes)
-        {
-            keyCodes.add(code);
-        }
-
+        emojiName = String.valueOf(key.popupCharacters);
         createPopupWindow();
 
         return true;
@@ -106,7 +98,7 @@ public class EmojidexKeyboardView extends KeyboardView {
         // Set register button.
         imageButton = (ImageButton)view.findViewById(R.id.favorite_register_button);
         imageButton.setOnClickListener(createListener());
-        if (FileOperation.searchFavorite(context, keyCodes))
+        if (FileOperation.searchFavorite(context, emojiName))
         {
             imageButton.setImageResource(android.R.drawable.star_big_on);
             first = true;
@@ -163,9 +155,9 @@ public class EmojidexKeyboardView extends KeyboardView {
         if (registered != first)
         {
             if (registered)
-                FileOperation.save(context, keyCodes, FileOperation.FAVORITES);
+                FileOperation.save(context, emojiName, FileOperation.FAVORITES);
             else
-                FileOperation.delete(context, keyCodes);
+                FileOperation.delete(context, emojiName);
         }
 
         if (popup != null)

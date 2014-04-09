@@ -5,7 +5,6 @@ import android.content.res.Configuration;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -539,7 +538,7 @@ public class EmojidexIME extends InputMethodService
     public void showHistories(View v)
     {
         // load histories
-        ArrayList<List<Integer>> histories = FileOperation.load(this, FileOperation.HISTORIES);
+        ArrayList<String> histories = FileOperation.load(this, FileOperation.HISTORIES);
         createNewKeyboards(histories);
     }
 
@@ -550,7 +549,7 @@ public class EmojidexIME extends InputMethodService
     public void showFavorites(View v)
     {
         // load favorites
-        ArrayList<List<Integer>> favorites = FileOperation.load(this, FileOperation.FAVORITES);
+        ArrayList<String> favorites = FileOperation.load(this, FileOperation.FAVORITES);
         createNewKeyboards(favorites);
     }
 
@@ -558,13 +557,13 @@ public class EmojidexIME extends InputMethodService
      * create favorites/histories keyboards
      * @param data keys
      */
-    private void createNewKeyboards(ArrayList<List<Integer>> data)
+    private void createNewKeyboards(ArrayList<String> data)
     {
 
         // get emoji
         List<EmojiData> emojiData = new ArrayList<EmojiData>();
-        for (List<Integer> codes : data)
-            emojiData.add(emojiDataManager.getEmojiData(codes));
+        for (String name : data)
+            emojiData.add(emojiDataManager.getEmojiData(name));
 
         // create keyboards
         final int minHeight = (int)getResources().getDimension(R.dimen.ime_keyboard_area_height);
@@ -590,7 +589,8 @@ public class EmojidexIME extends InputMethodService
      */
     private void saveHistories(List<Integer> keyCodes)
     {
-        FileOperation.save(this, keyCodes, FileOperation.HISTORIES);
+        EmojiData emoji = emojiDataManager.getEmojiData(keyCodes);
+        FileOperation.save(this, emoji.getName(), FileOperation.HISTORIES);
     }
 
     /**

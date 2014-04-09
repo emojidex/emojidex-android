@@ -18,7 +18,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by nazuki on 2014/01/22.
@@ -42,9 +41,9 @@ public class FileOperation
      * @param filename
      * @return keyCodes
      */
-    public static ArrayList<List<Integer>> load(Context context, String filename)
+    public static ArrayList<String> load(Context context, String filename)
     {
-        ArrayList<List<Integer>> data = new ArrayList<List<Integer>>();
+        ArrayList<String> data = new ArrayList<String>();
         String str = loadFileFromLocal(context, filename);
         if (str.equals(""))
             return data;
@@ -60,12 +59,7 @@ public class FileOperation
         }
         catch (IOException e) { e.printStackTrace();}
         for (int i = 0; i < rootNode.size(); i++)
-        {
-            List<Integer> list = new ArrayList<Integer>();
-            for (int j = 0; j < rootNode.get(i).size(); j++)
-                list.add(rootNode.get(i).get(j).intValue());
-            data.add(list);
-        }
+            data.add(rootNode.get(i).textValue());
 
         return data;
     }
@@ -109,19 +103,19 @@ public class FileOperation
     /**
      * save favorites/histories data to local file
      * @param context
-     * @param keyCodes
+     * @param emojiName
      * @param filename favorites or histories
      * @return success or failure or already registered (use only favorites)
      */
-    public static int save(Context context, List<Integer> keyCodes, String filename)
+    public static int save(Context context, String emojiName, String filename)
     {
         // current list
-        ArrayList<List<Integer>> data = load(context, filename);
+        ArrayList<String> data = load(context, filename);
 
         // duplication check
         if (filename.equals(FAVORITES))
         {
-            if (duplicationCheck(data, keyCodes))
+            if (duplicationCheck(data, emojiName))
                 return DONE;
         }
 
@@ -130,19 +124,11 @@ public class FileOperation
 
         // add data
         JSONArray array = new JSONArray();
-        JSONArray tmp = new JSONArray();
-        for (int keyCode : keyCodes)
-            tmp.put(keyCode);
-        array.put(tmp);
+        array.put(emojiName);
 
         // add old data
-        for (List<Integer> codes : data)
-        {
-            tmp = new JSONArray();
-            for (int code : codes)
-                tmp.put(code);
-            array.put(tmp);
-        }
+        for (String name : data)
+            array.put(name);
 
         if (saveFileToLocal(context, filename, array.toString()))
             return SUCCESS;
@@ -180,45 +166,33 @@ public class FileOperation
     /**
      * delete favorite
      * @param context
-     * @param keyCodes
+     * @param emojiName
      * @return
      */
-    public static boolean delete(Context context, List<Integer> keyCodes)
+    public static boolean delete(Context context, String emojiName)
     {
         // current list
-        ArrayList<List<Integer>> data = load(context, FAVORITES);
+        ArrayList<String> data = load(context, FAVORITES);
 
         // delete data
         boolean delete = false;
-        for (List<Integer> list :data)
+        for (String name : data)
         {
-            if (list.size() != keyCodes.size())
-                continue;
-
-            for (int i = 0; i < list.size(); i++)
+            if (name.equals(emojiName))
             {
-                if (!list.get(i).equals(keyCodes.get(i)))
-                    break;
-                if (i == list.size() - 1)
-                {
-                    delete = true;
-                    data.remove(list);
-                    break;
-                }
+                delete = true;
+                data.remove(name);
+                break;
             }
+
             if (delete)
                 break;
         }
 
         // prepare json data
         JSONArray array = new JSONArray();
-        for (List<Integer> codes : data)
-        {
-            JSONArray tmp = new JSONArray();
-            for (int code : codes)
-                tmp.put(code);
-            array.put(tmp);
-        }
+        for (String name : data)
+            array.put(name);
 
         // save data
         if (saveFileToLocal(context, FAVORITES, array.toString()))
@@ -241,24 +215,16 @@ public class FileOperation
     /**
      * duplication check
      * @param data
-     * @param keyCodes
+     * @param emojiName
      * @return
      */
-    private static boolean duplicationCheck(ArrayList<List<Integer>> data, List<Integer> keyCodes)
+    private static boolean duplicationCheck(ArrayList<String> data, String emojiName)
     {
         boolean check = false;
-        for (List<Integer> list : data)
+        for (String name : data)
         {
-            if (list.size() != keyCodes.size())
-                continue;
-
-            for (int i = 0; i < list.size(); i++)
-            {
-                if (!list.get(i).equals(keyCodes.get(i)))
-                    break;
-                if (i == list.size() - 1)
-                    check = true;
-            }
+            if (name.equals(emojiName))
+                check = true;
         }
 
         return check;
@@ -269,7 +235,7 @@ public class FileOperation
      * @param data
      * @return
      */
-    private static ArrayList<List<Integer>> sizeCheck(ArrayList<List<Integer>> data)
+    private static ArrayList<String> sizeCheck(ArrayList<String> data)
     {
         if (data.size() >= MAX_SIZE)
         {
@@ -343,14 +309,14 @@ public class FileOperation
     /**
      * Whether already registered.
      * @param context
-     * @param keyCodes
+     * @param emojiName
      * @return
      */
-    public static boolean searchFavorite(Context context, List<Integer> keyCodes)
+    public static boolean searchFavorite(Context context, String emojiName)
     {
-        ArrayList<List<Integer>> data = load(context, FAVORITES);
+        ArrayList<String> data = load(context, FAVORITES);
 
-        if (duplicationCheck(data, keyCodes))
+        if (duplicationCheck(data, emojiName))
             return true;
         else
             return false;
