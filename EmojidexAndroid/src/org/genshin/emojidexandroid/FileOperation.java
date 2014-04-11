@@ -7,12 +7,17 @@ import android.graphics.drawable.Drawable;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,6 +26,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by nazuki on 2014/01/22.
@@ -34,6 +40,7 @@ public class FileOperation
     public static final String FAVORITES = "favorites";
     public static final String HISTORIES = "histories";
     public static final String DOWNLOAD = "download";
+    public static final String RESULT = "search_result";
     public static final String KEYBOARD = "keyboard";
     public static final String SHARE = "share";
 
@@ -168,15 +175,15 @@ public class FileOperation
     }
 
     /**
-     * delete favorite
+     * delete favorite or download
      * @param context
      * @param emojiName
      * @return
      */
-    public static boolean delete(Context context, String emojiName)
+    public static boolean delete(Context context, String emojiName, String filename)
     {
         // current list
-        ArrayList<String> data = load(context, FAVORITES);
+        ArrayList<String> data = load(context, filename);
 
         // delete data
         boolean delete = false;
@@ -199,7 +206,7 @@ public class FileOperation
             array.put(name);
 
         // save data
-        if (saveFileToLocal(context, FAVORITES, array.toString()))
+        if (saveFileToLocal(context, filename, array.toString()))
             return true;
         else
             return  false;
@@ -336,13 +343,25 @@ public class FileOperation
     public static int saveEmoji(Context context, String emojiName, Drawable emoji)
     {
         // duplicate check.
-       if (searchEmoji(context, DOWNLOAD, emojiName))
-           return DONE;
+        boolean duplicate = duplicationCheckFromDownloadedData(context, emojiName);
+        File file = context.getFileStreamPath(emojiName + ".png");
+        if (file.exists() && duplicate)
+            return DONE;
 
-        // save data.
-        save(context, emojiName, DOWNLOAD);
+        // read the old data from local.
+        List<EmojidexEmojiData> list = readData(context);
 
-        // save image.
+        // prepare the data for save.
+        String newData = prepareData(emojiName, list);
+        if (newData.equals(""))
+            return FAILURE;
+
+        // save the json data.
+        boolean result = saveFileToLocal(context, DOWNLOAD, newData);
+        if (!result)
+            return FAILURE;
+
+        // save the image.
         try
         {
             OutputStream out = context.openFileOutput(emojiName + ".png", Context.MODE_PRIVATE);
@@ -360,12 +379,149 @@ public class FileOperation
     }
 
     /**
-     * Delete downloaded emoji.
+     * Delete the downloaded emoji.
      * @param context
      * @param emojiName
      */
-    public static void deleteEmoji(Context context, String emojiName)
+    public static boolean deleteEmoji(Context context, String emojiName)
     {
+        // read the old data from local.
+        List<EmojidexEmojiData> list = readData(context);
 
+        // delete the data.
+        boolean delete = false;
+        for (EmojidexEmojiData emoji : list)
+        {
+            if (emoji.getTmpName().equals(emojiName))
+            {
+                delete = true;
+                list.remove(emoji);
+                break;
+            }
+
+            if (delete)
+                break;;
+        }
+
+        // prepare data for save again.
+        String newData = prepareData("", list);
+        if (newData.equals(""))
+            return false;
+
+        boolean result = saveFileToLocal(context, DOWNLOAD, newData);
+        if (!result)
+            return false;
+
+        return context.deleteFile(emojiName + ".png");
+    }
+
+    /**
+     * Read the downloaded emoji data from local.
+     * @param context
+     * @return
+     */
+    private static List<EmojidexEmojiData> readData(Context context)
+    {
+        List<EmojidexEmojiData> list = new ArrayList<EmojidexEmojiData>();
+
+        // read data.
+        String data = loadFileFromLocal(context, DOWNLOAD);
+        if (data.equals(""))
+            return list;
+
+        ObjectMapper mapper = new ObjectMapper();
+        try
+        {
+            JsonNode rootNode = mapper.readTree(data);
+            JsonNode emojiNode = rootNode.path("emoji");
+            list = mapper.readValue(((Object)emojiNode).toString(),
+                                    new TypeReference<ArrayList<EmojidexEmojiData>>(){});
+        }
+        catch (JsonProcessingException e) { e.printStackTrace(); }
+        catch (IOException e) { e.printStackTrace(); }
+
+        return list;
+    }
+
+    /**
+     * Prepare the data for save.
+     * @param emojiName
+     * @param list
+     * @return
+     */
+    private static String prepareData(String emojiName, List<EmojidexEmojiData> list)
+    {
+        JSONArray array = new JSONArray();
+
+        // add new data.
+        if (!emojiName.equals(""))
+        {
+            JSONObject obj = new JSONObject();
+            try
+            {
+                obj.put("id", emojiName);
+                obj.put("code", emojiName);
+            }
+            catch (JSONException e)
+            {
+                e.printStackTrace();
+                return "";
+            }
+            array.put(obj);
+        }
+
+        // read old data.
+        for (EmojidexEmojiData emoji : list)
+        {
+            JSONObject obj = new JSONObject();
+            try
+            {
+                obj.put("id", emojiName);
+                obj.put("code", emoji.getName());
+            }
+            catch (JSONException e)
+            {
+                e.printStackTrace();
+                return "";
+            }
+            array.put(obj);
+        }
+
+        JSONObject obj = new JSONObject();
+        try
+        {
+            obj.put("emoji", array);
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+            return "";
+        }
+
+        return obj.toString();
+    }
+
+    /**
+     * duplication check from download data.
+     * @return
+     */
+    private static boolean duplicationCheckFromDownloadedData(Context context, String emojiName)
+    {
+        boolean result = false;
+
+        // read data.
+        List<EmojidexEmojiData> list = readData(context);
+
+        // check data.
+        for (EmojidexEmojiData emoji : list)
+        {
+            if (emoji.getTmpName().equals(emojiName))
+                result = true;
+
+            if (result)
+                break;;
+        }
+
+        return result;
     }
 }

@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -77,17 +78,6 @@ public class EmojidexIME extends InputMethodService
                     EmojidexKeyboard.create(this, emojiDataManager.getCategorizedList(categoryName), minHeight));
         }
 
-        // TODO download keyboard
-        // Create search result keyboard.
-//        String categoryName = getString(R.string.search_result);
-//        String data = FileOperation.loadFileFromLocal(getApplicationContext(), categoryName);
-//        if (!data.equals(""))
-//        {
-//            emojiDataManager.addCategorizedEmoji(data, categoryName);
-//            categorizedKeyboards.put(categoryName,
-//                    EmojidexKeyboard.create(this, emojiDataManager.getCategorizedList(categoryName), minHeight));
-//        }
-
         // Create GestureDetector
         detector = new GestureDetector(getApplicationContext(), this);
     }
@@ -113,9 +103,15 @@ public class EmojidexIME extends InputMethodService
         setKeyboard(getString(R.string.all_category));
         categoryScrollView.scrollTo(0, 0);
 
-        // Recreate search result keyboard.
-        String categoryName = getString(R.string.search_result);
-        String data = FileOperation.loadFileFromLocal(getApplicationContext(), categoryName);
+        // Recreate download and search result keyboard.
+        recreateKeyboard(getString(R.string.download), FileOperation.DOWNLOAD);
+        recreateKeyboard(getString(R.string.search_result), FileOperation.RESULT);
+    }
+
+    // TODO
+    private void recreateKeyboard(String categoryName, String filename)
+    {
+        String data = FileOperation.loadFileFromLocal(getApplicationContext(), filename);
         if (!data.equals(""))
         {
             emojiDataManager.deleteCategorizedEmoji(categoryName);
@@ -352,7 +348,9 @@ public class EmojidexIME extends InputMethodService
         keyboardViewFlipper.removeAllViews();
         for (int i = 0; i < categorizedKeyboards.get(categoryID).getKeyboards().size(); i++)
         {
-            if (categoryID.equals(getString(R.string.search_result)))
+            if (categoryID.equals(getString(R.string.download)))
+                keyboardView = new DownloadKeyboardView(this, null, R.attr.keyboardViewStyle, getLayoutInflater());
+            else if (categoryID.equals(getString(R.string.search_result)))
                 keyboardView = new ResultKeyboardView(this, null, R.attr.keyboardViewStyle, getLayoutInflater());
             else
                 keyboardView = new EmojidexKeyboardView(this, null, R.attr.keyboardViewStyle, getLayoutInflater());

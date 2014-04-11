@@ -555,7 +555,7 @@ public class MainActivity extends Activity {
         {
             String result = getJsonTask.get();
             FileOperation.saveFileToLocal(getApplicationContext(),
-                                          getString(R.string.search_result), result);
+                                          FileOperation.RESULT, result);
         }
         catch (InterruptedException e) { e.printStackTrace(); }
         catch (ExecutionException e) { e.printStackTrace(); }
@@ -568,6 +568,5 @@ public class MainActivity extends Activity {
 
         // Delete the search results file.
         FileOperation.deleteFile(getApplicationContext(), getString(R.string.search_result));
-        Log.e("test", "destroy");
     }
 }

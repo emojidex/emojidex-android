@@ -113,6 +113,11 @@ public class EmojidexEmojiData extends EmojiData
         catch (ExecutionException e) { e.printStackTrace(); }
     }
 
+    public String getTmpName()
+    {
+        return tmpName;
+    }
+
     public String getId()
     {
         return id;

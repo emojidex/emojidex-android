@@ -2,7 +2,6 @@ package org.genshin.emojidexandroid;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.util.Log;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -219,7 +218,6 @@ public class EmojiDataManager
         {
             emoji.initialize(nextCode++, context);
         }
-        Log.e("test", "size: " + downloadEmojiList.size());
 
         // When there is no image, remove emoji.
         for (int i = downloadEmojiList.size() - 1; i >= 0; i--)
