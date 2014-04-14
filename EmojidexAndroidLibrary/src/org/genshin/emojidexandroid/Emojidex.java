@@ -104,7 +104,8 @@ public class Emojidex {
                 // This string is emoji tag !!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 if(useImage)
                 {
-                    result.append(emojiData.createImageString());
+                    if (emojiData.getIcon() != null)
+                        result.append(emojiData.createImageString());
                 }
                 else if(emojiData.isOriginalEmoji())
                     result.append( text.subSequence(startIndex, endIndex) );

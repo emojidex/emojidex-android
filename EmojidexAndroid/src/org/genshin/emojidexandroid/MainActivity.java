@@ -12,7 +12,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -48,6 +47,11 @@ public class MainActivity extends Activity {
         initEmojidexEditor();
         setShareButtonIcon();
         getIntentData();
+
+        // TODO
+//        FileOperation.deleteFile(getApplicationContext(), FileOperation.HISTORIES);
+//        FileOperation.deleteFile(getApplicationContext(), FileOperation.FAVORITES);
+//        FileOperation.deleteFile(getApplicationContext(), FileOperation.DOWNLOAD);
     }
 
     @Override
@@ -369,7 +373,8 @@ public class MainActivity extends Activity {
     {
         EmojiData emoji = emojiDataManager.getEmojiData(name);
         ImageView blank = (ImageView)findViewById(R.id.blank);
-        blank.setImageDrawable(emoji.getIcon());
+        if (emoji != null && emoji.getIcon() != null)
+            blank.setImageDrawable(emoji.getIcon());
     }
 
     /**
@@ -567,6 +572,6 @@ public class MainActivity extends Activity {
         super.onDestroy();
 
         // Delete the search results file.
-        FileOperation.deleteFile(getApplicationContext(), getString(R.string.search_result));
+        FileOperation.deleteFile(getApplicationContext(), FileOperation.RESULT);
     }
 }

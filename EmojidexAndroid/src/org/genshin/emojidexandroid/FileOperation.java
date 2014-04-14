@@ -175,7 +175,7 @@ public class FileOperation
     }
 
     /**
-     * delete favorite or download
+     * delete favorite or history or download
      * @param context
      * @param emojiName
      * @return
@@ -186,18 +186,10 @@ public class FileOperation
         ArrayList<String> data = load(context, filename);
 
         // delete data
-        boolean delete = false;
-        for (String name : data)
+        for (int i = data.size() - 1; i >= 0; i--)
         {
-            if (name.equals(emojiName))
-            {
-                delete = true;
-                data.remove(name);
-                break;
-            }
-
-            if (delete)
-                break;
+            if (data.get(i).equals(emojiName))
+                data.remove(i);
         }
 
         // prepare json data
@@ -349,7 +341,7 @@ public class FileOperation
             return DONE;
 
         // read the old data from local.
-        List<EmojidexEmojiData> list = readData(context);
+        List<EmojidexEmojiData> list = parseData(context);
 
         // prepare the data for save.
         String newData = prepareData(emojiName, list);
@@ -386,7 +378,14 @@ public class FileOperation
     public static boolean deleteEmoji(Context context, String emojiName)
     {
         // read the old data from local.
-        List<EmojidexEmojiData> list = readData(context);
+        List<EmojidexEmojiData> list = parseData(context);
+
+        // delete history.
+        delete(context, emojiName, HISTORIES);
+
+        // delete favorite.
+        delete(context, emojiName, FAVORITES);
+
 
         // delete the data.
         boolean delete = false;
@@ -420,7 +419,7 @@ public class FileOperation
      * @param context
      * @return
      */
-    private static List<EmojidexEmojiData> readData(Context context)
+    private static List<EmojidexEmojiData> parseData(Context context)
     {
         List<EmojidexEmojiData> list = new ArrayList<EmojidexEmojiData>();
 
@@ -470,14 +469,14 @@ public class FileOperation
             array.put(obj);
         }
 
-        // read old data.
+        // add old data.
         for (EmojidexEmojiData emoji : list)
         {
             JSONObject obj = new JSONObject();
             try
             {
-                obj.put("id", emojiName);
-                obj.put("code", emoji.getName());
+                obj.put("id", emoji.getTmpName());
+                obj.put("code", emoji.getTmpName());
             }
             catch (JSONException e)
             {
@@ -510,7 +509,7 @@ public class FileOperation
         boolean result = false;
 
         // read data.
-        List<EmojidexEmojiData> list = readData(context);
+        List<EmojidexEmojiData> list = parseData(context);
 
         // check data.
         for (EmojidexEmojiData emoji : list)

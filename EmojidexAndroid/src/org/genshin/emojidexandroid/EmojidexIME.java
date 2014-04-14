@@ -5,7 +5,6 @@ import android.content.res.Configuration;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -106,19 +105,6 @@ public class EmojidexIME extends InputMethodService
         // Recreate download and search result keyboard.
         recreateKeyboard(getString(R.string.download), FileOperation.DOWNLOAD);
         recreateKeyboard(getString(R.string.search_result), FileOperation.RESULT);
-    }
-
-    // TODO
-    private void recreateKeyboard(String categoryName, String filename)
-    {
-        String data = FileOperation.loadFileFromLocal(getApplicationContext(), filename);
-        if (!data.equals(""))
-        {
-            emojiDataManager.deleteCategorizedEmoji(categoryName);
-            emojiDataManager.addCategorizedEmoji(data, categoryName);
-            categorizedKeyboards.put(categoryName,
-                    EmojidexKeyboard.create(this, emojiDataManager.getCategorizedList(categoryName), minHeight));
-        }
     }
 
     @Override
@@ -344,6 +330,12 @@ public class EmojidexIME extends InputMethodService
      */
     private void setKeyboard(String categoryID)
     {
+        // when histories/favorites/download keyboard, need to recreate
+        if (categoryID.equals(getString(R.string.history)) ||
+            categoryID.equals(getString(R.string.favorite)) ||
+            categoryID.equals(getString(R.string.download)))
+            recreateKeyboard(categoryID, FileOperation.DOWNLOAD);
+
         KeyboardView keyboardView;
         keyboardViewFlipper.removeAllViews();
         for (int i = 0; i < categorizedKeyboards.get(categoryID).getKeyboards().size(); i++)
@@ -370,7 +362,7 @@ public class EmojidexIME extends InputMethodService
     }
 
     /**
-     * setKeyboard from keyboards
+     * Set keyboard from keyboards.
      * @param keyboards categorized keyboards
      */
     private void setKeyboard(CategorizedKeyboard keyboards)
@@ -390,6 +382,23 @@ public class EmojidexIME extends InputMethodService
             keyboardView.setPreviewEnabled(false);
             keyboardView.setKeyboard(keyboards.getKeyboards().get(i));
             keyboardViewFlipper.addView(keyboardView);
+        }
+    }
+
+    /**
+     * Recreate keyboard. (download/search result)
+     * @param categoryName
+     * @param filename
+     */
+    private void recreateKeyboard(String categoryName, String filename)
+    {
+        String data = FileOperation.loadFileFromLocal(getApplicationContext(), filename);
+        if (!data.equals(""))
+        {
+            emojiDataManager.deleteCategorizedEmoji(categoryName);
+            emojiDataManager.addCategorizedEmoji(data, categoryName);
+            categorizedKeyboards.put(categoryName,
+                    EmojidexKeyboard.create(this, emojiDataManager.getCategorizedList(categoryName), minHeight));
         }
     }
 
