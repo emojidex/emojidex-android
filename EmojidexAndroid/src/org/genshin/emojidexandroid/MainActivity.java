@@ -48,11 +48,6 @@ public class MainActivity extends Activity {
         initEmojidexEditor();
         setShareButtonIcon();
         getIntentData();
-
-        // TODO
-//        FileOperation.deleteFile(getApplicationContext(), FileOperation.HISTORIES);
-//        FileOperation.deleteFile(getApplicationContext(), FileOperation.FAVORITES);
-//        FileOperation.deleteFile(getApplicationContext(), FileOperation.DOWNLOAD);
     }
 
     @Override
@@ -573,7 +568,6 @@ public class MainActivity extends Activity {
         super.onDestroy();
 
         // Delete the search results file.
-        boolean result = FileOperation.deleteFile(getApplicationContext(), FileOperation.SEARCH_RESULT);
-        Log.e("test", "delete:" + result);
+        FileOperation.deleteFile(getApplicationContext(), FileOperation.SEARCH_RESULT);
     }
 }
