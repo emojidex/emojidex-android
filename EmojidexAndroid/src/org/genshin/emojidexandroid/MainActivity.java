@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -560,7 +561,7 @@ public class MainActivity extends Activity {
         {
             String result = getJsonTask.get();
             FileOperation.saveFileToLocal(getApplicationContext(),
-                                          FileOperation.RESULT, result);
+                                          FileOperation.SEARCH_RESULT, result);
         }
         catch (InterruptedException e) { e.printStackTrace(); }
         catch (ExecutionException e) { e.printStackTrace(); }
@@ -572,6 +573,7 @@ public class MainActivity extends Activity {
         super.onDestroy();
 
         // Delete the search results file.
-        FileOperation.deleteFile(getApplicationContext(), FileOperation.RESULT);
+        boolean result = FileOperation.deleteFile(getApplicationContext(), FileOperation.SEARCH_RESULT);
+        Log.e("test", "delete:" + result);
     }
 }

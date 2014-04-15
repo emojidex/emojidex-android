@@ -49,6 +49,7 @@ public class EmojidexIME extends InputMethodService
     private boolean swipeFlag = false;
 
     private PopupWindow popup;
+    private String resultData = "";
 
     /**
      * Construct EmojidexIME object.
@@ -102,9 +103,13 @@ public class EmojidexIME extends InputMethodService
         setKeyboard(getString(R.string.all_category));
         categoryScrollView.scrollTo(0, 0);
 
-        // Recreate download and search result keyboard.
-        recreateKeyboard(getString(R.string.download), FileOperation.DOWNLOAD);
-        recreateKeyboard(getString(R.string.search_result), FileOperation.RESULT);
+        // When the data is different, recreate search result keyboard.
+        String newData = FileOperation.loadFileFromLocal(getApplicationContext(), FileOperation.SEARCH_RESULT);
+        if (!resultData.equals(newData))
+        {
+            recreateKeyboard(getString(R.string.search_result), FileOperation.SEARCH_RESULT);
+            resultData = newData;
+        }
     }
 
     @Override
@@ -330,10 +335,8 @@ public class EmojidexIME extends InputMethodService
      */
     private void setKeyboard(String categoryID)
     {
-        // when histories/favorites/download keyboard, need to recreate
-        if (categoryID.equals(getString(R.string.history)) ||
-            categoryID.equals(getString(R.string.favorite)) ||
-            categoryID.equals(getString(R.string.download)))
+        // when download keyboard, need to recreate
+        if (categoryID.equals(getString(R.string.download)))
             recreateKeyboard(categoryID, FileOperation.DOWNLOAD);
 
         KeyboardView keyboardView;
