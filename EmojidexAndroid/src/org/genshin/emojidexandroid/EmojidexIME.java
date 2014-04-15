@@ -581,6 +581,22 @@ public class EmojidexIME extends InputMethodService
     private void saveHistories(List<Integer> keyCodes)
     {
         EmojiData emoji = emojiDataManager.getEmojiData(keyCodes);
+
+        // Don't save the history of the search results
+        List<EmojiData> list = emojiDataManager.getCategorizedList(getString(R.string.search_result));
+        for (EmojiData listEmoji :list)
+        {
+            List<Integer> codes = listEmoji.getCodes();
+            for (int i = 0; i < codes.size(); i++)
+            {
+                if (codes.get(i) != emoji.getCodes().get(i))
+                    break;
+
+                if (i == codes.size() - 1)
+                    return;
+            }
+        }
+
         FileOperation.save(this, emoji.getName(), FileOperation.HISTORIES);
     }
 

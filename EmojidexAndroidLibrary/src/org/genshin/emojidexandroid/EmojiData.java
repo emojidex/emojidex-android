@@ -39,7 +39,6 @@ public class EmojiData
     protected List<Integer> codes = new ArrayList<Integer>();
     protected boolean isOriginal = false;
 
-
     /**
      * Initialize EmojiData object.
      * @param res

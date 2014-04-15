@@ -358,7 +358,7 @@ public class FileOperation
         {
             OutputStream out = context.openFileOutput(emojiName + ".png", Context.MODE_PRIVATE);
             Bitmap bitmap = ((BitmapDrawable)emoji).getBitmap();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
             out.close();
         }
         catch (IOException e)

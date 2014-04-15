@@ -247,15 +247,6 @@ public class EmojiDataManager
     public void deleteCategorizedEmoji(String categoryName)
     {
         // delete old keyboard
-        List<EmojiData> oldList = categorizedLists.get(categoryName);
-        if (oldList != null && oldList.size() != 0)
-            {
-            for (EmojiData emoji : oldList)
-            {
-                nameTable.remove(emoji.getName());
-                codeTable.remove(emoji.getCodes());
-            }
-            categorizedLists.remove(categoryName);
-        }
+        categorizedLists.remove(categoryName);
     }
 }

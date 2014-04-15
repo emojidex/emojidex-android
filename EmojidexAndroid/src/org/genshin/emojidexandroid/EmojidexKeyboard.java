@@ -93,7 +93,6 @@ public class EmojidexKeyboard extends Keyboard {
 
         newKey.popupCharacters = emojiData.getName();
 
-
         keys.add(newKey);
     }
 

@@ -95,13 +95,14 @@ public class EmojidexEmojiData extends EmojiData
     private void getIconFromEmojidexSite()
     {
         // Get the image from emojidex site.
+        String utfName = "";
         try
         {
-            id = URLEncoder.encode(id, "UTF-8");
+            utfName = URLEncoder.encode(name, "UTF-8");
         }
         catch (UnsupportedEncodingException e) { e.printStackTrace(); }
 
-        String imgUri = "http://assets.emojidex.com/emoji/" + id + "/px128.png";
+        String imgUri = "http://assets.emojidex.com/emoji/" + utfName + "/px128.png";
         Uri.Builder imgUriBuilder = new Uri.Builder();
         AsyncHttpRequestForGetImage getImgTask = new AsyncHttpRequestForGetImage(imgUri);
         getImgTask.execute(imgUriBuilder);
