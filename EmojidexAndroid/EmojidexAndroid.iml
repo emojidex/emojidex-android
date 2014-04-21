@@ -69,8 +69,8 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="jackson-annotations-2.1.2" level="project" />
     <orderEntry type="library" exported="" name="jackson-core-2.1.2" level="project" />
-    <orderEntry type="module" module-name="EmojidexAndroidLibrary" exported="" />
     <orderEntry type="library" exported="" name="jackson-databind-2.1.0" level="project" />
+    <orderEntry type="module" module-name="EmojidexAndroidLibrary" exported="" />
   </component>
 </module>
 

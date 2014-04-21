@@ -33,9 +33,8 @@ public class FileOperation
     public static final String HISTORIES = "histories";
     public static final String KEYBOARD = "keyboard";
     public static final String SHARE = "share";
-    public static final String REALTIME = "real_time";
 
-    public static int MAX_HISTORIES = 50;
+    public static int MAX_SIZE = 50;
 
     /**
      * load favorites/histories data from local file
@@ -114,24 +113,24 @@ public class FileOperation
                 return DONE;
         }
 
-        // histories size check
-        if (filename.equals(HISTORIES))
-            data = sizeCheck(data);
+        // size check
+        data = sizeCheck(data);
 
         // add data
         JSONArray array = new JSONArray();
-        for (List<Integer> codes : data)
-        {
-            JSONArray tmp = new JSONArray();
-            for (int code : codes)
-                tmp.put(code);
-            array.put(tmp);
-        }
-
         JSONArray tmp = new JSONArray();
         for (int keyCode : keyCodes)
             tmp.put(keyCode);
         array.put(tmp);
+
+        // add old data
+        for (List<Integer> codes : data)
+        {
+            tmp = new JSONArray();
+            for (int code : codes)
+                tmp.put(code);
+            array.put(tmp);
+        }
 
         if (saveFile(context, filename, array))
             return SUCCESS;
@@ -260,10 +259,10 @@ public class FileOperation
      */
     private static ArrayList<List<Integer>> sizeCheck(ArrayList<List<Integer>> data)
     {
-        if (data.size() >= MAX_HISTORIES)
+        if (data.size() >= MAX_SIZE)
         {
-            while (data.size() >= MAX_HISTORIES)
-                data.remove(data.get(0));
+            while (data.size() >= MAX_SIZE)
+                data.remove(data.get(MAX_SIZE - 1));
             return data;
         }
         else
@@ -273,7 +272,7 @@ public class FileOperation
     /**
      * set preferences
      * @param context
-     * @param param keyboard's id or packageName or real-time
+     * @param param keyboard's id or packageName
      * @return
      */
     public static boolean savePreferences(Context context, String param, String filename)
@@ -327,5 +326,21 @@ public class FileOperation
         }
 
         return str;
+    }
+
+    /**
+     * Whether already registered.
+     * @param context
+     * @param keyCodes
+     * @return
+     */
+    public static boolean searchFavorite(Context context, List<Integer> keyCodes)
+    {
+        ArrayList<List<Integer>> data = load(context, FAVORITES);
+
+        if (duplicationCheck(data, keyCodes))
+            return true;
+        else
+            return false;
     }
 }

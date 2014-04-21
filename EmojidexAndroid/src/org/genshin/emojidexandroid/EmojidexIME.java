@@ -5,7 +5,6 @@ import android.content.res.Configuration;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -350,16 +349,12 @@ public class EmojidexIME extends InputMethodService
      * setKeyboard from keyboards
      * @param keyboards categorized keyboards
      */
-    private void setKeyboard(CategorizedKeyboard keyboards, String type)
+    private void setKeyboard(CategorizedKeyboard keyboards)
     {
         keyboardViewFlipper.removeAllViews();
         for (int i = 0; i < keyboards.getKeyboards().size(); i++)
         {
-            KeyboardView keyboardView;
-            if (type.equals("favorites"))
-                keyboardView = new FavoriteKeyboardView(this, null, R.attr.keyboardViewStyle, getLayoutInflater());
-            else
-                keyboardView = new EmojidexKeyboardView(this, null, R.attr.keyboardViewStyle, getLayoutInflater());
+            KeyboardView keyboardView = new EmojidexKeyboardView(this, null, R.attr.keyboardViewStyle, getLayoutInflater());
             keyboardView.setOnKeyboardActionListener(this);
             keyboardView.setPreviewEnabled(false);
             keyboardView.setKeyboard(keyboards.getKeyboards().get(i));
@@ -521,7 +516,7 @@ public class EmojidexIME extends InputMethodService
     {
         // load histories
         ArrayList<List<Integer>> histories = FileOperation.load(this, FileOperation.HISTORIES);
-        createNewKeyboards(histories, "histories");
+        createNewKeyboards(histories);
     }
 
     /**
@@ -532,14 +527,14 @@ public class EmojidexIME extends InputMethodService
     {
         // load favorites
         ArrayList<List<Integer>> favorites = FileOperation.load(this, FileOperation.FAVORITES);
-        createNewKeyboards(favorites, "favorites");
+        createNewKeyboards(favorites);
     }
 
     /**
      * create favorites/histories keyboards
      * @param data keys
      */
-    private void createNewKeyboards(ArrayList<List<Integer>> data, String type)
+    private void createNewKeyboards(ArrayList<List<Integer>> data)
     {
 
         // get emoji
@@ -551,7 +546,7 @@ public class EmojidexIME extends InputMethodService
         final int minHeight = (int)getResources().getDimension(R.dimen.ime_keyboard_area_height);
         CategorizedKeyboard keyboards = EmojidexKeyboard.create(this, emojiData, minHeight);
 
-        setKeyboard(keyboards, type);
+        setKeyboard(keyboards);
     }
 
     /**

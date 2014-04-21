@@ -38,7 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:visibility="invisible" />
+            android:visibility="invisible"/>
 
         <ImageButton
             android:id="@+id/share_button"
@@ -62,16 +62,67 @@
 
     </LinearLayout>
 
-    <ViewFlipper
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:id="@+id/viewFlipper_editor"
-        android:layout_weight="1">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_margin="10dp">
 
-        <include android:id="@+id/emoji_text_layout" layout="@layout/emoji_text_view" />
-        <include android:id="@+id/emoji_layout" layout="@layout/emoji_view" />
-        <include android:id="@+id/text_layout" layout="@layout/text_view" />
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/clear"
+            android:onClick="clearText"/>
 
-    </ViewFlipper>
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginLeft="10dp"
+            android:text="@string/clear_and_paste"
+            android:onClick="clearAndPaste"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_margin="10dp">
+
+        <ToggleButton
+            android:id="@+id/toggle_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:textOn="@string/convert"
+            android:textOff="@string/convert"
+            android:checked="true"
+            android:onClick="clickToggleButton"/>
+
+        <Button
+            android:id="@+id/search_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginLeft="10dp"
+            android:text="@string/search"
+            android:onClick="createSearchWindow"/>
+
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_margin="10dp"
+        android:padding="10dp"
+        android:gravity="top"
+        android:textSize="20sp"
+        android:hint="@string/text_hint_emoji" />
 
 </LinearLayout>

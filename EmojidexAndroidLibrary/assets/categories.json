@@ -63,5 +63,10 @@
     "category" : "symbol",
     "English"  : "Symbol",
     "Japanese" : "シンボル"
+  },
+  {
+    "category" : "Download",
+    "English"  : "Download",
+    "Japanese" : "ダウンロード"
   }
 ]
