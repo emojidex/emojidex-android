@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="jackson-annotations-2.2.3">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/EmojidexAndroid/build/exploded-aar/emojidex-android/EmojidexAndroidLibrary/unspecified/libs/jackson-annotations-2.2.3.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

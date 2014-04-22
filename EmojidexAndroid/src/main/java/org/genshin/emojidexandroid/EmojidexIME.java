@@ -78,6 +78,11 @@ public class EmojidexIME extends InputMethodService
                     EmojidexKeyboard.create(this, emojiDataManager.getCategorizedList(categoryName), minHeight));
         }
 
+        // download keyboard
+        String result = FileOperation.loadFileFromLocal(getApplicationContext(), FileOperation.DOWNLOAD);
+        if (!result.equals(""))
+            emojiDataManager.addCategorizedEmoji(result, FileOperation.DOWNLOAD);
+
         // Create GestureDetector
         detector = new GestureDetector(getApplicationContext(), this);
     }
@@ -584,16 +589,16 @@ public class EmojidexIME extends InputMethodService
 
         // Don't save the history of the search results
         List<EmojiData> list = emojiDataManager.getCategorizedList(getString(R.string.search_result));
-        for (EmojiData listEmoji :list)
-        {
-            List<Integer> codes = listEmoji.getCodes();
-            for (int i = 0; i < codes.size(); i++)
-            {
-                if (codes.get(i) != emoji.getCodes().get(i))
-                    break;
+        if (list != null) {
+            for (EmojiData listEmoji : list) {
+                List<Integer> codes = listEmoji.getCodes();
+                for (int i = 0; i < codes.size(); i++) {
+                    if (codes.get(i) != emoji.getCodes().get(i))
+                        break;
 
-                if (i == codes.size() - 1)
-                    return;
+                    if (i == codes.size() - 1)
+                        return;
+                }
             }
         }
 

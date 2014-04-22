@@ -10,6 +10,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.genshin.emojidexandroidlibrary.R;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -34,7 +36,6 @@ public class EmojiDataManager
     private boolean isInitialized = false;
 
     private int nextCode;
-
 
     /**
      * Create EmojiDataManager object.
