@@ -1,11 +1,16 @@
-.gradle
+# Mac OS.
 .DS_Store
 *.tmp
-/local.properties
-/.idea/workspace.xml
-/.idea/libraries/jackson_annotations_2_1_2.xml
-/.idea/libraries/jackson_core_2_1_2.xml
-/.idea/libraries/jackson_databind_2_1_0.xml
-/.idea/misc.xml
-/EmojidexAndroid/EmojidexAndroid.iml
-/EmojidexAndroidLibrary/EmojidexAndroidLibrary.iml
+
+# Local configuration.
+local.properties
+
+# Android Studio.
+*.iml
+.gradle/
+.idea/
+
+!.idea/gradle.xml
+!.idea/runConfiguretions/*
+!.idea/.name
+
