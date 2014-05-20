@@ -135,8 +135,11 @@ public class EmojidexKeyboardView extends KeyboardView {
                 final String temporaryFilePath = "tmp.png";
                 FileOutputStream fos = null;
                 try {
+                    // Get emoji data.
+                    final EmojiData emojiData = EmojiDataManager.create(context).getEmojiData(emojiName);
+
                     // Convert image to byte array.
-                    final Bitmap bmp = ((BitmapDrawable)key.icon).getBitmap();
+                    final Bitmap bmp = emojiData.getStamp();
                     final ByteArrayOutputStream os = new ByteArrayOutputStream();
                     bmp.compress(Bitmap.CompressFormat.PNG, 100, os);
                     os.flush();
@@ -179,7 +182,7 @@ public class EmojidexKeyboardView extends KeyboardView {
                     }
                     catch(Exception e)
                     {
-
+                        e.printStackTrace();
                     }
                 }
             }

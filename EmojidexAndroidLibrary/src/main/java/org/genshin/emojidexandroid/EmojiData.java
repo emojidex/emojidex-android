@@ -35,6 +35,7 @@ public class EmojiData
 //    @JsonProperty("contributor")    private String contributor;
 //    @JsonProperty("url")            private String url;
 
+    protected Bitmap stamp = null;
     protected Drawable icon = null;
     protected List<Integer> codes = new ArrayList<Integer>();
     protected boolean isOriginal = false;
@@ -72,6 +73,7 @@ public class EmojiData
             InputStream is = res.getAssets().open(dir + name + ".png");
             Bitmap bitmap = BitmapFactory.decodeStream(is);
             is.close();
+            stamp = bitmap;     // TODO: Set high quality bitmap.
             icon = new BitmapDrawable(res, bitmap);
         }
         catch(IOException e)
@@ -142,6 +144,15 @@ public class EmojiData
     public Drawable getIcon()
     {
         return icon;
+    }
+
+    /**
+     * Get stamp bitmap.
+     * @return      Stamp bitmap.
+     */
+    public Bitmap getStamp()
+    {
+        return stamp;
     }
 
     /**
