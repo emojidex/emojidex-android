@@ -3,9 +3,12 @@ package org.genshin.emojidexandroid;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.inputmethodservice.Keyboard;
 import android.util.DisplayMetrics;
+import android.util.Log;
 
 import java.util.List;
 
@@ -85,7 +88,15 @@ public class EmojidexKeyboard extends Keyboard {
         newKey.x = x;
         newKey.y = y;
 
-        Drawable icon = emojiData.getIcon();
+        final BitmapDrawable icon = emojiData.getKeyIcon();
+        final Bitmap bitmap = icon.getBitmap();
+
+        final int bitmapDensity = bitmap.getDensity();
+        final int targetSize = newKey.width - bitmapDensity / 15;
+        final int targetDensity = bitmapDensity * targetSize / bitmap.getWidth();
+
+        icon.setTargetDensity(targetDensity);
+
         if(icon != null)
             newKey.icon = icon;
         else

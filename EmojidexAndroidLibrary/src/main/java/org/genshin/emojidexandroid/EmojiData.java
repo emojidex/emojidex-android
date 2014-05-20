@@ -36,6 +36,7 @@ public class EmojiData
 //    @JsonProperty("url")            private String url;
 
     protected Drawable icon = null;
+    protected Drawable keyIcon = null;
     protected List<Integer> codes = new ArrayList<Integer>();
     protected boolean isOriginal = false;
 
@@ -73,6 +74,7 @@ public class EmojiData
             Bitmap bitmap = BitmapFactory.decodeStream(is);
             is.close();
             icon = new BitmapDrawable(res, bitmap);
+            keyIcon = new BitmapDrawable(res, bitmap);
         }
         catch(IOException e)
         {
@@ -142,6 +144,15 @@ public class EmojiData
     public Drawable getIcon()
     {
         return icon;
+    }
+
+    /**
+     * Get icon image for key.
+     * @return      Icon image.
+     */
+    public BitmapDrawable getKeyIcon()
+    {
+        return (BitmapDrawable)keyIcon;
     }
 
     /**
