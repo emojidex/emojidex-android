@@ -69,6 +69,13 @@
                 android:layout_height="match_parent"
                 android:id="@+id/ime_categories"
                 android:orientation="horizontal" >
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/history"
+                    android:id="@+id/ime_category_history_button"
+                    android:onClick="showHistories" />
             </LinearLayout>
         </HorizontalScrollView>
 
