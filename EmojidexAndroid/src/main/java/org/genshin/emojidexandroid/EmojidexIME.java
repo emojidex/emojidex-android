@@ -43,7 +43,6 @@ public class EmojidexIME extends InputMethodService
 
     private Map<String, CategorizedKeyboard> categorizedKeyboards;
 
-    private ViewFlipper viewFlipper;
     private ViewFlipper keyboardViewFlipper;
     private GestureDetector detector;
     private boolean swipeFlag = false;
@@ -95,9 +94,6 @@ public class EmojidexIME extends InputMethodService
         createCategorySelector();
         createKeyboardView();
         createSubKeyboardView();
-
-        // Set ViewFlipper.
-        viewFlipper = (ViewFlipper)layout.findViewById(R.id.viewFlipper);
 
         return layout;
     }
@@ -408,28 +404,6 @@ public class EmojidexIME extends InputMethodService
             categorizedKeyboards.put(categoryName,
                     EmojidexKeyboard.create(this, emojiDataManager.getCategorizedList(categoryName), minHeight));
         }
-    }
-
-    /**
-     * viewFlipper move to left
-     * @param v view
-     */
-    public void moveToLeft(View v)
-    {
-        viewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_in));
-        viewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_out));
-        viewFlipper.showNext();
-    }
-
-    /**
-     * viewFlipper move to right
-     * @param v view
-     */
-    public void moveToRight(View v)
-    {
-        viewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_in));
-        viewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_out));
-        viewFlipper.showPrevious();
     }
 
     /**
