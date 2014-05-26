@@ -263,43 +263,6 @@ public class EmojidexIME extends InputMethodService
 
         // Create categories scroll buttons.
         categoryScrollView = (HorizontalScrollView)layout.findViewById(R.id.ime_category_scrollview);
-        final ImageButton leftButton = (ImageButton)layout.findViewById(R.id.ime_category_button_left);
-        final ImageButton rightButton = (ImageButton)layout.findViewById(R.id.ime_category_button_right);
-
-        leftButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final float currentX = categoryScrollView.getScrollX();
-                final int childCount = categoriesView.getChildCount();
-                int nextX = 0;
-                for(int i = 0;  i < childCount;  ++i)
-                {
-                    final float childX = categoriesView.getChildAt(i).getX();
-                    if(childX >= currentX)
-                        break;
-                    nextX = (int)childX;
-                }
-                categoryScrollView.smoothScrollTo(nextX, 0);
-            }
-        });
-        rightButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final float currentX = categoryScrollView.getScrollX();
-                final int childCount = categoriesView.getChildCount();
-                int nextX = 0;
-                for(int i = 0;  i < childCount;  ++i)
-                {
-                    final float childX = categoriesView.getChildAt(i).getX();
-                    if(childX > currentX)
-                    {
-                        nextX = (int)childX;
-                        break;
-                    }
-                }
-                categoryScrollView.smoothScrollTo(nextX, 0);
-            }
-        });
     }
 
     /**

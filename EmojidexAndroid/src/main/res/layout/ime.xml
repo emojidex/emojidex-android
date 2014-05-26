@@ -11,14 +11,6 @@
         android:layout_height="@dimen/ime_category_height"
         android:background="@drawable/background_gray" >
 
-        <ImageButton
-            android:id="@+id/ime_category_button_left"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:src="@drawable/arrow"
-            android:rotation="180"
-            android:contentDescription="@string/left"/>
-
         <HorizontalScrollView
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -39,13 +31,6 @@
                     android:onClick="showHistories" />
             </LinearLayout>
         </HorizontalScrollView>
-
-        <ImageButton
-            android:id="@+id/ime_category_button_right"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:src="@drawable/arrow"
-            android:contentDescription="@string/right"/>
 
     </LinearLayout>
 
