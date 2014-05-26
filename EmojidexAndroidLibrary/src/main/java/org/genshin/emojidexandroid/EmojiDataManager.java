@@ -144,7 +144,7 @@ public class EmojiDataManager
         catch (IOException e) { e.printStackTrace(); }
 
         // All category
-        categorizedLists.put(categories.get(0).getName(), newEmojiList);
+        categorizedLists.put(context.getString(R.string.all_category), newEmojiList);
 
         // Initialize emoji.
         nextCode = res.getInteger(R.integer.original_code_start);

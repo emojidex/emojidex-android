@@ -18,8 +18,6 @@
     <string name="clear_and_paste">Clear &amp; Paste</string>
     <string name="convert">Convert</string>
 
-    <string name="all_category">All</string>
-
     <string name="register_favorite">Favorite this emoji?</string>
     <string name="register_success">Registered.</string>
     <string name="register_done">Already registered.</string>
