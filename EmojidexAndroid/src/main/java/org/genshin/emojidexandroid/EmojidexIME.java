@@ -16,7 +16,6 @@ import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
-import android.widget.ImageButton;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -49,6 +48,8 @@ public class EmojidexIME extends InputMethodService
 
     private PopupWindow popup;
     private String resultData = "";
+
+    private HistoryManager historyManager;
 
     /**
      * Construct EmojidexIME object.
@@ -84,6 +85,10 @@ public class EmojidexIME extends InputMethodService
 
         // Create GestureDetector
         detector = new GestureDetector(getApplicationContext(), this);
+
+        // Create HistoryManager.
+        historyManager = new HistoryManager(getApplicationContext());
+        historyManager.load();
     }
 
     @Override
@@ -96,6 +101,12 @@ public class EmojidexIME extends InputMethodService
         createSubKeyboardView();
 
         return layout;
+    }
+
+    @Override
+    public void onFinishInputView(boolean finishingInput) {
+        super.onFinishInputView(finishingInput);
+        historyManager.save();
     }
 
     @Override
@@ -200,7 +211,7 @@ public class EmojidexIME extends InputMethodService
             if(emoji != null)
             {
                 getCurrentInputConnection().commitText(emoji.createImageString(), 1);
-                saveHistories(codes);
+                historyManager.regist(emoji.name);
             }
             // Input other.
             else
@@ -471,7 +482,7 @@ public class EmojidexIME extends InputMethodService
     public void showHistories(View v)
     {
         // load histories
-        ArrayList<String> histories = FileOperation.load(this, FileOperation.HISTORIES);
+        List<String> histories = historyManager.getHistories();
         createNewKeyboards(histories);
     }
 
@@ -490,7 +501,7 @@ public class EmojidexIME extends InputMethodService
      * create favorites/histories keyboards
      * @param data keys
      */
-    private void createNewKeyboards(ArrayList<String> data)
+    private void createNewKeyboards(List<String> data)
     {
 
         // get emoji
@@ -514,32 +525,6 @@ public class EmojidexIME extends InputMethodService
         closePopupWindow(v);
         View view = getLayoutInflater().inflate(R.layout.settings, null);
         createPopupWindow(view);
-    }
-
-    /**
-     * save histories to local data
-     * @param keyCodes save keyCodes
-     */
-    private void saveHistories(List<Integer> keyCodes)
-    {
-        EmojiData emoji = emojiDataManager.getEmojiData(keyCodes);
-
-        // Don't save the history of the search results
-        List<EmojiData> list = emojiDataManager.getCategorizedList(getString(R.string.search_result));
-        if (list != null) {
-            for (EmojiData listEmoji : list) {
-                List<Integer> codes = listEmoji.getCodes();
-                for (int i = 0; i < codes.size(); i++) {
-                    if (codes.get(i) != emoji.getCodes().get(i))
-                        break;
-
-                    if (i == codes.size() - 1)
-                        return;
-                }
-            }
-        }
-
-        FileOperation.save(this, emoji.getName(), FileOperation.HISTORIES);
     }
 
     /**
@@ -589,6 +574,7 @@ public class EmojidexIME extends InputMethodService
 
         // delete
         boolean result = FileOperation.deleteFile(getApplicationContext(), FileOperation.HISTORIES);
+        historyManager.clear();
         showResultToast(result);
         setKeyboard(getString(R.string.all_category));
     }

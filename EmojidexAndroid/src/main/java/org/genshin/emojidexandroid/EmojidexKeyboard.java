@@ -5,10 +5,8 @@ import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.inputmethodservice.Keyboard;
 import android.util.DisplayMetrics;
-import android.util.Log;
 
 import java.util.List;
 
