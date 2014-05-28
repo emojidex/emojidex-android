@@ -5,7 +5,9 @@
 
     <!-- IME layout size. -->
     <dimen name="ime_text_size">14sp</dimen>
+    <dimen name="ime_key_size">48dp</dimen>
+    <dimen name="ime_key_icon_size">36dp</dimen>
     <dimen name="ime_category_height">40dp</dimen>
-    <dimen name="ime_view_flipper_height">40dp</dimen>
-    <dimen name="ime_keyboard_area_height">145dp</dimen>    <!-- 48dp * 3row + 1 -->
+    <dimen name="ime_keyboard_height">145dp</dimen>    <!-- 48dp * 3row + 1 -->
+    <dimen name="ime_sub_keyboard_height">40dp</dimen>
 </resources>

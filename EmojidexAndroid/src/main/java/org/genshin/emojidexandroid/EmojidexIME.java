@@ -69,7 +69,7 @@ public class EmojidexIME extends InputMethodService
         emojiDataManager = EmojiDataManager.create(this);
 
         // Create categorized keyboards.
-        minHeight = (int)getResources().getDimension(R.dimen.ime_keyboard_area_height);
+        minHeight = (int)getResources().getDimension(R.dimen.ime_keyboard_height);
         categorizedKeyboards = new HashMap<String, CategorizedKeyboard>();
         for(CategoryData categoryData : emojiDataManager.getCategoryDatas())
         {
@@ -510,7 +510,7 @@ public class EmojidexIME extends InputMethodService
             emojiData.add(emojiDataManager.getEmojiData(name));
 
         // create keyboards
-        final int minHeight = (int)getResources().getDimension(R.dimen.ime_keyboard_area_height);
+        final int minHeight = (int)getResources().getDimension(R.dimen.ime_keyboard_height);
         CategorizedKeyboard keyboards = EmojidexKeyboard.create(this, emojiData, minHeight);
 
         setKeyboard(keyboards);
@@ -585,7 +585,7 @@ public class EmojidexIME extends InputMethodService
      */
     private void createPopupWindow(View view)
     {
-        int height = (int)getResources().getDimension(R.dimen.ime_keyboard_area_height);
+        int height = (int)getResources().getDimension(R.dimen.ime_keyboard_height);
 
         // create popup window
         popup = new PopupWindow(this);

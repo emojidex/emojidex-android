@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.inputmethodservice.Keyboard;
 import android.util.DisplayMetrics;
+import android.util.Log;
 
 import java.util.List;
 
@@ -21,6 +22,7 @@ public class EmojidexKeyboard extends Keyboard {
     private int displayWidth;
 
     private final Row row;
+    private final float keyIconSize;
 
     /**
      * Construct EmojidexKeyboard object.
@@ -38,6 +40,8 @@ public class EmojidexKeyboard extends Keyboard {
         row.verticalGap = getVerticalGap();
         row.rowEdgeFlags = 0;
         row.mode = 0;
+
+        keyIconSize = context.getResources().getDimension(R.dimen.ime_key_icon_size);
     }
 
     @Override
@@ -90,8 +94,7 @@ public class EmojidexKeyboard extends Keyboard {
         final Bitmap bitmap = icon.getBitmap();
 
         final int bitmapDensity = bitmap.getDensity();
-        final int targetSize = newKey.width - bitmapDensity / 15;
-        final int targetDensity = bitmapDensity * targetSize / bitmap.getWidth();
+        final int targetDensity = (int)(bitmapDensity * keyIconSize / bitmap.getWidth());
 
         icon.setTargetDensity(targetDensity);
 
