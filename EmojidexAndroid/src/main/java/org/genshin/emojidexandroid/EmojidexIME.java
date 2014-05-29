@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -88,7 +89,6 @@ public class EmojidexIME extends InputMethodService
 
         // Create HistoryManager.
         historyManager = new HistoryManager(getApplicationContext());
-        historyManager.load();
     }
 
     @Override
@@ -101,6 +101,13 @@ public class EmojidexIME extends InputMethodService
         createSubKeyboardView();
 
         return layout;
+    }
+
+    @Override
+    public void onStartInputView(EditorInfo info, boolean restarting) {
+        super.onStartInputView(info, restarting);
+        if( !restarting )
+            historyManager.load();
     }
 
     @Override

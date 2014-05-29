@@ -31,6 +31,7 @@ public class HistoryManager {
      */
     public void load()
     {
+        histories.clear();
         histories.addAll( FileOperation.load(this.context, saveFileName) );
 
         Log.d("ime", "Load history. (size = " + histories.size() + ")");
