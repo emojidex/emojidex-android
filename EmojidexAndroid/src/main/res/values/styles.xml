@@ -1,0 +1,44 @@
+<resources>
+
+    <!-- IME Theme. -->
+    <attr name="keyboardViewStyle" format="reference" />
+    <attr name="subKeyboardViewStyle" format="reference" />
+    <attr name="horizontalScrollViewStyle" format="reference" />
+    <style name="IMETheme" parent="android:Theme.Holo.InputMethod">
+        <item name="android:buttonStyle">@style/IMEButtonStyle</item>
+        <item name="android:imageButtonStyle">@style/IMEImageButtonStyle</item>
+        <item name="android:scrollViewStyle">@style/IMEScrollViewStyle</item>
+        <item name="horizontalScrollViewStyle">@style/IMEHorizontalScrollViewStyle</item>
+        <item name="keyboardViewStyle">@style/IMEKeyboardViewStyle</item>
+        <item name="subKeyboardViewStyle">@style/IMESubKeyboardViewStyle</item>
+    </style>
+
+    <!-- IME Button -->
+    <style name="IMEButtonStyle" parent="android:style/Widget.Holo.Button">
+        <item name="android:textSize">@dimen/ime_text_size</item>
+    </style>
+
+    <!-- IME ImageButton -->
+    <style name="IMEImageButtonStyle" parent="android:Widget.Holo.ImageButton">
+    </style>
+
+    <!-- IME ScrollView -->
+    <style name="IMEScrollViewStyle" parent="android:Widget.Holo.ScrollView">
+    </style>
+
+    <!-- IME HorizontalScrollView -->
+    <style name="IMEHorizontalScrollViewStyle" parent="android:Widget.Holo.HorizontalScrollView">
+    </style>
+
+    <!-- IME KeyboardView -->
+    <style name="IMEKeyboardViewStyle" parent="android:style/Widget.KeyboardView">
+        <item name="android:background">@drawable/background_blank</item>
+        <item name="android:keyBackground">@drawable/ime_keyboard_key_background</item>
+    </style>
+
+    <!-- IME Sub KeyboardView -->
+    <style name="IMESubKeyboardViewStyle" parent="android:style/Widget.KeyboardView">
+        <item name="android:background">@drawable/background_gray</item>
+    </style>
+
+</resources>

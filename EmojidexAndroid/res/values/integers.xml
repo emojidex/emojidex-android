@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<resources>
-    <integer name="ime_keycode_show_ime_picker">0x10FFFF</integer>
-</resources>

@@ -1,51 +1,33 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:0.7.+'
-    }
-}
 apply plugin: 'android-library'
 
-repositories {
-    mavenCentral()
-}
-
 android {
-    compileSdkVersion 19
-    buildToolsVersion "19.0.0"
+    compileSdkVersion 18
+    buildToolsVersion "19.0.3"
 
     defaultConfig {
-        minSdkVersion 10
-        targetSdkVersion 15
+        minSdkVersion 8
+        targetSdkVersion 16
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            runProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
     }
 
     sourceSets {
         main {
-            manifest.srcFile 'AndroidManifest.xml'
-            java.srcDirs = ['src']
-            res.srcDirs = ['res']
+            manifest.srcFile 'src/main/AndroidManifest.xml'
+            java.srcDirs = ['src/main/java']
+            res.srcDirs = ['src/main/res']
             assets.srcDirs = ['assets']
         }
     }
 }
 
 dependencies {
-    compile files('libs/jackson-annotations-2.1.2.jar', 'libs/jackson-core-2.1.2.jar', 'libs/jackson-databind-2.1.0.jar')
-}
-
-
-// aar
-apply plugin: 'maven'
-def deployTo = new File(projectDir, "repository")
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            repository url: "file://${deployTo.absolutePath}"
-            pom.version = '0.0.1'
-            pom.groupId = 'org.genshin'
-            pom.artifactId = 'emojidexandroid-lib'
-        }
-    }
+    compile 'com.android.support:appcompat-v7:19.+'
+    compile fileTree(dir: 'libs', include: ['*.jar'])
 }
