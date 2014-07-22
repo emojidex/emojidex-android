@@ -9,6 +9,7 @@ local.properties
 *.iml
 .gradle/
 .idea/
+build/
 
 !.idea/gradle.xml
 !.idea/runConfiguretions/*
