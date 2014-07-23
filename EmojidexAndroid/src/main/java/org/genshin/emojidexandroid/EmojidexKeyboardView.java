@@ -1,12 +1,21 @@
 package org.genshin.emojidexandroid;
 
+import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
+import android.net.Uri;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +26,10 @@ import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
+import java.util.List;
 
 /**
  * Created by nazuki on 14/01/08.
@@ -109,6 +122,69 @@ public class EmojidexKeyboardView extends KeyboardView {
             @Override
             public void onClick(View v) {
                 closePopup();
+            }
+        });
+
+        // Set stamp send button.
+        Button stampSendButton = (Button)view.findViewById(R.id.popup_stamp_send_button);
+        stampSendButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                closePopup();
+
+                final String temporaryFilePath = "tmp.png";
+                FileOutputStream fos = null;
+                try {
+                    // Get emoji data.
+                    final EmojiData emojiData = EmojiDataManager.create(context).getEmojiData(emojiName);
+
+                    // Convert image to byte array.
+                    final Bitmap bmp = emojiData.getStamp();
+                    final ByteArrayOutputStream os = new ByteArrayOutputStream();
+                    bmp.compress(Bitmap.CompressFormat.PNG, 100, os);
+                    os.flush();
+                    final byte[] w = os.toByteArray();
+                    os.close();
+
+                    // Save byte array to temporary file.
+                    fos = context.openFileOutput(temporaryFilePath, Context.MODE_WORLD_READABLE);
+                    fos.write(w, 0, w.length);
+                    fos.flush();
+
+                    // Send intent.
+                    final Uri uri = Uri.fromFile(context.getFileStreamPath(temporaryFilePath));
+                    final ActivityManager am = (ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
+                    final ActivityManager.RunningTaskInfo taskInfo =  am.getRunningTasks(1).get(0);
+
+                    final Intent intent = new Intent(Intent.ACTION_SEND);
+                    intent.setType("image/png");
+                    intent.putExtra(Intent.EXTRA_STREAM, uri);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+                    intent.setPackage(taskInfo.baseActivity.getPackageName());
+
+                    final Intent proxyIntent = new Intent(context, ProxyActivity.class);
+                    proxyIntent.putExtra(Intent.EXTRA_INTENT, intent);
+                    proxyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                    context.startActivity(proxyIntent);
+                }
+                catch(Exception e)
+                {
+                    e.printStackTrace();
+                }
+                finally
+                {
+                    try
+                    {
+                        if (fos != null)
+                            fos.close();
+                    }
+                    catch(Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
             }
         });
     }

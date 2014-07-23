@@ -36,6 +36,7 @@
     <string name="download_failure">ダウンロードに失敗しました。</string>
     <string name="delete_download_confirm">ローカルから削除しますか？</string>
     <string name="delete_download">削除</string>
+    <string name="stamp_send">送信</string>
 
     <string name="yes">はい</string>
     <string name="no">いいえ</string>
