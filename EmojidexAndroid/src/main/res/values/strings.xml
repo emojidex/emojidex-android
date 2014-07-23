@@ -38,6 +38,7 @@
     <string name="download_failure">Downloading failed.</string>
     <string name="delete_download_confirm">Remove this emoji from your storage?</string>
     <string name="delete_download">Remove</string>
+    <string name="stamp_send">Send</string>
 
     <string name="yes">Yes</string>
     <string name="no">No</string>

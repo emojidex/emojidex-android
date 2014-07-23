@@ -75,7 +75,7 @@ public class EmojidexIME extends InputMethodService
         {
             final String categoryName = categoryData.getName();
             categorizedKeyboards.put(categoryName,
-                    EmojidexKeyboard.create(this, emojiDataManager.getCategorizedList(categoryName), minHeight));
+                    EmojidexKeyboard.create(getApplicationContext(), emojiDataManager.getCategorizedList(categoryName), minHeight));
         }
 
         // download keyboard
