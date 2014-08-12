@@ -61,7 +61,7 @@ public class EmojidexIME extends InputMethodService
 
         // Test.
         EmojiLoader loader = new EmojiLoader();
-        loader.load();
+        loader.load(EmojiLoader.Format.PNG_MDPI, EmojiLoader.Format.PNG_PX256);
     }
 
     @Override
