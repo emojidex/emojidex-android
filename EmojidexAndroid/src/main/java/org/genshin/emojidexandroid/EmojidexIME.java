@@ -1,6 +1,7 @@
 package org.genshin.emojidexandroid;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
@@ -58,10 +59,6 @@ public class EmojidexIME extends InputMethodService
     public EmojidexIME()
     {
         setTheme(R.style.IMETheme);
-
-        // Test.
-        EmojiLoader loader = new EmojiLoader();
-        loader.load(EmojiLoader.Format.PNG_MDPI, EmojiLoader.Format.PNG_PX256);
     }
 
     @Override
@@ -90,6 +87,10 @@ public class EmojidexIME extends InputMethodService
 
         // Create GestureDetector
         detector = new GestureDetector(getApplicationContext(), this);
+
+        // Test.
+        EmojiLoader loader = new EmojiLoader(this);
+        loader.load(EmojiLoader.Format.PNG_MDPI, EmojiLoader.Format.PNG_PX256);
     }
 
     @Override

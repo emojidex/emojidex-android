@@ -1,7 +1,22 @@
 package org.genshin.emojidexandroid;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.DownloadManager;
+import android.app.ProgressDialog;
+import android.app.SearchManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -20,6 +35,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeSet;
 
 /**
  * Created by kou on 14/08/05.
@@ -28,6 +44,10 @@ public class EmojiLoader
 {
     private static final String[] KINDS = { "utf", "extended" };
     private static final String JSON_FILENAME = "emoji.json";
+
+    private final Context context;
+    private final DownloadManager downloadManager;
+    private final TreeSet<Long> idSet = new TreeSet<Long>();
 
     private String sourcePath;
     private String destinationPath;
@@ -58,93 +78,131 @@ public class EmojiLoader
         }
     }
 
-    public EmojiLoader()
+    public EmojiLoader(Context context)
     {
+        this.context = context;
+        downloadManager = (DownloadManager)context.getSystemService(Context.DOWNLOAD_SERVICE);
+
         sourcePath = "http://assets.emojidex.com";
         destinationPath = Environment.getExternalStorageDirectory().getPath() + "/emojidex";
     }
 
     public void load(Format... formats)
     {
-        final String[] jsonFiles = new String[KINDS.length];
-        for(int i = 0;  i < jsonFiles.length;  ++i)
-            jsonFiles[i] = KINDS[i] + "/" + JSON_FILENAME;
-
         this.formats = formats;
-        final AsyncHttpRequest task = new AsyncHttpRequest(new JsonLoadListener());
-        task.execute(jsonFiles);
-    }
+        registerReceiver(new JsonDownloadReceiver());
 
-
-    public class ProgressInfo
-    {
-        private String currentPath;
-        private int current;
-        private int[] loadedSizes;
-        private int[] fileSizes;
-
-        public ProgressInfo(int fileCount)
+        for(String kind : KINDS)
         {
-            currentPath = "";
-            current = 0;
-            loadedSizes = new int[fileCount];
-            fileSizes = new int[fileCount];
-            for(int i = 0;  i < fileCount;  ++i)
-                loadedSizes[i] = fileSizes[i] = 0;
+            final DownloadManager.Request request = createRequest(kind + "/" + JSON_FILENAME);
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_HIDDEN);
+            idSet.add(downloadManager.enqueue(request));
+        }
+    }
+
+    private void registerReceiver(DownloadReceiver receiver)
+    {
+        context.registerReceiver(receiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+    }
+
+    private DownloadManager.Request createRequest(String path)
+    {
+        final File destinationFile = new File(destinationPath, path);
+        if(destinationFile.exists())
+            destinationFile.delete();
+
+        final DownloadManager.Request request = new DownloadManager.Request(Uri.parse(sourcePath + "/" + path));
+        request.setDestinationUri(Uri.fromFile(destinationFile));
+        request.setTitle(path);
+        request.setVisibleInDownloadsUi(false);
+
+        return request;
+    }
+
+
+    private abstract class DownloadReceiver extends BroadcastReceiver
+    {
+        private int failedCount = 0;
+        private int successfulCount = 0;
+        private int unknownCount = 0;
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+            final Long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
+
+            if(action == DownloadManager.ACTION_DOWNLOAD_COMPLETE)
+            {
+                final DownloadManager.Query query = new DownloadManager.Query();
+                query.setFilterById(id);
+                final Cursor cursor = downloadManager.query(query);
+
+                if(cursor.moveToFirst())
+                {
+                    final int status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS));
+
+                    switch(status)
+                    {
+                        case DownloadManager.STATUS_SUCCESSFUL:
+                            ++successfulCount;
+                            onSuccessful(id, cursor);
+                            break;
+                        case DownloadManager.STATUS_FAILED:
+                            ++failedCount;
+                            onFailed(id, cursor);
+                            break;
+                        default:
+                            ++unknownCount;
+                            Log.d("loader", "Unknown status : status = " + status + ", id = " + id);
+                            break;
+                    }
+                }
+                else
+                    ++unknownCount;
+
+                idSet.remove(id);
+                if(idSet.isEmpty())
+                {
+                    onCompleted();
+                    context.unregisterReceiver(this);
+                }
+            }
         }
 
-        public String getCurrentPath() { return currentPath; }
-        public int getCurrentIndex() { return current; }
-        public int getFileCount() { return loadedSizes.length; }
-        public int getLoadedSize(int index) { return loadedSizes[index]; }
-        public int getFileSize(int index) { return fileSizes[index]; }
-    }
+        public int getSuccessfulCount() { return successfulCount; }
+        public int getFailedCount() { return failedCount; }
 
+        protected void onFailed(long id, Cursor cursor)
+        {
+            final String path = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_FILENAME));
+            Log.d("loader", "onFailed : id = " + id + ", dest = " + path);
+        }
 
-    public class Result
-    {
-        private int succeeded = 0;
-        private int failed = 0;
-        private int total = 0;
-
-        public int getSucceededCount() { return succeeded; }
-        public int getFailedCount() { return failed; }
-        public int getTotalCount() { return total; }
-    }
-
-
-
-    public interface Listener
-    {
-        public void onPreExecute();
-
-        public void onProgressUpdate(ProgressInfo progressInfo);
-
-        public void onPostExecute(Result result);
-
-        public void onCancelled(Result result);
-    }
-
-
-
-    private class JsonLoadListener implements Listener
-    {
-        @Override
-        public void onPreExecute() {
+        protected void onSuccessful(long id, Cursor cursor)
+        {
             // nop
         }
 
-        @Override
-        public void onProgressUpdate(ProgressInfo progressInfo) {
-            // nop
+        protected void onCompleted()
+        {
+            final int successful = getSuccessfulCount();
+            final int failed = getFailedCount();
+            final int unknown = unknownCount;
+            Log.d("loader", "onCompleted : successful = " + successful + ", failed = " + failed + ", unknown = " + unknown + ", total = " + (successful + failed));
         }
+    }
 
+
+
+    private class JsonDownloadReceiver extends DownloadReceiver
+    {
         @Override
-        public void onPostExecute(Result result) {
-            Log.d("loader", "onPostExecute.");
+        protected void onCompleted() {
+            super.onCompleted();
 
-            final ArrayList<String> fileNames = new ArrayList<String>();
+            registerReceiver(new EmojiDownloadReceiver());
 
+            int hoge = 10;
             for(String kind : KINDS)
             {
                 try
@@ -159,9 +217,10 @@ public class EmojiLoader
                         for(Format format : formats)
                         {
                             final String fileName = kind + "/" + format.relativeDir + "/" + emojiData.name + format.extension;
-                            if( new File(destinationPath, fileName).exists() )
+                            if( new File(destinationPath, fileName).exists() && hoge-- <= 0 )
                                 continue;
-                            fileNames.add(fileName);
+                            final DownloadManager.Request request = createRequest(fileName);
+                            idSet.add(downloadManager.enqueue(request));
                         }
                     }
                 }
@@ -170,165 +229,18 @@ public class EmojiLoader
                     e.printStackTrace();
                 }
             }
-
-            final AsyncHttpRequest task = new AsyncHttpRequest(new TestListener());
-            task.execute(fileNames.toArray(new String[fileNames.size()]));
-        }
-
-        @Override
-        public void onCancelled(Result result) {
-            // nop
         }
     }
 
 
 
-    private class TestListener implements Listener
+    private class EmojiDownloadReceiver extends DownloadReceiver
     {
-        private long startTime, endTime;
-
         @Override
-        public void onPreExecute() {
-            Log.d("loader", "onPreExecute");
-            startTime = System.currentTimeMillis();
-        }
+        protected void onCompleted() {
+            super.onCompleted();
 
-        @Override
-        public void onProgressUpdate(ProgressInfo progressInfo) {
-            final int currentIndex = progressInfo.getCurrentIndex();
-            Log.d("loader",
-                    "[" + currentIndex + "/" + progressInfo.getFileCount() + "] "
-                +   "\"" + progressInfo.getCurrentPath()+ "\" "
-                +   progressInfo.getLoadedSize(currentIndex) + "/" + progressInfo.getFileSize(currentIndex)
-            );
-        }
-
-        @Override
-        public void onPostExecute(Result result) {
-            endTime = System.currentTimeMillis();
-
-            final int succeeded = result.getSucceededCount();
-            final int failed = result.getFailedCount();
-            final int total = result.getTotalCount();
-
-            Log.d("loader", "onPostExecute : (" + succeeded + "+" + failed + "=" + (succeeded+failed) + ")/" + total + " : " + ((endTime-startTime)/1000.0) + "sec");
-        }
-
-        @Override
-        public void onCancelled(Result result) {
-            Log.d("loader", "onCancelled : " + result);
-        }
-    }
-
-
-
-    private class AsyncHttpRequest extends AsyncTask<String,ProgressInfo,Result>
-    {
-        private final Listener listener;
-        private byte[] buffer = new byte[4096];
-
-        public AsyncHttpRequest()
-        {
-            this(null);
-        }
-
-        public AsyncHttpRequest(Listener listener)
-        {
-            this.listener = listener;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            if(listener != null)
-                listener.onPreExecute();
-        }
-
-        @Override
-        protected Result doInBackground(String... params) {
-            final ProgressInfo progressInfo = new ProgressInfo(params.length);
-            final Result result = new Result();
-            result.total = params.length;
-
-            for(int i = 0;  i < params.length;  ++i)
-            {
-                if(isCancelled())
-                    break;
-
-                try
-                {
-                    final String path = params[i];
-                    final URL url = new URL(sourcePath + "/" + path);
-
-                    progressInfo.current = i;
-                    progressInfo.currentPath = path;
-
-                    {
-                        final HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-                        connection.setRequestMethod("HEAD");
-                        connection.connect();
-                        if(connection.getResponseCode() != HttpURLConnection.HTTP_OK)
-                            throw new HttpException();
-                        progressInfo.fileSizes[i] = connection.getContentLength();
-                        connection.disconnect();
-                    }
-
-                    final HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-                    connection.setAllowUserInteraction(false);
-                    connection.setInstanceFollowRedirects(true);
-                    connection.setRequestMethod("GET");
-                    connection.connect();
-
-                    if(connection.getResponseCode() != HttpURLConnection.HTTP_OK)
-                        throw new HttpException();
-
-                    final File destinationFile = new File(destinationPath + "/" + path);
-                    if( !destinationFile.getParentFile().exists() )
-                        destinationFile.getParentFile().mkdirs();
-
-                    DataInputStream dis = new DataInputStream(connection.getInputStream());
-                    DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(destinationFile)));
-
-                    int readByte;
-                    publishProgress(progressInfo);
-                    while( (readByte = dis.read(buffer)) != -1 )
-                    {
-                        dos.write(buffer, 0, readByte);
-
-                        progressInfo.loadedSizes[i] += readByte;
-                        publishProgress(progressInfo);
-                    }
-
-                    dis.close();
-                    dos.close();
-
-                    ++result.succeeded;
-                }
-                catch(Exception e)
-                {
-                    ++result.failed;
-                    e.printStackTrace();
-                }
-            }
-
-            return result;
-        }
-
-        @Override
-        protected void onProgressUpdate(ProgressInfo... values) {
-            if(listener != null)
-                listener.onProgressUpdate(values[0]);
-        }
-
-        @Override
-        protected void onPostExecute(Result result) {
-            if(listener != null)
-                listener.onPostExecute(result);
-        }
-
-        @Override
-        protected void onCancelled(Result result) {
-            if(listener != null)
-                listener.onCancelled(result);
+            Log.d("loader", "Notification!!!!!!!!!!!!!!!!!!!!!!!!!!!!11");
         }
     }
 }
