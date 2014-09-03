@@ -3,14 +3,13 @@ package org.genshin.emojidexandroid;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -35,7 +34,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeSet;
 
 /**
  * Created by kou on 14/08/05.
@@ -46,8 +44,6 @@ public class EmojiLoader
     private static final String JSON_FILENAME = "emoji.json";
 
     private final Context context;
-    private final DownloadManager downloadManager;
-    private final TreeSet<Long> idSet = new TreeSet<Long>();
 
     private String sourcePath;
     private String destinationPath;
@@ -81,7 +77,6 @@ public class EmojiLoader
     public EmojiLoader(Context context)
     {
         this.context = context;
-        downloadManager = (DownloadManager)context.getSystemService(Context.DOWNLOAD_SERVICE);
 
         sourcePath = "http://assets.emojidex.com";
         destinationPath = Environment.getExternalStorageDirectory().getPath() + "/emojidex";
@@ -89,118 +84,136 @@ public class EmojiLoader
 
     public void load(Format... formats)
     {
+        final String[] jsonFiles = new String[KINDS.length];
+        for(int i = 0;  i < jsonFiles.length;  ++i)
+            jsonFiles[i] = KINDS[i] + "/" + JSON_FILENAME;
+
         this.formats = formats;
-        registerReceiver(new JsonDownloadReceiver());
+        final JsonDownloadTask task = new JsonDownloadTask();
+        task.execute(jsonFiles);
+    }
 
-        for(String kind : KINDS)
+
+
+    private static class ProgressInfo
+    {
+        private String currentPath;
+        private int current;
+        private int[] loadedSizes;
+        private int[] fileSizes;
+
+        public ProgressInfo(int fileCount)
         {
-            final DownloadManager.Request request = createRequest(kind + "/" + JSON_FILENAME);
-            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_HIDDEN);
-            idSet.add(downloadManager.enqueue(request));
+            currentPath = "";
+            current = 0;
+            loadedSizes = new int[fileCount];
+            fileSizes = new int[fileCount];
+            for(int i = 0;  i < fileCount;  ++i)
+                loadedSizes[i] = fileSizes[i] = 0;
         }
-    }
 
-    private void registerReceiver(DownloadReceiver receiver)
-    {
-        context.registerReceiver(receiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
-    }
-
-    private DownloadManager.Request createRequest(String path)
-    {
-        final File destinationFile = new File(destinationPath, path);
-        if(destinationFile.exists())
-            destinationFile.delete();
-
-        final DownloadManager.Request request = new DownloadManager.Request(Uri.parse(sourcePath + "/" + path));
-        request.setDestinationUri(Uri.fromFile(destinationFile));
-        request.setTitle(path);
-        request.setVisibleInDownloadsUi(false);
-
-        return request;
+        public String getCurrentPath() { return currentPath; }
+        public int getCurrentIndex() { return current; }
+        public int getFileCount() { return loadedSizes.length; }
+        public int getLoadedSize(int index) { return loadedSizes[index]; }
+        public int getFileSize(int index) { return fileSizes[index]; }
     }
 
 
-    private abstract class DownloadReceiver extends BroadcastReceiver
+    public static class Result
     {
-        private int failedCount = 0;
-        private int successfulCount = 0;
-        private int unknownCount = 0;
+        private int succeeded = 0;
+        private int failed = 0;
+        private int total = 0;
+
+        public int getSucceededCount() { return succeeded; }
+        public int getFailedCount() { return failed; }
+        public int getTotalCount() { return total; }
+    }
+
+
+
+    private class FileDownloadTask extends AsyncTask<String,ProgressInfo,Result>
+    {
+        private final byte[] buffer = new byte[4096];
 
         @Override
-        public void onReceive(Context context, Intent intent) {
-            final String action = intent.getAction();
-            final Long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
+        protected Result doInBackground(String... params) {
+            final ProgressInfo progressInfo = new ProgressInfo(params.length);
+            final Result result = new Result();
+            result.total = params.length;
 
-            if(action == DownloadManager.ACTION_DOWNLOAD_COMPLETE)
+            for(int i = 0;  i < params.length;  ++i)
             {
-                final DownloadManager.Query query = new DownloadManager.Query();
-                query.setFilterById(id);
-                final Cursor cursor = downloadManager.query(query);
+                if(isCancelled())
+                    break;
 
-                if(cursor.moveToFirst())
+                try
                 {
-                    final int status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS));
+                    final String path = params[i];
+                    final URL url = new URL(sourcePath + "/" + path);
 
-                    switch(status)
+                    progressInfo.current = i;
+                    progressInfo.currentPath = path;
+
                     {
-                        case DownloadManager.STATUS_SUCCESSFUL:
-                            ++successfulCount;
-                            onSuccessful(id, cursor);
-                            break;
-                        case DownloadManager.STATUS_FAILED:
-                            ++failedCount;
-                            onFailed(id, cursor);
-                            break;
-                        default:
-                            ++unknownCount;
-                            Log.d("loader", "Unknown status : status = " + status + ", id = " + id);
-                            break;
+                        final HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+                        connection.setRequestMethod("HEAD");
+                        connection.connect();
+                        if(connection.getResponseCode() != HttpURLConnection.HTTP_OK)
+                            throw new HttpException();
+                        progressInfo.fileSizes[i] = connection.getContentLength();
+                        connection.disconnect();
                     }
-                }
-                else
-                    ++unknownCount;
 
-                idSet.remove(id);
-                if(idSet.isEmpty())
+                    final HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+                    connection.setAllowUserInteraction(false);
+                    connection.setInstanceFollowRedirects(true);
+                    connection.setRequestMethod("GET");
+                    connection.connect();
+
+                    if(connection.getResponseCode() != HttpURLConnection.HTTP_OK)
+                        throw new HttpException();
+
+                    final File destinationFile = new File(destinationPath + "/" + path);
+                    if( !destinationFile.getParentFile().exists() )
+                        destinationFile.getParentFile().mkdirs();
+
+                    DataInputStream dis = new DataInputStream(connection.getInputStream());
+                    DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(destinationFile)));
+
+                    int readByte;
+                    publishProgress(progressInfo);
+                    while( (readByte = dis.read(buffer)) != -1 )
+                    {
+                        dos.write(buffer, 0, readByte);
+
+                        progressInfo.loadedSizes[i] += readByte;
+                        publishProgress(progressInfo);
+                    }
+
+                    dis.close();
+                    dos.close();
+
+                    ++result.succeeded;
+                }
+                catch(Exception e)
                 {
-                    onCompleted();
-                    context.unregisterReceiver(this);
+                    ++result.failed;
+                    e.printStackTrace();
                 }
             }
-        }
 
-        public int getSuccessfulCount() { return successfulCount; }
-        public int getFailedCount() { return failedCount; }
-
-        protected void onFailed(long id, Cursor cursor)
-        {
-            final String path = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_FILENAME));
-            Log.d("loader", "onFailed : id = " + id + ", dest = " + path);
-        }
-
-        protected void onSuccessful(long id, Cursor cursor)
-        {
-            // nop
-        }
-
-        protected void onCompleted()
-        {
-            final int successful = getSuccessfulCount();
-            final int failed = getFailedCount();
-            final int unknown = unknownCount;
-            Log.d("loader", "onCompleted : successful = " + successful + ", failed = " + failed + ", unknown = " + unknown + ", total = " + (successful + failed));
+            return result;
         }
     }
 
 
-
-    private class JsonDownloadReceiver extends DownloadReceiver
+    private class JsonDownloadTask extends FileDownloadTask
     {
         @Override
-        protected void onCompleted() {
-            super.onCompleted();
-
-            registerReceiver(new EmojiDownloadReceiver());
+        protected void onPostExecute(Result result) {
+            final ArrayList<String> fileNames = new ArrayList<String>();
 
             int hoge = 10;
             for(String kind : KINDS)
@@ -219,8 +232,7 @@ public class EmojiLoader
                             final String fileName = kind + "/" + format.relativeDir + "/" + emojiData.name + format.extension;
                             if( new File(destinationPath, fileName).exists() && hoge-- <= 0 )
                                 continue;
-                            final DownloadManager.Request request = createRequest(fileName);
-                            idSet.add(downloadManager.enqueue(request));
+                            fileNames.add(fileName);
                         }
                     }
                 }
@@ -229,18 +241,45 @@ public class EmojiLoader
                     e.printStackTrace();
                 }
             }
+
+            final EmojiDownloadTask task = new EmojiDownloadTask();
+            task.execute(fileNames.toArray(new String[fileNames.size()]));
         }
     }
 
 
-
-    private class EmojiDownloadReceiver extends DownloadReceiver
+    private class EmojiDownloadTask extends FileDownloadTask
     {
-        @Override
-        protected void onCompleted() {
-            super.onCompleted();
+        private long startTime, endTime;
 
-            Log.d("loader", "Notification!!!!!!!!!!!!!!!!!!!!!!!!!!!!11");
+        @Override
+        protected void onPreExecute() {
+            startTime = System.currentTimeMillis();
+        }
+
+        @Override
+        protected void onProgressUpdate(ProgressInfo... values) {
+        }
+
+        @Override
+        protected void onPostExecute(final Result result) {
+            putResult(result, "Complete.");
+        }
+
+        @Override
+        protected void onCancelled(final Result result) {
+            putResult(result, "Cancel.");
+        }
+
+        private void putResult(Result result, String title)
+        {
+            endTime = System.currentTimeMillis();
+
+            final int succeeded = result.getSucceededCount();
+            final int failed = result.getFailedCount();
+            final int total = result.getTotalCount();
+
+            Log.d("loader", title + " : (" + succeeded + "+" + failed + "=" + (succeeded+failed) + ")/" + total + " : " + ((endTime-startTime)/1000.0) + "sec");
         }
     }
 }

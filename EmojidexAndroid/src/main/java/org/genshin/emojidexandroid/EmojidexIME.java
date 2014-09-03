@@ -90,7 +90,7 @@ public class EmojidexIME extends InputMethodService
 
         // Test.
         EmojiLoader loader = new EmojiLoader(this);
-        loader.load(EmojiLoader.Format.PNG_MDPI, EmojiLoader.Format.PNG_PX256);
+        loader.load(EmojiLoader.Format.PNG_LDPI);
     }
 
     @Override
