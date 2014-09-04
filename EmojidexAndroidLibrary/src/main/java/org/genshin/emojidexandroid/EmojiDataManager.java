@@ -109,14 +109,7 @@ public class EmojiDataManager
         Resources res = context.getResources();
 
         // Get device dpi.
-        int dpi = res.getDisplayMetrics().densityDpi;
-        String dpiDir;
-        if(dpi < 140)           dpiDir = "ldpi/";
-        else if(dpi < 200)      dpiDir = "mdpi/";
-        else if(dpi <= 280)     dpiDir = "hdpi/";
-        else                    dpiDir = "xhdpi/";
-
-        android.util.Log.d("lib", "Device DPI = " + dpi + ", Assets directory = " + dpiDir);
+        String dpiDir = context.getResources().getString(R.string.dpi);
 
         // Load category data from "categories.json".
         try

@@ -73,6 +73,14 @@ public class EmojiLoader
             this.extension = extension;
             this.relativeDir = relativeDir;
         }
+
+        public static Format getFormat(String name)
+        {
+            for(Format format : Format.values())
+                if (name.equals(format.relativeDir))
+                    return format;
+            return null;
+        }
     }
 
     public EmojiLoader(Context context)

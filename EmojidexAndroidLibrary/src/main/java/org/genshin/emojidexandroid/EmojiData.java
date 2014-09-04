@@ -70,7 +70,7 @@ public class EmojiData
         // Load icon image.
         try
         {
-            InputStream is = res.getAssets().open(dir + name + ".png");
+            InputStream is = res.getAssets().open(dir + "/" + name + ".png");
             Bitmap bitmap = BitmapFactory.decodeStream(is);
             is.close();
             stamp = bitmap;     // TODO: Set high quality bitmap.
