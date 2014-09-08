@@ -2,6 +2,7 @@ package org.genshin.emojidexandroid;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.os.Environment;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -12,6 +13,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.genshin.emojidexandroidlibrary.R;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -123,31 +126,39 @@ public class EmojiDataManager
         catch (JsonMappingException e) { e.printStackTrace(); }
         catch (IOException e) { e.printStackTrace(); }
 
-        // Load emoji data from "index.json".
-        List<EmojiData> newEmojiList = null;
-        try
+        // Load emoji data from "emoji.json".
+        final String[] KINDS = {"utf", "extended"};
+        final List<EmojiData> newEmojiList = new ArrayList<EmojiData>();
+        nextCode = res.getInteger(R.integer.original_code_start);
+        for(String kind : KINDS)
         {
-            ObjectMapper objectMapper = new ObjectMapper();
-            InputStream is = res.openRawResource(R.raw.index);
-            newEmojiList = objectMapper.readValue(is, new TypeReference<ArrayList<EmojiData>>(){});
-            is.close();
+            List<EmojiData> tmpEmojiList = null;
+            try
+            {
+                ObjectMapper objectMapper = new ObjectMapper();
+                InputStream is = new FileInputStream(new File(Environment.getExternalStorageDirectory().getPath() + "/emojidex", kind + "/emoji.json"));
+                tmpEmojiList = objectMapper.readValue(is, new TypeReference<ArrayList<EmojiData>>(){});
+                is.close();
+            }
+            catch (JsonParseException e) { e.printStackTrace(); }
+            catch (JsonMappingException e) { e.printStackTrace(); }
+            catch (IOException e) { e.printStackTrace(); }
+
+            // Initialize emoji.
+            for(EmojiData emoji : tmpEmojiList)
+            {
+                if(emoji.hasCode())
+                    emoji.initialize(res, kind + "/" + dpiDir);
+                else
+                    emoji.initialize(res, kind + "/" + dpiDir, nextCode++);
+            }
+
+            // Merge list.
+            newEmojiList.addAll(tmpEmojiList);
         }
-        catch (JsonParseException e) { e.printStackTrace(); }
-        catch (JsonMappingException e) { e.printStackTrace(); }
-        catch (IOException e) { e.printStackTrace(); }
 
         // All category
         categorizedLists.put(categories.get(0).getName(), newEmojiList);
-
-        // Initialize emoji.
-        nextCode = res.getInteger(R.integer.original_code_start);
-        for(EmojiData emoji : newEmojiList)
-        {
-            if(emoji.hasCode())
-                emoji.initialize(res, dpiDir);
-            else
-                emoji.initialize(res, dpiDir, nextCode++);
-        }
 
         // Create categorized list.
         for(EmojiData emoji : newEmojiList)
