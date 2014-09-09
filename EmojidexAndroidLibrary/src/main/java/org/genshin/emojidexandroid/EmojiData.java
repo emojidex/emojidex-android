@@ -8,7 +8,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.text.SpannableString;
 import android.text.style.ImageSpan;
-import android.util.Log;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -1,22 +1,12 @@
 package org.genshin.emojidexandroid;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.DownloadManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.ProgressDialog;
-import android.app.SearchManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.os.Environment;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.Log;
 
 import com.fasterxml.jackson.core.type.TypeReference;
