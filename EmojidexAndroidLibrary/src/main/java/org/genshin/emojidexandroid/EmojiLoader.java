@@ -250,8 +250,11 @@ public class EmojiLoader
                 }
             }
 
-            final EmojiDownloadTask task = new EmojiDownloadTask();
-            task.execute(fileNames.toArray(new String[fileNames.size()]));
+            if(!fileNames.isEmpty())
+            {
+                final EmojiDownloadTask task = new EmojiDownloadTask();
+                task.execute(fileNames.toArray(new String[fileNames.size()]));
+            }
         }
     }
 
