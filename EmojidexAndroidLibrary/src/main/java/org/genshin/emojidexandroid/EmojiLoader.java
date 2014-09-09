@@ -224,7 +224,6 @@ public class EmojiLoader
         protected void onPostExecute(Result result) {
             final ArrayList<String> fileNames = new ArrayList<String>();
 
-            int hoge = 10;
             for(String kind : KINDS)
             {
                 try
@@ -239,7 +238,7 @@ public class EmojiLoader
                         for(Format format : formats)
                         {
                             final String fileName = kind + "/" + format.relativeDir + "/" + emojiData.name + format.extension;
-                            if( new File(destinationPath, fileName).exists() && hoge-- <= 0 )
+                            if( new File(destinationPath, fileName).exists())
                                 continue;
                             fileNames.add(fileName);
                         }
