@@ -144,6 +144,9 @@ public class EmojiDataManager
             catch (JsonMappingException e) { e.printStackTrace(); }
             catch (IOException e) { e.printStackTrace(); }
 
+            if(tmpEmojiList == null)
+                continue;
+
             // Initialize emoji.
             for(EmojiData emoji : tmpEmojiList)
             {
