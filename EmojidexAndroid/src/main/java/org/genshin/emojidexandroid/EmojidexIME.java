@@ -85,6 +85,10 @@ public class EmojidexIME extends InputMethodService
 
         // Create GestureDetector
         detector = new GestureDetector(getApplicationContext(), this);
+
+        // Test.
+        final EmojiLoader loader = new EmojiLoader(this);
+        loader.load(EmojiLoader.Format.getFormat(getString(R.string.dpi)), EmojiLoader.Format.PNG_PX128);
     }
 
     @Override
