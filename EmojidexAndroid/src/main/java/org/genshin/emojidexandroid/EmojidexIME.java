@@ -89,6 +89,10 @@ public class EmojidexIME extends InputMethodService
 
         // Create HistoryManager.
         historyManager = new HistoryManager(getApplicationContext());
+
+        // Test.
+        final EmojiLoader loader = new EmojiLoader(this);
+        loader.load(EmojiLoader.Format.getFormat(getString(R.string.dpi)), EmojiLoader.Format.PNG_PX128);
     }
 
     @Override

@@ -5,12 +5,15 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Environment;
 import android.text.SpannableString;
 import android.text.style.ImageSpan;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -71,7 +74,7 @@ public class EmojiData
         // Load icon image.
         try
         {
-            InputStream is = res.getAssets().open(dir + name + ".png");
+            InputStream is = new FileInputStream(new File(Environment.getExternalStorageDirectory().getPath() + "/emojidex", dir + "/" + name + ".png"));
             Bitmap bitmap = BitmapFactory.decodeStream(is);
             is.close();
             stamp = bitmap;     // TODO: Set high quality bitmap.
@@ -181,7 +184,7 @@ public class EmojiData
      */
     public boolean hasCode()
     {
-        return !codes.isEmpty() || !moji.equals(NOT_UNICODE_MOJI);
+        return !codes.isEmpty() || (moji != null && !moji.equals(NOT_UNICODE_MOJI));
     }
 
     /**

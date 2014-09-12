@@ -15,8 +15,8 @@
     "Japanese" : "人"
   },
   {
-    "category" : "gesture",
-    "English"  : "Gesture",
+    "category" : "gestures",
+    "English"  : "Gestures",
     "Japanese" : "ジェスチャー"
   },
   {
@@ -25,8 +25,8 @@
     "Japanese" : "食べ物"
   },
   {
-    "category" : "object",
-    "English"  : "Object",
+    "category" : "objects",
+    "English"  : "Objects",
     "Japanese" : "物"
   },
   {
@@ -60,8 +60,8 @@
     "Japanese" : "抽象物"
   },
   {
-    "category" : "symbol",
-    "English"  : "Symbol",
+    "category" : "symbols",
+    "English"  : "Symbols",
     "Japanese" : "シンボル"
   },
   {
