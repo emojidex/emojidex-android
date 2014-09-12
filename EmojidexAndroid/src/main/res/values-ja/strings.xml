@@ -18,8 +18,6 @@
     <string name="clear_and_paste">クリア &amp; 貼り付け</string>
     <string name="convert">変換</string>
 
-    <string name="all_category">All</string>
-
     <string name="register_favorite">お気に入りに登録しますか？</string>
     <string name="register_success">登録しました。</string>
     <string name="register_done">すでに登録済です。</string>

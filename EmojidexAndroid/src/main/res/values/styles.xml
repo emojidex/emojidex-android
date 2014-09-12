@@ -28,11 +28,12 @@
 
     <!-- IME HorizontalScrollView -->
     <style name="IMEHorizontalScrollViewStyle" parent="android:Widget.Holo.HorizontalScrollView">
+        <item name="android:background">@drawable/background_gray</item>
     </style>
 
     <!-- IME KeyboardView -->
     <style name="IMEKeyboardViewStyle" parent="android:style/Widget.KeyboardView">
-        <item name="android:background">@drawable/background_blank</item>
+        <item name="android:background">@drawable/background_white</item>
         <item name="android:keyBackground">@drawable/ime_keyboard_key_background</item>
     </style>
 

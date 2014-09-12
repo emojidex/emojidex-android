@@ -3,103 +3,39 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/background_blank">
+    android:layout_height="wrap_content">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/ime_view_flipper_height"
-        android:background="@drawable/background_gray">
-
-        <!--
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:src="@drawable/arrow"
-            android:rotation="180"
-            android:contentDescription="@string/left"
-            android:onClick="moveToRight" />
-         -->
-
-        <ViewFlipper
-            android:layout_width="0dp"
-            android:layout_height="@dimen/ime_view_flipper_height"
-            android:id="@+id/viewFlipper"
-            android:layout_weight="1" >
-
-            <!--
-            <include android:id="@+id/search_layout" layout="@layout/search" />
-            -->
-            <include android:id="@+id/options_layout" layout="@layout/options" />
-
-        </ViewFlipper>
-
-        <!--
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:src="@drawable/arrow"
-            android:contentDescription="@string/right"
-            android:onClick="moveToLeft"/>
-        -->
-
-    </LinearLayout>
-
-    <LinearLayout
+    <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="@dimen/ime_category_height"
-        android:background="@drawable/background_gray" >
-
-        <ImageButton
-            android:id="@+id/ime_category_button_left"
+        android:layout_weight="1"
+        android:id="@+id/ime_category_scrollview"
+        style="@style/IMEHorizontalScrollViewStyle">
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:src="@drawable/arrow"
-            android:rotation="180"
-            android:contentDescription="@string/left"/>
+            android:id="@+id/ime_categories"
+            android:orientation="horizontal" >
 
-        <HorizontalScrollView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:id="@+id/ime_category_scrollview"
-            style="@style/IMEHorizontalScrollViewStyle">
-            <LinearLayout
+            <Button
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:id="@+id/ime_categories"
-                android:orientation="horizontal" >
-            </LinearLayout>
-        </HorizontalScrollView>
+                android:layout_height="wrap_content"
+                android:text="@string/history"
+                android:id="@+id/ime_category_history_button"
+                android:onClick="showHistories" />
+        </LinearLayout>
+    </HorizontalScrollView>
 
-        <ImageButton
-            android:id="@+id/ime_category_button_right"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:src="@drawable/arrow"
-            android:contentDescription="@string/right"/>
-
-    </LinearLayout>
-
-    <LinearLayout
+    <ViewFlipper
         android:layout_width="match_parent"
-        android:layout_height="@dimen/ime_keyboard_area_height"
-        android:id="@+id/ime_keyboard"
-        android:orientation="vertical"
-        android:background="@drawable/background_white">
-
-        <ViewFlipper
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/keyboard_viewFlipper"
-            android:layout_weight="1">
-        </ViewFlipper>
-
-    </LinearLayout>
+        android:layout_height="@dimen/ime_keyboard_height"
+        android:id="@+id/keyboard_viewFlipper"
+        android:layout_weight="1">
+    </ViewFlipper>
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/ime_sub_keyboard_height"
         android:id="@+id/ime_sub_keyboard"/>
 
 </LinearLayout>

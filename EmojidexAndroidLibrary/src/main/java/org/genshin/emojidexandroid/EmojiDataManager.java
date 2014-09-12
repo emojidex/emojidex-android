@@ -161,7 +161,7 @@ public class EmojiDataManager
         }
 
         // All category
-        categorizedLists.put(categories.get(0).getName(), newEmojiList);
+        categorizedLists.put(context.getString(R.string.all_category), newEmojiList);
 
         // Create categorized list.
         for(EmojiData emoji : newEmojiList)

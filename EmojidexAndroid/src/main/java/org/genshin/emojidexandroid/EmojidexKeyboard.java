@@ -3,7 +3,8 @@ package org.genshin.emojidexandroid;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
-import android.graphics.drawable.Drawable;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.inputmethodservice.Keyboard;
 import android.util.DisplayMetrics;
 
@@ -20,6 +21,7 @@ public class EmojidexKeyboard extends Keyboard {
     private int displayWidth;
 
     private final Row row;
+    private final float keyIconSize;
 
     /**
      * Construct EmojidexKeyboard object.
@@ -37,6 +39,8 @@ public class EmojidexKeyboard extends Keyboard {
         row.verticalGap = getVerticalGap();
         row.rowEdgeFlags = 0;
         row.mode = 0;
+
+        keyIconSize = context.getResources().getDimension(R.dimen.ime_key_icon_size);
     }
 
     @Override
@@ -85,7 +89,14 @@ public class EmojidexKeyboard extends Keyboard {
         newKey.x = x;
         newKey.y = y;
 
-        Drawable icon = emojiData.getIcon();
+        final BitmapDrawable icon = emojiData.getKeyIcon();
+        final Bitmap bitmap = icon.getBitmap();
+
+        final int bitmapDensity = bitmap.getDensity();
+        final int targetDensity = (int)(bitmapDensity * keyIconSize / bitmap.getWidth());
+
+        icon.setTargetDensity(targetDensity);
+
         if(icon != null)
             newKey.icon = icon;
         else

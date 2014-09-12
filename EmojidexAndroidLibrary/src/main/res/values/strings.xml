@@ -2,4 +2,5 @@
     <string name="app_name">EmojidexAndroidLibrary</string>
 
     <string name="dpi">xhdpi</string>
+    <string name="all_category">all</string>
 </resources>

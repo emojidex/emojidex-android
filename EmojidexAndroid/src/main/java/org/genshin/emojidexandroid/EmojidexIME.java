@@ -12,11 +12,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
-import android.widget.ImageButton;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -43,13 +43,14 @@ public class EmojidexIME extends InputMethodService
 
     private Map<String, CategorizedKeyboard> categorizedKeyboards;
 
-    private ViewFlipper viewFlipper;
     private ViewFlipper keyboardViewFlipper;
     private GestureDetector detector;
     private boolean swipeFlag = false;
 
     private PopupWindow popup;
     private String resultData = "";
+
+    private HistoryManager historyManager;
 
     /**
      * Construct EmojidexIME object.
@@ -69,7 +70,7 @@ public class EmojidexIME extends InputMethodService
         emojiDataManager = EmojiDataManager.create(this);
 
         // Create categorized keyboards.
-        minHeight = (int)getResources().getDimension(R.dimen.ime_keyboard_area_height);
+        minHeight = (int)getResources().getDimension(R.dimen.ime_keyboard_height);
         categorizedKeyboards = new HashMap<String, CategorizedKeyboard>();
         for(CategoryData categoryData : emojiDataManager.getCategoryDatas())
         {
@@ -86,6 +87,9 @@ public class EmojidexIME extends InputMethodService
         // Create GestureDetector
         detector = new GestureDetector(getApplicationContext(), this);
 
+        // Create HistoryManager.
+        historyManager = new HistoryManager(getApplicationContext());
+
         // Test.
         final EmojiLoader loader = new EmojiLoader(this);
         loader.load(EmojiLoader.Format.getFormat(getString(R.string.dpi)), EmojiLoader.Format.PNG_PX128);
@@ -100,10 +104,20 @@ public class EmojidexIME extends InputMethodService
         createKeyboardView();
         createSubKeyboardView();
 
-        // Set ViewFlipper.
-        viewFlipper = (ViewFlipper)layout.findViewById(R.id.viewFlipper);
-
         return layout;
+    }
+
+    @Override
+    public void onStartInputView(EditorInfo info, boolean restarting) {
+        super.onStartInputView(info, restarting);
+        if( !restarting )
+            historyManager.load();
+    }
+
+    @Override
+    public void onFinishInputView(boolean finishingInput) {
+        super.onFinishInputView(finishingInput);
+        historyManager.save();
     }
 
     @Override
@@ -208,7 +222,7 @@ public class EmojidexIME extends InputMethodService
             if(emoji != null)
             {
                 getCurrentInputConnection().commitText(emoji.createImageString(), 1);
-                saveHistories(codes);
+                historyManager.regist(emoji.name);
             }
             // Input other.
             else
@@ -271,43 +285,6 @@ public class EmojidexIME extends InputMethodService
 
         // Create categories scroll buttons.
         categoryScrollView = (HorizontalScrollView)layout.findViewById(R.id.ime_category_scrollview);
-        final ImageButton leftButton = (ImageButton)layout.findViewById(R.id.ime_category_button_left);
-        final ImageButton rightButton = (ImageButton)layout.findViewById(R.id.ime_category_button_right);
-
-        leftButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final float currentX = categoryScrollView.getScrollX();
-                final int childCount = categoriesView.getChildCount();
-                int nextX = 0;
-                for(int i = 0;  i < childCount;  ++i)
-                {
-                    final float childX = categoriesView.getChildAt(i).getX();
-                    if(childX >= currentX)
-                        break;
-                    nextX = (int)childX;
-                }
-                categoryScrollView.smoothScrollTo(nextX, 0);
-            }
-        });
-        rightButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final float currentX = categoryScrollView.getScrollX();
-                final int childCount = categoriesView.getChildCount();
-                int nextX = 0;
-                for(int i = 0;  i < childCount;  ++i)
-                {
-                    final float childX = categoriesView.getChildAt(i).getX();
-                    if(childX > currentX)
-                    {
-                        nextX = (int)childX;
-                        break;
-                    }
-                }
-                categoryScrollView.smoothScrollTo(nextX, 0);
-            }
-        });
     }
 
     /**
@@ -415,28 +392,6 @@ public class EmojidexIME extends InputMethodService
     }
 
     /**
-     * viewFlipper move to left
-     * @param v view
-     */
-    public void moveToLeft(View v)
-    {
-        viewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_in));
-        viewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_out));
-        viewFlipper.showNext();
-    }
-
-    /**
-     * viewFlipper move to right
-     * @param v view
-     */
-    public void moveToRight(View v)
-    {
-        viewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_in));
-        viewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_out));
-        viewFlipper.showPrevious();
-    }
-
-    /**
      * move to the next keyboard view
      * @param direction left or down
      */
@@ -538,7 +493,7 @@ public class EmojidexIME extends InputMethodService
     public void showHistories(View v)
     {
         // load histories
-        ArrayList<String> histories = FileOperation.load(this, FileOperation.HISTORIES);
+        List<String> histories = historyManager.getHistories();
         createNewKeyboards(histories);
     }
 
@@ -557,7 +512,7 @@ public class EmojidexIME extends InputMethodService
      * create favorites/histories keyboards
      * @param data keys
      */
-    private void createNewKeyboards(ArrayList<String> data)
+    private void createNewKeyboards(List<String> data)
     {
 
         // get emoji
@@ -566,7 +521,7 @@ public class EmojidexIME extends InputMethodService
             emojiData.add(emojiDataManager.getEmojiData(name));
 
         // create keyboards
-        final int minHeight = (int)getResources().getDimension(R.dimen.ime_keyboard_area_height);
+        final int minHeight = (int)getResources().getDimension(R.dimen.ime_keyboard_height);
         CategorizedKeyboard keyboards = EmojidexKeyboard.create(this, emojiData, minHeight);
 
         setKeyboard(keyboards);
@@ -581,32 +536,6 @@ public class EmojidexIME extends InputMethodService
         closePopupWindow(v);
         View view = getLayoutInflater().inflate(R.layout.settings, null);
         createPopupWindow(view);
-    }
-
-    /**
-     * save histories to local data
-     * @param keyCodes save keyCodes
-     */
-    private void saveHistories(List<Integer> keyCodes)
-    {
-        EmojiData emoji = emojiDataManager.getEmojiData(keyCodes);
-
-        // Don't save the history of the search results
-        List<EmojiData> list = emojiDataManager.getCategorizedList(getString(R.string.search_result));
-        if (list != null) {
-            for (EmojiData listEmoji : list) {
-                List<Integer> codes = listEmoji.getCodes();
-                for (int i = 0; i < codes.size(); i++) {
-                    if (codes.get(i) != emoji.getCodes().get(i))
-                        break;
-
-                    if (i == codes.size() - 1)
-                        return;
-                }
-            }
-        }
-
-        FileOperation.save(this, emoji.getName(), FileOperation.HISTORIES);
     }
 
     /**
@@ -656,6 +585,7 @@ public class EmojidexIME extends InputMethodService
 
         // delete
         boolean result = FileOperation.deleteFile(getApplicationContext(), FileOperation.HISTORIES);
+        historyManager.clear();
         showResultToast(result);
         setKeyboard(getString(R.string.all_category));
     }
@@ -666,7 +596,7 @@ public class EmojidexIME extends InputMethodService
      */
     private void createPopupWindow(View view)
     {
-        int height = (int)getResources().getDimension(R.dimen.ime_keyboard_area_height);
+        int height = (int)getResources().getDimension(R.dimen.ime_keyboard_height);
 
         // create popup window
         popup = new PopupWindow(this);
