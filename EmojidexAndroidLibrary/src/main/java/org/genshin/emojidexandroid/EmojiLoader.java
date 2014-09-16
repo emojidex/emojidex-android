@@ -35,6 +35,7 @@ public class EmojiLoader
     private static final String JSON_FILENAME = "emoji.json";
 
     private final Context context;
+    private final int threadCount;
 
     private String sourcePath;
     private String destinationPath;
@@ -75,7 +76,13 @@ public class EmojiLoader
 
     public EmojiLoader(Context context)
     {
+        this(context, 8);
+    }
+
+    public EmojiLoader(Context context, int threadCount)
+    {
         this.context = context;
+        this.threadCount = Math.max(threadCount, 1);
 
         sourcePath = "http://assets.emojidex.com";
         destinationPath = Environment.getExternalStorageDirectory().getPath() + "/emojidex";
@@ -212,8 +219,12 @@ public class EmojiLoader
     {
         @Override
         protected void onPostExecute(Result result) {
-            final ArrayList<String> fileNames = new ArrayList<String>();
+            final ArrayList<ArrayList<String>> fileNamesArray = new ArrayList<ArrayList<String>>();
+            fileNamesArray.ensureCapacity(threadCount);
+            for(int i = 0;  i < threadCount;  ++i)
+                fileNamesArray.add(new ArrayList<String>());
 
+            int threadIndex = 0;
             for(String kind : KINDS)
             {
                 try
@@ -230,7 +241,8 @@ public class EmojiLoader
                             final String fileName = kind + "/" + format.relativeDir + "/" + emojiData.name + format.extension;
                             if( new File(destinationPath, fileName).exists())
                                 continue;
-                            fileNames.add(fileName);
+                            fileNamesArray.get(threadIndex).add(fileName);
+                            threadIndex = (threadIndex + 1) % threadCount;
                         }
                     }
                 }
@@ -240,10 +252,13 @@ public class EmojiLoader
                 }
             }
 
-            if(!fileNames.isEmpty())
+            for(ArrayList<String> fileNames : fileNamesArray)
             {
-                final EmojiDownloadTask task = new EmojiDownloadTask();
-                task.execute(fileNames.toArray(new String[fileNames.size()]));
+                if(!fileNames.isEmpty())
+                {
+                    final EmojiDownloadTask task = new EmojiDownloadTask();
+                    task.execute(fileNames.toArray(new String[fileNames.size()]));
+                }
             }
         }
     }
