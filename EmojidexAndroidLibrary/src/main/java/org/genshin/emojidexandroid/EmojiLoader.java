@@ -267,31 +267,15 @@ public class EmojiLoader
     private class EmojiDownloadTask extends FileDownloadTask
     {
         private long startTime, endTime;
-        private NotificationManager notificationManager;
-        private Notification.Builder notificationBuilder;
 
         @Override
         protected void onPreExecute() {
-            notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
-            notificationBuilder = new Notification.Builder(context);
-            notificationBuilder.setTicker("Emojidex");
-            notificationBuilder.setContentTitle("Emojidex");
-            notificationBuilder.setSmallIcon(android.R.drawable.ic_dialog_info);
-
             startTime = System.currentTimeMillis();
         }
 
         @Override
         protected void onProgressUpdate(ProgressInfo... values) {
-            final ProgressInfo progressInfo = values[0];
-            final String path = progressInfo.getCurrentPath();
-            final int fileCount = progressInfo.getFileCount();
-            final int currentIndex = progressInfo.getCurrentIndex();
-            final int loadedSize = progressInfo.getLoadedSize(currentIndex);
-            final int fileSize = progressInfo.getFileSize(currentIndex);
-            notificationBuilder.setContentText(currentIndex + "/" + fileCount + " files");
-            notificationBuilder.setProgress(fileCount, currentIndex, false);
-            notificationManager.notify(0, notificationBuilder.build());
+            // nop
         }
 
         @Override
@@ -313,12 +297,6 @@ public class EmojiLoader
             final int total = result.getTotalCount();
 
             Log.d("loader", title + " : (" + succeeded + "+" + failed + "=" + (succeeded+failed) + ")/" + total + " : " + ((endTime-startTime)/1000.0) + "sec");
-
-            notificationBuilder.setContentText(succeeded + " succeeded " + failed + " failed " + ((endTime-startTime)/1000.0) + " sec");
-            notificationBuilder.setProgress(0, 0, false);
-            notificationBuilder.setAutoCancel(true);
-            notificationBuilder.setContentIntent(PendingIntent.getActivity(context, 0, new Intent(), 0));
-            notificationManager.notify(0, notificationBuilder.build());
         }
     }
 }
