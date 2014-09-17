@@ -36,6 +36,7 @@ public class EmojiLoader
 
     private final Context context;
     private final int threadCount;
+    private final EventListener eventListener;
 
     private String sourcePath;
     private String destinationPath;
@@ -76,13 +77,19 @@ public class EmojiLoader
 
     public EmojiLoader(Context context)
     {
-        this(context, 8);
+        this(context, null);
     }
 
-    public EmojiLoader(Context context, int threadCount)
+    public EmojiLoader(Context context, EventListener eventListener)
+    {
+        this(context, eventListener, 8);
+    }
+
+    public EmojiLoader(Context context, EventListener eventListener, int threadCount)
     {
         this.context = context;
         this.threadCount = Math.max(threadCount, 1);
+        this.eventListener = eventListener == null ? new EventListener() : eventListener;
 
         sourcePath = "http://assets.emojidex.com";
         destinationPath = Environment.getExternalStorageDirectory().getPath() + "/emojidex";
@@ -97,6 +104,26 @@ public class EmojiLoader
         this.formats = formats;
         final JsonDownloadTask task = new JsonDownloadTask();
         task.execute(jsonFiles);
+    }
+
+
+
+    public class EventListener
+    {
+        public void onJsonDownloadCompleted()
+        {
+            // nop
+        }
+
+        public void onEmojiDownloadCompleted(String emojiName)
+        {
+            // nop
+        }
+
+        public void onAllDownloadCompleted()
+        {
+            // nop
+        }
     }
 
 
