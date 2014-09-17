@@ -205,9 +205,15 @@ public class EmojiLoader
                         e.printStackTrace();
                     }
                 }
+                onDownloadCompleted(fileInfo);
             }
 
             return result;
+        }
+
+        protected void onDownloadCompleted(FileInfo fileInfo)
+        {
+            // nop
         }
     }
 
@@ -216,6 +222,8 @@ public class EmojiLoader
     {
         @Override
         protected void onPostExecute(Result result) {
+            eventListener.onJsonDownloadCompleted();
+
             final ArrayList<ArrayList<FileInfo>> fileInfosArray = new ArrayList<ArrayList<FileInfo>>();
             fileInfosArray.ensureCapacity(threadCount);
             for(int i = 0;  i < threadCount;  ++i)
@@ -275,6 +283,11 @@ public class EmojiLoader
         @Override
         protected void onPreExecute() {
             startTime = System.currentTimeMillis();
+        }
+
+        @Override
+        protected void onDownloadCompleted(FileInfo fileInfo) {
+            eventListener.onEmojiDownloadCompleted(fileInfo.name);
         }
 
         @Override
