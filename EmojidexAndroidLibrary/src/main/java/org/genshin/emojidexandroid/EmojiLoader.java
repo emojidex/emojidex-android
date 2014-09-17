@@ -97,13 +97,15 @@ public class EmojiLoader
 
     public void load(Format... formats)
     {
-        final String[] jsonFiles = new String[KINDS.length];
-        for(int i = 0;  i < jsonFiles.length;  ++i)
-            jsonFiles[i] = KINDS[i] + "/" + JSON_FILENAME;
+        final FileInfo fileInfo = new FileInfo();
+        fileInfo.name = JSON_FILENAME;
+        fileInfo.files.ensureCapacity(KINDS.length);
+        for(int i = 0;  i < KINDS.length;  ++i)
+            fileInfo.files.add(KINDS[i] + "/" + JSON_FILENAME);
 
         this.formats = formats;
         final JsonDownloadTask task = new JsonDownloadTask();
-        task.execute(jsonFiles);
+        task.execute(fileInfo);
     }
 
 
@@ -128,28 +130,10 @@ public class EmojiLoader
 
 
 
-    private static class ProgressInfo
+    private static class FileInfo
     {
-        private String currentPath;
-        private int current;
-        private int[] loadedSizes;
-        private int[] fileSizes;
-
-        public ProgressInfo(int fileCount)
-        {
-            currentPath = "";
-            current = 0;
-            loadedSizes = new int[fileCount];
-            fileSizes = new int[fileCount];
-            for(int i = 0;  i < fileCount;  ++i)
-                loadedSizes[i] = fileSizes[i] = 0;
-        }
-
-        public String getCurrentPath() { return currentPath; }
-        public int getCurrentIndex() { return current; }
-        public int getFileCount() { return loadedSizes.length; }
-        public int getLoadedSize(int index) { return loadedSizes[index]; }
-        public int getFileSize(int index) { return fileSizes[index]; }
+        private String name;
+        private ArrayList<String> files  = new ArrayList<String>();
     }
 
 
@@ -166,74 +150,60 @@ public class EmojiLoader
 
 
 
-    private class FileDownloadTask extends AsyncTask<String,ProgressInfo,Result>
+    private class FileDownloadTask extends AsyncTask<FileInfo,Void,Result>
     {
         private final byte[] buffer = new byte[4096];
 
         @Override
-        protected Result doInBackground(String... params) {
-            final ProgressInfo progressInfo = new ProgressInfo(params.length);
+        protected Result doInBackground(FileInfo... params) {
             final Result result = new Result();
-            result.total = params.length;
+            result.total = 0;
 
-            for(int i = 0;  i < params.length;  ++i)
+            for(FileInfo fileInfo : params)
             {
+                result.total += fileInfo.files.size();
+
                 if(isCancelled())
-                    break;
+                    continue;
 
-                try
+                for(String path : fileInfo.files)
                 {
-                    final String path = params[i];
-                    final URL url = new URL(sourcePath + "/" + path);
-
-                    progressInfo.current = i;
-                    progressInfo.currentPath = path;
-
+                    try
                     {
+                        final URL url = new URL(sourcePath + "/" + path);
+
                         final HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-                        connection.setRequestMethod("HEAD");
+                        connection.setAllowUserInteraction(false);
+                        connection.setInstanceFollowRedirects(true);
+                        connection.setRequestMethod("GET");
                         connection.connect();
+
                         if(connection.getResponseCode() != HttpURLConnection.HTTP_OK)
                             throw new HttpException();
-                        progressInfo.fileSizes[i] = connection.getContentLength();
-                        connection.disconnect();
+
+                        final File destinationFile = new File(destinationPath + "/" + path);
+                        if( !destinationFile.getParentFile().exists() )
+                            destinationFile.getParentFile().mkdirs();
+
+                        DataInputStream dis = new DataInputStream(connection.getInputStream());
+                        DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(destinationFile)));
+
+                        int readByte;
+                        while( (readByte = dis.read(buffer)) != -1 )
+                        {
+                            dos.write(buffer, 0, readByte);
+                        }
+
+                        dis.close();
+                        dos.close();
+
+                        ++result.succeeded;
                     }
-
-                    final HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-                    connection.setAllowUserInteraction(false);
-                    connection.setInstanceFollowRedirects(true);
-                    connection.setRequestMethod("GET");
-                    connection.connect();
-
-                    if(connection.getResponseCode() != HttpURLConnection.HTTP_OK)
-                        throw new HttpException();
-
-                    final File destinationFile = new File(destinationPath + "/" + path);
-                    if( !destinationFile.getParentFile().exists() )
-                        destinationFile.getParentFile().mkdirs();
-
-                    DataInputStream dis = new DataInputStream(connection.getInputStream());
-                    DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(destinationFile)));
-
-                    int readByte;
-                    publishProgress(progressInfo);
-                    while( (readByte = dis.read(buffer)) != -1 )
+                    catch(Exception e)
                     {
-                        dos.write(buffer, 0, readByte);
-
-                        progressInfo.loadedSizes[i] += readByte;
-                        publishProgress(progressInfo);
+                        ++result.failed;
+                        e.printStackTrace();
                     }
-
-                    dis.close();
-                    dos.close();
-
-                    ++result.succeeded;
-                }
-                catch(Exception e)
-                {
-                    ++result.failed;
-                    e.printStackTrace();
                 }
             }
 
@@ -246,10 +216,10 @@ public class EmojiLoader
     {
         @Override
         protected void onPostExecute(Result result) {
-            final ArrayList<ArrayList<String>> fileNamesArray = new ArrayList<ArrayList<String>>();
-            fileNamesArray.ensureCapacity(threadCount);
+            final ArrayList<ArrayList<FileInfo>> fileInfosArray = new ArrayList<ArrayList<FileInfo>>();
+            fileInfosArray.ensureCapacity(threadCount);
             for(int i = 0;  i < threadCount;  ++i)
-                fileNamesArray.add(new ArrayList<String>());
+                fileInfosArray.add(new ArrayList<FileInfo>());
 
             int threadIndex = 0;
             for(String kind : KINDS)
@@ -263,13 +233,20 @@ public class EmojiLoader
 
                     for(EmojiData emojiData : emojiDatas)
                     {
+                        FileInfo fileInfo = null;
                         for(Format format : formats)
                         {
                             final String fileName = kind + "/" + format.relativeDir + "/" + emojiData.name + format.extension;
                             if( new File(destinationPath, fileName).exists())
                                 continue;
-                            fileNamesArray.get(threadIndex).add(fileName);
-                            threadIndex = (threadIndex + 1) % threadCount;
+
+                            if(fileInfo == null)
+                            {
+                                fileInfo = new FileInfo();
+                                fileInfosArray.get(threadIndex).add(fileInfo);
+                                threadIndex = (threadIndex + 1) % threadCount;
+                            }
+                            fileInfo.files.add(fileName);
                         }
                     }
                 }
@@ -279,12 +256,12 @@ public class EmojiLoader
                 }
             }
 
-            for(ArrayList<String> fileNames : fileNamesArray)
+            for(ArrayList<FileInfo> fileInfos : fileInfosArray)
             {
-                if(!fileNames.isEmpty())
+                if(!fileInfos.isEmpty())
                 {
                     final EmojiDownloadTask task = new EmojiDownloadTask();
-                    task.execute(fileNames.toArray(new String[fileNames.size()]));
+                    task.execute(fileInfos.toArray(new FileInfo[fileInfos.size()]));
                 }
             }
         }
@@ -298,11 +275,6 @@ public class EmojiLoader
         @Override
         protected void onPreExecute() {
             startTime = System.currentTimeMillis();
-        }
-
-        @Override
-        protected void onProgressUpdate(ProgressInfo... values) {
-            // nop
         }
 
         @Override
