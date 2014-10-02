@@ -405,8 +405,8 @@ public class MainActivity extends Activity {
     {
         ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clipData = clipboard.getPrimaryClip();
-        ClipData.Item item = clipData.getItemAt(0);
-        editText.setText(item.getText());
+        CharSequence newText = (clipData == null) ? "" : clipData.getItemAt(0).getText();
+        editText.setText(newText);
     }
 
     /**
