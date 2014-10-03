@@ -114,17 +114,17 @@ public class EmojiLoader
     {
         public void onJsonDownloadCompleted()
         {
-            // nop
+            Log.d("loader", "EmojiLoader::EventListener: onJsonDownloadCompleted.");
         }
 
         public void onEmojiDownloadCompleted(String emojiName)
         {
-            // nop
+            Log.d("loader", "EmojiLoader::EventListener: onEmojiDownloadCompleted.(emojiName = \"" + emojiName + "\")");
         }
 
         public void onAllDownloadCompleted()
         {
-            // nop
+            Log.d("loader", "EmojiLoader::EventListener: onAllDownloadCompleted.");
         }
     }
 
@@ -251,6 +251,7 @@ public class EmojiLoader
                             if(fileInfo == null)
                             {
                                 fileInfo = new FileInfo();
+                                fileInfo.name = emojiData.name;
                                 fileInfosArray.get(threadIndex).add(fileInfo);
                                 threadIndex = (threadIndex + 1) % threadCount;
                             }
