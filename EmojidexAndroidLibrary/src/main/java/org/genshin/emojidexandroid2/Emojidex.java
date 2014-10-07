@@ -1,6 +1,7 @@
 package org.genshin.emojidexandroid2;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.List;
 
@@ -8,7 +9,8 @@ import java.util.List;
  * Created by kou on 14/10/03.
  */
 public class Emojidex {
-    private static Emojidex instance = new Emojidex();
+    private static final String TAG = "EmojidexLibrary";
+    private static final Emojidex instance = new Emojidex();
 
     private Context context = null;
 
@@ -76,10 +78,16 @@ public class Emojidex {
      */
     public void initialize(Context context)
     {
+        Log.d(TAG, "Initialize start.");
         if(isInitialized())
+        {
+            Log.d(TAG, "Already initialized.");
             return;
+        }
 
         this.context = context.getApplicationContext();
+
+        Log.d(TAG, "Initialize complete.");
     }
 
     /**

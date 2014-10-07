@@ -21,6 +21,8 @@ import android.widget.PopupWindow;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
+import org.genshin.emojidexandroid2.*;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -68,6 +70,7 @@ public class EmojidexIME extends InputMethodService
 
         // Create EmojiDataManager object.
         emojiDataManager = EmojiDataManager.create(this);
+        org.genshin.emojidexandroid2.Emojidex.getInstance().initialize(this);
 
         // Create categorized keyboards.
         minHeight = (int)getResources().getDimension(R.dimen.ime_keyboard_height);

@@ -104,6 +104,7 @@ public class MainActivity extends Activity {
             emojidex = new EmojidexEditor(getApplicationContext());
 
         emojiDataManager = emojidex.getEmojiDataManager();
+        org.genshin.emojidexandroid2.Emojidex.getInstance().initialize(this);
         emojiDataList = emojiDataManager.getCategorizedList(getString(R.string.all_category));
 
         editText = (EditText)findViewById(R.id.edit_text);
