@@ -146,8 +146,8 @@ class EmojiDownloader {
                         if( !destinationFile.getParentFile().exists() )
                             destinationFile.getParentFile().mkdirs();
 
-                        DataInputStream dis = new DataInputStream(connection.getInputStream());
-                        DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(destinationFile)));
+                        final DataInputStream dis = new DataInputStream(connection.getInputStream());
+                        final DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(destinationFile)));
 
                         int readByte;
                         while( (readByte = dis.read(buffer)) != -1 )
@@ -240,6 +240,7 @@ class EmojiDownloader {
                     final File file = new File(destinationPath, PathGenerator.getJsonRelativePath(kind));
                     final InputStream is = new FileInputStream(file);
                     final ArrayList<Emoji> emojies = objectMapper.readValue(is, new TypeReference<ArrayList<Emoji>>(){});
+                    is.close();
 
                     // Create download file list.
                     for(Emoji emoji : emojies)
