@@ -2,19 +2,24 @@ package org.genshin.emojidexandroid2;
 
 import android.graphics.drawable.Drawable;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by kou on 14/10/03.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Emoji {
-    private String name;
-    private String category;
-    private final List<Integer> codes = new ArrayList<Integer>();
-    private String text;
+    @JsonProperty("code")       private String name;
+    @JsonProperty("moji")       private String text;
+    @JsonProperty("category")   private String category;
 
-    private final Drawable[] drawables = new Drawable[Emojidex.Format.values().length];
+    private final List<Integer> codes = new ArrayList<Integer>();
+
+    private final Drawable[] drawables = new Drawable[EmojiFormat.values().length];
 
     /**
      * Get emoji name.
@@ -57,7 +62,7 @@ public class Emoji {
      * @param format    Image format.
      * @return          Image.
      */
-    public Drawable getDrawable(Emojidex.Format format)
+    public Drawable getDrawable(EmojiFormat format)
     {
         return drawables[format.ordinal()];
     }

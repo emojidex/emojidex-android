@@ -9,68 +9,18 @@ import java.util.List;
  * Created by kou on 14/10/03.
  */
 public class Emojidex {
-    private static final String TAG = "EmojidexLibrary";
-    private static final Emojidex instance = new Emojidex();
+    static final String TAG = "EmojidexLibrary";
+
+    private static final Emojidex INSTANCE = new Emojidex();
+    private static final String[] KINDS = { "utf", "extended" };
 
     private Context context = null;
-
-    /**
-     * Image format.
-     */
-    public enum Format
-    {
-        SVG(".svg", "."),
-        PNG_LDPI(".png", "ldpi"),
-        PNG_MDPI(".png", "mdpi"),
-        PNG_HDPI(".png", "hdpi"),
-        PNG_XHDPI(".png", "xhdpi"),
-        PNG_PX8(".png", "px8"),
-        PNG_PX16(".png", "px16"),
-        PNG_PX32(".png", "px32"),
-        PNG_PX64(".png", "px64"),
-        PNG_PX128(".png", "px128"),
-        PNG_PX256(".png", "px256"),
-        ;
-
-        private final String extension;
-        private final String relativeDir;
-
-        /**
-         * Get format from resolution name.
-         * @param resolution    Resolution name.
-         * @return              Format of resolution.(If resolution is not found, return null.)
-         */
-        public static Format getFormat(String resolution)
-        {
-            for(Format format : Format.values())
-                if (resolution.equals(format.relativeDir))
-                    return format;
-            return null;
-        }
-
-        String getExtension()
-        {
-            return extension;
-        }
-
-        String getRelativeDir()
-        {
-            return relativeDir;
-        }
-
-        /** Construct format. */
-        private Format(String extension, String relativeDir)
-        {
-            this.extension = extension;
-            this.relativeDir = relativeDir;
-        }
-    }
 
     /**
      * Get singleton instance.
      * @return  Singleton instance.
      */
-    public static Emojidex getInstance() { return instance; }
+    public static Emojidex getInstance() { return INSTANCE; }
 
     /**
      * Initialize emojidex.
@@ -93,11 +43,12 @@ public class Emojidex {
     /**
      * Download emoji image to local storage.
      * If already downloaded, update emoji.
-     * @param formats   Download format list.
+     * @param config Configuration of download.
      */
-    public void download(Format... formats)
+    public void download(DownloadConfig config)
     {
-
+        final EmojiDownloader downloader = new EmojiDownloader(context);
+        downloader.download(config);
     }
 
     /**

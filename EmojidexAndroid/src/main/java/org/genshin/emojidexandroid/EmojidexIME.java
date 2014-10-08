@@ -21,7 +21,8 @@ import android.widget.PopupWindow;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
-import org.genshin.emojidexandroid2.*;
+import org.genshin.emojidexandroid2.DownloadConfig;
+import org.genshin.emojidexandroid2.EmojiFormat;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -70,7 +71,8 @@ public class EmojidexIME extends InputMethodService
 
         // Create EmojiDataManager object.
         emojiDataManager = EmojiDataManager.create(this);
-        org.genshin.emojidexandroid2.Emojidex.getInstance().initialize(this);
+        final org.genshin.emojidexandroid2.Emojidex emojidex = org.genshin.emojidexandroid2.Emojidex.getInstance();
+        emojidex.initialize(this);
 
         // Create categorized keyboards.
         minHeight = (int)getResources().getDimension(R.dimen.ime_keyboard_height);
@@ -94,8 +96,10 @@ public class EmojidexIME extends InputMethodService
         historyManager = new HistoryManager(getApplicationContext());
 
         // Test.
-        final EmojiLoader loader = new EmojiLoader(this);
-        loader.load(EmojiLoader.Format.getFormat(getString(R.string.dpi)), EmojiLoader.Format.PNG_PX128);
+        final DownloadConfig config = new DownloadConfig();
+        config.formats.add(EmojiFormat.toFormat(getString(R.string.dpi)));
+        config.formats.add(EmojiFormat.PNG_PX128);
+        emojidex.download(config);
     }
 
     @Override
