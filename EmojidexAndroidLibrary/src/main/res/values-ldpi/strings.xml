@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="dpi">ldpi</string>
+    <string name="emojidex_format_default">ldpi</string>
 </resources>

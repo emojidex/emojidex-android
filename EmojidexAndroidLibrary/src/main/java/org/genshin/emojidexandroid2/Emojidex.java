@@ -17,9 +17,11 @@ public class Emojidex {
     private static final Emojidex INSTANCE = new Emojidex();
     private static final String[] KINDS = { "utf", "extended" };
 
-    private final EmojiManager manager = new EmojiManager();
+    private final TextConverter converter = new TextConverter();
 
     private Context context = null;
+    private EmojiManager manager;
+    private EmojiFormat defaultFormat;
 
     /**
      * Get singleton instance.
@@ -29,7 +31,7 @@ public class Emojidex {
 
     /**
      * Initialize emojidex.
-     * @param context
+     * @param context   Context of application.
      */
     public void initialize(Context context)
     {
@@ -41,6 +43,8 @@ public class Emojidex {
         }
 
         this.context = context.getApplicationContext();
+        manager = new EmojiManager(this.context);
+        defaultFormat = EmojiFormat.toFormat(this.context.getResources().getString(R.string.emojidex_format_default));
 
         Log.d(TAG, "Initialize complete.");
     }
@@ -74,7 +78,19 @@ public class Emojidex {
      */
     public CharSequence emojify(CharSequence text, boolean useImage)
     {
-        return text;
+        return emojify(text, useImage, defaultFormat);
+    }
+
+    /**
+     * Normal text encode to emojidex text.
+     * @param text      Normal text.
+     * @param useImage  If true, use phantom-emoji image.
+     * @param format    Image format.
+     * @return          Emojidex text.
+     */
+    public CharSequence emojify(CharSequence text, boolean useImage, EmojiFormat format)
+    {
+        return converter.emojify(text, useImage, format);
     }
 
     /**
@@ -84,7 +100,7 @@ public class Emojidex {
      */
     public CharSequence deEmojify(CharSequence text)
     {
-        return text;
+        return converter.deEmojify(text);
     }
 
     /**
@@ -143,9 +159,4 @@ public class Emojidex {
     {
         return manager.getCategoryNames();
     }
-
-    /**
-     * Construct Emojidex object.(private)
-     */
-    private Emojidex() { /* nop */ }
 }

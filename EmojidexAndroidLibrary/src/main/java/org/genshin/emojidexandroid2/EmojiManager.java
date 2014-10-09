@@ -1,7 +1,12 @@
 package org.genshin.emojidexandroid2;
 
+import android.content.Context;
+import android.content.res.Resources;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.genshin.emojidexandroidlibrary.R;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,12 +26,17 @@ class EmojiManager {
     private final HashMap<List<Integer>, Emoji> emojiTableFromCodes = new HashMap<List<Integer>, Emoji>();
     private final HashMap<String, ArrayList<Emoji>> categorizedEmojies = new HashMap<String, ArrayList<Emoji>>();
 
+    private final Context context;
+
+    private int nextOriginalCode;
+
     /**
      * Construct EmojiManager object.
      */
-    public EmojiManager()
+    public EmojiManager(Context context)
     {
-        // nop
+        this.context = context.getApplicationContext();
+        reset();
     }
 
     /**
@@ -55,10 +65,14 @@ class EmojiManager {
         emojies.ensureCapacity(emojies.size() + newEmojies.size());
         emojies.addAll(newEmojies);
 
+        final Resources res = context.getResources();
         for(Emoji emoji : newEmojies)
         {
             // Initialize.
-            emoji.initialize(kind);
+            if(emoji.hasCodes())
+                emoji.initialize(res, kind);
+            else
+                emoji.initialize(res, kind, nextOriginalCode++);
 
             // Add.
             emojiTableFromName.put(emoji.getName(), emoji);
@@ -84,6 +98,8 @@ class EmojiManager {
         emojiTableFromName.clear();
         emojiTableFromCodes.clear();
         categorizedEmojies.clear();
+
+        nextOriginalCode = context.getResources().getInteger(R.integer.original_code_start);
     }
 
     /**
