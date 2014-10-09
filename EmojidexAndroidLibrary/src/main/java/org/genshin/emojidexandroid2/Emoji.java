@@ -18,8 +18,9 @@ public class Emoji {
     @JsonProperty("category")   private String category;
 
     private final List<Integer> codes = new ArrayList<Integer>();
-
     private final Drawable[] drawables = new Drawable[EmojiFormat.values().length];
+
+    private String kind;
 
     /**
      * Get emoji name.
@@ -65,5 +66,14 @@ public class Emoji {
     public Drawable getDrawable(EmojiFormat format)
     {
         return drawables[format.ordinal()];
+    }
+
+    /**
+     * Initialize emoji object.
+     * @param kind  Emoji kind.
+     */
+    void initialize(String kind)
+    {
+        this.kind = kind;
     }
 }

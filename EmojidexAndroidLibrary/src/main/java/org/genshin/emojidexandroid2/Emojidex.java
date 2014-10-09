@@ -3,6 +3,9 @@ package org.genshin.emojidexandroid2;
 import android.content.Context;
 import android.util.Log;
 
+import org.genshin.emojidexandroidlibrary.R;
+
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -13,6 +16,8 @@ public class Emojidex {
 
     private static final Emojidex INSTANCE = new Emojidex();
     private static final String[] KINDS = { "utf", "extended" };
+
+    private final EmojiManager manager = new EmojiManager();
 
     private Context context = null;
 
@@ -98,7 +103,7 @@ public class Emojidex {
      */
     public Emoji getEmoji(String name)
     {
-        return null;
+        return manager.getEmoji(name);
     }
 
     /**
@@ -106,9 +111,9 @@ public class Emojidex {
      * @param codes     Emoji codes.
      * @return          Emoji.(If emoji is not found, return null.)
      */
-    public Emoji getEmoji(Integer... codes)
+    public Emoji getEmoji(List<Integer> codes)
     {
-        return null;
+        return manager.getEmoji(codes);
     }
 
     /**
@@ -116,31 +121,31 @@ public class Emojidex {
      * @param category  Category name.
      * @return          Emoji list.(If emoji list is not found, return null.)
      */
-    public List<Emoji> getEmojiList(String category)
+    public Collection<Emoji> getEmojiList(String category)
     {
-        return null;
+        return manager.getEmojiList(category);
     }
 
     /**
      * Ger all emoji list.
      * @return  All emoji list.
      */
-    public List<Emoji> getAllEmojiList()
+    public Collection<Emoji> getAllEmojiList()
     {
-        return null;
+        return manager.getAllEmojiList();
     }
 
     /**
-     * Get category list.
-     * @return  Category list.
+     * Get category name list.
+     * @return  Category name list.
      */
-    public List<String> getCategories()
+    public Collection<String> getCategoryNames()
     {
-        return null;
+        return manager.getCategoryNames();
     }
 
     /**
-     * Construct Emojidex object.
+     * Construct Emojidex object.(private)
      */
     private Emojidex() { /* nop */ }
 }
