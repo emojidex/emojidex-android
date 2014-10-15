@@ -7,6 +7,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -21,18 +22,13 @@ import java.util.List;
 /**
  * Created by kou on 14/10/03.
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class Emoji {
-    @JsonProperty("code")       private String name;
-    @JsonProperty("moji")       private String text = null;
-    @JsonProperty("category")   private String category;
+public class Emoji extends SimpleJsonParam {
+    @JsonIgnore     private final List<Integer> codes = new ArrayList<Integer>();
+    @JsonIgnore     private final Drawable[] drawables = new Drawable[EmojiFormat.values().length];
 
-    private final List<Integer> codes = new ArrayList<Integer>();
-    private final Drawable[] drawables = new Drawable[EmojiFormat.values().length];
-
-    private Resources res;
-    private String kind;
-    private boolean hasOriginalCodes = false;
+    @JsonIgnore     private Resources res;
+    @JsonIgnore     private String kind;
+    @JsonIgnore     private boolean hasOriginalCodes = false;
 
     /**
      * Get emoji name.
@@ -41,6 +37,15 @@ public class Emoji {
     public String getName()
     {
         return name;
+    }
+
+    /**
+     * Get emoji text.
+     * @return  Emoji text.
+     */
+    public String getText()
+    {
+        return text;
     }
 
     /**
@@ -59,15 +64,6 @@ public class Emoji {
     public List<Integer> getCodes()
     {
         return codes;
-    }
-
-    /**
-     * Get emoji text.
-     * @return  Emoji text.
-     */
-    public String getText()
-    {
-        return text;
     }
 
     /**
