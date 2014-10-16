@@ -283,6 +283,18 @@ class EmojiDownloader {
             final ArrayList<JsonParam> localJsonParams = readJson(new File(PathGenerator.getLocalJsonPath()));
             final HashMap<String, JsonParam> localJsonParamMap = new HashMap<String, JsonParam>();
 
+            // vvvvvvvv DEBUG vvvvvvvv
+            for(int i = 0;  i < Math.min(10, localJsonParams.size());  ++i)
+            {
+                final JsonParam jsonParam = localJsonParams.get(i);
+                final String defaultFormat = Emojidex.getInstance().getDefaultFormat().getRelativeDir();
+                if(i / 2 == 0)
+                    jsonParam.checksums.png.remove(defaultFormat);
+                else
+                    jsonParam.checksums.png.put(defaultFormat, "hoge");
+            }
+            // ^^^^^^^^ DEBUG ^^^^^^^^
+
             for(JsonParam jsonParam: localJsonParams)
                 localJsonParamMap.put(jsonParam.name, jsonParam);
 
