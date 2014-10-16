@@ -1,10 +1,12 @@
 package org.genshin.emojidexandroid2;
 
 import android.content.Context;
+import android.os.Environment;
 import android.util.Log;
 
 import org.genshin.emojidexandroidlibrary.R;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.List;
 
@@ -15,7 +17,6 @@ public class Emojidex {
     static final String TAG = "EmojidexLibrary";
 
     private static final Emojidex INSTANCE = new Emojidex();
-    private static final String[] KINDS = { "utf", "extended" };
 
     private final TextConverter converter = new TextConverter();
 
@@ -44,6 +45,7 @@ public class Emojidex {
 
         this.context = context.getApplicationContext();
         manager = new EmojiManager(this.context);
+//        manager.add(PathGenerator.getLocalJsonPath());
         defaultFormat = EmojiFormat.toFormat(this.context.getResources().getString(R.string.emojidex_format_default));
 
         Log.d(TAG, "Initialize complete.");
@@ -58,6 +60,15 @@ public class Emojidex {
     {
         final EmojiDownloader downloader = new EmojiDownloader(context);
         downloader.download(config);
+    }
+
+    /**
+     * Reload emojidex.
+     */
+    public void reload()
+    {
+        manager.reset();
+        manager.add(PathGenerator.getLocalJsonPath());
     }
 
     /**
@@ -158,5 +169,14 @@ public class Emojidex {
     public Collection<String> getCategoryNames()
     {
         return manager.getCategoryNames();
+    }
+
+    /**
+     * Get default format for device.
+     * @return  Default format for device.
+     */
+    public EmojiFormat getDefaultFormat()
+    {
+        return defaultFormat;
     }
 }

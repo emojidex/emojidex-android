@@ -41,9 +41,9 @@ class EmojiManager {
 
     /**
      * Add emoji from json file.
-     * @param kind  Emoji kind.
+     * @param path  Json file path.
      */
-    public void add(String kind)
+    public void add(String path)
     {
         ArrayList<Emoji> newEmojies = null;
 
@@ -51,7 +51,7 @@ class EmojiManager {
         try
         {
             final ObjectMapper objectMapper = new ObjectMapper();
-            final File file = new File(PathGenerator.getLocalRootPath(), PathGenerator.getJsonRelativePath(kind));
+            final File file = new File(path);
             final InputStream is = new FileInputStream(file);
             newEmojies = objectMapper.readValue(is, new TypeReference<ArrayList<Emoji>>(){});
             is.close();
@@ -70,9 +70,9 @@ class EmojiManager {
         {
             // Initialize.
             if(emoji.hasCodes())
-                emoji.initialize(res, kind);
+                emoji.initialize(res);
             else
-                emoji.initialize(res, kind, nextOriginalCode++);
+                emoji.initialize(res, nextOriginalCode++);
 
             // Add.
             emojiTableFromName.put(emoji.getName(), emoji);

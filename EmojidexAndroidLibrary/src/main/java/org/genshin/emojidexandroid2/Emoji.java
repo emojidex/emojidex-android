@@ -23,12 +23,11 @@ import java.util.List;
  * Created by kou on 14/10/03.
  */
 public class Emoji extends SimpleJsonParam {
-    @JsonIgnore     private final List<Integer> codes = new ArrayList<Integer>();
-    @JsonIgnore     private final Drawable[] drawables = new Drawable[EmojiFormat.values().length];
+    private final List<Integer> codes = new ArrayList<Integer>();
+    private final Drawable[] drawables = new Drawable[EmojiFormat.values().length];
 
-    @JsonIgnore     private Resources res;
-    @JsonIgnore     private String kind;
-    @JsonIgnore     private boolean hasOriginalCodes = false;
+    private Resources res;
+    private boolean hasOriginalCodes = false;
 
     /**
      * Get emoji name.
@@ -80,7 +79,7 @@ public class Emoji extends SimpleJsonParam {
         {
             try
             {
-                final File file = new File(PathGenerator.getLocalRootPath(), PathGenerator.getEmojiRelativePath(name, format, kind));
+                final File file = new File(PathGenerator.getLocalEmojiPath(name, format));
                 if(file.exists())
                 {
                     final InputStream is = new FileInputStream(file);
@@ -117,10 +116,9 @@ public class Emoji extends SimpleJsonParam {
      * Initialize emoji object.
      * @param kind  Emoji kind.
      */
-    void initialize(Resources res, String kind)
+    void initialize(Resources res)
     {
         this.res = res;
-        this.kind = kind;
 
         // Set codes.
         final int count = text.codePointCount(0, text.length());
@@ -146,12 +144,17 @@ public class Emoji extends SimpleJsonParam {
         }
     }
 
-    void initialize(Resources res, String kind, int codes)
+    /**
+     * Initialize emoji object.
+     * @param res       Resources object.
+     * @param codes     Original emoji code.
+     */
+    void initialize(Resources res, int codes)
     {
         text = new String(Character.toChars(codes));
         hasOriginalCodes = true;
 
-        initialize(res, kind);
+        initialize(res);
     }
 
     /**

@@ -16,9 +16,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by kou on 14/10/03.
@@ -26,10 +28,9 @@ import java.util.ArrayList;
 class EmojiDownloader {
     static final String TAG = Emojidex.TAG + "::EmojiDownloader";
 
-    private static final String JSON_FILENAME = "emoji.json";
-
     private final Context context;
     private final DownloadConfig config = new DownloadConfig();
+    private final Result downloadResult = new Result();
 
     private int runningThreadCount = 0;
 
@@ -55,6 +56,11 @@ class EmojiDownloader {
             return;
         }
 
+        // Reset fields.
+        downloadResult.succeeded = 0;
+        downloadResult.failed = 0;
+        downloadResult.total = 0;
+
         // Set parameter from config.
         this.config.copy(config);
         if(this.config.listener == null)
@@ -62,15 +68,28 @@ class EmojiDownloader {
         this.config.threadCount = Math.max(this.config.threadCount, 1);
 
         // Create json file list.
-        final FileInfo fileInfo = new FileInfo();
-        fileInfo.name = JSON_FILENAME;
-        fileInfo.files.ensureCapacity(this.config.kinds.size());
-        for(String kind : this.config.kinds)
-            fileInfo.files.add(PathGenerator.getJsonRelativePath(kind));
+        final int kindCount = this.config.kinds.size();
+        final FileInfo[] fileInfos = new FileInfo[kindCount];
+        for(int i = 0;  i< kindCount;  ++i)
+        {
+            fileInfos[i] = new FileInfo();
+            fileInfos[i].name = PathGenerator.JSON_FILENAME;
+            fileInfos[i].kind = this.config.kinds.get(i);
+        }
 
         // Download start.
         final JsonDownloadTask task = new JsonDownloadTask();
-        task.execute(fileInfo);
+        task.execute(fileInfos);
+    }
+
+    /**
+     * Create temporary path.
+     * @param kind  Emoji kind.
+     * @return      Temporary path.
+     */
+    private String getTemporaryJsonPath(String kind)
+    {
+        return context.getExternalCacheDir() + "/" + kind + "/" + PathGenerator.JSON_FILENAME;
     }
 
     /**
@@ -78,8 +97,16 @@ class EmojiDownloader {
      */
     private static class FileInfo
     {
-        private String name;
-        private ArrayList<String> files = new ArrayList<String>();
+        protected String name;
+        protected String kind;
+    }
+
+    /**
+     * File information for Emoji.
+     */
+    private static class EmojiFileInfo extends FileInfo
+    {
+        protected final ArrayList<EmojiFormat> formats = new ArrayList<EmojiFormat>();
     }
 
     /**
@@ -105,6 +132,12 @@ class EmojiDownloader {
 
         private long startTime, endTime;
 
+        protected class PathInfo
+        {
+            public String destination;
+            public String source;
+        }
+
         @Override
         protected void onPreExecute() {
             ++runningThreadCount;
@@ -115,23 +148,24 @@ class EmojiDownloader {
         @Override
         protected Result doInBackground(FileInfo... params) {
             final Result result = new Result();
-            final String destinationPath = PathGenerator.getLocalRootPath();
 
             for(FileInfo fileInfo : params)
             {
+                PathInfo[] pathInfos = createPathInfos(fileInfo);
+
                 // Add total count.
-                result.total += fileInfo.files.size();
+                result.total += pathInfos.length;
 
                 // Download cancelled.
                 if(isCancelled())
                     continue;
 
                 // Download files.
-                for(String path : fileInfo.files)
+                for(PathInfo pathInfo : pathInfos)
                 {
                     try
                     {
-                        final URL url = new URL(config.sourcePath + "/" + path);
+                        final URL url = new URL(pathInfo.source);
 
                         final HttpURLConnection connection = (HttpURLConnection)url.openConnection();
                         connection.setAllowUserInteraction(false);
@@ -142,7 +176,7 @@ class EmojiDownloader {
                         if(connection.getResponseCode() != HttpURLConnection.HTTP_OK)
                             throw new HttpException();
 
-                        final File destinationFile = new File(destinationPath + "/" + path);
+                        final File destinationFile = new File(pathInfo.destination);
                         if( !destinationFile.getParentFile().exists() )
                             destinationFile.getParentFile().mkdirs();
 
@@ -190,6 +224,8 @@ class EmojiDownloader {
             // nop
         }
 
+        protected abstract PathInfo[] createPathInfos(FileInfo fileInfo);
+
         /**
          * Finalize download task.
          * @param result    Download result.
@@ -198,17 +234,36 @@ class EmojiDownloader {
         {
             --runningThreadCount;
 
+            // Put log.
             endTime = System.currentTimeMillis();
-            Log.d(TAG, "Task end.(runningThreadCount = " + runningThreadCount + ") : "
+            putResultLog(result, "Task end.(runningThreadCount = " + runningThreadCount + ")");
+
+            // Add all result.
+            downloadResult.succeeded += result.succeeded;
+            downloadResult.failed += result.failed;
+            downloadResult.total += result.total;
+
+            // Check all completed.
+            if(runningThreadCount <= 0)
+            {
+                config.listener.onAllDownloadCompleted();
+                putResultLog(downloadResult, "All task end.");
+            }
+        }
+
+        /**
+         * Put result log.
+         * @param result    Download result.
+         */
+        private void putResultLog(Result result, String preMessage)
+        {
+            Log.d(TAG, preMessage + " : "
                             + "(S" + result.getSucceededCount() + " + "
                             + "F" + result.getFailedCount() + " = "
                             + (result.getSucceededCount() + result.getFailedCount()) + ") / "
                             + result.getTotalCount() + " : "
                             + ((endTime-startTime) / 1000.0) + "sec"
             );
-
-            if(runningThreadCount <= 0)
-                config.listener.onAllDownloadCompleted();
         }
     }
 
@@ -217,12 +272,19 @@ class EmojiDownloader {
      */
     private class JsonDownloadTask extends AbstractDownloadTask
     {
+        private final ArrayList<FileInfo> jsonFileInfos = new ArrayList<FileInfo>();
+
         @Override
         protected void onPostExecute(Result result) {
-            final String destinationPath = PathGenerator.getLocalRootPath();
-
             // Call listener method.
             config.listener.onJsonDownloadCompleted();
+
+            // Load local data.
+            final ArrayList<JsonParam> localJsonParams = readJson(new File(PathGenerator.getLocalJsonPath()));
+            final HashMap<String, JsonParam> localJsonParamMap = new HashMap<String, JsonParam>();
+
+            for(JsonParam jsonParam: localJsonParams)
+                localJsonParamMap.put(jsonParam.name, jsonParam);
 
             // Create emoji file information list.
             final ArrayList<ArrayList<FileInfo>> fileInfosArray = new ArrayList<ArrayList<FileInfo>>();
@@ -230,61 +292,159 @@ class EmojiDownloader {
             for(int i = 0;  i < config.threadCount;  ++i)
                 fileInfosArray.add(new ArrayList<FileInfo>());
 
+            int downloadEmojiCount = 0;
             int threadIndex = 0;
-            for(String kind : config.kinds)
+            for(FileInfo jsonFileInfo : jsonFileInfos)
             {
-                try
+                final File jsonFile = new File(getTemporaryJsonPath(jsonFileInfo.kind));
+
+                // Load json data.
+                final ArrayList<JsonParam> newJsonParams = readJson(jsonFile);
+
+                // Add file information to download list.
+                for(JsonParam jsonParam : newJsonParams)
                 {
-                    // Load emoji parameter from json.
-                    final ObjectMapper objectMapper = new ObjectMapper();
-                    final File file = new File(destinationPath, PathGenerator.getJsonRelativePath(kind));
-                    final InputStream is = new FileInputStream(file);
-                    final ArrayList<Emoji> emojies = objectMapper.readValue(is, new TypeReference<ArrayList<Emoji>>(){});
-                    is.close();
+                    EmojiFileInfo fileInfo = null;
 
-                    // Create download file list.
-                    for(Emoji emoji : emojies)
+                    // Find jsonParam from local data.
+                    // If jsonParam is not found, add new data to local data.
+                    JsonParam localJsonParam = localJsonParamMap.get(jsonParam.name);
+                    if(localJsonParam == null)
                     {
-                        FileInfo fileInfo = null;
-                        for(EmojiFormat format : config.formats)
+                        localJsonParam = new JsonParam();
+                        localJsonParams.add(localJsonParam);
+                        localJsonParamMap.put(jsonParam.name, localJsonParam);
+                    }
+                    if(localJsonParam.checksums == null)
+                        localJsonParam.checksums = new JsonParam.Checksums();
+                    if(localJsonParam.checksums.png == null)
+                        localJsonParam.checksums.png = new HashMap<String, String>();
+
+                    // Add file information.
+                    for(EmojiFormat format : config.formats)
+                    {
+                        // If file already downloaded, ignore file.
+                        if(format == EmojiFormat.SVG)
                         {
-                            final String filePath = PathGenerator.getEmojiRelativePath(emoji.getName(), format, kind);
-
-                            // If file already downloaded, ignore file.
-                            // TODO : Use MD5.
-                            if(new File(destinationPath, filePath).exists())
+                            final String localChecksum = localJsonParam.checksums.svg;
+                            final String remoteChecksum = jsonParam.checksums.svg;
+                            if( remoteChecksum.equals(localChecksum) )
                                 continue;
-
-                            // Add to list.
-                            if(fileInfo == null)
-                            {
-                                fileInfo = new FileInfo();
-                                fileInfo.name = emoji.getName();
-                                fileInfosArray.get(threadIndex).add(fileInfo);
-                                threadIndex = (threadIndex + 1) % config.threadCount;
-                            }
-                            fileInfo.files.add(filePath);
+                            localJsonParam.checksums.svg = remoteChecksum;
                         }
+                        else
+                        {
+                            final String resolution = format.getRelativeDir();
+                            final String localChecksum = localJsonParam.checksums.png.get(resolution);
+                            final String remoteChecksum = jsonParam.checksums.png.get(resolution);
+                            if( remoteChecksum.equals(localChecksum) )
+                                continue;
+                            localJsonParam.checksums.png.put(resolution, remoteChecksum);
+                        }
+
+                        // Add to list.
+                        if(fileInfo == null)
+                        {
+                            // Copy json parameter to local.
+                            localJsonParam.name = jsonParam.name;
+                            localJsonParam.text = jsonParam.text;
+                            localJsonParam.category = jsonParam.category;
+                            localJsonParam.name_ja = jsonParam.name_ja;
+
+                            // Create and add file information.
+                            fileInfo = new EmojiFileInfo();
+                            fileInfo.name = localJsonParam.name;
+                            fileInfo.kind = jsonFileInfo.kind;
+                            fileInfosArray.get(threadIndex).add(fileInfo);
+
+                            // To next thread.
+                            threadIndex = (threadIndex + 1) % config.threadCount;
+                        }
+                        fileInfo.formats.add(format);
+                        ++downloadEmojiCount;
                     }
                 }
-                catch(Exception e)
-                {
-                    e.printStackTrace();
-                }
+
+                // Clean temporary file.
+                jsonFile.delete();
             }
 
             // Emoji download start.
-            for(ArrayList<FileInfo> fileInfos : fileInfosArray)
+            if(downloadEmojiCount > 0)
             {
-                if(fileInfos.isEmpty())
-                    continue;
+                // Update local json file.
+                writeJson(localJsonParams);
 
-                final EmojiDownloadTask task = new EmojiDownloadTask();
-                task.execute(fileInfos.toArray(new FileInfo[fileInfos.size()]));
+                // Execute download tasks.
+                for(ArrayList<FileInfo> fileInfos : fileInfosArray)
+                {
+                    if(fileInfos.isEmpty())
+                        continue;
+
+                    final EmojiDownloadTask task = new EmojiDownloadTask();
+                    task.execute(fileInfos.toArray(new FileInfo[fileInfos.size()]));
+                }
             }
 
             // Thread end.
             super.onPostExecute(result);
+        }
+
+        @Override
+        protected void onDownloadCompleted(FileInfo fileInfo) {
+            jsonFileInfos.add(fileInfo);
+        }
+
+        @Override
+        protected PathInfo[] createPathInfos(FileInfo fileInfo) {
+            final PathInfo[] result = new PathInfo[1];
+
+            result[0] = new PathInfo();
+            result[0].destination = getTemporaryJsonPath(fileInfo.kind);
+            result[0].source = PathGenerator.getRemoteJsonPath(fileInfo.kind, config.sourcePath);
+
+            return result;
+        }
+
+        /**
+         * Read json parameter.
+         * @param file  Json file.
+         * @return      Json parameter.
+         */
+        private ArrayList<JsonParam> readJson(File file)
+        {
+            try
+            {
+                final ObjectMapper objectMapper = new ObjectMapper();
+                final InputStream is = new FileInputStream(file);
+                final ArrayList<JsonParam> result = objectMapper.readValue(is, new TypeReference<ArrayList<JsonParam>>(){});
+                is.close();
+                return result;
+            }
+            catch(Exception e)
+            {
+                e.printStackTrace();
+            }
+            return new ArrayList<JsonParam>();
+        }
+
+        /**
+         * Write json parameter to local storage.
+         */
+        private void writeJson(ArrayList<JsonParam> jsonParams)
+        {
+            try
+            {
+                final ObjectMapper objectMapper = new ObjectMapper();
+                final File file = new File(PathGenerator.getLocalJsonPath());
+                final OutputStream os = new FileOutputStream(file);
+                objectMapper.writeValue(os, jsonParams);
+                os.close();
+            }
+            catch(Exception e)
+            {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -297,6 +457,23 @@ class EmojiDownloader {
         protected void onDownloadCompleted(FileInfo fileInfo) {
             // Call listener method.
             config.listener.onEmojiDownloadCompleted(fileInfo.name);
+        }
+
+        @Override
+        protected PathInfo[] createPathInfos(FileInfo fileInfo) {
+            final EmojiFileInfo emojiFileInfo = (EmojiFileInfo)fileInfo;
+            final int formatCount = emojiFileInfo.formats.size();
+            final PathInfo[] result = new PathInfo[formatCount];
+
+            for(int i = 0;  i < formatCount;  ++i)
+            {
+                final EmojiFormat format = emojiFileInfo.formats.get(i);
+                result[i] = new PathInfo();
+                result[i].destination = PathGenerator.getLocalEmojiPath(emojiFileInfo.name, format);
+                result[i].source = PathGenerator.getRemoteEmojiPath(emojiFileInfo.name, format, emojiFileInfo.kind, config.sourcePath);
+            }
+
+            return result;
         }
     }
 }

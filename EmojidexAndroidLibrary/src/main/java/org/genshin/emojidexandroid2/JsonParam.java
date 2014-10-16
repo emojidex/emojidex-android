@@ -13,9 +13,9 @@ class JsonParam extends SimpleJsonParam {
     @JsonProperty("code_ja")    protected String name_ja = null;
     @JsonProperty("checksums")  protected Checksums checksums = null;
 
-    public class Checksums
+    public static class Checksums
     {
         @JsonProperty("svg")   public String svg = null;
-        @JsonProperty("png")   public Map<String, String> png = null;
+        @JsonProperty("png")   public HashMap<String, String> png = null;
     }
 }
