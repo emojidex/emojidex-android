@@ -3,11 +3,13 @@ package org.genshin.emojidexandroid;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.text.SpannableString;
 import android.text.style.ImageSpan;
+import android.util.Log;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -79,7 +81,9 @@ public class EmojiData
             is.close();
             stamp = bitmap;     // TODO: Set high quality bitmap.
             icon = new BitmapDrawable(res, bitmap);
+            icon.setBounds(0, 0, icon.getIntrinsicWidth(), icon.getIntrinsicHeight());
             keyIcon = new BitmapDrawable(res, bitmap);
+            keyIcon.setBounds(0, 0, keyIcon.getIntrinsicWidth(), keyIcon.getIntrinsicHeight());
         }
         catch(IOException e)
         {
