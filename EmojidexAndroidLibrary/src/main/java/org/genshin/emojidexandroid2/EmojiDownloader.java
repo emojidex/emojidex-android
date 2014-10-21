@@ -316,6 +316,9 @@ class EmojiDownloader {
                 // Add file information to download list.
                 for(JsonParam jsonParam : newJsonParams)
                 {
+                    if(jsonParam.checksums == null)
+                        continue;
+
                     EmojiFileInfo fileInfo = null;
 
                     // Find jsonParam from local data.
@@ -340,7 +343,7 @@ class EmojiDownloader {
                         {
                             final String localChecksum = localJsonParam.checksums.svg;
                             final String remoteChecksum = jsonParam.checksums.svg;
-                            if( remoteChecksum.equals(localChecksum) )
+                            if( remoteChecksum == null || remoteChecksum.equals(localChecksum) )
                                 continue;
                             localJsonParam.checksums.svg = remoteChecksum;
                         }
@@ -349,7 +352,7 @@ class EmojiDownloader {
                             final String resolution = format.getRelativeDir();
                             final String localChecksum = localJsonParam.checksums.png.get(resolution);
                             final String remoteChecksum = jsonParam.checksums.png.get(resolution);
-                            if( remoteChecksum.equals(localChecksum) )
+                            if( remoteChecksum == null || remoteChecksum.equals(localChecksum) )
                                 continue;
                             localJsonParam.checksums.png.put(resolution, remoteChecksum);
                         }
