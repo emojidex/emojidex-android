@@ -54,6 +54,9 @@ public class Emojidex {
      */
     public void download(DownloadConfig config)
     {
+        if( !isInitialized() )
+            throw new EmojidexIsNotInitializedException();
+
         final EmojiDownloader downloader = new EmojiDownloader(context);
         downloader.download(config);
     }
@@ -63,6 +66,9 @@ public class Emojidex {
      */
     public void reload()
     {
+        if( !isInitialized() )
+            throw new EmojidexIsNotInitializedException();
+
         manager.reset();
         manager.add(PathGenerator.getLocalJsonPath());
     }
@@ -97,6 +103,9 @@ public class Emojidex {
      */
     public CharSequence emojify(CharSequence text, boolean useImage, EmojiFormat format)
     {
+        if( !isInitialized() )
+            throw new EmojidexIsNotInitializedException();
+
         return TextConverter.emojify(text, useImage, format);
     }
 
@@ -107,6 +116,9 @@ public class Emojidex {
      */
     public CharSequence deEmojify(CharSequence text)
     {
+        if( !isInitialized() )
+            throw new EmojidexIsNotInitializedException();
+
         return TextConverter.deEmojify(text);
     }
 
@@ -126,6 +138,9 @@ public class Emojidex {
      */
     public Emoji getEmoji(String name)
     {
+        if( !isInitialized() )
+            throw new EmojidexIsNotInitializedException();
+
         return manager.getEmoji(name);
     }
 
@@ -136,6 +151,9 @@ public class Emojidex {
      */
     public Emoji getEmoji(List<Integer> codes)
     {
+        if( !isInitialized() )
+            throw new EmojidexIsNotInitializedException();
+
         return manager.getEmoji(codes);
     }
 
@@ -146,6 +164,9 @@ public class Emojidex {
      */
     public Collection<Emoji> getEmojiList(String category)
     {
+        if( !isInitialized() )
+            throw new EmojidexIsNotInitializedException();
+
         return manager.getEmojiList(category);
     }
 
@@ -155,6 +176,9 @@ public class Emojidex {
      */
     public Collection<Emoji> getAllEmojiList()
     {
+        if( !isInitialized() )
+            throw new EmojidexIsNotInitializedException();
+
         return manager.getAllEmojiList();
     }
 
@@ -164,6 +188,9 @@ public class Emojidex {
      */
     public Collection<String> getCategoryNames()
     {
+        if( !isInitialized() )
+            throw new EmojidexIsNotInitializedException();
+
         return manager.getCategoryNames();
     }
 
@@ -173,6 +200,9 @@ public class Emojidex {
      */
     public EmojiFormat getDefaultFormat()
     {
+        if( !isInitialized() )
+            throw new EmojidexIsNotInitializedException();
+        
         return defaultFormat;
     }
 }
