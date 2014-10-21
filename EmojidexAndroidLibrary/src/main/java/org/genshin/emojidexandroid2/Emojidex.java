@@ -1,12 +1,10 @@
 package org.genshin.emojidexandroid2;
 
 import android.content.Context;
-import android.os.Environment;
 import android.util.Log;
 
 import org.genshin.emojidexandroidlibrary.R;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.List;
 
@@ -44,7 +42,7 @@ public class Emojidex {
         this.context = context.getApplicationContext();
         manager = new EmojiManager(this.context);
 //        manager.add(PathGenerator.getLocalJsonPath());
-        defaultFormat = EmojiFormat.toFormat(this.context.getResources().getString(R.string.emojidex_format_default));
+        defaultFormat = EmojiFormat.toFormat(this.context.getResources().getString(R.string.emoji_format_default));
 
         Log.d(TAG, "Initialize complete.");
     }

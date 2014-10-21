@@ -59,4 +59,6 @@
     <string name="download">Download</string>
     <string name="search_result">Search result</string>
 
+    <string name="emoji_format_stamp">px128</string>
+
 </resources>

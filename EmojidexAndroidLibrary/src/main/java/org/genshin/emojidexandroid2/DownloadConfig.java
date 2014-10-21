@@ -19,6 +19,10 @@ public class DownloadConfig {
     public DownloadConfig()
     {
         // Set default values.
+        final EmojiFormat defaultFormat = Emojidex.getInstance().getDefaultFormat();
+        if(defaultFormat != null)
+            formats.add(defaultFormat);
+
         kinds.add("utf");
         kinds.add("extended");
     }

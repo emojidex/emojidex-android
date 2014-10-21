@@ -97,8 +97,7 @@ public class EmojidexIME extends InputMethodService
 
         // Test.
         final DownloadConfig config = new DownloadConfig();
-        config.formats.add(EmojiFormat.toFormat(getString(R.string.dpi)));
-        config.formats.add(EmojiFormat.PNG_PX128);
+        config.formats.add(EmojiFormat.toFormat(getResources().getString(R.string.emoji_format_stamp)));
         emojidex.download(config);
     }
 
