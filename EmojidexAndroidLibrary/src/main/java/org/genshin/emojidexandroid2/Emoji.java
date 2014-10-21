@@ -29,6 +29,21 @@ public class Emoji extends SimpleJsonParam {
     private Resources res;
     private boolean hasOriginalCodes = false;
 
+    @Override
+    public String toString() {
+        return toString(Emojidex.getInstance().getDefaultFormat());
+    }
+
+    /**
+     * Emoji object to string.
+     * @param format    Image format.
+     * @return          String.
+     */
+    public String toString(EmojiFormat format)
+    {
+        return (String)TextConverter.createEmojidexText(this, Emojidex.getInstance().getDefaultFormat());
+    }
+
     /**
      * Get emoji name.
      * @return  Emoji name.

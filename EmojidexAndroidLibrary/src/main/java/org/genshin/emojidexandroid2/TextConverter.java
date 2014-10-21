@@ -17,15 +17,7 @@ class TextConverter {
 
     private static final String SEPARATOR = ":";
 
-    private final Emojidex emojidex;
-
-    /**
-     * Construce TextConverter object.
-     */
-    public TextConverter()
-    {
-        emojidex = Emojidex.getInstance();
-    }
+    private static final Emojidex emojidex = Emojidex.getInstance();
 
     /**
      * Normal text encode to emojidex text.
@@ -34,7 +26,7 @@ class TextConverter {
      * @param format    Image format.
      * @return          Emojidex text.
      */
-    public CharSequence emojify(CharSequence text, boolean useImage, EmojiFormat format)
+    public static CharSequence emojify(CharSequence text, boolean useImage, EmojiFormat format)
     {
         final SpannableStringBuilder result = new SpannableStringBuilder();
 
@@ -104,7 +96,7 @@ class TextConverter {
      * @param text  Emojidex text.
      * @return      Normal text.
      */
-    public CharSequence deEmojify(CharSequence text)
+    public static CharSequence deEmojify(CharSequence text)
     {
         final SpannableStringBuilder result = new SpannableStringBuilder();
 
@@ -172,7 +164,7 @@ class TextConverter {
      * @param format    Image format.
      * @return      Emojidex text.
      */
-    private CharSequence createEmojidexText(Emoji emoji, EmojiFormat format)
+    static CharSequence createEmojidexText(Emoji emoji, EmojiFormat format)
     {
         final ImageSpan imageSpan = new ImageSpan(emoji.getDrawable(format));
         final SpannableString result = new SpannableString(emoji.getText());

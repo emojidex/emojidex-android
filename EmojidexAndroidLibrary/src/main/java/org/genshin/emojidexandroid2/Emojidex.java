@@ -18,8 +18,6 @@ public class Emojidex {
 
     private static final Emojidex INSTANCE = new Emojidex();
 
-    private final TextConverter converter = new TextConverter();
-
     private Context context = null;
     private EmojiManager manager;
     private EmojiFormat defaultFormat;
@@ -101,7 +99,7 @@ public class Emojidex {
      */
     public CharSequence emojify(CharSequence text, boolean useImage, EmojiFormat format)
     {
-        return converter.emojify(text, useImage, format);
+        return TextConverter.emojify(text, useImage, format);
     }
 
     /**
@@ -111,7 +109,7 @@ public class Emojidex {
      */
     public CharSequence deEmojify(CharSequence text)
     {
-        return converter.deEmojify(text);
+        return TextConverter.deEmojify(text);
     }
 
     /**
