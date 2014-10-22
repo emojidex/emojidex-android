@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metadata>
-  <groupId>org.genshin</groupId>
+  <groupId>org.emojidex</groupId>
   <artifactId>emojidexandroid-lib</artifactId>
   <version>0.0.1</version>
   <versioning>
