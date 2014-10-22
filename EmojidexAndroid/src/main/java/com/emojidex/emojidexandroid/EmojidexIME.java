@@ -2,6 +2,7 @@ package com.emojidex.emojidexandroid;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
@@ -97,6 +98,13 @@ public class EmojidexIME extends InputMethodService
         historyManager = new HistoryManager(getApplicationContext());
 
         // Test.
+        final Resources res = getResources();
+        final EmojiLoader loader = new EmojiLoader(this);
+        loader.load(
+                EmojiLoader.Format.getFormat(res.getString(R.string.emoji_format_default)),
+                EmojiLoader.Format.getFormat(res.getString(R.string.emoji_format_stamp))
+        );
+
         final DownloadConfig config = new DownloadConfig();
         config.formats.add(EmojiFormat.toFormat(getResources().getString(R.string.emoji_format_stamp)));
         emojidex.download(config);
