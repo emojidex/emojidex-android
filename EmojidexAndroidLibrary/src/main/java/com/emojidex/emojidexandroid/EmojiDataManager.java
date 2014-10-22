@@ -112,7 +112,7 @@ public class EmojiDataManager
         Resources res = context.getResources();
 
         // Get device dpi.
-        String dpiDir = "hdpi";
+        String dpiDir = res.getString(R.string.emoji_format_default);
 
         // Load category data from "categories.json".
         try
