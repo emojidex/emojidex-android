@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.emojidex.emojidexandroidlibrary.R;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.List;
 
@@ -71,6 +72,14 @@ public class Emojidex {
 
         manager.reset();
         manager.add(PathGenerator.getLocalJsonPath());
+    }
+
+    /**
+     * Delete all cache files in local storage.
+     */
+    public void deleteLocalCache()
+    {
+        deleteFile(new File(PathGenerator.JSON_FILENAME));
     }
 
     /**
@@ -204,5 +213,24 @@ public class Emojidex {
             throw new EmojidexIsNotInitializedException();
         
         return defaultFormat;
+    }
+
+    /**
+     * Delete file.
+     * @param file  File.
+     */
+    private void deleteFile(File file)
+    {
+        // File is not found.
+        if(file == null || !file.exists())
+            return;
+
+        // If file is directory, delete child files.
+        if(file.isDirectory())
+            for(File child : file.listFiles())
+                deleteFile(child);
+
+        // Delete file.
+        file.delete();
     }
 }
