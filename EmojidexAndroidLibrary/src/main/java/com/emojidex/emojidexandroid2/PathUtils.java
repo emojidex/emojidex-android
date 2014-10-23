@@ -5,7 +5,7 @@ import android.os.Environment;
 /**
  * Created by kou on 14/10/03.
  */
-class PathGenerator {
+class PathUtils {
     static final String LOCAL_ROOT_PATH = Environment.getExternalStorageDirectory().getPath() + "/emojidex";
     static final String JSON_FILENAME = "emoji.json";
 

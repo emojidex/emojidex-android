@@ -71,7 +71,7 @@ public class Emojidex {
             throw new EmojidexIsNotInitializedException();
 
         manager.reset();
-        manager.add(PathGenerator.getLocalJsonPath());
+        manager.add(PathUtils.getLocalJsonPath());
     }
 
     /**
@@ -79,7 +79,7 @@ public class Emojidex {
      */
     public void deleteLocalCache()
     {
-        deleteFile(new File(PathGenerator.JSON_FILENAME));
+        deleteFile(new File(PathUtils.JSON_FILENAME));
     }
 
     /**

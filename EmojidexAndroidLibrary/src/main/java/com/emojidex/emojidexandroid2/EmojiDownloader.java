@@ -73,7 +73,7 @@ class EmojiDownloader {
         for(int i = 0;  i< kindCount;  ++i)
         {
             fileInfos[i] = new FileInfo();
-            fileInfos[i].name = PathGenerator.JSON_FILENAME;
+            fileInfos[i].name = PathUtils.JSON_FILENAME;
             fileInfos[i].kind = this.config.kinds.get(i);
         }
 
@@ -89,7 +89,7 @@ class EmojiDownloader {
      */
     private String getTemporaryJsonPath(String kind)
     {
-        return context.getExternalCacheDir() + "/" + kind + "/" + PathGenerator.JSON_FILENAME;
+        return context.getExternalCacheDir() + "/" + kind + "/" + PathUtils.JSON_FILENAME;
     }
 
     /**
@@ -280,7 +280,7 @@ class EmojiDownloader {
             config.listener.onJsonDownloadCompleted();
 
             // Load local data.
-            final ArrayList<JsonParam> localJsonParams = readJson(new File(PathGenerator.getLocalJsonPath()));
+            final ArrayList<JsonParam> localJsonParams = readJson(new File(PathUtils.getLocalJsonPath()));
             final HashMap<String, JsonParam> localJsonParamMap = new HashMap<String, JsonParam>();
 
             // vvvvvvvv DEBUG vvvvvvvv
@@ -416,7 +416,7 @@ class EmojiDownloader {
 
             result[0] = new PathInfo();
             result[0].destination = getTemporaryJsonPath(fileInfo.kind);
-            result[0].source = PathGenerator.getRemoteJsonPath(fileInfo.kind, config.sourcePath);
+            result[0].source = PathUtils.getRemoteJsonPath(fileInfo.kind, config.sourcePath);
 
             return result;
         }
@@ -451,7 +451,7 @@ class EmojiDownloader {
             try
             {
                 final ObjectMapper objectMapper = new ObjectMapper();
-                final File file = new File(PathGenerator.getLocalJsonPath());
+                final File file = new File(PathUtils.getLocalJsonPath());
                 final OutputStream os = new FileOutputStream(file);
                 objectMapper.writeValue(os, jsonParams);
                 os.close();
@@ -484,8 +484,8 @@ class EmojiDownloader {
             {
                 final EmojiFormat format = emojiFileInfo.formats.get(i);
                 result[i] = new PathInfo();
-                result[i].destination = PathGenerator.getLocalEmojiPath(emojiFileInfo.name, format);
-                result[i].source = PathGenerator.getRemoteEmojiPath(emojiFileInfo.name, format, emojiFileInfo.kind, config.sourcePath);
+                result[i].destination = PathUtils.getLocalEmojiPath(emojiFileInfo.name, format);
+                result[i].source = PathUtils.getRemoteEmojiPath(emojiFileInfo.name, format, emojiFileInfo.kind, config.sourcePath);
             }
 
             return result;

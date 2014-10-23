@@ -90,7 +90,7 @@ public class Emoji extends SimpleJsonParam {
         {
             try
             {
-                final File file = new File(PathGenerator.getLocalEmojiPath(name, format));
+                final File file = new File(PathUtils.getLocalEmojiPath(name, format));
                 if(file.exists())
                 {
                     final InputStream is = new FileInputStream(file);
