@@ -80,6 +80,7 @@ public class Emojidex {
     public void deleteLocalCache()
     {
         deleteFile(new File(PathUtils.LOCAL_ROOT_PATH));
+        Log.d(TAG, "Delete all cache files in local storage.");
     }
 
     /**

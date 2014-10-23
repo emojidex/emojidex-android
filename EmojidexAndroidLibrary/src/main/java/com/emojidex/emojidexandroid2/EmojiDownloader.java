@@ -280,7 +280,8 @@ class EmojiDownloader {
             config.listener.onJsonDownloadCompleted();
 
             // Load local data.
-            final ArrayList<JsonParam> localJsonParams = readJson(new File(PathUtils.getLocalJsonPath()));
+            final File localJsonFile = new File(PathUtils.getLocalJsonPath());
+            final ArrayList<JsonParam> localJsonParams = readJson(localJsonFile);
             final HashMap<String, JsonParam> localJsonParamMap = new HashMap<String, JsonParam>();
 
             // vvvvvvvv DEBUG vvvvvvvv
@@ -298,6 +299,8 @@ class EmojiDownloader {
             for(JsonParam jsonParam: localJsonParams)
                 localJsonParamMap.put(jsonParam.name, jsonParam);
 
+            Log.d(TAG, localJsonFile.getAbsolutePath() + " : param count = " + localJsonParams.size());
+
             // Create emoji file information list.
             final ArrayList<ArrayList<FileInfo>> fileInfosArray = new ArrayList<ArrayList<FileInfo>>();
             fileInfosArray.ensureCapacity(config.threadCount);
@@ -312,6 +315,8 @@ class EmojiDownloader {
 
                 // Load json data.
                 final ArrayList<JsonParam> newJsonParams = readJson(jsonFile);
+
+                Log.d(TAG, jsonFile.getAbsolutePath() + " : param count = " + newJsonParams.size());
 
                 // Add file information to download list.
                 for(JsonParam jsonParam : newJsonParams)
@@ -400,6 +405,8 @@ class EmojiDownloader {
                     task.execute(fileInfos.toArray(new FileInfo[fileInfos.size()]));
                 }
             }
+
+            Log.d(TAG, localJsonFile.getAbsolutePath() + " : param count = " + localJsonParams.size());
 
             // Thread end.
             super.onPostExecute(result);
