@@ -3,4 +3,8 @@ emojidex-android
 
 emojidex keyboard/editor/libraries for Android
 
-Dual licensed under the GPLv3 and AGPLv3. All rights reserved 2012 Genshin Souzou Kabushiki Kaisha.
+License
+=======
+emojidex and emojidex tools are licensed under the [emojidex Open License](https://www.emojidex.com/emojidex/emojidex_open_license).
+
+©2013 the emojidex project / Genshin Souzou K.K. [Phantom Creation Inc.]
