@@ -79,7 +79,7 @@ public class Emojidex {
      */
     public void deleteLocalCache()
     {
-        deleteFile(new File(PathUtils.JSON_FILENAME));
+        deleteFile(new File(PathUtils.LOCAL_ROOT_PATH));
     }
 
     /**
