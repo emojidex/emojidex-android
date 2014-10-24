@@ -37,8 +37,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class MainActivity extends Activity {
+import com.emojidex.emojidexandroid2.Emojidex;
 
+public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,9 +87,7 @@ public class MainActivity extends Activity {
     /**
      * Emojidex
      */
-    private EmojidexEditor emojidex = null;
-    private EmojiDataManager emojiDataManager;
-    private List<EmojiData> emojiDataList;
+    private Emojidex emojidex = null;
 
     private EditText editText;
     private CustomTextWatcher textWatcher;
@@ -100,13 +99,11 @@ public class MainActivity extends Activity {
 
     private void initEmojidexEditor()
     {
-        if (emojidex == null)
-            emojidex = new EmojidexEditor(getApplicationContext());
+        // Initialize emojdiex.
+        emojidex = Emojidex.getInstance();
+        emojidex.initialize(this);
 
-        emojiDataManager = emojidex.getEmojiDataManager();
-        com.emojidex.emojidexandroid2.Emojidex.getInstance().initialize(this);
-        emojiDataList = emojiDataManager.getCategorizedList(getString(R.string.all_category));
-
+        // Get edit text.
         editText = (EditText)findViewById(R.id.edit_text);
 
         // detects input
@@ -130,7 +127,7 @@ public class MainActivity extends Activity {
 
     private CharSequence toUnicodeString(final CharSequence cs)
     {
-        return emojidex.toUnicodeString(cs);
+        return emojidex.emojify(cs, false);
     }
 
     /**
@@ -229,13 +226,13 @@ public class MainActivity extends Activity {
             editText.setSelection(newPos);
 
             // load image
-            ArrayList<String> emojiNames = new ArrayList<String>();
-            emojiNames = emojidex.getEmojiNames();
-            if (emojiNames != null)
-            {
-                for (String emojiName : emojiNames)
-                    loadImage(emojiName);
-            }
+//            ArrayList<String> emojiNames = new ArrayList<String>();
+//            emojiNames = emojidex.getEmojiNames();
+//            if (emojiNames != null)
+//            {
+//                for (String emojiName : emojiNames)
+//                    loadImage(emojiName);
+//            }
         }
     }
 
@@ -367,10 +364,10 @@ public class MainActivity extends Activity {
      */
     private void loadImage(String name)
     {
-        EmojiData emoji = emojiDataManager.getEmojiData(name);
-        ImageView blank = (ImageView)findViewById(R.id.blank);
-        if (emoji != null && emoji.getIcon() != null)
-            blank.setImageDrawable(emoji.getIcon());
+//        EmojiData emoji = emojiDataManager.getEmojiData(name);
+//        ImageView blank = (ImageView)findViewById(R.id.blank);
+//        if (emoji != null && emoji.getIcon() != null)
+//            blank.setImageDrawable(emoji.getIcon());
     }
 
     /**

@@ -40,7 +40,7 @@ public class Emoji extends SimpleJsonParam {
      */
     public String toString(EmojiFormat format)
     {
-        return (String)TextConverter.createEmojidexText(this, Emojidex.getInstance().getDefaultFormat());
+        return TextConverter.createEmojidexText(this, Emojidex.getInstance().getDefaultFormat()).toString();
     }
 
     /**
@@ -94,18 +94,22 @@ public class Emoji extends SimpleJsonParam {
             try
             {
                 final File file = new File(PathUtils.getLocalEmojiPath(name, format));
+                Drawable drawable;
                 if(file.exists())
                 {
                     final InputStream is = new FileInputStream(file);
                     final Bitmap bitmap = BitmapFactory.decodeStream(is);
-                    final Drawable[] drawableArray = {new BitmapDrawable(res, bitmap)};
-                    drawables[index] = new LayerDrawable(drawableArray);
+                    drawable = new BitmapDrawable(res, bitmap);
                 }
                 else
                 {
-                    final Drawable[] drawableArray = { res.getDrawable(R.drawable.ic_launcher) };
-                    drawables[index] = new LayerDrawable(drawableArray);
+                    drawable = res.getDrawable(R.drawable.ic_launcher);
                 }
+                drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+                final Drawable[] drawableArray = { drawable };
+                final LayerDrawable layerDrawable = new LayerDrawable(drawableArray);
+                layerDrawable.setBounds(0, 0, layerDrawable.getIntrinsicWidth(), layerDrawable.getIntrinsicHeight());
+                drawables[index] = layerDrawable;
             }
             catch(Exception e)
             {
