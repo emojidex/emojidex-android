@@ -5,9 +5,17 @@ import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
+import android.graphics.drawable.ScaleDrawable;
 import android.inputmethodservice.Keyboard;
 import android.util.DisplayMetrics;
+import android.util.Log;
 
+import com.emojidex.emojidexandroid2.Emoji;
+import com.emojidex.emojidexandroid2.EmojiFormat;
+
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -64,9 +72,10 @@ public class EmojidexKeyboard extends Keyboard {
 
     /**
      * Add new key to keyboard.
-     * @param emojiData
+     * @param emoji
+     * @param emojiFormat
      */
-    private void addKey(EmojiData emojiData)
+    private void addKey(Emoji emoji, EmojiFormat emojiFormat)
     {
         List<Key> keys = getKeys();
 
@@ -80,7 +89,7 @@ public class EmojidexKeyboard extends Keyboard {
         // Create new key and set parameters.
         Key newKey = new Key(row);
 
-        final List<Integer> codes = emojiData.getCodes();
+        final List<Integer> codes = emoji.getCodes();
         final int size = codes.size();
         newKey.codes = new int[size];
         for(int i = 0;  i < size;  ++i)
@@ -89,20 +98,19 @@ public class EmojidexKeyboard extends Keyboard {
         newKey.x = x;
         newKey.y = y;
 
-        final BitmapDrawable icon = emojiData.getKeyIcon();
-        final Bitmap bitmap = icon.getBitmap();
+        final Drawable drawable = emoji.getDrawable(emojiFormat);
+        final ScaleDrawable icon = new ScaleDrawable(drawable, 0 , 1.0f, 1.0f);
+        final float scale = ((float)keyIconSize) / drawable.getIntrinsicWidth();
+        icon.setBounds(
+                0, 0,
+                icon.getIntrinsicWidth(), icon.getIntrinsicHeight()
+        );
+        if(icon.setLevel((int)(10000 * scale)))
+            icon.invalidateSelf();
 
-        final int bitmapDensity = bitmap.getDensity();
-        final int targetDensity = (int)(bitmapDensity * keyIconSize / bitmap.getWidth());
+        newKey.icon = icon;
 
-        icon.setTargetDensity(targetDensity);
-
-        if(icon != null)
-            newKey.icon = icon;
-        else
-            newKey.label = emojiData.getMoji();
-
-        newKey.popupCharacters = emojiData.getName();
+        newKey.popupCharacters = emoji.getName();
 
         keys.add(newKey);
     }
@@ -110,14 +118,16 @@ public class EmojidexKeyboard extends Keyboard {
     /**
      * Create CategorizedKeyboard object.
      * @param context
-     * @param emojiDatas
+     * @param emojies
      * @param minHeight
      * @return      New CategorizedKeyboard object.
      */
-    public static CategorizedKeyboard create(Context context, List<EmojiData> emojiDatas, int minHeight)
+    public static CategorizedKeyboard create(Context context, Collection<Emoji> emojies, int minHeight)
     {
+        context = context.getApplicationContext();
+
         // Set keyboard parameters.
-        int emojiCount = (emojiDatas != null) ? emojiDatas.size() : 0;
+        int emojiCount = (emojies != null) ? emojies.size() : 0;
         EmojidexKeyboard.minHeight = minHeight;
 
         // Create keyboard.
@@ -125,18 +135,19 @@ public class EmojidexKeyboard extends Keyboard {
         EmojidexKeyboard newKeyboard = new EmojidexKeyboard(context);
 
         // Create categorizedKeyboard's page.
-        int num = 0;
-        for(int i = 0; i < emojiCount; i++)
+        final EmojiFormat emojiFormat = EmojiFormat.toFormat(context.getResources().getString(R.string.emoji_format_default));
+        final int keyCountMax = columnCount * 3;
+        int count = 0;
+        for(Emoji emoji : emojies)
         {
-            // Create new page.
-            if (num == columnCount * 3)
+            if( count == keyCountMax )
             {
                 categorizedKeyboard.setKeyboard(newKeyboard);
                 newKeyboard = new EmojidexKeyboard(context);
-                num = 0;
+                count = 0;
             }
-            newKeyboard.addKey(emojiDatas.get(i));
-            num++;
+            newKeyboard.addKey(emoji, emojiFormat);
+            ++count;
         }
         categorizedKeyboard.setKeyboard(newKeyboard);
 

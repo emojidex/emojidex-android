@@ -42,7 +42,7 @@ public class Emojidex {
 
         this.context = context.getApplicationContext();
         manager = new EmojiManager(this.context);
-//        manager.add(PathGenerator.getLocalJsonPath());
+        manager.add(PathUtils.getLocalJsonPath());
         defaultFormat = EmojiFormat.toFormat(this.context.getResources().getString(R.string.emoji_format_default));
 
         Log.d(TAG, "Initialize complete.");

@@ -23,7 +23,8 @@ import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.emojidex.emojidexandroid2.DownloadConfig;
-import com.emojidex.emojidexandroid2.*;
+import com.emojidex.emojidexandroid2.Emoji;
+import com.emojidex.emojidexandroid2.EmojiFormat;
 import com.emojidex.emojidexandroid2.Emojidex;
 
 import java.util.ArrayList;
@@ -37,7 +38,7 @@ import java.util.Map;
  */
 public class EmojidexIME extends InputMethodService
         implements KeyboardView.OnKeyboardActionListener, GestureDetector.OnGestureListener {
-    private EmojiDataManager emojiDataManager;
+    private Emojidex emojidex;
 
     private InputMethodManager inputMethodManager = null;
     private int showIMEPickerCode = 0;
@@ -71,25 +72,28 @@ public class EmojidexIME extends InputMethodService
         inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
         showIMEPickerCode = getResources().getInteger(R.integer.ime_keycode_show_ime_picker);
 
-        // Create EmojiDataManager object.
-        emojiDataManager = EmojiDataManager.create(this);
-        final com.emojidex.emojidexandroid2.Emojidex emojidex = Emojidex.getInstance();
+        // Initialize Emojidex object.
+        emojidex = Emojidex.getInstance();
         emojidex.initialize(this);
 
         // Create categorized keyboards.
         minHeight = (int)getResources().getDimension(R.dimen.ime_keyboard_height);
         categorizedKeyboards = new HashMap<String, CategorizedKeyboard>();
-        for(CategoryData categoryData : emojiDataManager.getCategoryDatas())
+        for(String categoryName : emojidex.getCategoryNames())
         {
-            final String categoryName = categoryData.getName();
-            categorizedKeyboards.put(categoryName,
-                    EmojidexKeyboard.create(getApplicationContext(), emojiDataManager.getCategorizedList(categoryName), minHeight));
+            final CategorizedKeyboard newKeyboard = EmojidexKeyboard.create(this, emojidex.getEmojiList(categoryName), minHeight);
+            categorizedKeyboards.put(categoryName, newKeyboard);
+        }
+        {
+            final String categoryName = getString(R.string.all_category);
+            final CategorizedKeyboard newKeybaord = EmojidexKeyboard.create(this, emojidex.getAllEmojiList(), minHeight);
+            categorizedKeyboards.put(categoryName, newKeybaord);
         }
 
         // download keyboard
-        String result = FileOperation.loadFileFromLocal(getApplicationContext(), FileOperation.DOWNLOAD);
-        if (!result.equals(""))
-            emojiDataManager.addCategorizedEmoji(result, FileOperation.DOWNLOAD);
+//        String result = FileOperation.loadFileFromLocal(getApplicationContext(), FileOperation.DOWNLOAD);
+//        if (!result.equals(""))
+//            emojiDataManager.addCategorizedEmoji(result, FileOperation.DOWNLOAD);
 
         // Create GestureDetector
         detector = new GestureDetector(getApplicationContext(), this);
@@ -98,13 +102,6 @@ public class EmojidexIME extends InputMethodService
         historyManager = new HistoryManager(getApplicationContext());
 
         // Test.
-        final Resources res = getResources();
-        final EmojiLoader loader = new EmojiLoader(this);
-        loader.load(
-                EmojiLoader.Format.getFormat(res.getString(R.string.emoji_format_default)),
-                EmojiLoader.Format.getFormat(res.getString(R.string.emoji_format_stamp))
-        );
-
         final DownloadConfig config = new DownloadConfig();
         config.formats.add(EmojiFormat.toFormat(getResources().getString(R.string.emoji_format_stamp)));
         emojidex.download(config);
@@ -211,33 +208,14 @@ public class EmojidexIME extends InputMethodService
             else
                 inputMethodManager.showInputMethodPicker();
         }
-        /*
-        else if (primaryCode == KeyEvent.KEYCODE_ENTER)
-        {
-            String hex = Integer.toHexString(getCurrentInputEditorInfo().inputType);
-            int type = Integer.parseInt(hex, 16);
-
-            // check multi-line flag
-            if ((type & InputType.TYPE_TEXT_FLAG_MULTI_LINE) > 0 ||
-                (type & InputType.TYPE_TEXT_FLAG_IME_MULTI_LINE) > 0)
-            {
-                sendDownUpKeyEvents(primaryCode);
-            }
-            // when multi-line is not allowed, hide keyboard
-            else
-            {
-                hideWindow();
-            }
-        }
-        */
         else
         {
             // Input emoji.
-            final EmojiData emoji = emojiDataManager.getEmojiData(codes);
+            final Emoji emoji = emojidex.getEmoji(codes);
             if(emoji != null)
             {
-                getCurrentInputConnection().commitText(emoji.createImageString(), 1);
-                historyManager.regist(emoji.name);
+                getCurrentInputConnection().commitText(emoji.toString(), 1);
+                historyManager.regist(emoji.getName());
             }
             // Input other.
             else
@@ -274,21 +252,21 @@ public class EmojidexIME extends InputMethodService
     {
         // Create category buttons and add to IME layout.
         final ViewGroup categoriesView = (ViewGroup)layout.findViewById(R.id.ime_categories);
+        final ArrayList<String> categoryNames = new ArrayList<String>();
+        categoryNames.add(getString(R.string.all_category));
+        categoryNames.addAll(emojidex.getCategoryNames());
 
-        for(final CategoryData categoryData : emojiDataManager.getCategoryDatas())
+        for(final String categoryName : categoryNames)
         {
             // Create button.
             final Button newButton = new Button(this);
 
             // Set button parametors.
-            final Locale locale = Locale.getDefault();
-            final boolean isJapanese = locale.equals(Locale.JAPANESE) || locale.equals(Locale.JAPAN);
-            final String buttonText = isJapanese ? categoryData.getJapaneseName() : categoryData.getEnglishName();
+            final String buttonText = categoryName;
             newButton.setText(buttonText);
             newButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    final String categoryName = categoryData.getName();
                     android.util.Log.d("ime", "Click category button : category = " + categoryName);
                     setKeyboard(categoryName);
                 }
@@ -396,14 +374,7 @@ public class EmojidexIME extends InputMethodService
      */
     private void recreateKeyboard(String categoryName, String filename)
     {
-        String data = FileOperation.loadFileFromLocal(getApplicationContext(), filename);
-        if (!data.equals(""))
-        {
-            emojiDataManager.deleteCategorizedEmoji(categoryName);
-            emojiDataManager.addCategorizedEmoji(data, categoryName);
-            categorizedKeyboards.put(categoryName,
-                    EmojidexKeyboard.create(this, emojiDataManager.getCategorizedList(categoryName), minHeight));
-        }
+        android.util.Log.d("ime", "recreateKeyboard(" + categoryName + ", " + filename + ")");
     }
 
     /**
@@ -531,13 +502,13 @@ public class EmojidexIME extends InputMethodService
     {
 
         // get emoji
-        List<EmojiData> emojiData = new ArrayList<EmojiData>();
+        List<Emoji> emojies = new ArrayList<Emoji>();
         for (String name : data)
-            emojiData.add(emojiDataManager.getEmojiData(name));
+            emojies.add(emojidex.getEmoji(name));
 
         // create keyboards
         final int minHeight = (int)getResources().getDimension(R.dimen.ime_keyboard_height);
-        CategorizedKeyboard keyboards = EmojidexKeyboard.create(this, emojiData, minHeight);
+        CategorizedKeyboard keyboards = EmojidexKeyboard.create(this, emojies, minHeight);
 
         setKeyboard(keyboards);
     }

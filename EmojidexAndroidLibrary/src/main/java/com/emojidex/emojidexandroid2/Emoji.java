@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
+import android.util.Log;
 
 import com.emojidex.emojidexandroidlibrary.R;
 
@@ -19,6 +20,8 @@ import java.util.List;
  * Created by kou on 14/10/03.
  */
 public class Emoji extends SimpleJsonParam {
+    static final String TAG = Emojidex.TAG + "::Emoji";
+
     private final List<Integer> codes = new ArrayList<Integer>();
     private final Drawable[] drawables = new Drawable[EmojiFormat.values().length];
 
