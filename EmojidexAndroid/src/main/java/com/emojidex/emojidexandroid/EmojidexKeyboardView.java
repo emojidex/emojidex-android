@@ -22,7 +22,12 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.emojidex.emojidexandroid2.EmojiFormat;
+import com.emojidex.emojidexandroid2.Emojidex;
+import com.emojidex.emojidexandroid2.Emoji;
+
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 
 /**
@@ -126,59 +131,29 @@ public class EmojidexKeyboardView extends KeyboardView {
             public void onClick(View v) {
                 closePopup();
 
-                final String temporaryFilePath = "tmp.png";
-                FileOutputStream fos = null;
-                try {
-                    // Get emoji data.
-                    final EmojiData emojiData = EmojiDataManager.create(context).getEmojiData(emojiName);
+                // Get emoji data.
+                final Emoji emoji = Emojidex.getInstance().getEmoji(emojiName);
+                final String formatName = context.getResources().getString(R.string.emoji_format_stamp);
+                final EmojiFormat format = EmojiFormat.toFormat(formatName);
 
-                    // Convert image to byte array.
-                    final Bitmap bmp = emojiData.getStamp();
-                    final ByteArrayOutputStream os = new ByteArrayOutputStream();
-                    bmp.compress(Bitmap.CompressFormat.PNG, 100, os);
-                    os.flush();
-                    final byte[] w = os.toByteArray();
-                    os.close();
+                // Send intent.
+                final File file = new File(emoji.getImageFilePath(format));
+                final Uri uri = Uri.fromFile(file);
+                final ActivityManager am = (ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
+                final ActivityManager.RunningTaskInfo taskInfo =  am.getRunningTasks(1).get(0);
 
-                    // Save byte array to temporary file.
-                    fos = context.openFileOutput(temporaryFilePath, Context.MODE_WORLD_READABLE);
-                    fos.write(w, 0, w.length);
-                    fos.flush();
+                final Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("image/png");
+                intent.putExtra(Intent.EXTRA_STREAM, uri);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+                intent.setPackage(taskInfo.baseActivity.getPackageName());
 
-                    // Send intent.
-                    final Uri uri = Uri.fromFile(context.getFileStreamPath(temporaryFilePath));
-                    final ActivityManager am = (ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
-                    final ActivityManager.RunningTaskInfo taskInfo =  am.getRunningTasks(1).get(0);
+                final Intent proxyIntent = new Intent(context, ProxyActivity.class);
+                proxyIntent.putExtra(Intent.EXTRA_INTENT, intent);
+                proxyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-                    final Intent intent = new Intent(Intent.ACTION_SEND);
-                    intent.setType("image/png");
-                    intent.putExtra(Intent.EXTRA_STREAM, uri);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
-                    intent.setPackage(taskInfo.baseActivity.getPackageName());
-
-                    final Intent proxyIntent = new Intent(context, ProxyActivity.class);
-                    proxyIntent.putExtra(Intent.EXTRA_INTENT, intent);
-                    proxyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-                    context.startActivity(proxyIntent);
-                }
-                catch(Exception e)
-                {
-                    e.printStackTrace();
-                }
-                finally
-                {
-                    try
-                    {
-                        if (fos != null)
-                            fos.close();
-                    }
-                    catch(Exception e)
-                    {
-                        e.printStackTrace();
-                    }
-                }
+                context.startActivity(proxyIntent);
             }
         });
     }

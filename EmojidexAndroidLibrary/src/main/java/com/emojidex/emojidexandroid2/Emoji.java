@@ -12,6 +12,8 @@ import com.emojidex.emojidexandroidlibrary.R;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +25,7 @@ public class Emoji extends SimpleJsonParam {
     static final String TAG = Emojidex.TAG + "::Emoji";
 
     private final List<Integer> codes = new ArrayList<Integer>();
-    private final Drawable[] drawables = new Drawable[EmojiFormat.values().length];
+    private final Bitmap[] bitmaps = new Bitmap[EmojiFormat.values().length];
 
     private Resources res;
     private boolean hasOriginalCodes = false;
@@ -84,41 +86,49 @@ public class Emoji extends SimpleJsonParam {
      * @param format    Image format.
      * @return          Image.
      */
-    public Drawable getDrawable(EmojiFormat format)
+    public BitmapDrawable getDrawable(EmojiFormat format)
     {
         final int index = format.ordinal();
 
         // Load image.
-        if(drawables[index] == null)
+        if(bitmaps[index] == null)
         {
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPurgeable = true;
+            InputStream is;
+
             try
             {
-                final File file = new File(PathUtils.getLocalEmojiPath(name, format));
-                Drawable drawable;
-                if(file.exists())
-                {
-                    final InputStream is = new FileInputStream(file);
-                    final Bitmap bitmap = BitmapFactory.decodeStream(is);
-                    drawable = new BitmapDrawable(res, bitmap);
-                }
-                else
-                {
-                    drawable = res.getDrawable(R.drawable.ic_launcher);
-                }
-                drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
-                final Drawable[] drawableArray = { drawable };
-                final LayerDrawable layerDrawable = new LayerDrawable(drawableArray);
-                layerDrawable.setBounds(0, 0, layerDrawable.getIntrinsicWidth(), layerDrawable.getIntrinsicHeight());
-                drawables[index] = layerDrawable;
+                final File file = new File(getImageFilePath(format));
+                is = new FileInputStream(file);
             }
-            catch(Exception e)
+            catch(FileNotFoundException e)
             {
-                e.printStackTrace();
+                // If file not found, use default image.
+                try
+                {
+                    is = res.getAssets().open(PathUtils.getAssetsEmojiPath("not_found", format));
+                }
+                catch(IOException e2)
+                {
+                    is = null;
+                    e2.printStackTrace();
+                }
             }
+            final Bitmap tmpBitmap = BitmapFactory.decodeStream(is, null, options);
+            bitmaps[index] = Bitmap.createBitmap(tmpBitmap);
         }
 
-        // Return image.
-        return drawables[index];
+        // Create drawable.
+        final BitmapDrawable result = new BitmapDrawable(res, bitmaps[index]);
+        result.setBounds(0, 0, result.getIntrinsicWidth(), result.getIntrinsicHeight());
+
+        return result;
+    }
+
+    public String getImageFilePath(EmojiFormat format)
+    {
+        return PathUtils.getLocalEmojiPath(name, format);
     }
 
     /**

@@ -70,7 +70,6 @@ public class EmojiData
             for(Integer current : codes)
                 moji += String.valueOf(Character.toChars(current));
         }
-
         // Load icon image.
         try
         {

@@ -62,4 +62,17 @@ class PathUtils {
                 + JSON_FILENAME
                 ;
     }
+
+    /**
+     * Create emoji path from assets.
+     * @param name      Emoji name.
+     * @param format    Emoji format.
+     * @return          Emoji path.
+     */
+    public static String getAssetsEmojiPath(String name, EmojiFormat format)
+    {
+        return format.getRelativeDir() + "/"
+                + name + format.getExtension()
+                ;
+    }
 }
