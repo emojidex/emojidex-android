@@ -3,14 +3,10 @@ package com.emojidex.emojidexandroid;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.ScaleDrawable;
 import android.inputmethodservice.Keyboard;
 import android.util.DisplayMetrics;
-import android.util.Log;
 
 import com.emojidex.emojidexandroid2.Emoji;
 import com.emojidex.emojidexandroid2.EmojiFormat;

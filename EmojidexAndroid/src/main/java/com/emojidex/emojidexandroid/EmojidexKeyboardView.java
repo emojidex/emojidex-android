@@ -6,7 +6,6 @@ import android.content.ClipDescription;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.net.Uri;
@@ -22,13 +21,11 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.emojidex.emojidexandroid2.Emoji;
 import com.emojidex.emojidexandroid2.EmojiFormat;
 import com.emojidex.emojidexandroid2.Emojidex;
-import com.emojidex.emojidexandroid2.Emoji;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 
 /**
  * Created by nazuki on 14/01/08.

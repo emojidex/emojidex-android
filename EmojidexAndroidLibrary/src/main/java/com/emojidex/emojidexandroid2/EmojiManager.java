@@ -3,10 +3,9 @@ package com.emojidex.emojidexandroid2;
 import android.content.Context;
 import android.content.res.Resources;
 
+import com.emojidex.emojidexandroidlibrary.R;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import com.emojidex.emojidexandroidlibrary.R;
 
 import java.io.File;
 import java.io.FileInputStream;
