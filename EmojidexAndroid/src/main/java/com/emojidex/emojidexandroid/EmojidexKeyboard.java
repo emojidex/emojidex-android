@@ -3,6 +3,7 @@ package com.emojidex.emojidexandroid;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ScaleDrawable;
 import android.inputmethodservice.Keyboard;
@@ -91,15 +92,8 @@ public class EmojidexKeyboard extends Keyboard {
         newKey.x = x;
         newKey.y = y;
 
-        final Drawable drawable = emoji.getDrawable(emojiFormat);
-        final ScaleDrawable icon = new ScaleDrawable(drawable, 0 , 1.0f, 1.0f);
-        final float scale = ((float)keyIconSize) / drawable.getIntrinsicWidth();
-        icon.setBounds(
-                0, 0,
-                icon.getIntrinsicWidth(), icon.getIntrinsicHeight()
-        );
-        if(icon.setLevel((int)(10000 * scale)))
-            icon.invalidateSelf();
+        final BitmapDrawable icon = emoji.getDrawable(emojiFormat);
+        icon.setTargetDensity((int)(icon.getBitmap().getDensity() * keyIconSize / icon.getIntrinsicWidth()));
 
         newKey.icon = icon;
 

@@ -82,7 +82,7 @@ public class Emoji extends SimpleJsonParam {
      * @param format    Image format.
      * @return          Image.
      */
-    public Drawable getDrawable(EmojiFormat format)
+    public BitmapDrawable getDrawable(EmojiFormat format)
     {
         final int index = format.ordinal();
 
