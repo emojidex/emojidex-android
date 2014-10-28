@@ -8,9 +8,6 @@ import android.graphics.drawable.ScaleDrawable;
 import android.inputmethodservice.Keyboard;
 import android.util.DisplayMetrics;
 
-import com.emojidex.emojidexandroid2.Emoji;
-import com.emojidex.emojidexandroid2.EmojiFormat;
-
 import java.util.Collection;
 import java.util.List;
 

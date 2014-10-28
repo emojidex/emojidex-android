@@ -1,9 +1,10 @@
-package com.emojidex.emojidexandroid2;
+package com.emojidex.emojidexandroid;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -81,7 +82,7 @@ public class Emoji extends SimpleJsonParam {
      * @param format    Image format.
      * @return          Image.
      */
-    public BitmapDrawable getDrawable(EmojiFormat format)
+    public Drawable getDrawable(EmojiFormat format)
     {
         final int index = format.ordinal();
 

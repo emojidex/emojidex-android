@@ -1,4 +1,4 @@
-package com.emojidex.emojidexandroid2;
+package com.emojidex.emojidexandroid;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

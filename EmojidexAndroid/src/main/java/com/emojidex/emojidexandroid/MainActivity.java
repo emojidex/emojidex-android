@@ -26,8 +26,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import com.emojidex.emojidexandroid2.Emojidex;
-
 import java.util.List;
 
 public class MainActivity extends Activity {

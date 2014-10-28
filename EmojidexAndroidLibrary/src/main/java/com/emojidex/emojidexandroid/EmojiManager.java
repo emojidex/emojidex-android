@@ -1,4 +1,4 @@
-package com.emojidex.emojidexandroid2;
+package com.emojidex.emojidexandroid;
 
 import android.content.Context;
 import android.content.res.Resources;

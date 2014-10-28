@@ -1,4 +1,4 @@
-package com.emojidex.emojidexandroid2;
+package com.emojidex.emojidexandroid;
 
 import java.util.ArrayList;
 

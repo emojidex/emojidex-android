@@ -21,10 +21,6 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.emojidex.emojidexandroid2.Emoji;
-import com.emojidex.emojidexandroid2.EmojiFormat;
-import com.emojidex.emojidexandroid2.Emojidex;
-
 import java.io.File;
 
 /**

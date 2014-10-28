@@ -1,4 +1,4 @@
-package com.emojidex.emojidexandroid2;
+package com.emojidex.emojidexandroid;
 
 /**
  * Created by kou on 14/10/07.
