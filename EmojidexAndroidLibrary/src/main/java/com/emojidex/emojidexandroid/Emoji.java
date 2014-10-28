@@ -5,12 +5,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +27,35 @@ public class Emoji extends SimpleJsonParam {
 
     private Resources res;
     private boolean hasOriginalCodes = false;
+
+    /**
+     * Reload image files.
+     */
+    public void reloadImage()
+    {
+        for(EmojiFormat format : EmojiFormat.values())
+        {
+            final Bitmap current = bitmaps[format.ordinal()];
+            if(current == null)
+                continue;
+
+            // Load bitmap and create buffer.
+            final Bitmap newBitmap = loadBitmap(format);
+            final int[] pixels = new int[newBitmap.getWidth() * newBitmap.getHeight()];
+            final IntBuffer buffer = IntBuffer.wrap(pixels);
+
+            // new bitmap -> buffer
+            buffer.position(0);
+            newBitmap.copyPixelsToBuffer(buffer);
+
+            // current <- buffer
+            buffer.position(0);
+            current.copyPixelsFromBuffer(buffer);
+
+            // release.
+            newBitmap.recycle();
+        }
+    }
 
     @Override
     public String toString() {
@@ -89,30 +120,9 @@ public class Emoji extends SimpleJsonParam {
         // Load image.
         if(bitmaps[index] == null)
         {
-            final BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inPurgeable = true;
-            InputStream is;
-
-            try
-            {
-                final File file = new File(getImageFilePath(format));
-                is = new FileInputStream(file);
-            }
-            catch(FileNotFoundException e)
-            {
-                // If file not found, use default image.
-                try
-                {
-                    is = res.getAssets().open(PathUtils.getAssetsEmojiPath("not_found", format));
-                }
-                catch(IOException e2)
-                {
-                    is = null;
-                    e2.printStackTrace();
-                }
-            }
-            final Bitmap tmpBitmap = BitmapFactory.decodeStream(is, null, options);
-            bitmaps[index] = Bitmap.createBitmap(tmpBitmap);
+            final Bitmap newBitmap = loadBitmap(format);
+            bitmaps[index] = newBitmap.copy(newBitmap.getConfig(), true);
+            newBitmap.recycle();
         }
 
         // Create drawable.
@@ -179,6 +189,39 @@ public class Emoji extends SimpleJsonParam {
         hasOriginalCodes = true;
 
         initialize(res);
+    }
+
+    /**
+     * Load bitmap from local storage.
+     * @param format    Emoji format.
+     * @return          Bitmap.
+     */
+    Bitmap loadBitmap(EmojiFormat format)
+    {
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPurgeable = true;
+        InputStream is;
+
+        try
+        {
+            final File file = new File(getImageFilePath(format));
+            is = new FileInputStream(file);
+        }
+        catch(FileNotFoundException e)
+        {
+            // If file not found, use default image.
+            try
+            {
+                is = res.getAssets().open(PathUtils.getAssetsEmojiPath("not_found", format));
+            }
+            catch(IOException e2)
+            {
+                is = null;
+                e2.printStackTrace();
+            }
+        }
+
+        return BitmapFactory.decodeStream(is, null, options);
     }
 
     /**

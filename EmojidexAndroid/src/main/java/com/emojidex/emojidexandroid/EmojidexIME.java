@@ -97,6 +97,7 @@ public class EmojidexIME extends InputMethodService
         // Test.
         final DownloadConfig config = new DownloadConfig();
         config.formats.add(EmojiFormat.toFormat(getResources().getString(R.string.emoji_format_stamp)));
+        config.listener = new CustomDownloadListener();
         emojidex.download(config);
     }
 
@@ -603,5 +604,28 @@ public class EmojidexIME extends InputMethodService
             Toast.makeText(this, R.string.delete_success, Toast.LENGTH_SHORT).show();
         else
             Toast.makeText(this, R.string.delete_failure, Toast.LENGTH_SHORT).show();
+    }
+
+
+    /**
+     * Custom download listener.
+     */
+    private class CustomDownloadListener extends DownloadListener
+    {
+        @Override
+        public void onJsonDownloadCompleted() {
+            super.onJsonDownloadCompleted();
+        }
+
+        @Override
+        public void onEmojiDownloadCompleted(String emojiName) {
+            final Emoji emoji = Emojidex.getInstance().getEmoji(emojiName);
+            emoji.reloadImage();
+        }
+
+        @Override
+        public void onAllDownloadCompleted() {
+            super.onAllDownloadCompleted();
+        }
     }
 }
