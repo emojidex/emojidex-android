@@ -620,7 +620,8 @@ public class EmojidexIME extends InputMethodService
         @Override
         public void onEmojiDownloadCompleted(String emojiName) {
             final Emoji emoji = Emojidex.getInstance().getEmoji(emojiName);
-            emoji.reloadImage();
+            if(emoji != null)
+                emoji.reloadImage();
         }
 
         @Override

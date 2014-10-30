@@ -60,6 +60,9 @@ class EmojiManager {
             e.printStackTrace();
         }
 
+        if(newEmojies == null)
+            return;
+
         // Initialize and add emoji.
         emojies.ensureCapacity(emojies.size() + newEmojies.size());
         emojies.addAll(newEmojies);
@@ -85,7 +88,6 @@ class EmojiManager {
             }
             categoryList.add(emoji);
         }
-
     }
 
     /**
