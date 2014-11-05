@@ -28,7 +28,7 @@
 
     <ViewFlipper
         android:layout_width="match_parent"
-        android:layout_height="@dimen/ime_keyboard_height"
+        android:layout_height="wrap_content"
         android:id="@+id/keyboard_viewFlipper"
         android:layout_weight="1">
     </ViewFlipper>

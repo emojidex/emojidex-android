@@ -80,7 +80,7 @@ public class EmojidexKeyboardView extends KeyboardView {
         popup.setContentView(view);
         popup.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
         popup.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
-        popup.showAtLocation(this, Gravity.CENTER_HORIZONTAL, 0, -this.getHeight());
+        popup.showAtLocation(this, Gravity.CENTER, 0, -this.getHeight());
 
         // Set emoji data.
         TextView textView = (TextView)view.findViewById(R.id.favorite_name);

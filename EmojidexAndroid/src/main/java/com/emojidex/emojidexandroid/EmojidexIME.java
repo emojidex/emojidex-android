@@ -38,15 +38,11 @@ public class EmojidexIME extends InputMethodService {
 
     private View layout;
     private HorizontalScrollView categoryScrollView;
-//    private int minHeight;
-
-//    private Map<String, CategorizedKeyboard> categorizedKeyboards;
 
     private ViewFlipper keyboardViewFlipper;
     private boolean swipeFlag = false;
 
     private PopupWindow popup;
-//    private String resultData = "";
 
     private HistoryManager historyManager;
     private KeyboardViewManager keyboardViewManager;
@@ -68,25 +64,6 @@ public class EmojidexIME extends InputMethodService {
         // Initialize Emojidex object.
         emojidex = Emojidex.getInstance();
         emojidex.initialize(this);
-
-        // Create categorized keyboards.
-//        minHeight = (int)getResources().getDimension(R.dimen.ime_keyboard_height);
-//        categorizedKeyboards = new HashMap<String, CategorizedKeyboard>();
-//        for(String categoryName : emojidex.getCategoryNames())
-//        {
-//            final CategorizedKeyboard newKeyboard = EmojidexKeyboard.create(this, emojidex.getEmojiList(categoryName), minHeight);
-//            categorizedKeyboards.put(categoryName, newKeyboard);
-//        }
-//        {
-//            final String categoryName = getString(R.string.all_category);
-//            final CategorizedKeyboard newKeybaord = EmojidexKeyboard.create(this, emojidex.getAllEmojiList(), minHeight);
-//            categorizedKeyboards.put(categoryName, newKeybaord);
-//        }
-
-        // download keyboard
-//        String result = FileOperation.loadFileFromLocal(getApplicationContext(), FileOperation.DOWNLOAD);
-//        if (!result.equals(""))
-//            emojiDataManager.addCategorizedEmoji(result, FileOperation.DOWNLOAD);
 
         // Create HistoryManager.
         historyManager = new HistoryManager(this);
@@ -128,14 +105,6 @@ public class EmojidexIME extends InputMethodService {
         // Reset IME.
         setKeyboard(getString(R.string.all_category));
         categoryScrollView.scrollTo(0, 0);
-
-        // When the data is different, recreate search result keyboard.
-//        String newData = FileOperation.loadFileFromLocal(getApplicationContext(), FileOperation.SEARCH_RESULT);
-//        if (!resultData.equals(newData))
-//        {
-//            recreateKeyboard(getString(R.string.search_result), FileOperation.SEARCH_RESULT);
-//            resultData = newData;
-//        }
     }
 
     @Override
@@ -147,11 +116,6 @@ public class EmojidexIME extends InputMethodService {
     @Override
     public void hideWindow()
     {
-//        for (int i = 0; i < keyboardViewFlipper.getChildCount(); i++)
-//        {
-//            EmojidexKeyboardView view = (EmojidexKeyboardView)keyboardViewFlipper.getChildAt(i);
-//            view.closePopup();
-//        }
         if( !keyboardViewManager.getCurrentView().closePopup() )
             super.hideWindow();
     }
@@ -235,34 +199,6 @@ public class EmojidexIME extends InputMethodService {
     }
 
     /**
-     * Set keyboard from keyboards.
-     * @param keyboards categorized keyboards
-     */
-//    private void setKeyboard(CategorizedKeyboard keyboards)
-//    {
-//        keyboardViewFlipper.removeAllViews();
-//        for (int i = 0; i < keyboards.getKeyboards().size(); i++)
-//        {
-//            EmojidexKeyboardView keyboardView = new EmojidexKeyboardView(this, null, R.attr.keyboardViewStyle);
-//            keyboardView.setOnTouchListener(new CustomOnTouchListener());
-//            keyboardView.setOnKeyboardActionListener(new CustomOnKeyboardActionListener());
-//            keyboardView.setPreviewEnabled(false);
-//            keyboardView.setKeyboard(keyboards.getKeyboards().get(i));
-//            keyboardViewFlipper.addView(keyboardView);
-//        }
-//    }
-
-    /**
-     * Recreate keyboard. (download/search result)
-     * @param categoryName
-     * @param filename
-     */
-//    private void recreateKeyboard(String categoryName, String filename)
-//    {
-//        android.util.Log.d("ime", "recreateKeyboard(" + categoryName + ", " + filename + ")");
-//    }
-
-    /**
      * move to the next keyboard view
      * @param direction left or down
      */
@@ -323,25 +259,6 @@ public class EmojidexIME extends InputMethodService {
         ArrayList<String> favorites = FileOperation.load(this, FileOperation.FAVORITES);
         keyboardViewManager.initializeFromName(favorites);
     }
-
-    /**
-     * create favorites/histories keyboards
-     * @param data keys
-     */
-//    private void createNewKeyboards(List<String> data)
-//    {
-//
-//        // get emoji
-//        List<Emoji> emojies = new ArrayList<Emoji>();
-//        for (String name : data)
-//            emojies.add(emojidex.getEmoji(name));
-//
-//        // create keyboards
-//        final int minHeight = (int)getResources().getDimension(R.dimen.ime_keyboard_height);
-//        CategorizedKeyboard keyboards = EmojidexKeyboard.create(this, emojies, minHeight);
-//
-//        setKeyboard(keyboards);
-//    }
 
     /**
      * show settings
@@ -412,7 +329,7 @@ public class EmojidexIME extends InputMethodService {
      */
     private void createPopupWindow(View view)
     {
-        int height = (int)getResources().getDimension(R.dimen.ime_keyboard_height);
+        int height = keyboardViewFlipper.getHeight();
 
         // create popup window
         popup = new PopupWindow(this);
