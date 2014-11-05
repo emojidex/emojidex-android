@@ -56,7 +56,7 @@ public class EmojidexKeyboardView extends KeyboardView {
      * @return
      */
     @Override
-    public boolean onLongPress(android.inputmethodservice.Keyboard.Key popupKey)
+    public boolean onLongPress(Keyboard.Key popupKey)
     {
         key = popupKey;
         emojiName = String.valueOf(key.popupCharacters);

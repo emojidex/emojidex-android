@@ -6,7 +6,6 @@ import android.util.Log;
 import com.emojidex.emojidexandroidlibrary.R;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 

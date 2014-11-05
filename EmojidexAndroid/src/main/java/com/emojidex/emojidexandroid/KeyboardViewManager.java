@@ -2,14 +2,9 @@ package com.emojidex.emojidexandroid;
 
 import android.content.Context;
 import android.inputmethodservice.KeyboardView;
-import android.util.Log;
-import android.view.GestureDetector;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
