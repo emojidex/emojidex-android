@@ -32,7 +32,7 @@ public class newEmojidexKeyboard extends Keyboard {
         super(context, R.xml.keyboard);
 
         if(EMOJI_FORMAT == null)
-            EMOJI_FORMAT = EmojiFormat.toFormat(context.getResources().getString(R.string.emoji_format_default));
+            EMOJI_FORMAT = EmojiFormat.toFormat(context.getResources().getString(R.string.emoji_format_stamp));
 
         getKeys().clear();
 
