@@ -12,6 +12,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.ref.WeakReference;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,7 @@ public class Emoji extends SimpleJsonParam {
     static final String TAG = Emojidex.TAG + "::Emoji";
 
     private final List<Integer> codes = new ArrayList<Integer>();
-    private final Bitmap[] bitmaps = new Bitmap[EmojiFormat.values().length];
+    private final WeakReference<Bitmap>[] bitmaps = new WeakReference[EmojiFormat.values().length];
 
     private Resources res;
     private boolean hasOriginalCodes = false;
@@ -35,9 +36,10 @@ public class Emoji extends SimpleJsonParam {
     {
         for(EmojiFormat format : EmojiFormat.values())
         {
-            final Bitmap current = bitmaps[format.ordinal()];
-            if(current == null)
+            if(bitmaps[format.ordinal()] == null || bitmaps[format.ordinal()].get() == null)
                 continue;
+
+            final Bitmap current = bitmaps[format.ordinal()].get();
 
             // Load bitmap and create buffer.
             final Bitmap newBitmap = loadBitmap(format);
@@ -118,15 +120,15 @@ public class Emoji extends SimpleJsonParam {
         final int index = format.ordinal();
 
         // Load image.
-        if(bitmaps[index] == null)
+        if(bitmaps[index] == null || bitmaps[index].get() == null)
         {
             final Bitmap newBitmap = loadBitmap(format);
-            bitmaps[index] = newBitmap.copy(newBitmap.getConfig(), true);
+            bitmaps[index] = new WeakReference<Bitmap>(newBitmap.copy(newBitmap.getConfig(), true));
             newBitmap.recycle();
         }
 
         // Create drawable.
-        final BitmapDrawable result = new BitmapDrawable(res, bitmaps[index]);
+        final BitmapDrawable result = new BitmapDrawable(res, bitmaps[index].get());
         result.setBounds(0, 0, result.getIntrinsicWidth(), result.getIntrinsicHeight());
 
         return result;
