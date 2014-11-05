@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -29,8 +30,7 @@ import java.util.Map;
 /**
  * Created by kou on 13/08/11.
  */
-public class EmojidexIME extends InputMethodService
-        implements KeyboardView.OnKeyboardActionListener, GestureDetector.OnGestureListener {
+public class EmojidexIME extends InputMethodService {
     private Emojidex emojidex;
 
     private InputMethodManager inputMethodManager = null;
@@ -38,18 +38,18 @@ public class EmojidexIME extends InputMethodService
 
     private View layout;
     private HorizontalScrollView categoryScrollView;
-    private int minHeight;
+//    private int minHeight;
 
-    private Map<String, CategorizedKeyboard> categorizedKeyboards;
+//    private Map<String, CategorizedKeyboard> categorizedKeyboards;
 
     private ViewFlipper keyboardViewFlipper;
-    private GestureDetector detector;
     private boolean swipeFlag = false;
 
     private PopupWindow popup;
-    private String resultData = "";
+//    private String resultData = "";
 
     private HistoryManager historyManager;
+    private KeyboardViewManager keyboardViewManager;
 
     /**
      * Construct EmojidexIME object.
@@ -70,29 +70,26 @@ public class EmojidexIME extends InputMethodService
         emojidex.initialize(this);
 
         // Create categorized keyboards.
-        minHeight = (int)getResources().getDimension(R.dimen.ime_keyboard_height);
-        categorizedKeyboards = new HashMap<String, CategorizedKeyboard>();
-        for(String categoryName : emojidex.getCategoryNames())
-        {
-            final CategorizedKeyboard newKeyboard = EmojidexKeyboard.create(this, emojidex.getEmojiList(categoryName), minHeight);
-            categorizedKeyboards.put(categoryName, newKeyboard);
-        }
-        {
-            final String categoryName = getString(R.string.all_category);
-            final CategorizedKeyboard newKeybaord = EmojidexKeyboard.create(this, emojidex.getAllEmojiList(), minHeight);
-            categorizedKeyboards.put(categoryName, newKeybaord);
-        }
+//        minHeight = (int)getResources().getDimension(R.dimen.ime_keyboard_height);
+//        categorizedKeyboards = new HashMap<String, CategorizedKeyboard>();
+//        for(String categoryName : emojidex.getCategoryNames())
+//        {
+//            final CategorizedKeyboard newKeyboard = EmojidexKeyboard.create(this, emojidex.getEmojiList(categoryName), minHeight);
+//            categorizedKeyboards.put(categoryName, newKeyboard);
+//        }
+//        {
+//            final String categoryName = getString(R.string.all_category);
+//            final CategorizedKeyboard newKeybaord = EmojidexKeyboard.create(this, emojidex.getAllEmojiList(), minHeight);
+//            categorizedKeyboards.put(categoryName, newKeybaord);
+//        }
 
         // download keyboard
 //        String result = FileOperation.loadFileFromLocal(getApplicationContext(), FileOperation.DOWNLOAD);
 //        if (!result.equals(""))
 //            emojiDataManager.addCategorizedEmoji(result, FileOperation.DOWNLOAD);
 
-        // Create GestureDetector
-        detector = new GestureDetector(getApplicationContext(), this);
-
         // Create HistoryManager.
-        historyManager = new HistoryManager(getApplicationContext());
+        historyManager = new HistoryManager(this);
 
         // Test.
         final DownloadConfig config = new DownloadConfig();
@@ -133,12 +130,12 @@ public class EmojidexIME extends InputMethodService
         categoryScrollView.scrollTo(0, 0);
 
         // When the data is different, recreate search result keyboard.
-        String newData = FileOperation.loadFileFromLocal(getApplicationContext(), FileOperation.SEARCH_RESULT);
-        if (!resultData.equals(newData))
-        {
-            recreateKeyboard(getString(R.string.search_result), FileOperation.SEARCH_RESULT);
-            resultData = newData;
-        }
+//        String newData = FileOperation.loadFileFromLocal(getApplicationContext(), FileOperation.SEARCH_RESULT);
+//        if (!resultData.equals(newData))
+//        {
+//            recreateKeyboard(getString(R.string.search_result), FileOperation.SEARCH_RESULT);
+//            resultData = newData;
+//        }
     }
 
     @Override
@@ -150,93 +147,13 @@ public class EmojidexIME extends InputMethodService
     @Override
     public void hideWindow()
     {
-        for (int i = 0; i < keyboardViewFlipper.getChildCount(); i++)
-        {
-            EmojidexKeyboardView view = (EmojidexKeyboardView)keyboardViewFlipper.getChildAt(i);
-            view.closePopup();
-        }
-        super.hideWindow();
-    }
-
-    @Override
-    public void onPress(int primaryCode) {
-    }
-
-    @Override
-    public void onRelease(int primaryCode) {
-    }
-
-    @Override
-    public void onKey(int primaryCode, int[] keyCodes) {
-        if (swipeFlag)
-        {
-            swipeFlag = false;
-            return;
-        }
-
-        List<Integer> codes = new ArrayList<Integer>();
-        for(int i = 0;  keyCodes[i] != -1;  ++i)
-            codes.add(keyCodes[i]);
-
-        StringBuilder buf = new StringBuilder("Click key : primaryCode = 0x" + String.format("%1$08x", primaryCode) + ", keyCodes = 0x");
-        for (int i = 0;  i < codes.size();  ++i)
-            buf.append( String.format(" %1$08x", keyCodes[i]) );
-        buf.append(", length = " + codes.size());
-        android.util.Log.d("ime", buf.toString());
-
-        // Input show ime picker or default keyboard.
-        if (primaryCode == showIMEPickerCode)
-        {
-            boolean result = false;
-            String id = FileOperation.loadPreferences(this, FileOperation.KEYBOARD);
-
-            List<InputMethodInfo> inputMethodInfoList = inputMethodManager.getEnabledInputMethodList();
-            for (int i = 0; i < inputMethodInfoList.size(); ++i) {
-                InputMethodInfo inputMethodInfo = inputMethodInfoList.get(i);
-                if (inputMethodInfo.getId().equals(id))
-                    result = true;
-            }
-
-            if (result)
-                switchInputMethod(id);
-            else
-                inputMethodManager.showInputMethodPicker();
-        }
-        else
-        {
-            // Input emoji.
-            final Emoji emoji = emojidex.getEmoji(codes);
-            if(emoji != null)
-            {
-                getCurrentInputConnection().commitText(emoji.toString(), 1);
-                historyManager.regist(emoji.getName());
-            }
-            // Input other.
-            else
-            {
-                sendDownUpKeyEvents(primaryCode);
-            }
-        }
-    }
-
-    @Override
-    public void onText(CharSequence text) {
-    }
-
-    @Override
-    public void swipeLeft() {
-    }
-
-    @Override
-    public void swipeRight() {
-    }
-
-    @Override
-    public void swipeDown() {
-    }
-
-    @Override
-    public void swipeUp() {
+//        for (int i = 0; i < keyboardViewFlipper.getChildCount(); i++)
+//        {
+//            EmojidexKeyboardView view = (EmojidexKeyboardView)keyboardViewFlipper.getChildAt(i);
+//            view.closePopup();
+//        }
+        if( !keyboardViewManager.getCurrentView().closePopup() )
+            super.hideWindow();
     }
 
     /**
@@ -281,6 +198,12 @@ public class EmojidexIME extends InputMethodService
     {
         // Add KeyboardViewFlipper to IME layout.
         keyboardViewFlipper = (ViewFlipper)layout.findViewById(R.id.keyboard_viewFlipper);
+
+        // Create KeyboardViewManager.
+        keyboardViewManager = new KeyboardViewManager(this, new CustomOnKeyboardActionListener(), new CustomOnTouchListener());
+
+        for(View view : keyboardViewManager.getViews())
+            keyboardViewFlipper.addView(view);
     }
 
     /**
@@ -290,7 +213,7 @@ public class EmojidexIME extends InputMethodService
     {
         // Create KeyboardView.
         EmojidexSubKeyboardView subKeyboardView = new EmojidexSubKeyboardView(this, null, R.attr.subKeyboardViewStyle);
-        subKeyboardView.setOnKeyboardActionListener(this);
+        subKeyboardView.setOnKeyboardActionListener(new CustomOnKeyboardActionListener());
         subKeyboardView.setPreviewEnabled(false);
 
         // Create Keyboard and set to KeyboardView.
@@ -304,67 +227,40 @@ public class EmojidexIME extends InputMethodService
 
     /**
      * Set categorized keyboard.
-     * @param categoryID category id
+     * @param categoryName category name
      */
-    private void setKeyboard(String categoryID)
+    private void setKeyboard(String categoryName)
     {
-        // when download keyboard, need to recreate
-        if (categoryID.equals(getString(R.string.download)))
-            recreateKeyboard(categoryID, FileOperation.DOWNLOAD);
-
-        KeyboardView keyboardView;
-        keyboardViewFlipper.removeAllViews();
-        for (int i = 0; i < categorizedKeyboards.get(categoryID).getKeyboards().size(); i++)
-        {
-            keyboardView = new EmojidexKeyboardView(this, null, R.attr.keyboardViewStyle, getLayoutInflater());
-
-            keyboardView.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    boolean result = detector.onTouchEvent(event);
-                    return result;
-                }
-            });
-            keyboardView.setOnKeyboardActionListener(this);
-            keyboardView.setPreviewEnabled(false);
-            keyboardView.setKeyboard(categorizedKeyboards.get(categoryID).getKeyboards().get(i));
-            keyboardViewFlipper.addView(keyboardView);
-        }
+        keyboardViewManager.initialize(emojidex.getEmojiList(categoryName));
     }
 
     /**
      * Set keyboard from keyboards.
      * @param keyboards categorized keyboards
      */
-    private void setKeyboard(CategorizedKeyboard keyboards)
-    {
-        keyboardViewFlipper.removeAllViews();
-        for (int i = 0; i < keyboards.getKeyboards().size(); i++)
-        {
-            EmojidexKeyboardView keyboardView = new EmojidexKeyboardView(this, null, R.attr.keyboardViewStyle, getLayoutInflater());
-            keyboardView.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    boolean result = detector.onTouchEvent(event);
-                    return result;
-                }
-            });
-            keyboardView.setOnKeyboardActionListener(this);
-            keyboardView.setPreviewEnabled(false);
-            keyboardView.setKeyboard(keyboards.getKeyboards().get(i));
-            keyboardViewFlipper.addView(keyboardView);
-        }
-    }
+//    private void setKeyboard(CategorizedKeyboard keyboards)
+//    {
+//        keyboardViewFlipper.removeAllViews();
+//        for (int i = 0; i < keyboards.getKeyboards().size(); i++)
+//        {
+//            EmojidexKeyboardView keyboardView = new EmojidexKeyboardView(this, null, R.attr.keyboardViewStyle);
+//            keyboardView.setOnTouchListener(new CustomOnTouchListener());
+//            keyboardView.setOnKeyboardActionListener(new CustomOnKeyboardActionListener());
+//            keyboardView.setPreviewEnabled(false);
+//            keyboardView.setKeyboard(keyboards.getKeyboards().get(i));
+//            keyboardViewFlipper.addView(keyboardView);
+//        }
+//    }
 
     /**
      * Recreate keyboard. (download/search result)
      * @param categoryName
      * @param filename
      */
-    private void recreateKeyboard(String categoryName, String filename)
-    {
-        android.util.Log.d("ime", "recreateKeyboard(" + categoryName + ", " + filename + ")");
-    }
+//    private void recreateKeyboard(String categoryName, String filename)
+//    {
+//        android.util.Log.d("ime", "recreateKeyboard(" + categoryName + ", " + filename + ")");
+//    }
 
     /**
      * move to the next keyboard view
@@ -376,14 +272,14 @@ public class EmojidexIME extends InputMethodService
         {
             keyboardViewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_in));
             keyboardViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_out));
-            keyboardViewFlipper.showNext();
         }
         else
         {
             keyboardViewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.down_in));
             keyboardViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.up_out));
-            keyboardViewFlipper.showNext();
         }
+        keyboardViewManager.next();
+        keyboardViewFlipper.showNext();
     }
 
     /**
@@ -396,69 +292,14 @@ public class EmojidexIME extends InputMethodService
         {
             keyboardViewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_in));
             keyboardViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_out));
-            keyboardViewFlipper.showPrevious();
         }
         else
         {
             keyboardViewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.up_in));
             keyboardViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.down_out));
-            keyboardViewFlipper.showPrevious();
         }
-    }
-
-
-    @Override
-    public boolean onDown(MotionEvent e) {
-        return false;
-    }
-
-    @Override
-    public void onShowPress(MotionEvent e) {
-    }
-
-    @Override
-    public boolean onSingleTapUp(MotionEvent e) {
-        return false;
-    }
-
-    @Override
-    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        return false;
-    }
-
-    @Override
-    public void onLongPress(MotionEvent e) {
-    }
-
-    @Override
-    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-        float disX = e1.getX() - e2.getX();
-        float disY = e1.getY() - e2.getY();
-        if ((Math.abs(disX) < 100) && (Math.abs(disY) < 50))
-            return true;
-
-        // closing the popup window.
-        EmojidexKeyboardView view = (EmojidexKeyboardView)keyboardViewFlipper.getCurrentView();
-        view.closePopup();
-
-        // left or right
-        if (Math.abs(disX) > Math.abs(disY))
-        {
-            if (disX > 0)
-                moveToNextKeyboard("left");
-            else
-                moveToPrevKeyboard("right");
-        }
-        // up or down
-        else
-        {
-            if (disY > 0)
-                moveToNextKeyboard("down");
-            else
-                moveToPrevKeyboard("up");
-        }
-        swipeFlag = true;
-        return false;
+        keyboardViewManager.prev();
+        keyboardViewFlipper.showPrevious();
     }
 
     /**
@@ -468,8 +309,8 @@ public class EmojidexIME extends InputMethodService
     public void showHistories(View v)
     {
         // load histories
-        List<String> histories = historyManager.getHistories();
-        createNewKeyboards(histories);
+        final List<String> histories = historyManager.getHistories();
+        keyboardViewManager.initializeFromName(histories);
     }
 
     /**
@@ -480,27 +321,27 @@ public class EmojidexIME extends InputMethodService
     {
         // load favorites
         ArrayList<String> favorites = FileOperation.load(this, FileOperation.FAVORITES);
-        createNewKeyboards(favorites);
+        keyboardViewManager.initializeFromName(favorites);
     }
 
     /**
      * create favorites/histories keyboards
      * @param data keys
      */
-    private void createNewKeyboards(List<String> data)
-    {
-
-        // get emoji
-        List<Emoji> emojies = new ArrayList<Emoji>();
-        for (String name : data)
-            emojies.add(emojidex.getEmoji(name));
-
-        // create keyboards
-        final int minHeight = (int)getResources().getDimension(R.dimen.ime_keyboard_height);
-        CategorizedKeyboard keyboards = EmojidexKeyboard.create(this, emojies, minHeight);
-
-        setKeyboard(keyboards);
-    }
+//    private void createNewKeyboards(List<String> data)
+//    {
+//
+//        // get emoji
+//        List<Emoji> emojies = new ArrayList<Emoji>();
+//        for (String name : data)
+//            emojies.add(emojidex.getEmoji(name));
+//
+//        // create keyboards
+//        final int minHeight = (int)getResources().getDimension(R.dimen.ime_keyboard_height);
+//        CategorizedKeyboard keyboards = EmojidexKeyboard.create(this, emojies, minHeight);
+//
+//        setKeyboard(keyboards);
+//    }
 
     /**
      * show settings
@@ -604,6 +445,189 @@ public class EmojidexIME extends InputMethodService
             Toast.makeText(this, R.string.delete_success, Toast.LENGTH_SHORT).show();
         else
             Toast.makeText(this, R.string.delete_failure, Toast.LENGTH_SHORT).show();
+    }
+
+
+    /**
+     * Custom OnKeyboardActionListener.
+     */
+    private class CustomOnKeyboardActionListener implements KeyboardView.OnKeyboardActionListener
+    {
+        @Override
+        public void onPress(int primaryCode) {
+            // nop
+        }
+
+        @Override
+        public void onRelease(int primaryCode) {
+            // nop
+        }
+
+        @Override
+        public void onKey(int primaryCode, int[] keyCodes) {
+            if (swipeFlag)
+            {
+                swipeFlag = false;
+                return;
+            }
+
+            List<Integer> codes = new ArrayList<Integer>();
+            for(int i = 0;  keyCodes[i] != -1;  ++i)
+                codes.add(keyCodes[i]);
+
+            StringBuilder buf = new StringBuilder("Click key : primaryCode = 0x" + String.format("%1$08x", primaryCode) + ", keyCodes = 0x");
+            for (int i = 0;  i < codes.size();  ++i)
+                buf.append( String.format(" %1$08x", keyCodes[i]) );
+            buf.append(", length = " + codes.size());
+            android.util.Log.d("ime", buf.toString());
+
+            // Input show ime picker or default keyboard.
+            if (primaryCode == showIMEPickerCode)
+            {
+                boolean result = false;
+                String id = FileOperation.loadPreferences(EmojidexIME.this, FileOperation.KEYBOARD);
+
+                List<InputMethodInfo> inputMethodInfoList = inputMethodManager.getEnabledInputMethodList();
+                for (int i = 0; i < inputMethodInfoList.size(); ++i) {
+                    InputMethodInfo inputMethodInfo = inputMethodInfoList.get(i);
+                    if (inputMethodInfo.getId().equals(id))
+                        result = true;
+                }
+
+                if (result)
+                    switchInputMethod(id);
+                else
+                    inputMethodManager.showInputMethodPicker();
+            }
+            else
+            {
+                // Input emoji.
+                final Emoji emoji = emojidex.getEmoji(codes);
+                if(emoji != null)
+                {
+                    getCurrentInputConnection().commitText(emoji.toString(), 1);
+                    historyManager.regist(emoji.getName());
+                }
+                // Input other.
+                else
+                {
+                    sendDownUpKeyEvents(primaryCode);
+                }
+            }
+        }
+
+        @Override
+        public void onText(CharSequence text) {
+            // nop
+        }
+
+        @Override
+        public void swipeLeft() {
+            // nop
+        }
+
+        @Override
+        public void swipeRight() {
+            // nop
+        }
+
+        @Override
+        public void swipeDown() {
+            // nop
+        }
+
+        @Override
+        public void swipeUp() {
+            // nop
+        }
+    }
+
+
+    /**
+     * Custom OnGestureListener.
+     */
+    private class CustomOnGestureListener implements GestureDetector.OnGestureListener
+    {
+        @Override
+        public boolean onDown(MotionEvent e) {
+            // nop
+            return false;
+        }
+
+        @Override
+        public void onShowPress(MotionEvent e) {
+            // nop
+        }
+
+        @Override
+        public boolean onSingleTapUp(MotionEvent e) {
+            // nop
+            return false;
+        }
+
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            // nop
+            return false;
+        }
+
+        @Override
+        public void onLongPress(MotionEvent e) {
+            // nop
+        }
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            float disX = e1.getX() - e2.getX();
+            float disY = e1.getY() - e2.getY();
+            if ((Math.abs(disX) < 100) && (Math.abs(disY) < 50))
+                return true;
+
+            // closing the popup window.
+            EmojidexKeyboardView view = keyboardViewManager.getCurrentView();
+            view.closePopup();
+
+            // left or right
+            if (Math.abs(disX) > Math.abs(disY))
+            {
+                if (disX > 0)
+                    moveToNextKeyboard("left");
+                else
+                    moveToPrevKeyboard("right");
+            }
+            // up or down
+            else
+            {
+                if (disY > 0)
+                    moveToNextKeyboard("down");
+                else
+                    moveToPrevKeyboard("up");
+            }
+            swipeFlag = true;
+            return false;
+        }
+    }
+
+
+    /**
+     * Custom OnTouchListener.
+     */
+    private class CustomOnTouchListener implements View.OnTouchListener
+    {
+        private final GestureDetector detector;
+
+        /**
+         * Construct object.
+         */
+        public CustomOnTouchListener()
+        {
+            detector = new GestureDetector(getApplicationContext(), new CustomOnGestureListener());
+        }
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            return detector.onTouchEvent(event);
+        }
     }
 
 

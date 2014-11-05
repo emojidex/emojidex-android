@@ -128,8 +128,10 @@ class EmojiManager {
      * @param category  Category name.
      * @return          Emoji list.(If emoji list is not found, return null.)
      */
-    public Collection<Emoji> getEmojiList(String category)
+    public List<Emoji> getEmojiList(String category)
     {
+        if(category.equals(context.getResources().getString(R.string.all_category)))
+            return getAllEmojiList();
         return categorizedEmojies.get(category);
     }
 
@@ -137,7 +139,7 @@ class EmojiManager {
      * Ger all emoji list.
      * @return  All emoji list.
      */
-    public Collection<Emoji> getAllEmojiList()
+    public List<Emoji> getAllEmojiList()
     {
         return emojies;
     }

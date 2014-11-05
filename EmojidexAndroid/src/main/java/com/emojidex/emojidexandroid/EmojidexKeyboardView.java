@@ -43,12 +43,11 @@ public class EmojidexKeyboardView extends KeyboardView {
      * @param context
      * @param attrs
      * @param defStyle
-     * @param inflater
      */
-    public EmojidexKeyboardView(Context context, AttributeSet attrs, int defStyle, LayoutInflater inflater) {
+    public EmojidexKeyboardView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         this.context = context;
-        this.inflater = inflater;
+        this.inflater = LayoutInflater.from(context);
     }
 
     /**
@@ -76,6 +75,8 @@ public class EmojidexKeyboardView extends KeyboardView {
         // Create popup window.
         View view = inflater.inflate(R.layout.popup_favorite, null);
         popup = new PopupWindow(this);
+        popup.setOutsideTouchable(true);
+        popup.setFocusable(true);
         popup.setContentView(view);
         popup.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
         popup.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
@@ -196,8 +197,9 @@ public class EmojidexKeyboardView extends KeyboardView {
 
     /**
      * Close popup window.
+     * @return  false if popup is not opened.
      */
-    public void closePopup()
+    public boolean closePopup()
     {
         // If changed favorite state, save current state.
         if (registered != first)
@@ -212,6 +214,8 @@ public class EmojidexKeyboardView extends KeyboardView {
         {
             popup.dismiss();
             popup = null;
+            return true;
         }
+        return false;
     }
 }

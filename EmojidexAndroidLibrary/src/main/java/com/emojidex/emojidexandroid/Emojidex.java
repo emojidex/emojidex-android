@@ -6,6 +6,7 @@ import android.util.Log;
 import com.emojidex.emojidexandroidlibrary.R;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -172,7 +173,7 @@ public class Emojidex {
      * @param category  Category name.
      * @return          Emoji list.(If emoji list is not found, return null.)
      */
-    public Collection<Emoji> getEmojiList(String category)
+    public List<Emoji> getEmojiList(String category)
     {
         if( !isInitialized() )
             throw new EmojidexIsNotInitializedException();

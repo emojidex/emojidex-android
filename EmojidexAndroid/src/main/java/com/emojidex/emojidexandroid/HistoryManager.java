@@ -22,7 +22,7 @@ public class HistoryManager {
      */
     public HistoryManager(Context context)
     {
-        this.context = context;
+        this.context = context.getApplicationContext();
         histories = new LinkedList<String>();
     }
 

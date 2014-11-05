@@ -2,4 +2,6 @@
 
 <resources>
     <integer name="ime_keycode_show_ime_picker">0x10FFFF</integer>
+
+    <integer name="ime_keyboard_row_count">3</integer>
 </resources>
