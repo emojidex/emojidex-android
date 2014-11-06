@@ -13,7 +13,7 @@ import java.util.List;
 public class KeyboardViewManager {
     private final int PAGE_COUNT = 3;
     private final EmojidexKeyboardView[] views = new EmojidexKeyboardView[PAGE_COUNT];
-    private final newEmojidexKeyboard[] keyboards = new newEmojidexKeyboard[PAGE_COUNT];
+    private final EmojidexKeyboard[] keyboards = new EmojidexKeyboard[PAGE_COUNT];
     private final ArrayList<List<Emoji>> pages = new ArrayList<List<Emoji>>();
 
     private int currentView;
@@ -34,7 +34,7 @@ public class KeyboardViewManager {
             views[i].setOnTouchListener(onTouchListener);
             views[i].setOnKeyboardActionListener(onKeyboardActionListener);
             views[i].setPreviewEnabled(false);
-            keyboards[i] = newEmojidexKeyboard.create(context);
+            keyboards[i] = EmojidexKeyboard.create(context);
             views[i].setKeyboard(keyboards[i]);
         }
 

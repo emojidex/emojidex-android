@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Created by kou on 14/10/29.
  */
-public class newEmojidexKeyboard extends Keyboard {
+public class EmojidexKeyboard extends Keyboard {
     private static EmojiFormat EMOJI_FORMAT = null;
 
     private final Row row;
@@ -26,7 +26,7 @@ public class newEmojidexKeyboard extends Keyboard {
      * Construct object.
      * @param context      Application context.
      */
-    private newEmojidexKeyboard(Context context)
+    private EmojidexKeyboard(Context context)
     {
         super(context, R.xml.keyboard);
 
@@ -133,11 +133,11 @@ public class newEmojidexKeyboard extends Keyboard {
      * @param context   Application context.
      * @return          New keyboard.
      */
-    public static newEmojidexKeyboard create(Context context)
+    public static EmojidexKeyboard create(Context context)
     {
         context = context.getApplicationContext();
 
-        final newEmojidexKeyboard newKeyboard = new newEmojidexKeyboard(context);
+        final EmojidexKeyboard newKeyboard = new EmojidexKeyboard(context);
 
         return newKeyboard;
     }
