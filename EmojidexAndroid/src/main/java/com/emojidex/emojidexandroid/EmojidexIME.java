@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
+import android.os.Handler;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -550,6 +551,8 @@ public class EmojidexIME extends InputMethodService {
      */
     private class CustomDownloadListener extends DownloadListener
     {
+        private final Handler handler = new Handler();
+
         @Override
         public void onJsonDownloadCompleted() {
             super.onJsonDownloadCompleted();
@@ -559,7 +562,31 @@ public class EmojidexIME extends InputMethodService {
         public void onEmojiDownloadCompleted(String emojiName) {
             final Emoji emoji = Emojidex.getInstance().getEmoji(emojiName);
             if(emoji != null)
+            {
                 emoji.reloadImage();
+
+                // Find emoji in current keyboard.
+                final EmojidexKeyboardView view = keyboardViewManager.getCurrentView();
+                final Keyboard keyboard = view.getKeyboard();
+                final List<Keyboard.Key> keys = keyboard.getKeys();
+
+                for(int i = 0;  i < keys.size();  ++i)
+                {
+                    if(keys.get(i).popupCharacters.equals(emojiName))
+                    {
+                        final int index = i;
+
+                        handler.post(new Runnable(){
+                            @Override
+                            public void run() {
+                                keyboardViewManager.getCurrentView().invalidateKey(index);
+                            }
+                        });
+
+                        break;
+                    }
+                }
+            }
         }
 
         @Override

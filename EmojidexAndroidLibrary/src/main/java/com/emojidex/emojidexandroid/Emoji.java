@@ -45,8 +45,8 @@ public class Emoji extends SimpleJsonParam {
             final IntBuffer buffer = IntBuffer.wrap(pixels);
 
             // new bitmap -> buffer
-            buffer.position(0);
-            newBitmap.copyPixelsToBuffer(buffer);
+//            buffer.position(0);
+//            newBitmap.copyPixelsToBuffer(buffer);
 
             // current <- buffer
             buffer.position(0);
