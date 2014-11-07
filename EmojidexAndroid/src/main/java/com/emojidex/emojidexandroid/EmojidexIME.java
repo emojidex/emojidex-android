@@ -46,6 +46,8 @@ public class EmojidexIME extends InputMethodService {
     private HistoryManager historyManager;
     private KeyboardViewManager keyboardViewManager;
 
+    private String currentCategory = null;
+
     /**
      * Construct EmojidexIME object.
      */
@@ -102,6 +104,7 @@ public class EmojidexIME extends InputMethodService {
     @Override
     public void onWindowShown() {
         // Reset IME
+        currentCategory = null;
         ChangeCategory(getString(R.string.all_category));
         categoryScrollView.scrollTo(0, 0);
     }
@@ -262,6 +265,11 @@ public class EmojidexIME extends InputMethodService {
      */
     public void ChangeCategory(String category)
     {
+        if(currentCategory != null && currentCategory.equals(category))
+            return;
+
+        currentCategory = category;
+
         if(category.equals(getString(R.string.ime_category_id_history)))
         {
             final List<String> histories = historyManager.getHistories();
@@ -588,6 +596,18 @@ public class EmojidexIME extends InputMethodService {
         @Override
         public void onJsonDownloadCompleted() {
             super.onJsonDownloadCompleted();
+
+        }
+
+        @Override
+        public boolean onPreEmojiDownload(int downloadCount) {
+            emojidex.reload();
+
+            final String category = currentCategory;
+            currentCategory = null;
+            ChangeCategory(category);
+
+            return true;
         }
 
         @Override

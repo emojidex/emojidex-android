@@ -392,17 +392,35 @@ class EmojiDownloader {
             // Emoji download start.
             if(downloadEmojiCount > 0)
             {
+                // Backup old json file.
+                final File tmpJsonFile = new File(getTemporaryJsonPath("."));
+                tmpJsonFile.delete();
+                localJsonFile.renameTo(tmpJsonFile);
+
                 // Update local json file.
                 writeJson(localJsonParams);
 
-                // Execute download tasks.
-                for(ArrayList<FileInfo> fileInfos : fileInfosArray)
+                // Check update start.
+                if(config.listener.onPreEmojiDownload(downloadEmojiCount))
                 {
-                    if(fileInfos.isEmpty())
-                        continue;
+                    // Delete temporary file.
+                    tmpJsonFile.delete();
 
-                    final EmojiDownloadTask task = new EmojiDownloadTask();
-                    task.execute(fileInfos.toArray(new FileInfo[fileInfos.size()]));
+                    // Execute download tasks.
+                    for(ArrayList<FileInfo> fileInfos : fileInfosArray)
+                    {
+                        if(fileInfos.isEmpty())
+                            continue;
+
+                        final EmojiDownloadTask task = new EmojiDownloadTask();
+                        task.execute(fileInfos.toArray(new FileInfo[fileInfos.size()]));
+                    }
+                }
+                else
+                {
+                    // Rollback local json file.
+                    localJsonFile.delete();
+                    tmpJsonFile.renameTo(localJsonFile);
                 }
             }
 
