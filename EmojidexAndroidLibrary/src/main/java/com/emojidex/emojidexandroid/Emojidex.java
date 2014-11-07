@@ -184,7 +184,7 @@ public class Emojidex {
      * Ger all emoji list.
      * @return  All emoji list.
      */
-    public Collection<Emoji> getAllEmojiList()
+    public List<Emoji> getAllEmojiList()
     {
         if( !isInitialized() )
             throw new EmojidexIsNotInitializedException();

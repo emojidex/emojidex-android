@@ -55,10 +55,39 @@
     <string name="search_emoji">Please enter the emoji name you want to search.</string>
     <string name="hit"> hits.</string>
 
+    <string name="ime_category_text_all">All</string>
+    <string name="ime_category_text_history">History</string>
+    <string name="ime_category_text_gestures">Gestures</string>
+    <string name="ime_category_text_abstract">Abstract</string>
+    <string name="ime_category_text_tools">Tools</string>
+    <string name="ime_category_text_faces">Faces</string>
+    <string name="ime_category_text_symbols">Symbols</string>
+    <string name="ime_category_text_nature">Nature</string>
+    <string name="ime_category_text_food">Food</string>
+    <string name="ime_category_text_cosmos">Cosmos</string>
+    <string name="ime_category_text_transportation">Transportation</string>
+    <string name="ime_category_text_places">Places</string>
+    <string name="ime_category_text_people">People</string>
+    <string name="ime_category_text_objects">Objects</string>
+
     <!-- Japanese not needed -->
     <string name="download">Download</string>
     <string name="search_result">Search result</string>
 
-    <string name="emoji_format_stamp">px128</string>
+    <string name="ime_category_id_all">all</string>
+    <string name="ime_category_id_history">history</string>
+    <string name="ime_category_id_gestures">gestures</string>
+    <string name="ime_category_id_abstract">abstract</string>
+    <string name="ime_category_id_tools">tools</string>
+    <string name="ime_category_id_faces">faces</string>
+    <string name="ime_category_id_symbols">symbols</string>
+    <string name="ime_category_id_nature">nature</string>
+    <string name="ime_category_id_food">food</string>
+    <string name="ime_category_id_cosmos">cosmos</string>
+    <string name="ime_category_id_transportation">transportation</string>
+    <string name="ime_category_id_places">places</string>
+    <string name="ime_category_id_people">people</string>
+    <string name="ime_category_id_objects">objects</string>
 
+    <string name="emoji_format_stamp">px128</string>
 </resources>

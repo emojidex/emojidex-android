@@ -2,6 +2,7 @@ package com.emojidex.emojidexandroid;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.util.Log;
 
 import com.emojidex.emojidexandroidlibrary.R;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -130,8 +131,6 @@ class EmojiManager {
      */
     public List<Emoji> getEmojiList(String category)
     {
-        if(category.equals(context.getResources().getString(R.string.all_category)))
-            return getAllEmojiList();
         return categorizedEmojies.get(category);
     }
 

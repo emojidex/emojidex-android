@@ -2,6 +2,7 @@ package com.emojidex.emojidexandroid;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
@@ -100,8 +101,8 @@ public class EmojidexIME extends InputMethodService {
 
     @Override
     public void onWindowShown() {
-        // Reset IME.
-        setKeyboard(getString(R.string.all_category));
+        // Reset IME
+        ChangeCategory(getString(R.string.all_category));
         categoryScrollView.scrollTo(0, 0);
     }
 
@@ -125,23 +126,31 @@ public class EmojidexIME extends InputMethodService {
     {
         // Create category buttons and add to IME layout.
         final ViewGroup categoriesView = (ViewGroup)layout.findViewById(R.id.ime_categories);
-        final ArrayList<String> categoryNames = new ArrayList<String>();
-        categoryNames.add(getString(R.string.all_category));
-        categoryNames.addAll(emojidex.getCategoryNames());
 
-        for(final String categoryName : categoryNames)
+        for(final String categoryName : emojidex.getCategoryNames())
         {
+            // Skip if already added.
+            boolean isFind = false;
+            for(int i = 0;  i < categoriesView.getChildCount();  ++i)
+            {
+                if(categoriesView.getChildAt(i).getContentDescription().equals(categoryName))
+                {
+                    isFind = true;
+                    break;
+                }
+            }
+            if(isFind)
+                continue;
+
             // Create button.
             final Button newButton = new Button(this);
 
-            // Set button parametors.
-            final String buttonText = categoryName;
-            newButton.setText(buttonText);
+            newButton.setText(categoryName);
+            newButton.setContentDescription(categoryName);
             newButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    android.util.Log.d("ime", "Click category button : category = " + categoryName);
-                    setKeyboard(categoryName);
+                    onClickCategoryButton(v);
                 }
             });
 
@@ -237,14 +246,37 @@ public class EmojidexIME extends InputMethodService {
     }
 
     /**
-     * show histories keyboard
-     * @param v view
+     * When click category button.
+     * @param v     Clicked button.
      */
-    public void showHistories(View v)
+    public void onClickCategoryButton(View v)
     {
-        // load histories
-        final List<String> histories = historyManager.getHistories();
-        keyboardViewManager.initializeFromName(histories);
+        final String categoryName = v.getContentDescription().toString();
+        android.util.Log.d("ime", "Click category button : category = " + categoryName);
+        ChangeCategory(categoryName);
+    }
+
+    /**
+     * Change category.
+     * @param category  Category.
+     */
+    public void ChangeCategory(String category)
+    {
+        if(category.equals(getString(R.string.ime_category_id_history)))
+        {
+            final List<String> histories = historyManager.getHistories();
+            keyboardViewManager.initializeFromName(histories);
+        }
+        else if(category.equals(getString(R.string.ime_category_id_all)))
+        {
+            final List<Emoji> emojies = emojidex.getAllEmojiList();
+            keyboardViewManager.initialize(emojies);
+        }
+        else
+        {
+            final List<Emoji> emojies = emojidex.getEmojiList(category);
+            keyboardViewManager.initialize(emojies);
+        }
     }
 
     /**
