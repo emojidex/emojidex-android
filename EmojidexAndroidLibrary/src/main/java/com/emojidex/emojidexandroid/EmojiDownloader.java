@@ -465,6 +465,8 @@ class EmojiDownloader {
             {
                 final ObjectMapper objectMapper = new ObjectMapper();
                 final File file = new File(PathUtils.getLocalJsonPath());
+                if( !file.getParentFile().exists() )
+                    file.getParentFile().mkdirs();
                 final OutputStream os = new FileOutputStream(file);
                 objectMapper.writeValue(os, jsonParams);
                 os.close();

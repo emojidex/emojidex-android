@@ -52,13 +52,17 @@ public class KeyboardViewManager {
         pages.clear();
 
         final int keyCountMax = keyboards[0].getKeyCountMax();
-        final int emojiCount = emojies.size();
+        final int emojiCount = emojies == null ? 0 : emojies.size();
         for(int i = 0;  i < emojiCount;  i += keyCountMax)
         {
             pages.add(new ArrayList<Emoji>(
                     emojies.subList(i, Math.min(i + keyCountMax, emojiCount))
             ));
         }
+
+        // Add dummy if pages is empty.
+        if(pages.isEmpty())
+            pages.add(new ArrayList<Emoji>());
 
         initializePage(currentView, currentPage);
     }
