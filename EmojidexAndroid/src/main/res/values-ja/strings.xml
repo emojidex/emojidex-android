@@ -56,4 +56,19 @@
     <string name="search_emoji">検索したい絵文字名を入力してください。</string>
     <string name="hit">件ヒットしました。</string>
 
+    <string name="ime_category_text_all">全て</string>
+    <string name="ime_category_text_history">履歴</string>
+    <string name="ime_category_text_gestures">ジェスチャー</string>
+    <string name="ime_category_text_abstract">抽象物</string>
+    <string name="ime_category_text_tools">道具</string>
+    <string name="ime_category_text_faces">顔</string>
+    <string name="ime_category_text_symbols">シンボル</string>
+    <string name="ime_category_text_nature">自然</string>
+    <string name="ime_category_text_food">食べ物</string>
+    <string name="ime_category_text_cosmos">宇宙</string>
+    <string name="ime_category_text_transportation">乗り物</string>
+    <string name="ime_category_text_places">場所</string>
+    <string name="ime_category_text_people">人</string>
+    <string name="ime_category_text_objects">物</string>
+
 </resources>

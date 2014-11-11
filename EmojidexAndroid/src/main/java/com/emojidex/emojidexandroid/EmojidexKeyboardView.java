@@ -6,7 +6,6 @@ import android.content.ClipDescription;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.net.Uri;
@@ -22,8 +21,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
+import java.io.File;
 
 /**
  * Created by nazuki on 14/01/08.
@@ -45,12 +43,11 @@ public class EmojidexKeyboardView extends KeyboardView {
      * @param context
      * @param attrs
      * @param defStyle
-     * @param inflater
      */
-    public EmojidexKeyboardView(Context context, AttributeSet attrs, int defStyle, LayoutInflater inflater) {
+    public EmojidexKeyboardView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         this.context = context;
-        this.inflater = inflater;
+        this.inflater = LayoutInflater.from(context);
     }
 
     /**
@@ -59,7 +56,7 @@ public class EmojidexKeyboardView extends KeyboardView {
      * @return
      */
     @Override
-    public boolean onLongPress(android.inputmethodservice.Keyboard.Key popupKey)
+    public boolean onLongPress(Keyboard.Key popupKey)
     {
         key = popupKey;
         emojiName = String.valueOf(key.popupCharacters);
@@ -78,10 +75,12 @@ public class EmojidexKeyboardView extends KeyboardView {
         // Create popup window.
         View view = inflater.inflate(R.layout.popup_favorite, null);
         popup = new PopupWindow(this);
+        popup.setOutsideTouchable(true);
+        popup.setFocusable(true);
         popup.setContentView(view);
         popup.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
         popup.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
-        popup.showAtLocation(this, Gravity.CENTER_HORIZONTAL, 0, -this.getHeight());
+        popup.showAtLocation(this, Gravity.CENTER, 0, -this.getHeight());
 
         // Set emoji data.
         TextView textView = (TextView)view.findViewById(R.id.favorite_name);
@@ -126,59 +125,29 @@ public class EmojidexKeyboardView extends KeyboardView {
             public void onClick(View v) {
                 closePopup();
 
-                final String temporaryFilePath = "tmp.png";
-                FileOutputStream fos = null;
-                try {
-                    // Get emoji data.
-                    final EmojiData emojiData = EmojiDataManager.create(context).getEmojiData(emojiName);
+                // Get emoji data.
+                final Emoji emoji = Emojidex.getInstance().getEmoji(emojiName);
+                final String formatName = context.getResources().getString(R.string.emoji_format_stamp);
+                final EmojiFormat format = EmojiFormat.toFormat(formatName);
 
-                    // Convert image to byte array.
-                    final Bitmap bmp = emojiData.getStamp();
-                    final ByteArrayOutputStream os = new ByteArrayOutputStream();
-                    bmp.compress(Bitmap.CompressFormat.PNG, 100, os);
-                    os.flush();
-                    final byte[] w = os.toByteArray();
-                    os.close();
+                // Send intent.
+                final File file = new File(emoji.getImageFilePath(format));
+                final Uri uri = Uri.fromFile(file);
+                final ActivityManager am = (ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
+                final ActivityManager.RunningTaskInfo taskInfo =  am.getRunningTasks(1).get(0);
 
-                    // Save byte array to temporary file.
-                    fos = context.openFileOutput(temporaryFilePath, Context.MODE_WORLD_READABLE);
-                    fos.write(w, 0, w.length);
-                    fos.flush();
+                final Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("image/png");
+                intent.putExtra(Intent.EXTRA_STREAM, uri);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+                intent.setPackage(taskInfo.baseActivity.getPackageName());
 
-                    // Send intent.
-                    final Uri uri = Uri.fromFile(context.getFileStreamPath(temporaryFilePath));
-                    final ActivityManager am = (ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
-                    final ActivityManager.RunningTaskInfo taskInfo =  am.getRunningTasks(1).get(0);
+                final Intent proxyIntent = new Intent(context, ProxyActivity.class);
+                proxyIntent.putExtra(Intent.EXTRA_INTENT, intent);
+                proxyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-                    final Intent intent = new Intent(Intent.ACTION_SEND);
-                    intent.setType("image/png");
-                    intent.putExtra(Intent.EXTRA_STREAM, uri);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
-                    intent.setPackage(taskInfo.baseActivity.getPackageName());
-
-                    final Intent proxyIntent = new Intent(context, ProxyActivity.class);
-                    proxyIntent.putExtra(Intent.EXTRA_INTENT, intent);
-                    proxyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-                    context.startActivity(proxyIntent);
-                }
-                catch(Exception e)
-                {
-                    e.printStackTrace();
-                }
-                finally
-                {
-                    try
-                    {
-                        if (fos != null)
-                            fos.close();
-                    }
-                    catch(Exception e)
-                    {
-                        e.printStackTrace();
-                    }
-                }
+                context.startActivity(proxyIntent);
             }
         });
     }
@@ -228,8 +197,9 @@ public class EmojidexKeyboardView extends KeyboardView {
 
     /**
      * Close popup window.
+     * @return  false if popup is not opened.
      */
-    public void closePopup()
+    public boolean closePopup()
     {
         // If changed favorite state, save current state.
         if (registered != first)
@@ -244,6 +214,8 @@ public class EmojidexKeyboardView extends KeyboardView {
         {
             popup.dismiss();
             popup = null;
+            return true;
         }
+        return false;
     }
 }

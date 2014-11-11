@@ -20,15 +20,120 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/history"
-                android:id="@+id/ime_category_history_button"
-                android:onClick="showHistories" />
+                android:text="@string/ime_category_text_history"
+                android:id="@+id/ime_category_button_history"
+                android:onClick="onClickCategoryButton"
+                android:contentDescription="@string/ime_category_id_history"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ime_category_text_all"
+                android:id="@+id/ime_category_button_all"
+                android:onClick="onClickCategoryButton"
+                android:contentDescription="@string/ime_category_id_all"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ime_category_text_faces"
+                android:id="@+id/ime_category_button_faces"
+                android:onClick="onClickCategoryButton"
+                android:contentDescription="@string/ime_category_id_faces"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ime_category_text_people"
+                android:id="@+id/ime_category_button_people"
+                android:onClick="onClickCategoryButton"
+                android:contentDescription="@string/ime_category_id_people"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ime_category_text_gestures"
+                android:id="@+id/ime_category_button_gestures"
+                android:onClick="onClickCategoryButton"
+                android:contentDescription="@string/ime_category_id_gestures"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ime_category_text_food"
+                android:id="@+id/ime_category_button_food"
+                android:onClick="onClickCategoryButton"
+                android:contentDescription="@string/ime_category_id_food"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ime_category_text_objects"
+                android:id="@+id/ime_category_button_objects"
+                android:onClick="onClickCategoryButton"
+                android:contentDescription="@string/ime_category_id_objects"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ime_category_text_tools"
+                android:id="@+id/ime_category_button_tools"
+                android:onClick="onClickCategoryButton"
+                android:contentDescription="@string/ime_category_id_tools"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ime_category_text_nature"
+                android:id="@+id/ime_category_button_nature"
+                android:onClick="onClickCategoryButton"
+                android:contentDescription="@string/ime_category_id_nature"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ime_category_text_cosmos"
+                android:id="@+id/ime_category_button_cosmos"
+                android:onClick="onClickCategoryButton"
+                android:contentDescription="@string/ime_category_id_cosmos"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ime_category_text_places"
+                android:id="@+id/ime_category_button_places"
+                android:onClick="onClickCategoryButton"
+                android:contentDescription="@string/ime_category_id_places"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ime_category_text_transportation"
+                android:id="@+id/ime_category_button_transportation"
+                android:onClick="onClickCategoryButton"
+                android:contentDescription="@string/ime_category_id_transportation"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ime_category_text_abstract"
+                android:id="@+id/ime_category_button_abstract"
+                android:onClick="onClickCategoryButton"
+                android:contentDescription="@string/ime_category_id_abstract"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ime_category_text_symbols"
+                android:id="@+id/ime_category_button_symbols"
+                android:onClick="onClickCategoryButton"
+                android:contentDescription="@string/ime_category_id_symbols"/>
         </LinearLayout>
     </HorizontalScrollView>
 
     <ViewFlipper
         android:layout_width="match_parent"
-        android:layout_height="@dimen/ime_keyboard_height"
+        android:layout_height="wrap_content"
         android:id="@+id/keyboard_viewFlipper"
         android:layout_weight="1">
     </ViewFlipper>

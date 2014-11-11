@@ -15,6 +15,8 @@ import java.util.List;
  * Created by kou on 14/05/19.
  */
 public class ProxyActivity extends Activity {
+    static final String TAG = MainActivity.TAG + "::ProxyActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,7 +31,7 @@ public class ProxyActivity extends Activity {
         // Error.
         if( resolveInfos.isEmpty() )
         {
-            Log.d("ime", "Proxy: Intent send failed.");
+            Log.d(TAG, "Proxy: Intent send failed.");
 
             // Create error dialog.
             // TODO Set error detail.
@@ -52,7 +54,7 @@ public class ProxyActivity extends Activity {
         else
         {
             startActivity(intent);
-            Log.d("ime", "Proxy: Intent send succeeded.");
+            Log.d(TAG, "Proxy: Intent send succeeded.");
 
             // Close proxy activity.
             finish();

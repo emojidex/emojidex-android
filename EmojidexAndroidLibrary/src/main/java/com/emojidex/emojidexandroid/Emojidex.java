@@ -1,196 +1,239 @@
 package com.emojidex.emojidexandroid;
 
 import android.content.Context;
-import android.text.SpannableStringBuilder;
+import android.util.Log;
 
-import java.util.LinkedList;
+import com.emojidex.emojidexandroidlibrary.R;
+
+import java.io.File;
+import java.util.Collection;
+import java.util.List;
 
 /**
- * Created by kou on 13/09/09.
+ * Created by kou on 14/10/03.
  */
 public class Emojidex {
-    private final String separator = ":";
-    private final EmojiDataManager emojiDataManager;
+    static final String TAG = "EmojidexLibrary";
+
+    public static final String SEPARATOR = ":";
+
+    private static final Emojidex INSTANCE = new Emojidex();
+
+    private Context context = null;
+    private EmojiManager manager;
+    private EmojiFormat defaultFormat;
 
     /**
-     * Construct Emojidex object.
-     * @param context
+     * Get singleton instance.
+     * @return  Singleton instance.
      */
-    public Emojidex(Context context)
+    public static Emojidex getInstance() { return INSTANCE; }
+
+    /**
+     * Initialize emojidex.
+     * @param context   Context of application.
+     */
+    public void initialize(Context context)
     {
-        emojiDataManager = EmojiDataManager.create(context);
+        Log.d(TAG, "Initialize start.");
+        if(isInitialized())
+        {
+            Log.d(TAG, "Already initialized.");
+            return;
+        }
+
+        this.context = context.getApplicationContext();
+        manager = new EmojiManager(this.context);
+        manager.add(PathUtils.getLocalJsonPath());
+        defaultFormat = EmojiFormat.toFormat(this.context.getResources().getString(R.string.emoji_format_default));
+
+        Log.d(TAG, "Initialize complete.");
     }
 
     /**
-     * Normal text encode to Emojidex text.
-     * @param text      Normal text.
-     * @return          Emojidex text.
+     * Download emoji image to local storage.
+     * If already downloaded, update emoji.
+     * @param config Configuration of download.
+     */
+    public void download(DownloadConfig config)
+    {
+        if( !isInitialized() )
+            throw new EmojidexIsNotInitializedException();
+
+        final EmojiDownloader downloader = new EmojiDownloader(context);
+        downloader.download(config);
+    }
+
+    /**
+     * Reload emojidex.
+     */
+    public void reload()
+    {
+        if( !isInitialized() )
+            throw new EmojidexIsNotInitializedException();
+
+        manager.reset();
+        manager.add(PathUtils.getLocalJsonPath());
+    }
+
+    /**
+     * Delete all cache files in local storage.
+     */
+    public void deleteLocalCache()
+    {
+        deleteFile(new File(PathUtils.LOCAL_ROOT_PATH));
+        Log.d(TAG, "Delete all cache files in local storage.");
+    }
+
+    /**
+     * Normal text encode to emojidex text.
+     * @param text  Normal text.
+     * @return      Emojidex text.
      */
     public CharSequence emojify(CharSequence text)
     {
-        final CharSequence result = emojifyImpl(text, true);
-        android.util.Log.d("lib", "emojify : " + text + " -> " + result);
-        return result;
+        return emojify(text, true);
     }
 
     /**
-     * Emojidex text encode to normal text.
-     * @param text      Emojidex text.
-     * @return          Normal text.
-     */
-    public CharSequence deEmojify(CharSequence text)
-    {
-        final CharSequence result = deEmojifyImpl(text);
-        android.util.Log.d("lib", "deEmojify : " + text + " -> " + result);
-        return result;
-    }
-
-    /**
-     * Text encode to unicode text.
-     * @param text  Text.
-     * @return      Unicode text.
-     */
-    public CharSequence toUnicodeString(CharSequence text)
-    {
-        final CharSequence result = emojifyImpl( deEmojifyImpl(text), false );
-        android.util.Log.d("lib", "toUnicodeString : " + text + " -> " + result);
-        return result;
-    }
-
-    /**
-     * Normal text encode to Emojidex text.
+     * Normal text encode to emojidex text.
      * @param text      Normal text.
-     * @param useImage  If false use unicode emoji.
+     * @param useImage  If true, use phantom-emoji image.
      * @return          Emojidex text.
      */
-    protected CharSequence emojifyImpl(CharSequence text, boolean useImage)
+    public CharSequence emojify(CharSequence text, boolean useImage)
     {
-        final SpannableStringBuilder result = new SpannableStringBuilder();
+        return emojify(text, useImage, defaultFormat);
+    }
 
-        final int length = text.length();
-        int charCount = 0;
-        int startIndex = 0;
-        boolean startIsSeparator = false;
-        for(int i = 0;  i < length;  i += charCount)
-        {
-            final int codePoint = Character.codePointAt(text, i);
-            charCount = Character.charCount(codePoint);
+    /**
+     * Normal text encode to emojidex text.
+     * @param text      Normal text.
+     * @param useImage  If true, use phantom-emoji image.
+     * @param format    Image format.
+     * @return          Emojidex text.
+     */
+    public CharSequence emojify(CharSequence text, boolean useImage, EmojiFormat format)
+    {
+        if( !isInitialized() )
+            throw new EmojidexIsNotInitializedException();
 
-            if( String.valueOf(Character.toChars(codePoint)).equals(separator) )
-            {
-                final int endIndex = i;
-
-                // Start character is not separator.
-                if( !startIsSeparator )
-                {
-                    result.append( text.subSequence(startIndex, endIndex) );
-                    startIndex = endIndex;
-                    startIsSeparator = true;
-                    continue;
-                }
-
-                // Get EmojiData by emoji name.
-                final String emojiName = text.subSequence(startIndex + 1, endIndex).toString();
-                final EmojiData emojiData = emojiDataManager.getEmojiData(emojiName);
-
-                // String is not emoji tag.
-                if(emojiData == null)
-                {
-                    result.append( text.subSequence(startIndex, endIndex) );
-                    startIndex = endIndex;
-                    continue;
-                }
-
-                // This string is emoji tag !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                if(useImage)
-                {
-                    if (emojiData.getIcon() != null)
-                        result.append(emojiData.createImageString());
-                }
-                else if(emojiData.isOriginalEmoji())
-                    result.append( text.subSequence(startIndex, endIndex) );
-                else
-                    result.append(emojiData.getMoji());
-                startIndex = endIndex + charCount;
-                startIsSeparator = false;
-                android.util.Log.d("lib", "result -> " + result);
-            }
-        }
-
-        // Last string is not emoji tag.
-        if(startIndex < length)
-        {
-            result.append( text.subSequence(startIndex, length) );
-        }
-
-        return result;
+        return TextConverter.emojify(text, useImage, format);
     }
 
     /**
      * Emojidex text decode to normal text.
-     * @param text      Emojidex text.
-     * @return          Normal text.
+     * @param text  Emojidex text.
+     * @return      Normal text.
      */
-    protected CharSequence deEmojifyImpl(CharSequence text)
+    public CharSequence deEmojify(CharSequence text)
     {
-        final SpannableStringBuilder result = new SpannableStringBuilder();
+        if( !isInitialized() )
+            throw new EmojidexIsNotInitializedException();
 
-        LinkedList<Integer> codes = new LinkedList<Integer>();
-        int start = 0;
-        int next = 0;
-
-        final int count = Character.codePointCount(text, 0, text.length());
-        for(int i = 0;  i < count;  ++i)
-        {
-            final int codePoint = Character.codePointAt(text, next);
-            final int cur = next;
-            next += Character.charCount(codePoint);
-            codes.addLast(codePoint);
-
-            if(codes.size() < 2)
-                continue;
-
-            // Find combining character emoji.
-            EmojiData emojiData = emojiDataManager.getEmojiData(codes);
-            if( emojiData != null )
-            {
-                start = next;
-                codes.clear();
-            }
-
-            // Find single character emoji.
-            else
-            {
-                emojiData = emojiDataManager.getEmojiData(codes.subList(0, 1));
-                codes.removeFirst();
-
-                // Not emoji.
-                if(emojiData == null)
-                {
-                    result.append( text.subSequence(start, cur) );
-                    start = cur;
-                    continue;
-                }
-                start = cur;
-            }
-
-            // Emoji to tag.
-            result.append(separator + emojiData.getName() + separator);
-        }
-        if( !codes.isEmpty() )
-        {
-            final EmojiData emojiData = emojiDataManager.getEmojiData(codes);
-
-            if(emojiData == null)
-                result.append( text.subSequence(start, next) );
-            else
-                result.append(separator + emojiData.getName() + separator);
-        }
-         return result;
+        return TextConverter.deEmojify(text);
     }
 
-    public EmojiDataManager getEmojiDataManager()
+    /**
+     * Get initialized flag.
+     * @return  true if Emojidex object is initialized.
+     */
+    public boolean isInitialized()
     {
-        return emojiDataManager;
+        return context != null;
+    }
+
+    /**
+     * Get emoji from emoji name.
+     * @param name  Emoji name.
+     * @return      Emoji.(If emoji is not found, return null.)
+     */
+    public Emoji getEmoji(String name)
+    {
+        if( !isInitialized() )
+            throw new EmojidexIsNotInitializedException();
+
+        return manager.getEmoji(name);
+    }
+
+    /**
+     * Get emoji from emoji codes.
+     * @param codes     Emoji codes.
+     * @return          Emoji.(If emoji is not found, return null.)
+     */
+    public Emoji getEmoji(List<Integer> codes)
+    {
+        if( !isInitialized() )
+            throw new EmojidexIsNotInitializedException();
+
+        return manager.getEmoji(codes);
+    }
+
+    /**
+     * Get emoji list from category name.
+     * @param category  Category name.
+     * @return          Emoji list.(If emoji list is not found, return null.)
+     */
+    public List<Emoji> getEmojiList(String category)
+    {
+        if( !isInitialized() )
+            throw new EmojidexIsNotInitializedException();
+
+        return manager.getEmojiList(category);
+    }
+
+    /**
+     * Ger all emoji list.
+     * @return  All emoji list.
+     */
+    public List<Emoji> getAllEmojiList()
+    {
+        if( !isInitialized() )
+            throw new EmojidexIsNotInitializedException();
+
+        return manager.getAllEmojiList();
+    }
+
+    /**
+     * Get category name list.
+     * @return  Category name list.
+     */
+    public Collection<String> getCategoryNames()
+    {
+        if( !isInitialized() )
+            throw new EmojidexIsNotInitializedException();
+
+        return manager.getCategoryNames();
+    }
+
+    /**
+     * Get default format for device.
+     * @return  Default format for device.
+     */
+    public EmojiFormat getDefaultFormat()
+    {
+        if( !isInitialized() )
+            throw new EmojidexIsNotInitializedException();
+        
+        return defaultFormat;
+    }
+
+    /**
+     * Delete file.
+     * @param file  File.
+     */
+    private void deleteFile(File file)
+    {
+        // File is not found.
+        if(file == null || !file.exists())
+            return;
+
+        // If file is directory, delete child files.
+        if(file.isDirectory())
+            for(File child : file.listFiles())
+                deleteFile(child);
+
+        // Delete file.
+        file.delete();
     }
 }

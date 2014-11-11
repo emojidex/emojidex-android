@@ -8,36 +8,28 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.style.ImageSpan;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends Activity {
+    static final String TAG = "EmojidexAndroid";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,32 +78,24 @@ public class MainActivity extends Activity {
     /**
      * Emojidex
      */
-    private EmojidexEditor emojidex = null;
-    private EmojiDataManager emojiDataManager;
-    private List<EmojiData> emojiDataList;
+    private Emojidex emojidex = null;
 
     private EditText editText;
-    private CustomTextWatcher textWatcher;
 
     private ToggleButton toggleButton;
     private boolean toggleState = true;
 
-    private InputMethodManager inputMethodManager;
-
     private void initEmojidexEditor()
     {
-        if (emojidex == null)
-            emojidex = new EmojidexEditor(getApplicationContext());
+        // Initialize emojdiex.
+        emojidex = Emojidex.getInstance();
+        emojidex.initialize(this);
 
-        emojiDataManager = emojidex.getEmojiDataManager();
-        com.emojidex.emojidexandroid2.Emojidex.getInstance().initialize(this);
-        emojiDataList = emojiDataManager.getCategorizedList(getString(R.string.all_category));
-
+        // Get edit text.
         editText = (EditText)findViewById(R.id.edit_text);
 
         // detects input
-        textWatcher = new CustomTextWatcher();
-        editText.addTextChangedListener(textWatcher);
+        editText.addTextChangedListener(new CustomTextWatcher());
 
         // toggle button state
         toggleButton = (ToggleButton)findViewById(R.id.toggle_button);
@@ -130,7 +114,7 @@ public class MainActivity extends Activity {
 
     private CharSequence toUnicodeString(final CharSequence cs)
     {
-        return emojidex.toUnicodeString(cs);
+        return emojidex.emojify(cs, false);
     }
 
     /**
@@ -192,13 +176,20 @@ public class MainActivity extends Activity {
      */
     private class CustomTextWatcher implements TextWatcher
     {
-        public CustomTextWatcher() { }
+        private int start, end;
 
         @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+        public void beforeTextChanged(CharSequence s, int start, int count, int after)
+        {
+            // nop
+        }
 
         @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) { }
+        public void onTextChanged(CharSequence s, int start, int before, int count)
+        {
+            this.start = start;
+            this.end = start + count;
+        }
 
         @Override
         public void afterTextChanged(Editable s)
@@ -212,11 +203,24 @@ public class MainActivity extends Activity {
             int oldPos = editText.getSelectionStart();
             int oldTextLength = editText.getText().length();
 
+            final ImageSpan[] imageSpans = s.getSpans(start, end, ImageSpan.class);
             if (toggleState)
             {
-                editText.removeTextChangedListener(textWatcher);
-                editText.setText(emojify(deEmojify(editText.getText())));
-                editText.addTextChangedListener(textWatcher);
+                if(imageSpans.length == 0 && s.subSequence(start, end).toString().indexOf(Emojidex.SEPARATOR) != -1)
+                {
+                    editText.removeTextChangedListener(this);
+                    editText.setText(emojify(deEmojify(s)));
+                    editText.addTextChangedListener(this);
+                }
+            }
+            else
+            {
+                if(imageSpans.length > 0)
+                {
+                    editText.removeTextChangedListener(this);
+                    editText.setText(deEmojify(s));
+                    editText.addTextChangedListener(this);
+                }
             }
 
             // adjustment cursor position
@@ -227,15 +231,6 @@ public class MainActivity extends Activity {
             else if (newPos < 0)
                 newPos = 0;
             editText.setSelection(newPos);
-
-            // load image
-            ArrayList<String> emojiNames = new ArrayList<String>();
-            emojiNames = emojidex.getEmojiNames();
-            if (emojiNames != null)
-            {
-                for (String emojiName : emojiNames)
-                    loadImage(emojiName);
-            }
         }
     }
 
@@ -362,18 +357,6 @@ public class MainActivity extends Activity {
     }
 
     /**
-     * load image
-     * @param name emoji name
-     */
-    private void loadImage(String name)
-    {
-        EmojiData emoji = emojiDataManager.getEmojiData(name);
-        ImageView blank = (ImageView)findViewById(R.id.blank);
-        if (emoji != null && emoji.getIcon() != null)
-            blank.setImageDrawable(emoji.getIcon());
-    }
-
-    /**
      * When sent other application's text(intent).
      */
     private void getIntentData()
@@ -423,143 +406,6 @@ public class MainActivity extends Activity {
             editText.setText(emojify(editText.getText()));
         else
             editText.setText(deEmojify(editText.getText()));
-    }
-
-    /**
-     * Create the window(dialog) for emoji search
-     * @param v
-     */
-    public void createSearchWindow(View v)
-    {
-        // set view
-        View view = getLayoutInflater().inflate(R.layout.search_window, null);
-
-        // set edittext and keyboard
-        final EditText editText = (EditText)view.findViewById(R.id.search_edittext);
-        boolean result = false;
-        final String keyboardId = FileOperation.loadPreferences(this, FileOperation.KEYBOARD);
-        inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-        List<InputMethodInfo> inputMethodInfoList = inputMethodManager.getEnabledInputMethodList();
-        for (int i = 0; i < inputMethodInfoList.size(); ++i) {
-            InputMethodInfo inputMethodInfo = inputMethodInfoList.get(i);
-            if (inputMethodInfo.getId().equals(keyboardId))
-                result = true;
-        }
-
-        // set spinner
-        final Spinner spinner = (Spinner)view.findViewById(R.id.spinner);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        adapter.add(getString(R.string.newest));
-        adapter.add(getString(R.string.popular));
-        adapter.add(getString(R.string.category));
-        adapter.add(getString(R.string.emoji));
-        spinner.setAdapter(adapter);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position == 2)
-                {
-                    editText.setEnabled(true);
-                    editText.setHint(getString(R.string.search_category));
-                }
-                else if (position == 3)
-                {
-                    editText.setEnabled(true);
-                    editText.setHint(getString(R.string.search_emoji));
-                }
-                else
-                    editText.setEnabled(false);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
-
-        // set dialog
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setView(view);
-        final AlertDialog dialog = builder.show();
-        dialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
-
-        Button searchButton = (Button)view.findViewById(R.id.emoji_search_button);
-        searchButton.setOnClickListener( new View.OnClickListener() {
-            public void onClick( View v ) {
-                if (spinner.getSelectedItemPosition() == 2 && editText.getText().toString().equals(""))
-                    return;
-                if (spinner.getSelectedItemPosition() == 3 && editText.getText().toString().equals(""))
-                    return;
-
-                searchEmoji(spinner.getSelectedItemPosition(), editText.getText().toString());
-                dialog.dismiss();
-            }
-        });
-
-        Button closeButton = (Button)view.findViewById(R.id.window_close_button);
-        closeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.cancel();
-            }
-        });
-
-        // TODO change keyboard
-        if (result)
-            inputMethodManager.setInputMethod(getWindow().getAttributes().token, keyboardId);
-        else
-            inputMethodManager.showInputMethodPicker();
-    }
-
-    /**
-     * Search emoji from emojidex site.
-     * @param selected  selectedItem from spinner
-     * @param str       string from edittext
-     */
-    private void searchEmoji(int selected, String str)
-    {
-        String text = str;
-        if (!text.equals(""))
-        {
-            try
-            {
-                text = URLEncoder.encode(text, "UTF-8");
-            }
-            catch (UnsupportedEncodingException e) { e.printStackTrace(); }
-        }
-
-        String uri = "";
-        switch (selected)
-        {
-            // newest
-            case 0:
-                uri = "https://www.emojidex.com/api/v1/newest";
-                break;
-            // popular
-            case 1:
-                uri = "https://www.emojidex.com/api/v1/popular";
-                break;
-            // category
-            case 2:
-                uri = "https://www.emojidex.com/api/v1/search/categories?[q][name_cont]=" + text;
-                break;
-            // emoji
-            case 3:
-                uri = "https://www.emojidex.com/api/v1/search/emoji?[q][code_cont]=" + text;
-                break;
-        }
-
-        Uri.Builder builder = new Uri.Builder();
-        AsyncHttpRequestForGetJson getJsonTask = new AsyncHttpRequestForGetJson(uri);
-        getJsonTask.execute(builder);
-        try
-        {
-            String result = getJsonTask.get();
-            FileOperation.saveFileToLocal(getApplicationContext(),
-                                          FileOperation.SEARCH_RESULT, result);
-        }
-        catch (InterruptedException e) { e.printStackTrace(); }
-        catch (ExecutionException e) { e.printStackTrace(); }
     }
 
     @Override
