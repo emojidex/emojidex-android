@@ -29,6 +29,8 @@ import android.widget.ToggleButton;
 import java.util.List;
 
 public class MainActivity extends Activity {
+    static final String TAG = "EmojidexAndroid";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

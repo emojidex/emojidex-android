@@ -6,6 +6,7 @@ import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.os.Handler;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -29,6 +30,8 @@ import java.util.List;
  * Created by kou on 13/08/11.
  */
 public class EmojidexIME extends InputMethodService {
+    static final String TAG = MainActivity.TAG + "::EmojidexIME";
+
     private Emojidex emojidex;
 
     private InputMethodManager inputMethodManager = null;
@@ -254,7 +257,7 @@ public class EmojidexIME extends InputMethodService {
     public void onClickCategoryButton(View v)
     {
         final String categoryName = v.getContentDescription().toString();
-        android.util.Log.d("ime", "Click category button : category = " + categoryName);
+        Log.d(TAG, "Click category button : category = " + categoryName);
         ChangeCategory(categoryName);
     }
 
