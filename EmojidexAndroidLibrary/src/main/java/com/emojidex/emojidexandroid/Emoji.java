@@ -57,19 +57,31 @@ public class Emoji extends SimpleJsonParam {
         }
     }
 
-    @Override
-    public String toString() {
-        return toString(Emojidex.getInstance().getDefaultFormat());
+    /**
+     * Emoji object to emojidex string.
+     * @return          String.
+     */
+    public CharSequence toEmojidexString() {
+        return toEmojidexString(Emojidex.getInstance().getDefaultFormat());
     }
 
     /**
-     * Emoji object to string.
+     * Emoji object to emojidex string.
      * @param format    Image format.
      * @return          String.
      */
-    public String toString(EmojiFormat format)
+    public CharSequence toEmojidexString(EmojiFormat format)
     {
-        return TextConverter.createEmojidexText(this, Emojidex.getInstance().getDefaultFormat()).toString();
+        return TextConverter.createEmojidexText(this, Emojidex.getInstance().getDefaultFormat());
+    }
+
+    /**
+     * Emoji object to tag string.
+     * @return      Tag string.
+     */
+    public CharSequence toTagString()
+    {
+        return Emojidex.SEPARATOR + name + Emojidex.SEPARATOR;
     }
 
     /**

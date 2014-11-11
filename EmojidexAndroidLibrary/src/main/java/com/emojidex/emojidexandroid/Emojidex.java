@@ -15,6 +15,8 @@ import java.util.List;
 public class Emojidex {
     static final String TAG = "EmojidexLibrary";
 
+    public static final String SEPARATOR = ":";
+
     private static final Emojidex INSTANCE = new Emojidex();
 
     private Context context = null;

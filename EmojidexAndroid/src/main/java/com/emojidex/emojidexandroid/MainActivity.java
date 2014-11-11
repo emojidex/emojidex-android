@@ -11,6 +11,8 @@ import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.style.ImageSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -178,13 +180,20 @@ public class MainActivity extends Activity {
      */
     private class CustomTextWatcher implements TextWatcher
     {
-        public CustomTextWatcher() { }
+        private int start, end;
 
         @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+        public void beforeTextChanged(CharSequence s, int start, int count, int after)
+        {
+            // nop
+        }
 
         @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) { }
+        public void onTextChanged(CharSequence s, int start, int before, int count)
+        {
+            this.start = start;
+            this.end = start + count;
+        }
 
         @Override
         public void afterTextChanged(Editable s)
@@ -198,11 +207,25 @@ public class MainActivity extends Activity {
             int oldPos = editText.getSelectionStart();
             int oldTextLength = editText.getText().length();
 
+            final ImageSpan[] imageSpans = s.getSpans(start, end, ImageSpan.class);
             if (toggleState)
             {
-                editText.removeTextChangedListener(textWatcher);
-                editText.setText(emojify(deEmojify(editText.getText())));
-                editText.addTextChangedListener(textWatcher);
+                Log.d("hoge", "s.length = " + s.length() + ", start = " + start + ", end = " + end);
+                if(imageSpans.length == 0 && s.subSequence(start, end).toString().indexOf(Emojidex.SEPARATOR) != -1)
+                {
+                    editText.removeTextChangedListener(this);
+                    editText.setText(emojify(deEmojify(s)));
+                    editText.addTextChangedListener(this);
+                }
+            }
+            else
+            {
+                if(imageSpans.length > 0)
+                {
+                    editText.removeTextChangedListener(this);
+                    editText.setText(deEmojify(s));
+                    editText.addTextChangedListener(this);
+                }
             }
 
             // adjustment cursor position

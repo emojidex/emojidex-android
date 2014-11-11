@@ -460,7 +460,7 @@ public class EmojidexIME extends InputMethodService {
                 final Emoji emoji = emojidex.getEmoji(codes);
                 if(emoji != null)
                 {
-                    getCurrentInputConnection().commitText(emoji.toString(), 1);
+                    getCurrentInputConnection().commitText(emoji.toEmojidexString(), 1);
                     historyManager.regist(emoji.getName());
                 }
                 // Input other.

@@ -13,8 +13,6 @@ import java.util.LinkedList;
 class TextConverter {
     static final String TAG = Emojidex.TAG + "::TextConverter";
 
-    private static final String SEPARATOR = ":";
-
     private static final Emojidex emojidex = Emojidex.getInstance();
 
     /**
@@ -38,7 +36,7 @@ class TextConverter {
             charCount = Character.charCount(codePoint);
 
             // Find separator.
-            if( String.valueOf(Character.toChars(codePoint)).equals(SEPARATOR) )
+            if( String.valueOf(Character.toChars(codePoint)).equals(Emojidex.SEPARATOR) )
             {
                 final int endIndex = i;
 
@@ -130,7 +128,7 @@ class TextConverter {
                 // Not emoji.
                 if(emoji == null)
                 {
-                    result.append( text.subSequence(start, cur) );
+                    result.append( text.subSequence(start, cur).toString() );
                     start = cur;
                     continue;
                 }
@@ -138,16 +136,16 @@ class TextConverter {
             }
 
             // Emoji to tag.
-            result.append(SEPARATOR + emoji.getName() + SEPARATOR);
+            result.append(emoji.toTagString());
         }
         if( !codes.isEmpty() )
         {
             final Emoji emoji = emojidex.getEmoji(codes);
 
             if(emoji == null)
-                result.append( text.subSequence(start, next) );
+                result.append( text.subSequence(start, next).toString() );
             else
-                result.append(SEPARATOR + emoji.getName() + SEPARATOR);
+                result.append(emoji.toTagString());
         }
 
         // Put log.
@@ -165,7 +163,7 @@ class TextConverter {
     static CharSequence createEmojidexText(Emoji emoji, EmojiFormat format)
     {
         final ImageSpan imageSpan = new ImageSpan(emoji.getDrawable(format));
-        final SpannableString result = new SpannableString(emoji.getText());
+        final SpannableString result = new SpannableString(emoji.hasOriginalCodes() ? emoji.toTagString() : emoji.getText());
         result.setSpan(imageSpan, 0, result.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
         return result;
     }
