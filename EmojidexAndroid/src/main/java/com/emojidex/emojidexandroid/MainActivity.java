@@ -81,12 +81,9 @@ public class MainActivity extends Activity {
     private Emojidex emojidex = null;
 
     private EditText editText;
-    private CustomTextWatcher textWatcher;
 
     private ToggleButton toggleButton;
     private boolean toggleState = true;
-
-    private InputMethodManager inputMethodManager;
 
     private void initEmojidexEditor()
     {
@@ -98,8 +95,7 @@ public class MainActivity extends Activity {
         editText = (EditText)findViewById(R.id.edit_text);
 
         // detects input
-        textWatcher = new CustomTextWatcher();
-        editText.addTextChangedListener(textWatcher);
+        editText.addTextChangedListener(new CustomTextWatcher());
 
         // toggle button state
         toggleButton = (ToggleButton)findViewById(R.id.toggle_button);
@@ -210,7 +206,6 @@ public class MainActivity extends Activity {
             final ImageSpan[] imageSpans = s.getSpans(start, end, ImageSpan.class);
             if (toggleState)
             {
-                Log.d("hoge", "s.length = " + s.length() + ", start = " + start + ", end = " + end);
                 if(imageSpans.length == 0 && s.subSequence(start, end).toString().indexOf(Emojidex.SEPARATOR) != -1)
                 {
                     editText.removeTextChangedListener(this);
@@ -236,15 +231,6 @@ public class MainActivity extends Activity {
             else if (newPos < 0)
                 newPos = 0;
             editText.setSelection(newPos);
-
-            // load image
-//            ArrayList<String> emojiNames = new ArrayList<String>();
-//            emojiNames = emojidex.getEmojiNames();
-//            if (emojiNames != null)
-//            {
-//                for (String emojiName : emojiNames)
-//                    loadImage(emojiName);
-//            }
         }
     }
 
@@ -368,18 +354,6 @@ public class MainActivity extends Activity {
             if (!set)
                 button.setImageResource(android.R.drawable.ic_menu_send);
         }
-    }
-
-    /**
-     * load image
-     * @param name emoji name
-     */
-    private void loadImage(String name)
-    {
-//        EmojiData emoji = emojiDataManager.getEmojiData(name);
-//        ImageView blank = (ImageView)findViewById(R.id.blank);
-//        if (emoji != null && emoji.getIcon() != null)
-//            blank.setImageDrawable(emoji.getIcon());
     }
 
     /**

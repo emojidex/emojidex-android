@@ -430,12 +430,6 @@ public class EmojidexIME extends InputMethodService {
             for(int i = 0;  keyCodes[i] != -1;  ++i)
                 codes.add(keyCodes[i]);
 
-            StringBuilder buf = new StringBuilder("Click key : primaryCode = 0x" + String.format("%1$08x", primaryCode) + ", keyCodes = 0x");
-            for (int i = 0;  i < codes.size();  ++i)
-                buf.append( String.format(" %1$08x", keyCodes[i]) );
-            buf.append(", length = " + codes.size());
-            android.util.Log.d("ime", buf.toString());
-
             // Input show ime picker or default keyboard.
             if (primaryCode == showIMEPickerCode)
             {
