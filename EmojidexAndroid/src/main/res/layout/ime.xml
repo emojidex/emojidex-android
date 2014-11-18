@@ -11,21 +11,21 @@
         android:layout_weight="1"
         android:id="@+id/ime_category_scrollview"
         style="@style/IMEHorizontalScrollViewStyle">
-        <LinearLayout
+        <RadioGroup
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:id="@+id/ime_categories"
             android:orientation="horizontal" >
 
-            <Button
+            <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/ime_category_text_history"
                 android:id="@+id/ime_category_button_history"
                 android:onClick="onClickCategoryButton"
-                android:contentDescription="@string/ime_category_id_history"/>
+                android:contentDescription="@string/ime_category_id_history" />
 
-            <Button
+            <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/ime_category_text_all"
@@ -33,7 +33,7 @@
                 android:onClick="onClickCategoryButton"
                 android:contentDescription="@string/ime_category_id_all"/>
 
-            <Button
+            <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/ime_category_text_faces"
@@ -41,7 +41,7 @@
                 android:onClick="onClickCategoryButton"
                 android:contentDescription="@string/ime_category_id_faces"/>
 
-            <Button
+            <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/ime_category_text_people"
@@ -49,7 +49,7 @@
                 android:onClick="onClickCategoryButton"
                 android:contentDescription="@string/ime_category_id_people"/>
 
-            <Button
+            <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/ime_category_text_gestures"
@@ -57,7 +57,7 @@
                 android:onClick="onClickCategoryButton"
                 android:contentDescription="@string/ime_category_id_gestures"/>
 
-            <Button
+            <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/ime_category_text_food"
@@ -65,7 +65,7 @@
                 android:onClick="onClickCategoryButton"
                 android:contentDescription="@string/ime_category_id_food"/>
 
-            <Button
+            <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/ime_category_text_objects"
@@ -73,7 +73,7 @@
                 android:onClick="onClickCategoryButton"
                 android:contentDescription="@string/ime_category_id_objects"/>
 
-            <Button
+            <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/ime_category_text_tools"
@@ -81,7 +81,7 @@
                 android:onClick="onClickCategoryButton"
                 android:contentDescription="@string/ime_category_id_tools"/>
 
-            <Button
+            <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/ime_category_text_nature"
@@ -89,7 +89,7 @@
                 android:onClick="onClickCategoryButton"
                 android:contentDescription="@string/ime_category_id_nature"/>
 
-            <Button
+            <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/ime_category_text_cosmos"
@@ -97,7 +97,7 @@
                 android:onClick="onClickCategoryButton"
                 android:contentDescription="@string/ime_category_id_cosmos"/>
 
-            <Button
+            <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/ime_category_text_places"
@@ -105,7 +105,7 @@
                 android:onClick="onClickCategoryButton"
                 android:contentDescription="@string/ime_category_id_places"/>
 
-            <Button
+            <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/ime_category_text_transportation"
@@ -113,7 +113,7 @@
                 android:onClick="onClickCategoryButton"
                 android:contentDescription="@string/ime_category_id_transportation"/>
 
-            <Button
+            <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/ime_category_text_abstract"
@@ -121,14 +121,14 @@
                 android:onClick="onClickCategoryButton"
                 android:contentDescription="@string/ime_category_id_abstract"/>
 
-            <Button
+            <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/ime_category_text_symbols"
                 android:id="@+id/ime_category_button_symbols"
                 android:onClick="onClickCategoryButton"
                 android:contentDescription="@string/ime_category_id_symbols"/>
-        </LinearLayout>
+        </RadioGroup>
     </HorizontalScrollView>
 
     <ViewFlipper

@@ -6,6 +6,7 @@
     <attr name="horizontalScrollViewStyle" format="reference" />
     <style name="IMETheme" parent="android:Theme.Holo.InputMethod">
         <item name="android:buttonStyle">@style/IMEButtonStyle</item>
+        <item name="android:radioButtonStyle">@style/IMERadioButtonStyle</item>
         <item name="android:imageButtonStyle">@style/IMEImageButtonStyle</item>
         <item name="android:scrollViewStyle">@style/IMEScrollViewStyle</item>
         <item name="horizontalScrollViewStyle">@style/IMEHorizontalScrollViewStyle</item>
@@ -16,6 +17,14 @@
     <!-- IME Button -->
     <style name="IMEButtonStyle" parent="android:style/Widget.Holo.Button">
         <item name="android:textSize">@dimen/ime_text_size</item>
+    </style>
+
+    <!-- IME RadioButton -->
+    <style name="IMERadioButtonStyle" parent="android:style/Widget.Holo.CompoundButton.RadioButton">
+        <item name="android:textSize">@dimen/ime_text_size</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:button">@null</item>
+        <item name="android:background">@drawable/ime_category_button_background</item>
     </style>
 
     <!-- IME ImageButton -->
