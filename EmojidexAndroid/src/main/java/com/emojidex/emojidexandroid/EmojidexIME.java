@@ -20,6 +20,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.PopupWindow;
+import android.widget.RadioButton;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
@@ -39,6 +40,7 @@ public class EmojidexIME extends InputMethodService {
 
     private View layout;
     private HorizontalScrollView categoryScrollView;
+    private Button categoryAllButton;
 
     private ViewFlipper keyboardViewFlipper;
     private boolean swipeFlag = false;
@@ -83,6 +85,9 @@ public class EmojidexIME extends InputMethodService {
         // Create IME layout.
         layout = getLayoutInflater().inflate(R.layout.ime, null);
 
+        // Get all category button.
+        categoryAllButton = (Button)layout.findViewById(R.id.ime_category_button_all);
+
         createCategorySelector();
         createKeyboardView();
         createSubKeyboardView();
@@ -107,7 +112,7 @@ public class EmojidexIME extends InputMethodService {
     public void onWindowShown() {
         // Reset IME
         currentCategory = null;
-        ChangeCategory(getString(R.string.all_category));
+        categoryAllButton.performClick();
         categoryScrollView.scrollTo(0, 0);
     }
 
@@ -148,8 +153,10 @@ public class EmojidexIME extends InputMethodService {
                 continue;
 
             // Create button.
-            final Button newButton = new Button(this);
+            final RadioButton newButton = new RadioButton(this);
 
+//            newButton.setBackground();
+//            setButtonDrawable();
             newButton.setText(categoryName);
             newButton.setContentDescription(categoryName);
             newButton.setOnClickListener(new View.OnClickListener() {
@@ -333,7 +340,8 @@ public class EmojidexIME extends InputMethodService {
         // delete
         boolean result = FileOperation.deleteFile(getApplicationContext(), FileOperation.FAVORITES);
         showResultToast(result);
-        setKeyboard(getString(R.string.all_category));
+        currentCategory = null;
+        categoryAllButton.performClick();
     }
 
     /**
@@ -360,7 +368,8 @@ public class EmojidexIME extends InputMethodService {
         boolean result = FileOperation.deleteFile(getApplicationContext(), FileOperation.HISTORIES);
         historyManager.clear();
         showResultToast(result);
-        setKeyboard(getString(R.string.all_category));
+        currentCategory = null;
+        categoryAllButton.performClick();
     }
 
     /**

@@ -406,6 +406,9 @@ public class MainActivity extends Activity {
             editText.setText(emojify(editText.getText()));
         else
             editText.setText(deEmojify(editText.getText()));
+
+        // Move cursor to last.
+        editText.setSelection(editText.length());
     }
 
     @Override
