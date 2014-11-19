@@ -31,13 +31,13 @@ public class ProxyActivity extends Activity {
         // Error.
         if( resolveInfos.isEmpty() )
         {
-            Log.d(TAG, "Proxy: Intent send failed.");
+            Log.d(TAG, "Proxy: Intent send failed.(Target package name = " + intent.getPackage() + ")");
 
             // Create error dialog.
             // TODO Set error detail.
             final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Error.");
-            builder.setMessage("Error.");
+            builder.setTitle("Error");
+            builder.setMessage(getString(R.string.message_unsupported_stamp));
             builder.setPositiveButton(R.string.close, null);
             builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
                 @Override

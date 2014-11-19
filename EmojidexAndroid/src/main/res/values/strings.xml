@@ -55,6 +55,8 @@
     <string name="search_emoji">Please enter the emoji name you want to search.</string>
     <string name="hit"> hits.</string>
 
+    <string name="message_unsupported_stamp">Unsupported stamp.</string>
+
     <string name="ime_category_text_all">All</string>
     <string name="ime_category_text_history">History</string>
     <string name="ime_category_text_gestures">Gestures</string>

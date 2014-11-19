@@ -56,6 +56,8 @@
     <string name="search_emoji">検索したい絵文字名を入力してください。</string>
     <string name="hit">件ヒットしました。</string>
 
+    <string name="message_unsupported_stamp">スタンプに対応していません。</string>
+
     <string name="ime_category_text_all">全て</string>
     <string name="ime_category_text_history">履歴</string>
     <string name="ime_category_text_gestures">ジェスチャー</string>
