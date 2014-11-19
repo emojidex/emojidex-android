@@ -75,6 +75,7 @@ public class EmojidexKeyboardView extends KeyboardView {
         // Create popup window.
         View view = inflater.inflate(R.layout.popup_favorite, null);
         popup = new PopupWindow(this);
+        popup.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.background_blank));
         popup.setOutsideTouchable(true);
         popup.setFocusable(true);
         popup.setContentView(view);
