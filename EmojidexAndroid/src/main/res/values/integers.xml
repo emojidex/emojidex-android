@@ -2,6 +2,7 @@
 
 <resources>
     <integer name="ime_keycode_show_ime_picker">0x10FFFF</integer>
+    <integer name="ime_keycode_show_search_window">0x11FFFF</integer>
 
     <integer name="ime_keyboard_row_count">3</integer>
 </resources>

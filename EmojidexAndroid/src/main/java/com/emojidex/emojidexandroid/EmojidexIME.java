@@ -1,6 +1,7 @@
 package com.emojidex.emojidexandroid;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
@@ -37,6 +38,7 @@ public class EmojidexIME extends InputMethodService {
 
     private InputMethodManager inputMethodManager = null;
     private int showIMEPickerCode = 0;
+    private int showSearchWindowCode = 0;
 
     private View layout;
     private HorizontalScrollView categoryScrollView;
@@ -65,6 +67,7 @@ public class EmojidexIME extends InputMethodService {
         // Get InputMethodManager object.
         inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
         showIMEPickerCode = getResources().getInteger(R.integer.ime_keycode_show_ime_picker);
+        showSearchWindowCode = getResources().getInteger(R.integer.ime_keycode_show_search_window);
 
         // Initialize Emojidex object.
         emojidex = Emojidex.getInstance();
@@ -459,6 +462,10 @@ public class EmojidexIME extends InputMethodService {
                 else
                     inputMethodManager.showInputMethodPicker();
             }
+            else if (primaryCode == showSearchWindowCode)
+            {
+                showSearchWindow();
+            }
             else
             {
                 // Input emoji.
@@ -499,6 +506,13 @@ public class EmojidexIME extends InputMethodService {
         @Override
         public void swipeUp() {
             // nop
+        }
+
+        /**
+         * Show emoji search window.
+         */
+        private void showSearchWindow() {
+            startService(new Intent(getApplicationContext(), EmojidexService.class));
         }
     }
 

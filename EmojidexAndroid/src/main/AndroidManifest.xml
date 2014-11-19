@@ -5,6 +5,7 @@
 
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application
         android:allowBackup="true"
@@ -58,6 +59,8 @@
 
             <meta-data android:name="android.view.im" android:resource="@xml/method" />
         </service>
+
+        <service android:name="EmojidexService" />
 
     </application>
 

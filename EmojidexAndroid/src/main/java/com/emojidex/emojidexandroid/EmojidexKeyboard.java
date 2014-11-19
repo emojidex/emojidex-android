@@ -105,7 +105,7 @@ public class EmojidexKeyboard extends Keyboard {
     }
 
     /**
-     * Create key to keybaord.
+     * Create key to keyboard.
      * @param emoji         Emoji.
      * @return              New key.
      */
