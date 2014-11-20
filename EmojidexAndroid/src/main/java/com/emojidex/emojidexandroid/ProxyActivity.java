@@ -37,7 +37,7 @@ public class ProxyActivity extends Activity {
             // TODO Set error detail.
             final AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Error");
-            builder.setMessage(getString(R.string.message_unsupported_stamp));
+            builder.setMessage(getString(R.string.message_unsupported_seal));
             builder.setPositiveButton(R.string.close, null);
             builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
                 @Override

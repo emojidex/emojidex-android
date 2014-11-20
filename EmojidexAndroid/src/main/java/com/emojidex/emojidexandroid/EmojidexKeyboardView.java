@@ -111,31 +111,30 @@ public class EmojidexKeyboardView extends KeyboardView {
 
         // Set close button.
         Button closeButton = (Button)view.findViewById(R.id.popup_close_button);
-        closeButton.setOnClickListener(new OnClickListener()
-        {
+        closeButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 closePopup();
             }
         });
 
-        // Set stamp send button.
-        Button stampSendButton = (Button)view.findViewById(R.id.popup_stamp_send_button);
-        stampSendButton.setOnClickListener(new OnClickListener() {
+        // Set seal send button.
+        Button sealSendButton = (Button)view.findViewById(R.id.popup_seal_send_button);
+        sealSendButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 closePopup();
 
                 // Get emoji data.
                 final Emoji emoji = Emojidex.getInstance().getEmoji(emojiName);
-                final String formatName = context.getResources().getString(R.string.emoji_format_stamp);
+                final String formatName = context.getResources().getString(R.string.emoji_format_seal);
                 final EmojiFormat format = EmojiFormat.toFormat(formatName);
 
                 // Send intent.
                 final File file = new File(emoji.getImageFilePath(format));
                 final Uri uri = Uri.fromFile(file);
-                final ActivityManager am = (ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
-                final ActivityManager.RunningTaskInfo taskInfo =  am.getRunningTasks(1).get(0);
+                final ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+                final ActivityManager.RunningTaskInfo taskInfo = am.getRunningTasks(1).get(0);
 
                 final Intent intent = new Intent(Intent.ACTION_SEND);
                 intent.setType("image/png");

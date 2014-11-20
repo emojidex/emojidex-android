@@ -35,7 +35,7 @@
     <string name="download_failure">Downloading failed.</string>
     <string name="delete_download_confirm">Remove this emoji from your storage?</string>
     <string name="delete_download">Remove</string>
-    <string name="stamp_send">Send</string>
+    <string name="seal_send">Send</string>
 
     <string name="yes">Yes</string>
     <string name="no">No</string>
@@ -55,7 +55,7 @@
     <string name="search_emoji">Please enter the emoji name you want to search.</string>
     <string name="hit"> hits.</string>
 
-    <string name="message_unsupported_stamp">Unsupported stamp.</string>
+    <string name="message_unsupported_seal">Unsupported seal.</string>
 
     <string name="ime_category_text_all">All</string>
     <string name="ime_category_text_history">History</string>
@@ -91,5 +91,5 @@
     <string name="ime_category_id_people">people</string>
     <string name="ime_category_id_objects">objects</string>
 
-    <string name="emoji_format_stamp">seal</string>
+    <string name="emoji_format_seal">seal</string>
 </resources>

@@ -75,7 +75,7 @@ public class EmojidexIME extends InputMethodService {
 
         // Test.
         final DownloadConfig config = new DownloadConfig();
-        config.formats.add(EmojiFormat.toFormat(getResources().getString(R.string.emoji_format_stamp)));
+        config.formats.add(EmojiFormat.toFormat(getResources().getString(R.string.emoji_format_seal)));
         config.listener = new CustomDownloadListener();
         emojidex.download(config);
     }
