@@ -92,4 +92,5 @@
     <string name="ime_category_id_objects">objects</string>
 
     <string name="emoji_format_seal">seal</string>
+    <string name="emoji_format_key">px64</string>
 </resources>
