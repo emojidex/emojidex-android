@@ -10,12 +10,15 @@ public enum EmojiFormat
     PNG_MDPI(".png", "mdpi"),
     PNG_HDPI(".png", "hdpi"),
     PNG_XHDPI(".png", "xhdpi"),
+    PNG_HANKO(".png", "hanko"),
+    PNG_SEAL(".png", "seal"),
     PNG_PX8(".png", "px8"),
     PNG_PX16(".png", "px16"),
     PNG_PX32(".png", "px32"),
     PNG_PX64(".png", "px64"),
     PNG_PX128(".png", "px128"),
     PNG_PX256(".png", "px256"),
+    PNG_PX512(".png", "px512"),
     ;
 
     private final String extension;
