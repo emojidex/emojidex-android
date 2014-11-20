@@ -63,10 +63,10 @@
         android:orientation="horizontal" >
 
         <Button
-            android:id="@+id/popup_stamp_send_button"
+            android:id="@+id/popup_seal_send_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/stamp_send"
+            android:text="@string/seal_send"
             android:layout_weight="1" />
 
         <Button

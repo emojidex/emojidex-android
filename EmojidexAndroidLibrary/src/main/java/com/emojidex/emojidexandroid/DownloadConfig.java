@@ -1,12 +1,13 @@
 package com.emojidex.emojidexandroid;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * Created by kou on 14/10/07.
  */
 public class DownloadConfig {
-    public final ArrayList<EmojiFormat> formats = new ArrayList<EmojiFormat>();
+    public final HashSet<EmojiFormat> formats = new HashSet<EmojiFormat>();
     public final ArrayList<String> kinds = new ArrayList<String>();
 
     public String sourcePath = "http://assets.emojidex.com";
