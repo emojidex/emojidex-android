@@ -126,13 +126,14 @@ public class EmojidexKeyboardView extends KeyboardView {
                 closePopup();
 
                 // Get emoji data.
-                final Emoji emoji = Emojidex.getInstance().getEmoji(emojiName);
-                final String formatName = context.getResources().getString(R.string.emoji_format_seal);
-                final EmojiFormat format = EmojiFormat.toFormat(formatName);
+                //final Emoji emoji = Emojidex.getInstance().getEmoji(emojiName);
+                //final String formatName = context.getResources().getString(R.string.emoji_format_seal);
+                //final EmojiFormat format = EmojiFormat.toFormat(formatName);
 
                 // Send intent.
-                final File file = new File(emoji.getImageFilePath(format));
-                final Uri uri = Uri.fromFile(file);
+                //final File file = new File(emoji.getImageFilePath(format));
+                //final Uri uri = Uri.fromFile(file);
+                final Uri uri = Uri.parse("http://assets.emojidex.com/emoji/seal/" + emojiName + ".png");
                 final ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
                 final ActivityManager.RunningTaskInfo taskInfo = am.getRunningTasks(1).get(0);
 
