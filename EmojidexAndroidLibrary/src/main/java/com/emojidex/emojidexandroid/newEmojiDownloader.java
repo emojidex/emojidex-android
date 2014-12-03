@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -15,7 +14,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,9 +22,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
 
 /**
  * Created by kou on 14/11/26.
@@ -37,7 +33,7 @@ public class newEmojiDownloader {
     private final Context context;
     private final Result resultTotal = new Result();
 
-    private DownloadListener listener = new DownloadListener();
+    private newDownloadListener listener = new newDownloadListener();
     private int runningThreadCount = 0;
 
     private ArrayList<JsonParam> localJsonParams;
@@ -197,7 +193,7 @@ public class newEmojiDownloader {
         writeJson();
 
         // Notify to listener.
-//            listener.onPreEmojiDownload();
+        listener.onPreAllEmojiDownload();
 
         // Start download task.
         for(ArrayList<DownloadParam> downloadParams : downloadEmojiesArray)
@@ -212,11 +208,11 @@ public class newEmojiDownloader {
 
     /**
      * Set download event listener.
-     * @param listener      Listener.
+     * @param listener      Listener.(If value is null, set default listener.)
      */
-    public void setListener(DownloadListener listener)
+    public void setListener(newDownloadListener listener)
     {
-        this.listener = listener;
+        this.listener = (listener == null) ? new newDownloadListener() : listener;
     }
 
     /**
@@ -323,6 +319,7 @@ public class newEmojiDownloader {
                     continue;
 
                 // Download files.
+                onPreDownload(downloadParam);
                 for(FileParam fileParam : downloadParam.fileParams)
                 {
                     try
@@ -373,7 +370,7 @@ public class newEmojiDownloader {
                         e.printStackTrace();
                     }
                 }
-                onDownloadCompleted(downloadParam);
+                onPostDownload(downloadParam);
             }
 
             return result;
@@ -391,7 +388,20 @@ public class newEmojiDownloader {
             onTaskCompleted(result);
         }
 
-        protected void onDownloadCompleted(DownloadParam downloadParam)
+        /**
+         * Called when before download.
+         * @param downloadParam     Download parameter.
+         */
+        protected void onPreDownload(DownloadParam downloadParam)
+        {
+            // nop
+        }
+
+        /**
+         * Called when after download.
+         * @param downloadParam     Download parameter.
+         */
+        protected void onPostDownload(DownloadParam downloadParam)
         {
             // nop
         }
@@ -439,7 +449,13 @@ public class newEmojiDownloader {
         }
 
         @Override
-        protected void onDownloadCompleted(DownloadParam downloadParam)
+        protected void onPreDownload(DownloadParam downloadParam) {
+            // Notify to listener.
+            listener.onPreOneJsonDownload();
+        }
+
+        @Override
+        protected void onPostDownload(DownloadParam downloadParam)
         {
             // Find new emojies.
             for(FileParam fileParam : downloadParam.fileParams)
@@ -456,8 +472,7 @@ public class newEmojiDownloader {
             }
 
             // Notify to listener.
-//            if(listener != null)
-//                listener.onJsonDownloadCompleted(downloadParam);
+            listener.onPostOneJsonDownload();
         }
 
         @Override
@@ -467,9 +482,11 @@ public class newEmojiDownloader {
             if(runningThreadCount <= 0)
             {
                 // Notify to listener.
-//                if(listener != null)
-//                    listener.onAllJsonDownloadCompleted();
-                putResultLog(resultTotal, "Json download task end.");
+                listener.onPostAllJsonDownload(newEmojiDownloader.this);
+
+                // Put log if downloadEmojiCount equal 0.
+                if(downloadEmojiCount == 0)
+                    putResultLog(resultTotal, "All download task end.");
             }
         }
     }
@@ -480,9 +497,30 @@ public class newEmojiDownloader {
     private class EmojiDownloadTask extends AbstractDownloadTask
     {
         @Override
-        protected void onDownloadCompleted(DownloadParam downloadParam) {
+        protected void onPreDownload(DownloadParam downloadParam) {
+            // Notify to listener.
+            listener.onPreOneEmojiDownload(downloadParam.name);
+        }
+
+        @Override
+        protected void onPostDownload(DownloadParam downloadParam) {
             // Norify to listener.
-//            listener.onEmojiDownloadCompleted();
+            listener.onPostOneEmojiDownload(downloadParam.name);
+        }
+
+        @Override
+        protected void onTaskCompleted(Result result) {
+            super.onTaskCompleted(result);
+
+            // Notify to listener.
+            if(runningThreadCount == 0)
+            {
+                // Notify to listener.
+                listener.onPostAllEmojiDownload();
+
+                // Put log.
+                putResultLog(resultTotal, "All download task end.");
+            }
         }
     }
 }
