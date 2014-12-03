@@ -3,64 +3,52 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="@drawable/search_window_view"
-              android:padding="10dp">
+              android:background="@drawable/search_window_view">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
         android:orientation="horizontal"
         android:gravity="center">
-        <ImageView
+        <ImageButton
+            android:id="@+id/search_close"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_menu_search" />
+            android:layout_marginRight="10dp"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:background="@null"/>
         <EditText
             android:id="@+id/search_edit_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:singleLine="true"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/black"/>
+        <ImageButton
+            android:id="@+id/search_action"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_search"
+            android:background="@null"/>
     </LinearLayout>
 
-    <HorizontalScrollView
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray"/>
+
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp">
+        android:layout_margin="10dp">
         <LinearLayout
             android:id="@+id/search_result_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"/>
-    </HorizontalScrollView>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <Button
-            style="@style/IMERadioButtonStyle"
-            android:id="@+id/search_action"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_weight="1"
-            android:text="@string/search"
-            android:gravity="center"/>
-        <Button
-            style="@style/IMERadioButtonStyle"
-            android:id="@+id/search_clear"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_weight="1"
-            android:text="@string/clear"
-            android:gravity="center"/>
-        <Button
-            style="@style/IMERadioButtonStyle"
-            android:id="@+id/search_close"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_weight="1"
-            android:text="@string/close"
-            android:gravity="center"/>
-    </LinearLayout>
+            android:minHeight="50dp"
+            android:orientation="vertical"/>
+    </ScrollView>
 
 </LinearLayout>
