@@ -38,23 +38,29 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
         <Button
+            style="@style/IMERadioButtonStyle"
             android:id="@+id/search_action"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_weight="1"
-            android:text="@string/search"/>
+            android:text="@string/search"
+            android:gravity="center"/>
         <Button
+            style="@style/IMERadioButtonStyle"
             android:id="@+id/search_clear"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_weight="1"
-            android:text="@string/clear"/>
+            android:text="@string/clear"
+            android:gravity="center"/>
         <Button
+            style="@style/IMERadioButtonStyle"
             android:id="@+id/search_close"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_weight="1"
-            android:text="@string/close"/>
+            android:text="@string/close"
+            android:gravity="center"/>
     </LinearLayout>
 
 </LinearLayout>
