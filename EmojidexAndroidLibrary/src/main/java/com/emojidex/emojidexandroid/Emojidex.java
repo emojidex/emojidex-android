@@ -65,6 +65,39 @@ public class Emojidex {
     }
 
     /**
+     * Download emoji image to local storage.
+     * @param formats       Emoji format array.
+     */
+    public void download(EmojiFormat[] formats)
+    {
+        download(formats, null);
+    }
+
+    /**
+     * Download emoji image to local storage.
+     * @param formats       Emoji format array.
+     * @param listener      Download event listener.
+     */
+    public void download(EmojiFormat[] formats, newDownloadListener listener)
+    {
+        if( !isInitialized() )
+            throw new EmojidexIsNotInitializedException();
+
+        final newEmojiDownloader downloader = new newEmojiDownloader(context);
+        final String rootPath = "http://assets.emojidex.com";
+        if(listener != null)
+            downloader.setListener(listener);
+        downloader.add(
+                new File(PathUtils.getRemoteJsonPath("utf", rootPath)),
+                formats
+        );
+        downloader.add(
+                new File(PathUtils.getRemoteJsonPath("extended", rootPath)),
+                formats
+        );
+    }
+
+    /**
      * Reload emojidex.
      */
     public void reload()
