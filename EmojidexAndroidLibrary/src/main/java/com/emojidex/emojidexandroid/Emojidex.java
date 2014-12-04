@@ -88,11 +88,11 @@ public class Emojidex {
         if(listener != null)
             downloader.setListener(listener);
         downloader.add(
-                new File(PathUtils.getRemoteJsonPath("utf", rootPath)),
+                PathUtils.getRemoteJsonPath("utf", rootPath),
                 formats
         );
         downloader.add(
-                new File(PathUtils.getRemoteJsonPath("extended", rootPath)),
+                PathUtils.getRemoteJsonPath("extended", rootPath),
                 formats
         );
     }

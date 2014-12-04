@@ -20,6 +20,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -75,28 +77,45 @@ public class newEmojiDownloader {
 
     /**
      * Add download task from json file.
-     * @param jsonFile      Json file path.
+     * @param jsonPath      Json file path.
      * @param formats       Format of download images.
      */
-    public void add(File jsonFile, EmojiFormat[] formats)
+    public void add(String jsonPath, EmojiFormat[] formats)
     {
-        add(jsonFile, formats, jsonFile.getParent());
+        add(jsonPath, formats, null);
     }
 
     /**
      * Add download task from json file.
-     * @param jsonFile          Json file path.
+     * @param jsonPath          Json file path.
      * @param formats           Format of download images.
      * @param sourceRootPath    Root path of download image files.
      */
-    public void add(File jsonFile, EmojiFormat[] formats, String sourceRootPath)
+    public void add(String jsonPath, EmojiFormat[] formats, String sourceRootPath)
     {
+        // If sourceRootPath is null, create it from jsonPath.
+        if(sourceRootPath == null)
+        {
+            try
+            {
+                final URI uri = URI.create(jsonPath);
+                final File file = new File(uri.getPath());
+                final URI parent = new URI(uri.getScheme(), uri.getHost(), file.getParent(), uri.getFragment());
+                sourceRootPath = parent.toString();
+            }
+            catch(URISyntaxException e)
+            {
+                e.printStackTrace();
+            }
+        }
+
+        // Add download task from json.
         final FileParam fileParam = new FileParam();
-        fileParam.source = jsonFile.getPath();
+        fileParam.source = jsonPath;
         fileParam.destination = context.getExternalCacheDir() + "/" + System.currentTimeMillis();
 
         final DownloadParam downloadParam = new DownloadParam();
-        downloadParam.name = jsonFile.getName();
+        downloadParam.name = jsonPath;
         downloadParam.fileParams.add(fileParam);
 
         final JsonDownloadTask task = new JsonDownloadTask(formats, sourceRootPath);
