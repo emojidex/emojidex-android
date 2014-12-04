@@ -596,12 +596,12 @@ public class EmojidexIME extends InputMethodService {
     /**
      * Custom download listener.
      */
-    private class CustomDownloadListener extends newDownloadListener
+    private class CustomDownloadListener extends DownloadListener
     {
         private final Handler handler = new Handler();
 
         @Override
-        public void onPostAllJsonDownload(newEmojiDownloader downloader) {
+        public void onPostAllJsonDownload(EmojiDownloader downloader) {
             super.onPostAllJsonDownload(downloader);
         }
 

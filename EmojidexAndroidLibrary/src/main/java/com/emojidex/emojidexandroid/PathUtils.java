@@ -36,23 +36,6 @@ class PathUtils {
      * Create emoji path from remote server.
      * @param name          Emoji name.
      * @param format        Emoji format.
-     * @param kind          Emoji kind.
-     * @param rootPath      Server path.
-     * @return      Emoji path.
-     */
-    public static String getRemoteEmojiPath(String name, EmojiFormat format, String kind, String rootPath)
-    {
-        return rootPath + "/"
-                + kind + "/"
-                + format.getRelativeDir() + "/"
-                + name + format.getExtension()
-                ;
-    }
-
-    /**
-     * Create emoji path from remote server.
-     * @param name          Emoji name.
-     * @param format        Emoji format.
      * @param rootPath      Server path.
      * @return      Emoji path.
      */

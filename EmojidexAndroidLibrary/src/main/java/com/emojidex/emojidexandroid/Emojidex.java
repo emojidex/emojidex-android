@@ -52,20 +52,6 @@ public class Emojidex {
 
     /**
      * Download emoji image to local storage.
-     * If already downloaded, update emoji.
-     * @param config Configuration of download.
-     */
-    public void download(DownloadConfig config)
-    {
-        if( !isInitialized() )
-            throw new EmojidexIsNotInitializedException();
-
-        final EmojiDownloader downloader = new EmojiDownloader(context);
-        downloader.download(config);
-    }
-
-    /**
-     * Download emoji image to local storage.
      * @param formats       Emoji format array.
      */
     public void download(EmojiFormat[] formats)
@@ -78,12 +64,12 @@ public class Emojidex {
      * @param formats       Emoji format array.
      * @param listener      Download event listener.
      */
-    public void download(EmojiFormat[] formats, newDownloadListener listener)
+    public void download(EmojiFormat[] formats, DownloadListener listener)
     {
         if( !isInitialized() )
             throw new EmojidexIsNotInitializedException();
 
-        final newEmojiDownloader downloader = new newEmojiDownloader(context);
+        final EmojiDownloader downloader = new EmojiDownloader(context);
         final String rootPath = "http://assets.emojidex.com";
         if(listener != null)
             downloader.setListener(listener);
