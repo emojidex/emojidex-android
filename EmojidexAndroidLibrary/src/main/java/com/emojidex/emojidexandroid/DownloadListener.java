@@ -3,43 +3,70 @@ package com.emojidex.emojidexandroid;
 import android.util.Log;
 
 /**
- * Created by kou on 14/10/07.
+ * Created by kou on 14/12/01.
  */
 public class DownloadListener {
     static final String TAG = Emojidex.TAG + "::DownloadListener";
 
     /**
-     * Called when download completed all json.
+     * Called when before one json download.
      */
-    public void onJsonDownloadCompleted()
+    public void onPreOneJsonDownload()
     {
-        Log.d(TAG, "Called onJsonDownloadCompleted.");
+        // nop
     }
 
     /**
-     * Called when before emoji download.
-     * @param downloadCount     Count download.
-     * @return      true if download start, false if download cancel.
+     * Called when after one json download.
      */
-    public boolean onPreEmojiDownload(int downloadCount)
+    public void onPostOneJsonDownload()
     {
-        return true;
+        Log.d(TAG, "onPostOneJsonDownload");
     }
 
     /**
-     * Called when download completed one emoji.
-     * @param emojiName     Emoji name.
+     * Called when after all json download.
+     * @param downloader    EmojiDownloader object.
      */
-    public void onEmojiDownloadCompleted(String emojiName)
+    public void onPostAllJsonDownload(EmojiDownloader downloader)
     {
-        Log.d(TAG, "Called onEmojiDownloadCompleted.(emojiName = \"" + emojiName + "\")");
+        Log.d(TAG, "onPostAllJsonDownload");
+
+        // Start download.
+        downloader.download();
     }
 
     /**
-     * Called when downloader task completed.
+     * Called when before all emoji download.
      */
-    public void onAllDownloadCompleted()
+    public void onPreAllEmojiDownload()
     {
-        Log.d(TAG, "Called onAllDownloadCompleted.");
+        Log.d(TAG, "onPreAllEmojiDownload");
+    }
+
+    /**
+     * Called when before one emoji download.
+     * @param emojiName     Download emoji name.
+     */
+    public void onPreOneEmojiDownload(String emojiName)
+    {
+        // nop
+    }
+
+    /**
+     * Called when after one emoji download.
+     * @param emojiName     Downloaded emoji name.
+     */
+    public void onPostOneEmojiDownload(String emojiName)
+    {
+        Log.d(TAG, "onPostOneEmojiDownload: emojiName = \"" + emojiName + "\"");
+    }
+
+    /**
+     * Called when before all emoji download.
+     */
+    public void onPostAllEmojiDownload()
+    {
+        Log.d(TAG, "onPostAllEmojiDownload");
     }
 }
