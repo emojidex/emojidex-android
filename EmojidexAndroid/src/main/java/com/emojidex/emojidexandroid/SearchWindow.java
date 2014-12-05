@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -38,7 +39,7 @@ public class SearchWindow extends LinearLayout {
         resultLayout = (LinearLayout) root.findViewById(R.id.search_result_layout);
 
         // Search button.
-        Button searchButton = (Button) root.findViewById(R.id.search_action);
+        ImageButton searchButton = (ImageButton) root.findViewById(R.id.search_action);
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -46,18 +47,8 @@ public class SearchWindow extends LinearLayout {
             }
         });
 
-        // Clear button.
-        Button clearButton = (Button) root.findViewById(R.id.search_clear);
-        clearButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                searchEditText.setText("");
-                resultLayout.removeAllViews();
-            }
-        });
-
         // Window close button.
-        Button closeButton = (Button) root.findViewById(R.id.search_close);
+        ImageButton closeButton = (ImageButton) root.findViewById(R.id.search_close);
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
