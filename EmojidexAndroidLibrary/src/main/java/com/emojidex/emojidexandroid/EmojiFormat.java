@@ -10,6 +10,8 @@ public enum EmojiFormat
     PNG_MDPI(".png", "mdpi"),
     PNG_HDPI(".png", "hdpi"),
     PNG_XHDPI(".png", "xhdpi"),
+    PNG_XXHDPI(".png", "xxhdpi"),
+    PNG_XXXHDPI(".png", "xxxhdpi"),
     PNG_HANKO(".png", "hanko"),
     PNG_SEAL(".png", "seal"),
     PNG_PX8(".png", "px8"),
