@@ -25,6 +25,7 @@ import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 /**
@@ -73,12 +74,12 @@ public class EmojidexIME extends InputMethodService {
         // Create HistoryManager.
         historyManager = new HistoryManager(this);
 
-        // Test.
-        final DownloadConfig config = new DownloadConfig();
-        config.formats.add(EmojiFormat.toFormat(getResources().getString(R.string.emoji_format_seal)));
-        config.formats.add(EmojiFormat.toFormat(getResources().getString(R.string.emoji_format_key)));
-        config.listener = new CustomDownloadListener();
-        emojidex.download(config);
+        // Emoji download.
+        final LinkedHashSet<EmojiFormat> formats = new LinkedHashSet<EmojiFormat>();
+        formats.add(EmojiFormat.toFormat(getString(R.string.emoji_format_default)));
+        formats.add(EmojiFormat.toFormat(getString(R.string.emoji_format_key)));
+        formats.add(EmojiFormat.toFormat(getString(R.string.emoji_format_seal)));
+        emojidex.download(formats.toArray(new EmojiFormat[formats.size()]), new CustomDownloadListener());
     }
 
     @Override
@@ -600,24 +601,21 @@ public class EmojidexIME extends InputMethodService {
         private final Handler handler = new Handler();
 
         @Override
-        public void onJsonDownloadCompleted() {
-            super.onJsonDownloadCompleted();
-
+        public void onPostAllJsonDownload(EmojiDownloader downloader) {
+            super.onPostAllJsonDownload(downloader);
         }
 
         @Override
-        public boolean onPreEmojiDownload(int downloadCount) {
+        public void onPreAllEmojiDownload() {
             emojidex.reload();
 
             final String category = currentCategory;
             currentCategory = null;
             ChangeCategory(category);
-
-            return true;
         }
 
         @Override
-        public void onEmojiDownloadCompleted(String emojiName) {
+        public void onPostOneEmojiDownload(String emojiName) {
             final Emoji emoji = Emojidex.getInstance().getEmoji(emojiName);
             if(emoji != null)
             {
@@ -645,11 +643,6 @@ public class EmojidexIME extends InputMethodService {
                     }
                 }
             }
-        }
-
-        @Override
-        public void onAllDownloadCompleted() {
-            super.onAllDownloadCompleted();
         }
     }
 }

@@ -52,16 +52,35 @@ public class Emojidex {
 
     /**
      * Download emoji image to local storage.
-     * If already downloaded, update emoji.
-     * @param config Configuration of download.
+     * @param formats       Emoji format array.
      */
-    public void download(DownloadConfig config)
+    public void download(EmojiFormat[] formats)
+    {
+        download(formats, null);
+    }
+
+    /**
+     * Download emoji image to local storage.
+     * @param formats       Emoji format array.
+     * @param listener      Download event listener.
+     */
+    public void download(EmojiFormat[] formats, DownloadListener listener)
     {
         if( !isInitialized() )
             throw new EmojidexIsNotInitializedException();
 
         final EmojiDownloader downloader = new EmojiDownloader(context);
-        downloader.download(config);
+        final String rootPath = "http://assets.emojidex.com";
+        if(listener != null)
+            downloader.setListener(listener);
+        downloader.add(
+                PathUtils.getRemoteJsonPath("utf", rootPath),
+                formats
+        );
+        downloader.add(
+                PathUtils.getRemoteJsonPath("extended", rootPath),
+                formats
+        );
     }
 
     /**
