@@ -13,9 +13,14 @@ import java.lang.reflect.Method;
  * Created by kou on 14/12/10.
  */
 public class AbstractDialog extends PopupWindow {
+    /**
+     * Construct object.
+     * @param context       Context.
+     */
     public AbstractDialog(Context context) {
         super(context = context.getApplicationContext());
 
+        // Set default parameters.
         setBackgroundDrawable(context.getResources().getDrawable(R.drawable.background_blank));
         setOutsideTouchable(true);
         setFocusable(true);

@@ -3,6 +3,7 @@ package com.emojidex.emojidexandroid;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.PixelFormat;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
@@ -25,6 +26,8 @@ import android.widget.RadioButton;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -514,7 +517,8 @@ public class EmojidexIME extends InputMethodService {
          * Show emoji search window.
          */
         private void showSearchWindow() {
-            startService(new Intent(getApplicationContext(), EmojidexService.class));
+            final SearchDialog test = new SearchDialog(EmojidexIME.this);
+            test.showAtLocation(layout, Gravity.CENTER, 0, 0);
         }
     }
 
