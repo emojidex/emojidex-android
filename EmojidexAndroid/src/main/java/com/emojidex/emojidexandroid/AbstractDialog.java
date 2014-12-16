@@ -12,7 +12,7 @@ import java.lang.reflect.Method;
 /**
  * Created by kou on 14/12/10.
  */
-public class AbstractDialog extends PopupWindow {
+public abstract class AbstractDialog extends PopupWindow {
     /**
      * Construct object.
      * @param context       Context.
@@ -27,6 +27,7 @@ public class AbstractDialog extends PopupWindow {
         setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
         setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
         setInputMethodMode(INPUT_METHOD_NOT_NEEDED);
+        setContentView(createContentView(context));
 
         try
         {
@@ -46,4 +47,10 @@ public class AbstractDialog extends PopupWindow {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Create content view.
+     * @return      New content view.
+     */
+    protected abstract View createContentView(Context context);
 }

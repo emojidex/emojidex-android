@@ -35,7 +35,6 @@ public class SearchDialog extends AbstractDialog {
 
         // Initialize popup window.
         setInputMethodMode(INPUT_METHOD_FROM_FOCUSABLE);
-        setContentView(createView(context.getApplicationContext()));
 
         // Switch input method.
         inputMethodManager = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -65,25 +64,22 @@ public class SearchDialog extends AbstractDialog {
         super.dismiss();
     }
 
-    /**
-     * Create view.
-     * @return      View.
-     */
-    private View createView(Context context)
+    @Override
+    protected View createContentView(Context context)
     {
         // window layout.
         final LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final ViewGroup root = (ViewGroup)inflater.inflate(R.layout.window_search, null);
+        final View contentView = inflater.inflate(R.layout.window_search, null);
 
         // Input area.
-//        searchEditText = (EditText) root.findViewById(R.id.search_edit_text);
+//        searchEditText = (EditText)contentView.findViewById(R.id.search_edit_text);
 //        searchEditText.setFocusable(true);
 
         // Show result space.
-//        resultLayout = (LinearLayout) root.findViewById(R.id.search_result_layout);
+//        resultLayout = (LinearLayout)contentView.findViewById(R.id.search_result_layout);
 
         // Search button.
-        final ImageButton searchButton = (ImageButton) root.findViewById(R.id.search_action);
+        final ImageButton searchButton = (ImageButton)contentView.findViewById(R.id.search_action);
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,7 +88,7 @@ public class SearchDialog extends AbstractDialog {
         });
 
         // Window close button.
-        final ImageButton closeButton = (ImageButton) root.findViewById(R.id.search_close);
+        final ImageButton closeButton = (ImageButton)contentView.findViewById(R.id.search_close);
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -100,6 +96,6 @@ public class SearchDialog extends AbstractDialog {
             }
         });
 
-        return root;
+        return contentView;
     }
 }
