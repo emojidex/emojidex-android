@@ -17,14 +17,18 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
+import java.net.URL;
 import java.util.List;
 
 /**
  * Created by kou on 14/12/10.
  */
 public class SearchDialog extends AbstractDialog {
+    private final Context context;
     private final InputMethodManager inputMethodManager;
     private final String oldIME;
+
+    private EditText searchEditText;
 
     /**
      * Construct object.
@@ -32,6 +36,8 @@ public class SearchDialog extends AbstractDialog {
      */
     public SearchDialog(InputMethodService context, View view) {
         super(context);
+
+        this.context = context;
 
         // Initialize popup window.
         setInputMethodMode(INPUT_METHOD_FROM_FOCUSABLE);
@@ -72,7 +78,7 @@ public class SearchDialog extends AbstractDialog {
         final View contentView = inflater.inflate(R.layout.window_search, null);
 
         // Input area.
-//        searchEditText = (EditText)contentView.findViewById(R.id.search_edit_text);
+        searchEditText = (EditText)contentView.findViewById(R.id.search_edit_text);
 //        searchEditText.setFocusable(true);
 
         // Show result space.
@@ -83,7 +89,7 @@ public class SearchDialog extends AbstractDialog {
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                searchEmoji();
+                searchEmoji();
             }
         });
 
@@ -97,5 +103,15 @@ public class SearchDialog extends AbstractDialog {
         });
 
         return contentView;
+    }
+
+    /**
+     * Search emoji.
+     */
+    private void searchEmoji()
+    {
+        final String searchText = searchEditText.getText().toString();
+        final String url = "https://www.emojidex.com/api/v1/search/emoji?code_cont=" + searchText;
+//        final EmojiDownloader downloader = new EmojiDownloader(context);
     }
 }
