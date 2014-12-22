@@ -17,7 +17,16 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 /**
@@ -112,6 +121,51 @@ public class SearchDialog extends AbstractDialog {
     {
         final String searchText = searchEditText.getText().toString();
         final String url = "https://www.emojidex.com/api/v1/search/emoji?code_cont=" + searchText;
-//        final EmojiDownloader downloader = new EmojiDownloader(context);
+
+        final LinkedHashSet<EmojiFormat> formats = new LinkedHashSet<EmojiFormat>();
+        formats.add(EmojiFormat.toFormat(context.getString(R.string.emoji_format_default)));
+        formats.add(EmojiFormat.toFormat(context.getString(R.string.emoji_format_key)));
+        formats.add(EmojiFormat.toFormat(context.getString(R.string.emoji_format_seal)));
+
+        final EmojiDownloader downloader = new EmojiDownloader(context);
+        downloader.setListener(new CustomDownloadListener());
+        downloader.add(url, formats.toArray(new EmojiFormat[formats.size()]));
+    }
+
+    /**
+     * Read json parameter.
+     * @param file  Json file.
+     * @return      Json parameter.
+     */
+    private ArrayList<JsonParam> readJson(File file)
+    {
+        final ObjectMapper objectMapper = new ObjectMapper();
+        try
+        {
+            final InputStream is = new FileInputStream(file);
+            final TypeReference<ArrayList<JsonParam>> typeReference = new TypeReference<ArrayList<JsonParam>>(){};
+            final ArrayList<JsonParam> result = objectMapper.readValue(is, typeReference);
+            is.close();
+            return result;
+        }
+        catch(IOException e)
+        {
+            e.printStackTrace();
+        }
+
+        // If read failed, return ArrayList of empty.
+        return new ArrayList<JsonParam>();
+    }
+
+
+    private class CustomDownloadListener extends DownloadListener
+    {
+        @Override
+        public void onPostOneJsonDownload(String source, String destination) {
+            super.onPostOneJsonDownload(source, destination);
+
+            final ArrayList<JsonParam> emojies = readJson(new File(destination));
+            Log.d(TAG, "Search emoji count = " + emojies.size());
+        }
     }
 }
