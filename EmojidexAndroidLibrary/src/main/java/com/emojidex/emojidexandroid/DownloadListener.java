@@ -10,18 +10,22 @@ public class DownloadListener {
 
     /**
      * Called when before one json download.
+     * @param source        Download from.
+     * @param destination   Save to.
      */
-    public void onPreOneJsonDownload()
+    public void onPreOneJsonDownload(String source, String destination)
     {
         // nop
     }
 
     /**
      * Called when after one json download.
+     * @param source        Download from.
+     * @param destination   Save to.
      */
-    public void onPostOneJsonDownload()
+    public void onPostOneJsonDownload(String source, String destination)
     {
-        Log.d(TAG, "onPostOneJsonDownload");
+        Log.d(TAG, "onPostOneJsonDownload: source = " + source + ", destination = " + destination);
     }
 
     /**

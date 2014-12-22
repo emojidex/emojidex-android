@@ -469,8 +469,11 @@ public class EmojiDownloader {
 
         @Override
         protected void onPreDownload(DownloadParam downloadParam) {
-            // Notify to listener.
-            listener.onPreOneJsonDownload();
+            for(FileParam fileParam : downloadParam.fileParams)
+            {
+                // Notify to listener.
+                listener.onPreOneJsonDownload(fileParam.source, fileParam.destination);
+            }
         }
 
         @Override
@@ -486,12 +489,12 @@ public class EmojiDownloader {
                 // Add download task.
                 add(jsonParams, formats, sourceRootPath);
 
+                // Notify to listener.
+                listener.onPostOneJsonDownload(fileParam.source, fileParam.destination);
+
                 // Clean temporary file.
                 file.delete();
             }
-
-            // Notify to listener.
-            listener.onPostOneJsonDownload();
         }
 
         @Override
