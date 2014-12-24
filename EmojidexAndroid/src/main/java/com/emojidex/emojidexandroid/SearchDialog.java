@@ -17,7 +17,9 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
@@ -144,7 +146,9 @@ public class SearchDialog extends AbstractDialog {
         {
             final InputStream is = new FileInputStream(file);
             final TypeReference<ArrayList<JsonParam>> typeReference = new TypeReference<ArrayList<JsonParam>>(){};
-            final ArrayList<JsonParam> result = objectMapper.readValue(is, typeReference);
+            final JsonNode jsonNode = objectMapper.readTree(is);
+            final JsonParser jsonParser = jsonNode.has("emoji") ? jsonNode.get("emoji").traverse() : jsonNode.traverse();
+            final ArrayList<JsonParam> result = objectMapper.readValue(jsonParser, typeReference);
             is.close();
             return result;
         }

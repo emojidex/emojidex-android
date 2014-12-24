@@ -4,7 +4,9 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.http.HttpException;
@@ -246,7 +248,9 @@ public class EmojiDownloader {
         {
             final InputStream is = new FileInputStream(file);
             final TypeReference<ArrayList<JsonParam>> typeReference = new TypeReference<ArrayList<JsonParam>>(){};
-            final ArrayList<JsonParam> result = objectMapper.readValue(is, typeReference);
+            final JsonNode jsonNode = objectMapper.readTree(is);
+            final JsonParser jsonParser = jsonNode.has("emoji") ? jsonNode.get("emoji").traverse() : jsonNode.traverse();
+            final ArrayList<JsonParam> result = objectMapper.readValue(jsonParser, typeReference);
             is.close();
             return result;
         }
