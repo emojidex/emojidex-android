@@ -72,5 +72,7 @@
     <string name="ime_category_text_places">場所</string>
     <string name="ime_category_text_people">人</string>
     <string name="ime_category_text_objects">物</string>
+    <string name="download">ダウンロード</string>
+    <string name="search_result">検索結果</string>
 
 </resources>
