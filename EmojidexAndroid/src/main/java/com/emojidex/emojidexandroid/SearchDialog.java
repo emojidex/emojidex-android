@@ -149,6 +149,7 @@ public class SearchDialog extends AbstractDialog {
                 searchManager.add(emoji.name);
             }
             searchManager.save();
+            dismiss();
         }
     }
 }
