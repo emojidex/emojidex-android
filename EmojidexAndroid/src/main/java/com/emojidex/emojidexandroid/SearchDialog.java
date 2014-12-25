@@ -1,6 +1,7 @@
 package com.emojidex.emojidexandroid;
 
 import android.app.ActivityManager;
+import android.app.SearchManager;
 import android.content.Context;
 import android.inputmethodservice.InputMethodService;
 import android.os.IBinder;
@@ -142,7 +143,12 @@ public class SearchDialog extends AbstractDialog {
             super.onPostOneJsonDownload(source, destination);
 
             final ArrayList<JsonParam> emojies = JsonParam.readFromFile(new File(destination));
-            Log.d(TAG, "Search emoji count = " + emojies.size());
+            final PreferenceManager searchManager = new PreferenceManager(context, PreferenceManager.Type.Search);
+            for(JsonParam emoji : emojies)
+            {
+                searchManager.add(emoji.name);
+            }
+            searchManager.save();
         }
     }
 }
