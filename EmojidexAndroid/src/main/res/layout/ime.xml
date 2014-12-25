@@ -28,6 +28,14 @@
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/ime_category_text_search"
+                android:id="@+id/ime_category_button_search"
+                android:onClick="onClickCategoryButton"
+                android:contentDescription="@string/ime_category_id_search" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="@string/ime_category_text_all"
                 android:id="@+id/ime_category_button_all"
                 android:onClick="onClickCategoryButton"

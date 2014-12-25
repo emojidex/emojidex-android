@@ -58,8 +58,9 @@
 
     <string name="message_unsupported_seal">シールに対応していません。</string>
 
-    <string name="ime_category_text_all">全て</string>
     <string name="ime_category_text_history">履歴</string>
+    <string name="ime_category_text_search">検索</string>
+    <string name="ime_category_text_all">全て</string>
     <string name="ime_category_text_gestures">ジェスチャー</string>
     <string name="ime_category_text_abstract">抽象物</string>
     <string name="ime_category_text_tools">道具</string>
