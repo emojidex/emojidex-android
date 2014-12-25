@@ -1,9 +1,7 @@
 package com.emojidex.emojidexandroid;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.PixelFormat;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
@@ -26,8 +24,6 @@ import android.widget.RadioButton;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -53,7 +49,7 @@ public class EmojidexIME extends InputMethodService {
 
     private PopupWindow popup;
 
-    private HistoryManager historyManager;
+    private PreferenceManager historyManager;
     private KeyboardViewManager keyboardViewManager;
 
     private String currentCategory = null;
@@ -78,7 +74,7 @@ public class EmojidexIME extends InputMethodService {
         emojidex.initialize(this);
 
         // Create HistoryManager.
-        historyManager = new HistoryManager(this);
+        historyManager = new PreferenceManager(this, PreferenceManager.Type.History);
 
         // Emoji download.
         final LinkedHashSet<EmojiFormat> formats = new LinkedHashSet<EmojiFormat>();
@@ -289,7 +285,7 @@ public class EmojidexIME extends InputMethodService {
 
         if(category.equals(getString(R.string.ime_category_id_history)))
         {
-            final List<String> histories = historyManager.getHistories();
+            final List<String> histories = historyManager.getEmojiNames();
             keyboardViewManager.initializeFromName(histories);
         }
         else if(category.equals(getString(R.string.ime_category_id_all)))
@@ -373,9 +369,9 @@ public class EmojidexIME extends InputMethodService {
         closePopupWindow(v);
 
         // delete
-        boolean result = FileOperation.deleteFile(getApplicationContext(), FileOperation.HISTORIES);
         historyManager.clear();
-        showResultToast(result);
+        historyManager.save();
+        showResultToast(true);
         currentCategory = null;
         categoryAllButton.performClick();
     }
@@ -478,7 +474,7 @@ public class EmojidexIME extends InputMethodService {
                 if(emoji != null)
                 {
                     getCurrentInputConnection().commitText(emoji.toEmojidexString(), 1);
-                    historyManager.regist(emoji.getName());
+                    historyManager.add(emoji.getName());
                 }
                 // Input other.
                 else
