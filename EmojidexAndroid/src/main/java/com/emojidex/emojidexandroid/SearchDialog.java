@@ -132,7 +132,11 @@ public class SearchDialog extends AbstractDialog {
 
         final EmojiDownloader downloader = new EmojiDownloader(context);
         downloader.setListener(new CustomDownloadListener());
-        downloader.add(url, formats.toArray(new EmojiFormat[formats.size()]));
+        downloader.add(
+                url,
+                formats.toArray(new EmojiFormat[formats.size()]),
+                "http://assets.emojidex.com/emoji"
+        );
     }
 
 
@@ -149,6 +153,11 @@ public class SearchDialog extends AbstractDialog {
                 searchManager.add(emoji.name);
             }
             searchManager.save();
+        }
+
+        @Override
+        public void onPostAllJsonDownload(EmojiDownloader downloader) {
+            super.onPostAllJsonDownload(downloader);
             dismiss();
         }
     }
