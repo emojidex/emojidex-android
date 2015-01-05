@@ -77,22 +77,22 @@
     <string name="download">Download</string>
     <string name="search_result">Search result</string>
 
-    <string name="ime_category_id_history">history</string>
-    <string name="ime_category_id_search">search</string>
-    <string name="ime_category_id_all">all</string>
-    <string name="ime_category_id_gestures">gestures</string>
-    <string name="ime_category_id_abstract">abstract</string>
-    <string name="ime_category_id_tools">tools</string>
-    <string name="ime_category_id_faces">faces</string>
-    <string name="ime_category_id_symbols">symbols</string>
-    <string name="ime_category_id_nature">nature</string>
-    <string name="ime_category_id_food">food</string>
-    <string name="ime_category_id_cosmos">cosmos</string>
-    <string name="ime_category_id_transportation">transportation</string>
-    <string name="ime_category_id_places">places</string>
-    <string name="ime_category_id_people">people</string>
-    <string name="ime_category_id_objects">objects</string>
+    <string name="ime_category_id_history" translatable="false">history</string>
+    <string name="ime_category_id_search" translatable="false">search</string>
+    <string name="ime_category_id_all" translatable="false">all</string>
+    <string name="ime_category_id_gestures" translatable="false">gestures</string>
+    <string name="ime_category_id_abstract" translatable="false">abstract</string>
+    <string name="ime_category_id_tools" translatable="false">tools</string>
+    <string name="ime_category_id_faces" translatable="false">faces</string>
+    <string name="ime_category_id_symbols" translatable="false">symbols</string>
+    <string name="ime_category_id_nature" translatable="false">nature</string>
+    <string name="ime_category_id_food" translatable="false">food</string>
+    <string name="ime_category_id_cosmos" translatable="false">cosmos</string>
+    <string name="ime_category_id_transportation" translatable="false">transportation</string>
+    <string name="ime_category_id_places" translatable="false">places</string>
+    <string name="ime_category_id_people" translatable="false">people</string>
+    <string name="ime_category_id_objects" translatable="false">objects</string>
 
-    <string name="emoji_format_seal">seal</string>
-    <string name="emoji_format_key">px64</string>
+    <string name="emoji_format_seal" translatable="false">seal</string>
+    <string name="emoji_format_key" translatable="false">px64</string>
 </resources>
