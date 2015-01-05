@@ -71,7 +71,7 @@ public class EmojiDownloader {
 
         // Read local json.
         final File file = new File(PathUtils.getLocalJsonPath());
-        localJsonParams = readJson(file);
+        localJsonParams = JsonParam.readFromFile(file);
 
         for(JsonParam jsonParam: localJsonParams)
             localJsonParamMap.put(jsonParam.name, jsonParam);
@@ -211,7 +211,7 @@ public class EmojiDownloader {
             return;
 
         // Update local json file.
-        writeJson();
+        JsonParam.writeToFile(new File(PathUtils.getLocalJsonPath()), localJsonParams);
 
         // Notify to listener.
         listener.onPreAllEmojiDownload();
@@ -234,51 +234,6 @@ public class EmojiDownloader {
     public void setListener(DownloadListener listener)
     {
         this.listener = (listener == null) ? new DownloadListener() : listener;
-    }
-
-    /**
-     * Read json parameter.
-     * @param file  Json file.
-     * @return      Json parameter.
-     */
-    private ArrayList<JsonParam> readJson(File file)
-    {
-        final ObjectMapper objectMapper = new ObjectMapper();
-        try
-        {
-            final InputStream is = new FileInputStream(file);
-            final TypeReference<ArrayList<JsonParam>> typeReference = new TypeReference<ArrayList<JsonParam>>(){};
-            final JsonNode jsonNode = objectMapper.readTree(is);
-            final JsonParser jsonParser = jsonNode.has("emoji") ? jsonNode.get("emoji").traverse() : jsonNode.traverse();
-            final ArrayList<JsonParam> result = objectMapper.readValue(jsonParser, typeReference);
-            is.close();
-            return result;
-        }
-        catch(IOException e)
-        {
-            e.printStackTrace();
-        }
-
-        // If read failed, return ArrayList of empty.
-        return new ArrayList<JsonParam>();
-    }
-
-    private void writeJson()
-    {
-        final File file = new File(PathUtils.getLocalJsonPath());
-        if( !file.getParentFile().exists() )
-            file.getParentFile().mkdirs();
-
-        final ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            final OutputStream os = new FileOutputStream(file);
-            objectMapper.writeValue(os, localJsonParams);
-            os.close();
-        }
-        catch(IOException e)
-        {
-            e.printStackTrace();
-        }
     }
 
 
@@ -488,7 +443,7 @@ public class EmojiDownloader {
             {
                 // Read json parameter.
                 final File file = new File(fileParam.destination);
-                final ArrayList<JsonParam> jsonParams = readJson(file);
+                final ArrayList<JsonParam> jsonParams = JsonParam.readFromFile(file);
 
                 // Add download task.
                 add(jsonParams, formats, sourceRootPath);

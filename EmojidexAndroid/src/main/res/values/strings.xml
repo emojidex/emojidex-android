@@ -57,8 +57,9 @@
 
     <string name="message_unsupported_seal">Unsupported seal.</string>
 
-    <string name="ime_category_text_all">All</string>
     <string name="ime_category_text_history">History</string>
+    <string name="ime_category_text_search">Search</string>
+    <string name="ime_category_text_all">All</string>
     <string name="ime_category_text_gestures">Gestures</string>
     <string name="ime_category_text_abstract">Abstract</string>
     <string name="ime_category_text_tools">Tools</string>
@@ -76,8 +77,9 @@
     <string name="download">Download</string>
     <string name="search_result">Search result</string>
 
-    <string name="ime_category_id_all" translatable="false">all</string>
     <string name="ime_category_id_history" translatable="false">history</string>
+    <string name="ime_category_id_search" translatable="false">search</string>
+    <string name="ime_category_id_all" translatable="false">all</string>
     <string name="ime_category_id_gestures" translatable="false">gestures</string>
     <string name="ime_category_id_abstract" translatable="false">abstract</string>
     <string name="ime_category_id_tools" translatable="false">tools</string>

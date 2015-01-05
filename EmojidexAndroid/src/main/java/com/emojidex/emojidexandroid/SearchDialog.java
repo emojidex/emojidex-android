@@ -1,6 +1,7 @@
 package com.emojidex.emojidexandroid;
 
 import android.app.ActivityManager;
+import android.app.SearchManager;
 import android.content.Context;
 import android.inputmethodservice.InputMethodService;
 import android.os.IBinder;
@@ -131,34 +132,11 @@ public class SearchDialog extends AbstractDialog {
 
         final EmojiDownloader downloader = new EmojiDownloader(context);
         downloader.setListener(new CustomDownloadListener());
-        downloader.add(url, formats.toArray(new EmojiFormat[formats.size()]));
-    }
-
-    /**
-     * Read json parameter.
-     * @param file  Json file.
-     * @return      Json parameter.
-     */
-    private ArrayList<JsonParam> readJson(File file)
-    {
-        final ObjectMapper objectMapper = new ObjectMapper();
-        try
-        {
-            final InputStream is = new FileInputStream(file);
-            final TypeReference<ArrayList<JsonParam>> typeReference = new TypeReference<ArrayList<JsonParam>>(){};
-            final JsonNode jsonNode = objectMapper.readTree(is);
-            final JsonParser jsonParser = jsonNode.has("emoji") ? jsonNode.get("emoji").traverse() : jsonNode.traverse();
-            final ArrayList<JsonParam> result = objectMapper.readValue(jsonParser, typeReference);
-            is.close();
-            return result;
-        }
-        catch(IOException e)
-        {
-            e.printStackTrace();
-        }
-
-        // If read failed, return ArrayList of empty.
-        return new ArrayList<JsonParam>();
+        downloader.add(
+                url,
+                formats.toArray(new EmojiFormat[formats.size()]),
+                "http://assets.emojidex.com/emoji"
+        );
     }
 
 
@@ -168,8 +146,19 @@ public class SearchDialog extends AbstractDialog {
         public void onPostOneJsonDownload(String source, String destination) {
             super.onPostOneJsonDownload(source, destination);
 
-            final ArrayList<JsonParam> emojies = readJson(new File(destination));
-            Log.d(TAG, "Search emoji count = " + emojies.size());
+            final ArrayList<JsonParam> emojies = JsonParam.readFromFile(new File(destination));
+            final PreferenceManager searchManager = new PreferenceManager(context, PreferenceManager.Type.Search);
+            for(JsonParam emoji : emojies)
+            {
+                searchManager.add(emoji.name);
+            }
+            searchManager.save();
+        }
+
+        @Override
+        public void onPostAllJsonDownload(EmojiDownloader downloader) {
+            super.onPostAllJsonDownload(downloader);
+            dismiss();
         }
     }
 }

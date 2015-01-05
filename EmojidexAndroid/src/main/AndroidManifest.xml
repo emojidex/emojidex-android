@@ -38,15 +38,9 @@
         </activity>
 
         <activity
-            android:name="com.emojidex.emojidexandroid.ListActivity"
-            android:label="@string/app_name">
-        </activity>
-
-        <activity
             android:name="com.emojidex.emojidexandroid.ProxyActivity"
             android:label="emojidex"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
-        />
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
 
         <service
             android:name="com.emojidex.emojidexandroid.EmojidexIME"
