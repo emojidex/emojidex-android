@@ -441,15 +441,15 @@ public class EmojiDownloader {
             // Find new emojies.
             for(FileParam fileParam : downloadParam.fileParams)
             {
+                // Notify to listener.
+                listener.onPostOneJsonDownload(fileParam.source, fileParam.destination);
+
                 // Read json parameter.
                 final File file = new File(fileParam.destination);
                 final ArrayList<JsonParam> jsonParams = JsonParam.readFromFile(file);
 
                 // Add download task.
                 add(jsonParams, formats, sourceRootPath);
-
-                // Notify to listener.
-                listener.onPostOneJsonDownload(fileParam.source, fileParam.destination);
 
                 // Clean temporary file.
                 file.delete();

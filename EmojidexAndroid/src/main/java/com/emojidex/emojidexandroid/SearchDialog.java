@@ -146,13 +146,16 @@ public class SearchDialog extends AbstractDialog {
         public void onPostOneJsonDownload(String source, String destination) {
             super.onPostOneJsonDownload(source, destination);
 
-            final ArrayList<JsonParam> emojies = JsonParam.readFromFile(new File(destination));
+            final File file = new File(destination);
+            final ArrayList<JsonParam> emojies = JsonParam.readFromFile(file);
             final PreferenceManager searchManager = new PreferenceManager(context, PreferenceManager.Type.Search);
             for(JsonParam emoji : emojies)
             {
+                emoji.name = emoji.name.replaceAll(" ", "_");
                 searchManager.add(emoji.name);
             }
             searchManager.save();
+            JsonParam.writeToFile(file, emojies);
         }
 
         @Override
