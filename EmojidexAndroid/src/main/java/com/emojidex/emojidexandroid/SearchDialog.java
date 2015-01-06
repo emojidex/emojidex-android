@@ -123,7 +123,7 @@ public class SearchDialog extends AbstractDialog {
     private void searchEmoji()
     {
         final String searchText = searchEditText.getText().toString();
-        final String url = "https://www.emojidex.com/api/v1/search/emoji?code_cont=" + searchText;
+        final String url = "https://www.emojidex.com/api/v1/search/emoji?detailed=true&code_cont=" + searchText;
 
         final LinkedHashSet<EmojiFormat> formats = new LinkedHashSet<EmojiFormat>();
         formats.add(EmojiFormat.toFormat(context.getString(R.string.emoji_format_default)));
