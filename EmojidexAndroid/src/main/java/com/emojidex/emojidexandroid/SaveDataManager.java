@@ -20,8 +20,8 @@ import java.util.List;
 /**
  * Created by kou on 14/05/27.
  */
-public class PreferenceManager {
-    static final String TAG = MainActivity.TAG + "::PreferenceManager";
+public class SaveDataManager {
+    static final String TAG = MainActivity.TAG + "::SaveDataManager";
 
     public static final int CAPACITY_INFINITY = 0;
 
@@ -54,7 +54,7 @@ public class PreferenceManager {
      * @param context   Context.
      * @param type      Type.
      */
-    public PreferenceManager(Context context, Type type)
+    public SaveDataManager(Context context, Type type)
     {
         this.context = context.getApplicationContext();
         this.type = type;

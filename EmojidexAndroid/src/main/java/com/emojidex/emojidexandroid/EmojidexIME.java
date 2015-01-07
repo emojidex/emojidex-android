@@ -49,8 +49,8 @@ public class EmojidexIME extends InputMethodService {
 
     private PopupWindow popup;
 
-    private PreferenceManager historyManager;
-    private PreferenceManager searchManager;
+    private SaveDataManager historyManager;
+    private SaveDataManager searchManager;
     private KeyboardViewManager keyboardViewManager;
 
     private String currentCategory = null;
@@ -75,8 +75,8 @@ public class EmojidexIME extends InputMethodService {
         emojidex.initialize(this);
 
         // Create PreferenceManager.
-        historyManager = new PreferenceManager(this, PreferenceManager.Type.History);
-        searchManager = new PreferenceManager(this, PreferenceManager.Type.Search);
+        historyManager = new SaveDataManager(this, SaveDataManager.Type.History);
+        searchManager = new SaveDataManager(this, SaveDataManager.Type.Search);
 
         // Emoji download.
         final LinkedHashSet<EmojiFormat> formats = new LinkedHashSet<EmojiFormat>();

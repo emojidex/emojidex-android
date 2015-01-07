@@ -1,33 +1,16 @@
 package com.emojidex.emojidexandroid;
 
-import android.app.ActivityManager;
-import android.app.SearchManager;
 import android.content.Context;
 import android.inputmethodservice.InputMethodService;
-import android.os.IBinder;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.view.inputmethod.InputMethodSubtype;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
-
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -148,7 +131,7 @@ public class SearchDialog extends AbstractDialog {
 
             final File file = new File(destination);
             final ArrayList<JsonParam> emojies = JsonParam.readFromFile(file);
-            final PreferenceManager searchManager = new PreferenceManager(context, PreferenceManager.Type.Search);
+            final SaveDataManager searchManager = new SaveDataManager(context, SaveDataManager.Type.Search);
             for(JsonParam emoji : emojies)
             {
                 emoji.name = emoji.name.replaceAll(" ", "_");
