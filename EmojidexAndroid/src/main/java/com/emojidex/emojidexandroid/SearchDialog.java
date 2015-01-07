@@ -46,12 +46,12 @@ public class SearchDialog extends AbstractDialog {
      * Construct object.
      * @param context       Context.
      */
-    public SearchDialog(InputMethodService context, View view) {
+    public SearchDialog(InputMethodService context) {
         super(context);
 
         this.context = context;
 
-        // Initialize popup window.
+        // Initialize popupz window.
         setInputMethodMode(INPUT_METHOD_FROM_FOCUSABLE);
 
         // Switch input method.

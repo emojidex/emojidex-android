@@ -523,7 +523,7 @@ public class EmojidexIME extends InputMethodService {
          * Show emoji search window.
          */
         private void showSearchWindow() {
-            final SearchDialog test = new SearchDialog(EmojidexIME.this, layout);
+            final SearchDialog test = new SearchDialog(EmojidexIME.this);
             test.showAtLocation(layout, Gravity.CENTER, 0, 0);
         }
     }
