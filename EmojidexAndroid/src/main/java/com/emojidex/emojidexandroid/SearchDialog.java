@@ -1,7 +1,9 @@
 package com.emojidex.emojidexandroid;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.inputmethodservice.InputMethodService;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -144,6 +146,10 @@ public class SearchDialog extends AbstractDialog {
         @Override
         public void onPostAllJsonDownload(EmojiDownloader downloader) {
             super.onPostAllJsonDownload(downloader);
+            final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+            final SharedPreferences.Editor prefEditor = pref.edit();
+            prefEditor.putString("startCategory", context.getString(R.string.ime_category_id_search));
+            prefEditor.commit();
             dismiss();
         }
     }

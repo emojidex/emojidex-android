@@ -1,11 +1,13 @@
 package com.emojidex.emojidexandroid;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -121,8 +123,26 @@ public class EmojidexIME extends InputMethodService {
     public void onWindowShown() {
         // Reset IME
         currentCategory = null;
-        categoryAllButton.performClick();
         categoryScrollView.scrollTo(0, 0);
+
+        final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        final String defaultCategory = getString(R.string.ime_category_id_all);
+        final String startCategory = pref.getString("startCategory", defaultCategory);
+        final ViewGroup categoriesView = (ViewGroup)layout.findViewById(R.id.ime_categories);
+        final int childCount = categoriesView.getChildCount();
+        for(int i = 0;  i < childCount;  ++i)
+        {
+            final Button button = (Button)categoriesView.getChildAt(i);
+            if(button.getContentDescription().equals(startCategory))
+            {
+                pref.edit().putString("startCategory", defaultCategory).commit();
+                button.performClick();
+                return;
+            }
+        }
+
+        pref.edit().putString("startCategory", defaultCategory).commit();
+        categoryAllButton.performClick();
     }
 
     @Override
@@ -164,8 +184,6 @@ public class EmojidexIME extends InputMethodService {
             // Create button.
             final RadioButton newButton = new RadioButton(this);
 
-//            newButton.setBackground();
-//            setButtonDrawable();
             newButton.setText(categoryName);
             newButton.setContentDescription(categoryName);
             newButton.setOnClickListener(new View.OnClickListener() {
