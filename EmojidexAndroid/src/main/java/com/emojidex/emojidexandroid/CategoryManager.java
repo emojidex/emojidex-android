@@ -40,8 +40,10 @@ public class CategoryManager {
      * Initialize object.
      * @param context   Context.
      */
-    public void intialize(Context context)
+    public void initialize(Context context)
     {
+        context = context.getApplicationContext();
+
         // Declare initialize parameter table.
         final int[][] initParams = {
                 { R.string.ime_category_id_faces            , R.string.ime_category_text_faces },

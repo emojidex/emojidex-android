@@ -163,29 +163,25 @@ public class EmojidexIME extends InputMethodService {
      */
     private void createCategorySelector()
     {
+        final CategoryManager categoryManager = CategoryManager.getInstance();
+        categoryManager.initialize(this);
+
         // Create category buttons and add to IME layout.
         final ViewGroup categoriesView = (ViewGroup)layout.findViewById(R.id.ime_categories);
 
         for(final String categoryName : emojidex.getCategoryNames())
         {
-            // Skip if already added.
-            boolean isFind = false;
-            for(int i = 0;  i < categoriesView.getChildCount();  ++i)
-            {
-                if(categoriesView.getChildAt(i).getContentDescription().equals(categoryName))
-                {
-                    isFind = true;
-                    break;
-                }
-            }
-            if(isFind)
-                continue;
+            categoryManager.add(categoryName, categoryName);
+        }
 
+        final int categoryCount = categoryManager.getCategoryCount();
+        for(int i = 0;  i < categoryCount;  ++i)
+        {
             // Create button.
             final RadioButton newButton = new RadioButton(this);
 
-            newButton.setText(categoryName);
-            newButton.setContentDescription(categoryName);
+            newButton.setText(categoryManager.getCategoryText(i));
+            newButton.setContentDescription(categoryManager.getCategoryId(i));
             newButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
