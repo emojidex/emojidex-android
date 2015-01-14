@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:orientation="horizontal"
-        android:gravity="center">
+        android:gravity="top|center">
         <ImageButton
             android:id="@+id/search_close"
             android:layout_width="wrap_content"
@@ -18,14 +18,24 @@
             android:layout_marginRight="10dp"
             android:src="@android:drawable/ic_menu_close_clear_cancel"
             android:background="@null"/>
-        <EditText
-            android:id="@+id/search_edit_text"
-            android:singleLine="true"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginLeft="10dp"
-            android:textColor="@color/black"/>
+            android:orientation="vertical"
+            android:gravity="center">
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/search_category_spinner"
+                android:textColor="@color/black" />
+            <EditText
+                android:id="@+id/search_edit_text"
+                android:singleLine="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"/>
+        </LinearLayout>
         <ImageButton
             android:id="@+id/search_action"
             android:layout_width="wrap_content"

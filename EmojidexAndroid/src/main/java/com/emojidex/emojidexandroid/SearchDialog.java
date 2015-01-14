@@ -5,15 +5,20 @@ import android.content.SharedPreferences;
 import android.inputmethodservice.InputMethodService;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Spinner;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 
@@ -26,6 +31,8 @@ public class SearchDialog extends AbstractDialog {
     private final String oldIME;
 
     private EditText searchEditText;
+
+    private String category = null;
 
     /**
      * Construct object.
@@ -99,6 +106,35 @@ public class SearchDialog extends AbstractDialog {
             }
         });
 
+        // Category spinner.
+        final HashMap<String, String> categoryMap = new HashMap<String, String>();
+        final Spinner categorySpinner = (Spinner)contentView.findViewById(R.id.search_category_spinner);
+        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item);
+        adapter.add(context.getString(R.string.ime_category_text_all));
+
+        final CategoryManager categoryManager = CategoryManager.getInstance();
+        final int categoryCount = categoryManager.getCategoryCount();
+        for(int i = 0;  i < categoryCount;  ++i)
+        {
+            final String id = categoryManager.getCategoryId(i);
+            final String text = categoryManager.getCategoryText(i);
+            categoryMap.put(text, id);
+            adapter.add(text);
+        }
+        categorySpinner.setAdapter(adapter);
+        categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                final String selected = (String)categorySpinner.getSelectedItem();
+                category = categoryMap.get(selected);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                category = null;
+            }
+        });
+
         return contentView;
     }
 
@@ -108,7 +144,7 @@ public class SearchDialog extends AbstractDialog {
     private void searchEmoji()
     {
         final String searchText = searchEditText.getText().toString();
-        final String url = "https://www.emojidex.com/api/v1/search/emoji?detailed=true&code_cont=" + searchText;
+        final String url = "https://www.emojidex.com/api/v1/search/emoji?detailed=true&code_cont=" + searchText + (category == null ? "" : "&categories[]=" + category);
 
         final LinkedHashSet<EmojiFormat> formats = new LinkedHashSet<EmojiFormat>();
         formats.add(EmojiFormat.toFormat(context.getString(R.string.emoji_format_default)));
