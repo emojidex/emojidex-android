@@ -109,7 +109,8 @@ public class SearchDialog extends AbstractDialog {
         // Category spinner.
         final HashMap<String, String> categoryMap = new HashMap<String, String>();
         final Spinner categorySpinner = (Spinner)contentView.findViewById(R.id.search_category_spinner);
-        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item);
+        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, R.layout.spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         adapter.add(context.getString(R.string.ime_category_text_all));
 
         final CategoryManager categoryManager = CategoryManager.getInstance();
