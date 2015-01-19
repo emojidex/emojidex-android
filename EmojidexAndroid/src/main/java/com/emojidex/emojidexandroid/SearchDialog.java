@@ -6,8 +6,10 @@ import android.inputmethodservice.InputMethodService;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -15,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -83,6 +86,20 @@ public class SearchDialog extends AbstractDialog {
 
         // Input area.
         searchEditText = (EditText)contentView.findViewById(R.id.search_edit_text);
+        searchEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+
+                if(actionId == EditorInfo.IME_ACTION_SEARCH)
+                {
+                    searchEmoji();
+                    handled = true;
+                }
+
+                return handled;
+            }
+        });
 //        searchEditText.setFocusable(true);
 
         // Show result space.
