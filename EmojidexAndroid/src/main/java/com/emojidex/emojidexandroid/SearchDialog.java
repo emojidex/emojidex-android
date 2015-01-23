@@ -6,6 +6,7 @@ import android.inputmethodservice.InputMethodService;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +37,8 @@ public class SearchDialog extends AbstractDialog {
     private EditText searchEditText;
 
     private String category = null;
+
+    private LoadingDialog loadingDialog = null;
 
     /**
      * Construct object.
@@ -161,7 +164,16 @@ public class SearchDialog extends AbstractDialog {
      */
     private void searchEmoji()
     {
+        // Skip if already search.
+        if(loadingDialog != null)
+            return;
+
+        // Skip if search text is empty.
         final String searchText = searchEditText.getText().toString();
+        if(searchText.isEmpty())
+            return;
+
+        // Search emoji.
         final String url = "https://www.emojidex.com/api/v1/search/emoji?detailed=true&code_cont=" + searchText + (category == null ? "" : "&categories[]=" + category);
 
         final LinkedHashSet<EmojiFormat> formats = new LinkedHashSet<EmojiFormat>();
@@ -176,6 +188,16 @@ public class SearchDialog extends AbstractDialog {
                 formats.toArray(new EmojiFormat[formats.size()]),
                 "http://assets.emojidex.com/emoji"
         );
+
+        // Create loading dialog.
+        loadingDialog = new LoadingDialog(context);
+        loadingDialog.setOnDismissListener(new OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                dismiss();
+            }
+        });
+        loadingDialog.showAtLocation(searchEditText, Gravity.CENTER, 0, 0);
     }
 
 
@@ -204,7 +226,7 @@ public class SearchDialog extends AbstractDialog {
             final SharedPreferences.Editor prefEditor = pref.edit();
             prefEditor.putString("startCategory", context.getString(R.string.ime_category_id_search));
             prefEditor.commit();
-            dismiss();
+            loadingDialog.close();
         }
     }
 }
