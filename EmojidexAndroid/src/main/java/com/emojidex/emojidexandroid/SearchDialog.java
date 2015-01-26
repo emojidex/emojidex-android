@@ -3,6 +3,7 @@ package com.emojidex.emojidexandroid;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.inputmethodservice.InputMethodService;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
@@ -174,20 +175,26 @@ public class SearchDialog extends AbstractDialog {
             return;
 
         // Search emoji.
-        final String url = "https://www.emojidex.com/api/v1/search/emoji?detailed=true&code_cont=" + searchText + (category == null ? "" : "&categories[]=" + category);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                final String url = "https://www.emojidex.com/api/v1/search/emoji?detailed=true&code_cont=" + searchText + (category == null ? "" : "&categories[]=" + category);
 
-        final LinkedHashSet<EmojiFormat> formats = new LinkedHashSet<EmojiFormat>();
-        formats.add(EmojiFormat.toFormat(context.getString(R.string.emoji_format_default)));
-        formats.add(EmojiFormat.toFormat(context.getString(R.string.emoji_format_key)));
-        formats.add(EmojiFormat.toFormat(context.getString(R.string.emoji_format_seal)));
+                final LinkedHashSet<EmojiFormat> formats = new LinkedHashSet<EmojiFormat>();
+                formats.add(EmojiFormat.toFormat(context.getString(R.string.emoji_format_default)));
+                formats.add(EmojiFormat.toFormat(context.getString(R.string.emoji_format_key)));
+                formats.add(EmojiFormat.toFormat(context.getString(R.string.emoji_format_seal)));
 
-        final EmojiDownloader downloader = new EmojiDownloader(context);
-        downloader.setListener(new CustomDownloadListener());
-        downloader.add(
-                url,
-                formats.toArray(new EmojiFormat[formats.size()]),
-                "http://assets.emojidex.com/emoji"
-        );
+                final EmojiDownloader downloader = new EmojiDownloader(context);
+                downloader.setListener(new CustomDownloadListener());
+                downloader.add(
+                        url,
+                        formats.toArray(new EmojiFormat[formats.size()]),
+                        "http://assets.emojidex.com/emoji"
+                );
+
+            }
+        }, 500);
 
         // Create loading dialog.
         loadingDialog = new LoadingDialog(context);
