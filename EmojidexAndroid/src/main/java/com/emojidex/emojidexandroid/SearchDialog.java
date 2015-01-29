@@ -2,8 +2,10 @@ package com.emojidex.emojidexandroid;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.inputmethodservice.InputMethodService;
 import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
@@ -17,8 +19,10 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.TableLayout;
 import android.widget.TextView;
 
 import java.io.File;
@@ -33,12 +37,13 @@ import java.util.List;
 public class SearchDialog extends AbstractDialog {
     private final Context context;
     private final InputMethodManager inputMethodManager;
+    private final Handler handler;
     private final String oldIME;
 
     private EditText searchEditText;
+    private GridLayout resultGridLayout;
 
     private String category = null;
-
     private LoadingDialog loadingDialog = null;
 
     /**
@@ -72,6 +77,20 @@ public class SearchDialog extends AbstractDialog {
             context.switchInputMethod(defaultIME);
         else
             inputMethodManager.showInputMethodPicker();
+
+        // Create handler.
+        handler = new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                final String emojiName = (String)msg.obj;
+                final Emojidex emojidex = Emojidex.getInstance();
+                final EmojiFormat defaultFormat = EmojiFormat.toFormat(SearchDialog.this.context.getString(R.string.emoji_format_default));
+                final ImageButton imageButton = new ImageButton(SearchDialog.this.context);
+                final Drawable drawable = emojidex.getEmoji(emojiName).getDrawable(defaultFormat);
+                imageButton.setImageDrawable(drawable);
+                resultGridLayout.addView(imageButton);
+            }
+        };
     }
 
     @Override
@@ -107,7 +126,8 @@ public class SearchDialog extends AbstractDialog {
 //        searchEditText.setFocusable(true);
 
         // Show result space.
-//        resultLayout = (LinearLayout)contentView.findViewById(R.id.search_result_layout);
+        resultGridLayout = (GridLayout)contentView.findViewById(R.id.search_result_layout);
+        resultGridLayout.setColumnCount(3);
 
         // Search button.
         final ImageButton searchButton = (ImageButton)contentView.findViewById(R.id.search_action);
@@ -198,12 +218,12 @@ public class SearchDialog extends AbstractDialog {
 
         // Create loading dialog.
         loadingDialog = new LoadingDialog(context);
-        loadingDialog.setOnDismissListener(new OnDismissListener() {
-            @Override
-            public void onDismiss() {
-                dismiss();
-            }
-        });
+//        .setOnDismissListener(new OnDismissListener() {
+//            @Override
+//            public void onDismiss() {
+//                dismiss();
+//            }
+//        });
         loadingDialog.showAtLocation(searchEditText, Gravity.CENTER, 0, 0);
     }
 
@@ -219,8 +239,16 @@ public class SearchDialog extends AbstractDialog {
             final SaveDataManager searchManager = new SaveDataManager(context, SaveDataManager.Type.Search);
             for(JsonParam emoji : emojies)
             {
+                // Convert emoji name.
                 emoji.name = emoji.name.replaceAll(" ", "_");
+
+                // Add emoji name to manager.
                 searchManager.add(emoji.name);
+
+                // Add emoji button to result space.
+                final Message message = handler.obtainMessage();
+                message.obj = emoji.name;
+                handler.sendMessage(message);
             }
             searchManager.save();
             JsonParam.writeToFile(file, emojies);
