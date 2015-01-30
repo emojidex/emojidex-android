@@ -2,6 +2,7 @@ package com.emojidex.emojidexandroid;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.inputmethodservice.InputMethodService;
 import android.os.Handler;
@@ -86,26 +87,7 @@ public class SearchDialog extends AbstractDialog {
         handler = new Handler(){
             @Override
             public void handleMessage(Message msg) {
-                final String emojiName = (String)msg.obj;
-                final Emojidex emojidex = Emojidex.getInstance();
-                final EmojiFormat defaultFormat = EmojiFormat.toFormat(SearchDialog.this.context.getString(R.string.emoji_format_default));
-                final ImageButton imageButton = new ImageButton(SearchDialog.this.context);
-
-                final Drawable drawable = emojidex.getEmoji(emojiName).getDrawable(defaultFormat);
-                imageButton.setImageDrawable(drawable);
-
-                final int width = drawable.getIntrinsicWidth() + 20;
-                final ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(
-                        width,
-                        ViewGroup.LayoutParams.WRAP_CONTENT
-                );
-                imageButton.setLayoutParams(lp);
-
-                if(resultGridLayout.getChildCount() == 0)
-                {
-                    resultGridLayout.setColumnCount(resultGridLayout.getWidth() / width);
-                }
-                resultGridLayout.addView(imageButton);
+                addButton((String)msg.obj);
             }
         };
     }
@@ -241,6 +223,35 @@ public class SearchDialog extends AbstractDialog {
 //            }
 //        });
         loadingDialog.showAtLocation(searchEditText, Gravity.CENTER, 0, 0);
+    }
+
+    /**
+     * Add emoji button to result area.
+     * @param emojiName     Emoji name.
+     */
+    private void addButton(String emojiName)
+    {
+        final Emojidex emojidex = Emojidex.getInstance();
+        final EmojiFormat emojiFormat = EmojiFormat.toFormat(context.getString(R.string.emoji_format_key));
+        final ImageButton imageButton = new ImageButton(context);
+
+        final BitmapDrawable drawable = emojidex.getEmoji(emojiName).getDrawable(emojiFormat);
+        final float drawableSize = context.getResources().getDimension(R.dimen.ime_key_icon_size);
+        drawable.setTargetDensity((int)(drawable.getBitmap().getDensity() * drawableSize / drawable.getIntrinsicWidth()));
+        imageButton.setImageDrawable(drawable);
+
+        final int width = drawable.getIntrinsicWidth() + 20;
+        final ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(
+                width,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        imageButton.setLayoutParams(lp);
+
+        if(resultGridLayout.getChildCount() == 0)
+        {
+            resultGridLayout.setColumnCount(resultGridLayout.getWidth() / width);
+        }
+        resultGridLayout.addView(imageButton);
     }
 
 
