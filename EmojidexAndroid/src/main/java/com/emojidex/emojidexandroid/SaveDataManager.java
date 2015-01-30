@@ -105,10 +105,10 @@ public class SaveDataManager {
     }
 
     /**
-     * Add emoji name.
+     * Add emoji name to first.
      * @param emojiName     Emoji name.
      */
-    public void add(String emojiName)
+    public void addFirst(String emojiName)
     {
         // Already add.
         final int index = emojiNames.indexOf(emojiName);
@@ -121,6 +121,25 @@ public class SaveDataManager {
         // Capacity over.
         if(capacity != CAPACITY_INFINITY && capacity < emojiNames.size())
             emojiNames.removeLast();
+    }
+
+    /**
+     * Add emoji name to last.
+     * @param emojiName     Emoji name.
+     */
+    public void addLast(String emojiName)
+    {
+        // Already add.
+        final int index = emojiNames.indexOf(emojiName);
+        if(index != -1)
+            emojiNames.remove(index);
+
+        // Regist.
+        emojiNames.addLast(emojiName);
+
+        // Capacity over.
+        if(capacity != CAPACITY_INFINITY && capacity < emojiNames.size())
+            emojiNames.removeFirst();
     }
 
     /**

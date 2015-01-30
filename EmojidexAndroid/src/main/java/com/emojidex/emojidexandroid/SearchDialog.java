@@ -3,13 +3,11 @@ package com.emojidex.emojidexandroid;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.inputmethodservice.InputMethodService;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -21,12 +19,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
-import android.widget.TableLayout;
 import android.widget.TextView;
 
 import java.io.File;
@@ -270,7 +265,7 @@ public class SearchDialog extends AbstractDialog {
                 emoji.name = emoji.name.replaceAll(" ", "_");
 
                 // Add emoji name to manager.
-                searchManager.add(emoji.name);
+                searchManager.addFirst(emoji.name);
 
                 // Add emoji button to result space.
                 final Message message = handler.obtainMessage();

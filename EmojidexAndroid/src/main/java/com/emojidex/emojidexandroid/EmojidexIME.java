@@ -498,7 +498,7 @@ public class EmojidexIME extends InputMethodService {
                 if(emoji != null)
                 {
                     getCurrentInputConnection().commitText(emoji.toEmojidexString(), 1);
-                    historyManager.add(emoji.getName());
+                    historyManager.addFirst(emoji.getName());
                 }
                 // Input other.
                 else
