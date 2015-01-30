@@ -13,14 +13,17 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TextView;
@@ -40,6 +43,7 @@ public class SearchDialog extends AbstractDialog {
     private final Handler handler;
     private final String oldIME;
 
+    private View contentView;
     private EditText searchEditText;
     private GridLayout resultGridLayout;
 
@@ -86,8 +90,21 @@ public class SearchDialog extends AbstractDialog {
                 final Emojidex emojidex = Emojidex.getInstance();
                 final EmojiFormat defaultFormat = EmojiFormat.toFormat(SearchDialog.this.context.getString(R.string.emoji_format_default));
                 final ImageButton imageButton = new ImageButton(SearchDialog.this.context);
+
                 final Drawable drawable = emojidex.getEmoji(emojiName).getDrawable(defaultFormat);
                 imageButton.setImageDrawable(drawable);
+
+                final int width = drawable.getIntrinsicWidth() + 20;
+                final ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(
+                        width,
+                        ViewGroup.LayoutParams.WRAP_CONTENT
+                );
+                imageButton.setLayoutParams(lp);
+
+                if(resultGridLayout.getChildCount() == 0)
+                {
+                    resultGridLayout.setColumnCount(resultGridLayout.getWidth() / width);
+                }
                 resultGridLayout.addView(imageButton);
             }
         };
@@ -105,7 +122,7 @@ public class SearchDialog extends AbstractDialog {
     {
         // window layout.
         final LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View contentView = inflater.inflate(R.layout.window_search, null);
+        contentView = inflater.inflate(R.layout.window_search, null);
 
         // Input area.
         searchEditText = (EditText)contentView.findViewById(R.id.search_edit_text);
@@ -127,7 +144,6 @@ public class SearchDialog extends AbstractDialog {
 
         // Show result space.
         resultGridLayout = (GridLayout)contentView.findViewById(R.id.search_result_layout);
-        resultGridLayout.setColumnCount(3);
 
         // Search button.
         final ImageButton searchButton = (ImageButton)contentView.findViewById(R.id.search_action);
