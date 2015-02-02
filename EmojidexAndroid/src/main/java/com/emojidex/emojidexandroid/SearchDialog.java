@@ -23,6 +23,7 @@ import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -224,36 +225,41 @@ public class SearchDialog extends AbstractDialog {
     {
         final Emojidex emojidex = Emojidex.getInstance();
         final EmojiFormat emojiFormat = EmojiFormat.toFormat(context.getString(R.string.emoji_format_key));
-        final ImageButton imageButton = new ImageButton(context);
+//        final ImageButton button = new ImageButton(context);
+        final ToggleButton button = new ToggleButton(context);
 
         // Set drawable.
         final BitmapDrawable drawable = emojidex.getEmoji(emojiName).getDrawable(emojiFormat);
         final float drawableSize = context.getResources().getDimension(R.dimen.ime_key_icon_size);
         drawable.setTargetDensity((int)(drawable.getBitmap().getDensity() * drawableSize / drawable.getIntrinsicWidth()));
-        imageButton.setImageDrawable(drawable);
+//        button.setImageDrawable(drawable);
+        button.setButtonDrawable(drawable);
 
         // Set size.
-        final int width = drawable.getIntrinsicWidth() + 20;
-        final ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(
-                width,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-        );
-        imageButton.setLayoutParams(lp);
+//        final int width = drawable.getIntrinsicWidth() + 20;
+//        final ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(
+//                width,
+//                ViewGroup.LayoutParams.WRAP_CONTENT
+//        );
+//        button.setLayoutParams(lp);
 
         // Set click event.
-        imageButton.setOnClickListener(new View.OnClickListener() {
+        button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveDataManager.addFirst(emojiName);
+                if(((ToggleButton)v).isChecked())
+                    saveDataManager.addFirst(emojiName);
+                else
+                    saveDataManager.remove(emojiName);
             }
         });
 
         // Add to grid layout.
         if(resultGridLayout.getChildCount() == 0)
         {
-            resultGridLayout.setColumnCount(resultGridLayout.getWidth() / width);
+            resultGridLayout.setColumnCount(3);//resultGridLayout.getWidth() / width);
         }
-        resultGridLayout.addView(imageButton);
+        resultGridLayout.addView(button);
     }
 
 
