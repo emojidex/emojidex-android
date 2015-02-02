@@ -209,7 +209,7 @@ public class SearchDialog extends AbstractDialog {
                 );
 
             }
-        }, 500);
+        }, 1000);
 
         // Create loading dialog.
         loadingDialog = new LoadingDialog(context);
