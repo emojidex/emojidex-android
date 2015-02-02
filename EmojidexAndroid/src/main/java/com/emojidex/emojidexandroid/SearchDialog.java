@@ -37,6 +37,7 @@ public class SearchDialog extends AbstractDialog {
     private final Context context;
     private final InputMethodManager inputMethodManager;
     private final Handler handler;
+    private final SaveDataManager saveDataManager;
     private final String oldIME;
 
     private View contentView;
@@ -55,7 +56,7 @@ public class SearchDialog extends AbstractDialog {
 
         this.context = context;
 
-        // Initialize popupz window.
+        // Initialize popup window.
         setInputMethodMode(INPUT_METHOD_FROM_FOCUSABLE);
 
         // Switch input method.
@@ -78,7 +79,8 @@ public class SearchDialog extends AbstractDialog {
         else
             inputMethodManager.showInputMethodPicker();
 
-        // Create handler.
+        // Initialize fields.
+        saveDataManager = new SaveDataManager(this.context, SaveDataManager.Type.Search);
         handler = new Handler(){
             @Override
             public void handleMessage(Message msg) {
@@ -90,6 +92,7 @@ public class SearchDialog extends AbstractDialog {
     @Override
     public void dismiss()
     {
+        saveDataManager.save();
         inputMethodManager.showInputMethodPicker();
         super.dismiss();
     }
@@ -117,7 +120,6 @@ public class SearchDialog extends AbstractDialog {
                 return handled;
             }
         });
-//        searchEditText.setFocusable(true);
 
         // Show result space.
         resultGridLayout = (GridLayout)contentView.findViewById(R.id.search_result_layout);
@@ -211,12 +213,6 @@ public class SearchDialog extends AbstractDialog {
 
         // Create loading dialog.
         loadingDialog = new LoadingDialog(context);
-//        .setOnDismissListener(new OnDismissListener() {
-//            @Override
-//            public void onDismiss() {
-//                dismiss();
-//            }
-//        });
         loadingDialog.showAtLocation(searchEditText, Gravity.CENTER, 0, 0);
     }
 
@@ -224,17 +220,19 @@ public class SearchDialog extends AbstractDialog {
      * Add emoji button to result area.
      * @param emojiName     Emoji name.
      */
-    private void addButton(String emojiName)
+    private void addButton(final String emojiName)
     {
         final Emojidex emojidex = Emojidex.getInstance();
         final EmojiFormat emojiFormat = EmojiFormat.toFormat(context.getString(R.string.emoji_format_key));
         final ImageButton imageButton = new ImageButton(context);
 
+        // Set drawable.
         final BitmapDrawable drawable = emojidex.getEmoji(emojiName).getDrawable(emojiFormat);
         final float drawableSize = context.getResources().getDimension(R.dimen.ime_key_icon_size);
         drawable.setTargetDensity((int)(drawable.getBitmap().getDensity() * drawableSize / drawable.getIntrinsicWidth()));
         imageButton.setImageDrawable(drawable);
 
+        // Set size.
         final int width = drawable.getIntrinsicWidth() + 20;
         final ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(
                 width,
@@ -242,6 +240,15 @@ public class SearchDialog extends AbstractDialog {
         );
         imageButton.setLayoutParams(lp);
 
+        // Set click event.
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveDataManager.addFirst(emojiName);
+            }
+        });
+
+        // Add to grid layout.
         if(resultGridLayout.getChildCount() == 0)
         {
             resultGridLayout.setColumnCount(resultGridLayout.getWidth() / width);
@@ -258,21 +265,16 @@ public class SearchDialog extends AbstractDialog {
 
             final File file = new File(destination);
             final ArrayList<JsonParam> emojies = JsonParam.readFromFile(file);
-            final SaveDataManager searchManager = new SaveDataManager(context, SaveDataManager.Type.Search);
             for(JsonParam emoji : emojies)
             {
                 // Convert emoji name.
                 emoji.name = emoji.name.replaceAll(" ", "_");
-
-                // Add emoji name to manager.
-                searchManager.addFirst(emoji.name);
 
                 // Add emoji button to result space.
                 final Message message = handler.obtainMessage();
                 message.obj = emoji.name;
                 handler.sendMessage(message);
             }
-            searchManager.save();
             JsonParam.writeToFile(file, emojies);
         }
 
