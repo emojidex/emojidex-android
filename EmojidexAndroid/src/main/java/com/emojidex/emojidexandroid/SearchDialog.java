@@ -3,6 +3,7 @@ package com.emojidex.emojidexandroid;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.inputmethodservice.InputMethodService;
 import android.os.Handler;
 import android.os.Message;
@@ -21,9 +22,9 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -88,6 +89,11 @@ public class SearchDialog extends AbstractDialog {
                 addButton((String)msg.obj);
             }
         };
+
+
+        //----- TEST
+//        searchEditText.setText("face");
+//        searchEmoji();
     }
 
     @Override
@@ -225,39 +231,42 @@ public class SearchDialog extends AbstractDialog {
     {
         final Emojidex emojidex = Emojidex.getInstance();
         final EmojiFormat emojiFormat = EmojiFormat.toFormat(context.getString(R.string.emoji_format_key));
-//        final ImageButton button = new ImageButton(context);
-        final ToggleButton button = new ToggleButton(context);
+        final ImageView button = new ImageView(context);
+        button.setScaleType(ImageView.ScaleType.CENTER);
 
         // Set drawable.
         final BitmapDrawable drawable = emojidex.getEmoji(emojiName).getDrawable(emojiFormat);
-        final float drawableSize = context.getResources().getDimension(R.dimen.ime_key_icon_size);
-        drawable.setTargetDensity((int)(drawable.getBitmap().getDensity() * drawableSize / drawable.getIntrinsicWidth()));
-//        button.setImageDrawable(drawable);
-        button.setButtonDrawable(drawable);
+        final float drawableSize = context.getResources().getDimension(R.dimen.ime_search_emoji_button_icon_size);
+        drawable.setTargetDensity((int) (drawable.getBitmap().getDensity() * drawableSize / drawable.getIntrinsicWidth()));
+        button.setImageDrawable(drawable);
 
         // Set size.
-//        final int width = drawable.getIntrinsicWidth() + 20;
-//        final ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(
-//                width,
-//                ViewGroup.LayoutParams.WRAP_CONTENT
-//        );
-//        button.setLayoutParams(lp);
+        final float buttonSize = context.getResources().getDimension(R.dimen.ime_search_emoji_button_size);
+        final ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams((int)buttonSize, (int)buttonSize);
+        button.setLayoutParams(lp);
 
         // Set click event.
+        final Drawable background = context.getResources().getDrawable(R.drawable.ime_search_emoji_button_background_checked);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(((ToggleButton)v).isChecked())
+                if(v.getBackground() == null)
+                {
+                    v.setBackground(background);
                     saveDataManager.addFirst(emojiName);
+                }
                 else
+                {
+                    v.setBackground(null);
                     saveDataManager.remove(emojiName);
+                }
             }
         });
 
         // Add to grid layout.
         if(resultGridLayout.getChildCount() == 0)
         {
-            resultGridLayout.setColumnCount(3);//resultGridLayout.getWidth() / width);
+            resultGridLayout.setColumnCount((int)(resultGridLayout.getWidth() / buttonSize));
         }
         resultGridLayout.addView(button);
     }
