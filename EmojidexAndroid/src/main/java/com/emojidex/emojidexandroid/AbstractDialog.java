@@ -1,7 +1,6 @@
 package com.emojidex.emojidexandroid;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.PopupWindow;
