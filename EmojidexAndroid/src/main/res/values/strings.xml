@@ -26,8 +26,10 @@
     <string name="delete_failure">Emoji removal failed.</string>
     <string name="delete_favorites_all">Clear favorites</string>
     <string name="delete_histories_all">Clear history</string>
+    <string name="delete_search_results_all">Clear search results</string>
     <string name="delete_favorites_all_confirm">Clear all favorites?</string>
     <string name="delete_histories_all_confirm">Clear all history?</string>
+    <string name="delete_search_results_all_confirm">Clear all search results?</string>
     <string name="clipboard">Copied to the clipboard.</string>
     <string name="close">Close</string>
     <string name="download_done">Already downloaded.</string>
