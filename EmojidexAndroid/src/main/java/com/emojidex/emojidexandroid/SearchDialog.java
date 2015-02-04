@@ -83,6 +83,7 @@ public class SearchDialog extends AbstractDialog {
 
         // Initialize fields.
         saveDataManager = new SaveDataManager(this.context, SaveDataManager.Type.Search);
+        saveDataManager.load();
         handler = new Handler(){
             @Override
             public void handleMessage(Message msg) {
