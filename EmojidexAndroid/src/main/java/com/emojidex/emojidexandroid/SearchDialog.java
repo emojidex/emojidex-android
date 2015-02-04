@@ -89,11 +89,6 @@ public class SearchDialog extends AbstractDialog {
                 addButton((String)msg.obj);
             }
         };
-
-
-        //----- TEST
-//        searchEditText.setText("face");
-//        searchEmoji();
     }
 
     @Override
