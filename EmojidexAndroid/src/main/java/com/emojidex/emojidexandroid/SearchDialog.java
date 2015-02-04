@@ -178,6 +178,7 @@ public class SearchDialog extends AbstractDialog {
                 category = null;
             }
         });
+        categorySpinner.setBackground(context.getResources().getDrawable(R.drawable.ime_search_spinner_background));
 
         return contentView;
     }
