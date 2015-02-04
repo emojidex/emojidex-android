@@ -197,6 +197,9 @@ public class SearchDialog extends AbstractDialog {
         if(searchText.isEmpty())
             return;
 
+        // Clear result.
+        resultGridLayout.removeAllViews();
+
         // Search emoji.
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -302,6 +305,7 @@ public class SearchDialog extends AbstractDialog {
             prefEditor.putString("startCategory", context.getString(R.string.ime_category_id_search));
             prefEditor.commit();
             loadingDialog.close();
+            loadingDialog = null;
         }
     }
 }
