@@ -298,7 +298,10 @@ public class SearchDialog extends AbstractDialog {
             super.onPostAllJsonDownload(downloader);
             final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
             final SharedPreferences.Editor prefEditor = pref.edit();
-            prefEditor.putString("startCategory", context.getString(R.string.ime_category_id_search));
+            prefEditor.putString(
+                    context.getString(R.string.preference_key_start_category),
+                    context.getString(R.string.ime_category_id_search)
+            );
             prefEditor.commit();
             loadingDialog.close();
             loadingDialog = null;

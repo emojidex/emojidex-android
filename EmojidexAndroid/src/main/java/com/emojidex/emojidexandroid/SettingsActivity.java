@@ -5,6 +5,9 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.preference.Preference;
+import android.preference.PreferenceActivity;
+import android.preference.PreferenceFragment;
 import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +24,7 @@ import java.util.List;
 /**
  * Created by nazuki on 2014/01/31.
  */
-public class SettingsActivity extends Activity {
+public class SettingsActivity extends PreferenceActivity {
     private Context context;
 
     private ListView listView;
@@ -30,7 +33,8 @@ public class SettingsActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settings);
+
+        getFragmentManager().beginTransaction().replace(android.R.id.content, new CustomPreferenceFragment()).commit();
 
         context = getApplicationContext();
     }
@@ -103,9 +107,9 @@ public class SettingsActivity extends Activity {
 
         // set listView
         listView.setAdapter(new ArrayAdapter<String>(
-            this,
-            android.R.layout.simple_list_item_single_choice,
-            keyboardNames
+                this,
+                android.R.layout.simple_list_item_single_choice,
+                keyboardNames
         ));
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         listView.setItemChecked(current, true);
@@ -118,33 +122,6 @@ public class SettingsActivity extends Activity {
     public void backToMainActivity(View v)
     {
         super.onBackPressed();
-    }
-
-    /**
-     * delete all favorites
-     * @param v
-     */
-    public void deleteAllFavorites(View v)
-    {
-        createDeleteDialog(R.string.delete_favorites_all_confirm, FileOperation.FAVORITES);
-    }
-
-    /**
-     * delete all histories
-     * @param v
-     */
-    public void deleteAllHistories(View v)
-    {
-        createDeleteDialog(R.string.delete_histories_all_confirm, FileOperation.HISTORIES);
-    }
-
-    /**
-     * delete all search results
-     * @param v
-     */
-    public void deleteAllSearchResults(View v)
-    {
-        createDeleteDialog(R.string.delete_search_results_all_confirm, FileOperation.SEARCH_RESULT);
     }
 
     /**
@@ -176,5 +153,55 @@ public class SettingsActivity extends Activity {
                 }
             });
         dialog.show();
+    }
+
+
+    /**
+     * Custom PreferenceFragment.
+     */
+    private class CustomPreferenceFragment extends PreferenceFragment
+    {
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            addPreferencesFromResource(R.xml.preferences);
+
+            // Initialize.
+            final Preference defaultKeyboard = findPreference(getString(R.string.preference_key_default_keyboard));
+            defaultKeyboard.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    setKeyboard(null);
+                    return true;
+                }
+            });
+
+            final Preference clearFavorite = findPreference(getString(R.string.preference_key_clear_favorite));
+            clearFavorite.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    createDeleteDialog(R.string.delete_favorites_all_confirm, FileOperation.FAVORITES);
+                    return true;
+                }
+            });
+
+            final Preference clearHistory = findPreference(getString(R.string.preference_key_clear_history));
+            clearHistory.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    createDeleteDialog(R.string.delete_histories_all_confirm, FileOperation.HISTORIES);
+                    return true;
+                }
+            });
+
+            final Preference clearSearchResult = findPreference(getString(R.string.preference_key_clear_search_result));
+            clearSearchResult.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    createDeleteDialog(R.string.delete_search_results_all_confirm, FileOperation.SEARCH_RESULT);
+                    return true;
+                }
+            });
+        }
     }
 }
