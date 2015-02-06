@@ -66,15 +66,19 @@ public class SearchDialog extends AbstractDialog {
         oldIME = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.DEFAULT_INPUT_METHOD);
 
         boolean hasDefaultIME = false;
-        final String defaultIME = FileOperation.loadPreferences(context, FileOperation.KEYBOARD);
-        final List<InputMethodInfo> inputMethodInfos = inputMethodManager.getEnabledInputMethodList();
-        for(InputMethodInfo inputMethodInfo : inputMethodInfos)
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        final String idNothing = context.getString(R.string.preference_entryvalue_default_keyboard_nothing);
+        final String defaultIME = prefs.getString(context.getString(R.string.preference_key_default_keyboard), idNothing);
+
+        if( !defaultIME.equals(idNothing) )
         {
-            if(inputMethodInfo.getId().equals(defaultIME))
+            for(InputMethodInfo info : inputMethodManager.getEnabledInputMethodList())
             {
-                hasDefaultIME = true;
+                if(info.getId().equals(defaultIME))
+                    hasDefaultIME = true;
             }
         }
+
 
         if(hasDefaultIME)
             context.switchInputMethod(defaultIME);

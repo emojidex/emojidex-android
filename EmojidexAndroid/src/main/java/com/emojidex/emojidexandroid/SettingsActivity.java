@@ -5,10 +5,12 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -167,15 +169,58 @@ public class SettingsActivity extends PreferenceActivity {
             addPreferencesFromResource(R.xml.preferences);
 
             // Initialize.
-            final Preference defaultKeyboard = findPreference(getString(R.string.preference_key_default_keyboard));
-            defaultKeyboard.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            createGeneralPreference();
+            createDataPreference();
+        }
+
+        /**
+         * Create general category preference.
+         */
+        private void createGeneralPreference()
+        {
+            final ListPreference defaultKeyboard = (ListPreference)findPreference(getString(R.string.preference_key_default_keyboard));
+            final ArrayList<CharSequence> entries = new ArrayList<CharSequence>();
+            final ArrayList<CharSequence> entryValues = new ArrayList<CharSequence>();
+
+            // Create entries and entryValues.
+            final InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+            final List<InputMethodInfo> inputMethodInfos = inputMethodManager.getEnabledInputMethodList();
+            entries.add(getString(R.string.settings_entry_default_keyboard_nothing));
+            entryValues.add(getString(R.string.preference_entryvalue_default_keyboard_nothing));
+            for(InputMethodInfo info : inputMethodInfos)
+            {
+                final CharSequence id = info.getId();
+                if(id.equals(getPackageName() + "/.EmojidexIME"))
+                    continue;
+                entries.add(info.loadLabel(getPackageManager()));
+                entryValues.add(info.getId());
+            }
+            defaultKeyboard.setEntries(entries.toArray(new CharSequence[entries.size()]));
+            defaultKeyboard.setEntryValues(entryValues.toArray(new CharSequence[entryValues.size()]));
+
+            // Set summary.
+            if(defaultKeyboard.getEntry() == null)
+                defaultKeyboard.setValueIndex(0);
+            defaultKeyboard.setSummary(defaultKeyboard.getEntry());
+
+            // Set changed event.
+            defaultKeyboard.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    setKeyboard(null);
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    final ListPreference lp = (ListPreference) preference;
+                    final int newIndex = lp.findIndexOfValue((String) newValue);
+                    final CharSequence newEntry = lp.getEntries()[newIndex];
+                    lp.setSummary(newEntry);
                     return true;
                 }
             });
+        }
 
+        /**
+         * Create data category preference.
+         */
+        private void createDataPreference()
+        {
             final Preference clearFavorite = findPreference(getString(R.string.preference_key_clear_favorite));
             clearFavorite.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
