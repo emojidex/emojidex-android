@@ -28,106 +28,18 @@
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/ime_category_text_search"
+                android:id="@+id/ime_category_button_search"
+                android:onClick="onClickCategoryButton"
+                android:contentDescription="@string/ime_category_id_search" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="@string/ime_category_text_all"
                 android:id="@+id/ime_category_button_all"
                 android:onClick="onClickCategoryButton"
                 android:contentDescription="@string/ime_category_id_all"/>
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/ime_category_text_faces"
-                android:id="@+id/ime_category_button_faces"
-                android:onClick="onClickCategoryButton"
-                android:contentDescription="@string/ime_category_id_faces"/>
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/ime_category_text_people"
-                android:id="@+id/ime_category_button_people"
-                android:onClick="onClickCategoryButton"
-                android:contentDescription="@string/ime_category_id_people"/>
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/ime_category_text_gestures"
-                android:id="@+id/ime_category_button_gestures"
-                android:onClick="onClickCategoryButton"
-                android:contentDescription="@string/ime_category_id_gestures"/>
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/ime_category_text_food"
-                android:id="@+id/ime_category_button_food"
-                android:onClick="onClickCategoryButton"
-                android:contentDescription="@string/ime_category_id_food"/>
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/ime_category_text_objects"
-                android:id="@+id/ime_category_button_objects"
-                android:onClick="onClickCategoryButton"
-                android:contentDescription="@string/ime_category_id_objects"/>
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/ime_category_text_tools"
-                android:id="@+id/ime_category_button_tools"
-                android:onClick="onClickCategoryButton"
-                android:contentDescription="@string/ime_category_id_tools"/>
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/ime_category_text_nature"
-                android:id="@+id/ime_category_button_nature"
-                android:onClick="onClickCategoryButton"
-                android:contentDescription="@string/ime_category_id_nature"/>
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/ime_category_text_cosmos"
-                android:id="@+id/ime_category_button_cosmos"
-                android:onClick="onClickCategoryButton"
-                android:contentDescription="@string/ime_category_id_cosmos"/>
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/ime_category_text_places"
-                android:id="@+id/ime_category_button_places"
-                android:onClick="onClickCategoryButton"
-                android:contentDescription="@string/ime_category_id_places"/>
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/ime_category_text_transportation"
-                android:id="@+id/ime_category_button_transportation"
-                android:onClick="onClickCategoryButton"
-                android:contentDescription="@string/ime_category_id_transportation"/>
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/ime_category_text_abstract"
-                android:id="@+id/ime_category_button_abstract"
-                android:onClick="onClickCategoryButton"
-                android:contentDescription="@string/ime_category_id_abstract"/>
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/ime_category_text_symbols"
-                android:id="@+id/ime_category_button_symbols"
-                android:onClick="onClickCategoryButton"
-                android:contentDescription="@string/ime_category_id_symbols"/>
         </RadioGroup>
     </HorizontalScrollView>
 

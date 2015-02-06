@@ -4,20 +4,14 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.apache.http.HttpException;
 
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -69,7 +63,7 @@ public class EmojiDownloader {
 
         // Read local json.
         final File file = new File(PathUtils.getLocalJsonPath());
-        localJsonParams = readJson(file);
+        localJsonParams = JsonParam.readFromFile(file);
 
         for(JsonParam jsonParam: localJsonParams)
             localJsonParamMap.put(jsonParam.name, jsonParam);
@@ -209,7 +203,7 @@ public class EmojiDownloader {
             return;
 
         // Update local json file.
-        writeJson();
+        JsonParam.writeToFile(new File(PathUtils.getLocalJsonPath()), localJsonParams);
 
         // Notify to listener.
         listener.onPreAllEmojiDownload();
@@ -232,49 +226,6 @@ public class EmojiDownloader {
     public void setListener(DownloadListener listener)
     {
         this.listener = (listener == null) ? new DownloadListener() : listener;
-    }
-
-    /**
-     * Read json parameter.
-     * @param file  Json file.
-     * @return      Json parameter.
-     */
-    private ArrayList<JsonParam> readJson(File file)
-    {
-        final ObjectMapper objectMapper = new ObjectMapper();
-        try
-        {
-            final InputStream is = new FileInputStream(file);
-            final TypeReference<ArrayList<JsonParam>> typeReference = new TypeReference<ArrayList<JsonParam>>(){};
-            final ArrayList<JsonParam> result = objectMapper.readValue(is, typeReference);
-            is.close();
-            return result;
-        }
-        catch(IOException e)
-        {
-            e.printStackTrace();
-        }
-
-        // If read failed, return ArrayList of empty.
-        return new ArrayList<JsonParam>();
-    }
-
-    private void writeJson()
-    {
-        final File file = new File(PathUtils.getLocalJsonPath());
-        if( !file.getParentFile().exists() )
-            file.getParentFile().mkdirs();
-
-        final ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            final OutputStream os = new FileOutputStream(file);
-            objectMapper.writeValue(os, localJsonParams);
-            os.close();
-        }
-        catch(IOException e)
-        {
-            e.printStackTrace();
-        }
     }
 
 
@@ -469,8 +420,11 @@ public class EmojiDownloader {
 
         @Override
         protected void onPreDownload(DownloadParam downloadParam) {
-            // Notify to listener.
-            listener.onPreOneJsonDownload();
+            for(FileParam fileParam : downloadParam.fileParams)
+            {
+                // Notify to listener.
+                listener.onPreOneJsonDownload(fileParam.source, fileParam.destination);
+            }
         }
 
         @Override
@@ -479,9 +433,12 @@ public class EmojiDownloader {
             // Find new emojies.
             for(FileParam fileParam : downloadParam.fileParams)
             {
+                // Notify to listener.
+                listener.onPostOneJsonDownload(fileParam.source, fileParam.destination);
+
                 // Read json parameter.
                 final File file = new File(fileParam.destination);
-                final ArrayList<JsonParam> jsonParams = readJson(file);
+                final ArrayList<JsonParam> jsonParams = JsonParam.readFromFile(file);
 
                 // Add download task.
                 add(jsonParams, formats, sourceRootPath);
@@ -489,9 +446,6 @@ public class EmojiDownloader {
                 // Clean temporary file.
                 file.delete();
             }
-
-            // Notify to listener.
-            listener.onPostOneJsonDownload();
         }
 
         @Override

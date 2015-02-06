@@ -139,6 +139,15 @@ public class SettingsActivity extends Activity {
     }
 
     /**
+     * delete all search results
+     * @param v
+     */
+    public void deleteAllSearchResults(View v)
+    {
+        createDeleteDialog(R.string.delete_search_results_all_confirm, FileOperation.SEARCH_RESULT);
+    }
+
+    /**
      * create dialog
      * @param textRes favorites or histories text resources
      * @param mode favorites or histories

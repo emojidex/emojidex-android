@@ -27,8 +27,10 @@
     <string name="delete_failure">削除に失敗しました。</string>
     <string name="delete_favorites_all">お気に入りを全て削除</string>
     <string name="delete_histories_all">履歴を全て削除</string>
+    <string name="delete_search_results_all">検索結果を全て削除</string>
     <string name="delete_favorites_all_confirm">お気に入りを全て削除しますか？</string>
     <string name="delete_histories_all_confirm">履歴を全て削除しますか？</string>
+    <string name="delete_search_results_all_confirm">検索結果を全て削除しますか？</string>
     <string name="clipboard">クリップボードにコピーしました。</string>
     <string name="close">閉じる</string>
     <string name="download_done">すでにダウンロード済です。</string>
@@ -58,8 +60,9 @@
 
     <string name="message_unsupported_seal">シールに対応していません。</string>
 
-    <string name="ime_category_text_all">全て</string>
     <string name="ime_category_text_history">履歴</string>
+    <string name="ime_category_text_search">検索</string>
+    <string name="ime_category_text_all">全て</string>
     <string name="ime_category_text_gestures">ジェスチャー</string>
     <string name="ime_category_text_abstract">抽象物</string>
     <string name="ime_category_text_tools">道具</string>
@@ -72,5 +75,7 @@
     <string name="ime_category_text_places">場所</string>
     <string name="ime_category_text_people">人</string>
     <string name="ime_category_text_objects">物</string>
+    <string name="download">ダウンロード</string>
+    <string name="search_result">検索結果</string>
 
 </resources>

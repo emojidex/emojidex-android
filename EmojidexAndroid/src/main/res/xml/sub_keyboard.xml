@@ -6,11 +6,14 @@
         android:keyWidth="100%">
 
     <Row>
-        <Key android:codes="@integer/ime_keycode_show_ime_picker" android:keyIcon="@drawable/keyboard" android:keyEdgeFlags="left" />
+        <Key android:codes="@integer/ime_keycode_show_ime_picker"
+             android:keyIcon="@drawable/keyboard" android:keyEdgeFlags="left" />
         <Key android:codes="21" android:keyIcon="@drawable/key_left" android:isRepeatable="true" />
         <Key android:codes="22" android:keyIcon="@drawable/key_right" android:isRepeatable="true" />
         <Key android:codes="67" android:keyIcon="@drawable/key_delete" android:isRepeatable="true" />
-        <Key android:codes="66" android:keyIcon="@drawable/key_enter" android:keyEdgeFlags="right" />
+        <Key android:codes="66" android:keyIcon="@drawable/key_enter" />
+        <Key android:codes="@integer/ime_keycode_show_search_window"
+             android:keyIcon="@android:drawable/ic_menu_search" android:keyEdgeFlags="right" />
     </Row>
 
 </Keyboard>
