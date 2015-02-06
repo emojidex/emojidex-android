@@ -30,9 +30,7 @@ public class FileOperation
 
     public static final String FAVORITES = "favorites";
     public static final String HISTORIES = "history";
-    public static final String DOWNLOAD = "download";
     public static final String SEARCH_RESULT = "search";
-    public static final String KEYBOARD = "keyboard";
     public static final String SHARE = "share";
 
     public static int MAX_SIZE = 50;
