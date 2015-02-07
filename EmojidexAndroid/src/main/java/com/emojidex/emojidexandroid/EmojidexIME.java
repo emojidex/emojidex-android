@@ -472,18 +472,20 @@ public class EmojidexIME extends InputMethodService {
             // Input show ime picker or default keyboard.
             if (primaryCode == showIMEPickerCode)
             {
-                boolean result = false;
-                String id = FileOperation.loadPreferences(EmojidexIME.this, FileOperation.KEYBOARD);
+                boolean hasDefaultIME = false;
+                final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(EmojidexIME.this);
+                final String idNothing = getString(R.string.preference_entryvalue_default_keyboard_nothing);
+                final String defaultIME = prefs.getString(getString(R.string.preference_key_default_keyboard), idNothing);
 
-                List<InputMethodInfo> inputMethodInfoList = inputMethodManager.getEnabledInputMethodList();
-                for (int i = 0; i < inputMethodInfoList.size(); ++i) {
-                    InputMethodInfo inputMethodInfo = inputMethodInfoList.get(i);
-                    if (inputMethodInfo.getId().equals(id))
-                        result = true;
+                if( !defaultIME.equals(idNothing) ) {
+                    for (InputMethodInfo info : inputMethodManager.getEnabledInputMethodList()) {
+                        if (info.getId().equals(defaultIME))
+                            hasDefaultIME = true;
+                    }
                 }
 
-                if (result)
-                    switchInputMethod(id);
+                if (hasDefaultIME)
+                    switchInputMethod(defaultIME);
                 else
                     inputMethodManager.showInputMethodPicker();
             }

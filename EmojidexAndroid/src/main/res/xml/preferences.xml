@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="@string/settings_category_general">
+        <ListPreference
+            android:key="@string/preference_key_default_keyboard"
+            android:title="@string/settings_keyboard_button"/>
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/settings_category_data">
+        <Preference
+            android:key="@string/preference_key_clear_favorite"
+            android:title="@string/delete_favorites_all"/>
+        <Preference
+            android:key="@string/preference_key_clear_history"
+            android:title="@string/delete_histories_all"/>
+        <Preference
+            android:key="@string/preference_key_clear_search_result"
+            android:title="@string/delete_search_results_all"/>
+    </PreferenceCategory>
+</PreferenceScreen>

@@ -30,7 +30,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 
 /**
  * Created by kou on 14/12/10.
@@ -66,15 +65,19 @@ public class SearchDialog extends AbstractDialog {
         oldIME = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.DEFAULT_INPUT_METHOD);
 
         boolean hasDefaultIME = false;
-        final String defaultIME = FileOperation.loadPreferences(context, FileOperation.KEYBOARD);
-        final List<InputMethodInfo> inputMethodInfos = inputMethodManager.getEnabledInputMethodList();
-        for(InputMethodInfo inputMethodInfo : inputMethodInfos)
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        final String idNothing = context.getString(R.string.preference_entryvalue_default_keyboard_nothing);
+        final String defaultIME = prefs.getString(context.getString(R.string.preference_key_default_keyboard), idNothing);
+
+        if( !defaultIME.equals(idNothing) )
         {
-            if(inputMethodInfo.getId().equals(defaultIME))
+            for(InputMethodInfo info : inputMethodManager.getEnabledInputMethodList())
             {
-                hasDefaultIME = true;
+                if(info.getId().equals(defaultIME))
+                    hasDefaultIME = true;
             }
         }
+
 
         if(hasDefaultIME)
             context.switchInputMethod(defaultIME);
@@ -298,7 +301,10 @@ public class SearchDialog extends AbstractDialog {
             super.onPostAllJsonDownload(downloader);
             final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
             final SharedPreferences.Editor prefEditor = pref.edit();
-            prefEditor.putString("startCategory", context.getString(R.string.ime_category_id_search));
+            prefEditor.putString(
+                    context.getString(R.string.preference_key_start_category),
+                    context.getString(R.string.ime_category_id_search)
+            );
             prefEditor.commit();
             loadingDialog.close();
             loadingDialog = null;
