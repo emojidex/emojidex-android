@@ -148,24 +148,8 @@ public class EmojiDownloader {
             // Add download task.
             for(EmojiFormat format : formats)
             {
-                // If file already downloaded, ignore file.
-                if(format == EmojiFormat.SVG)
-                {
-                    final String localChecksum = localJsonParam.checksums.svg;
-                    final String remoteChecksum = jsonParam.checksums.svg;
-                    if( remoteChecksum == null || remoteChecksum.equals(localChecksum) )
-                        continue;
-                    localJsonParam.checksums.svg = remoteChecksum;
-                }
-                else
-                {
-                    final String resolution = format.getRelativeDir();
-                    final String localChecksum = localJsonParam.checksums.png.get(resolution);
-                    final String remoteChecksum = jsonParam.checksums.png.get(resolution);
-                    if( remoteChecksum == null || remoteChecksum.equals(localChecksum) )
-                        continue;
-                    localJsonParam.checksums.png.put(resolution, remoteChecksum);
-                }
+                if( !checkNeedDownload(jsonParam, localJsonParam, format) )
+                    continue;
 
                 // Add download task.
                 if(downloadParam == null)
@@ -226,6 +210,52 @@ public class EmojiDownloader {
     public void setListener(DownloadListener listener)
     {
         this.listener = (listener == null) ? new DownloadListener() : listener;
+    }
+
+    /**
+     * Check need download.
+     * @param newJsonParam      New json parameter.
+     * @param localJsonParam    Local json paramter.
+     * @param format            Emoji format.
+     * @return                  Return true if need download.
+     */
+    private boolean checkNeedDownload(JsonParam newJsonParam, JsonParam localJsonParam, EmojiFormat format)
+    {
+        // If exists temporary file.
+        final File temporaryFile = new File(PathUtils.getLocalTemporaryEmojiPath(newJsonParam.name, format));
+        if( temporaryFile.exists() )
+            return true;
+
+        // If file already downloaded, ignore file.
+        if(format == EmojiFormat.SVG)
+        {
+            final String localChecksum = localJsonParam.checksums.svg;
+            final String remoteChecksum = newJsonParam.checksums.svg;
+            if( remoteChecksum == null || remoteChecksum.equals(localChecksum) )
+                return false;
+            localJsonParam.checksums.svg = remoteChecksum;
+        }
+        else
+        {
+            final String resolution = format.getRelativeDir();
+            final String localChecksum = localJsonParam.checksums.png.get(resolution);
+            final String remoteChecksum = newJsonParam.checksums.png.get(resolution);
+            if( remoteChecksum == null || remoteChecksum.equals(localChecksum) )
+                return false;
+            localJsonParam.checksums.png.put(resolution, remoteChecksum);
+        }
+
+        // If need download, create temporary file.
+        try
+        {
+            temporaryFile.createNewFile();
+        }
+        catch(IOException e)
+        {
+            e.printStackTrace();
+        }
+
+        return true;
     }
 
 
@@ -477,6 +507,16 @@ public class EmojiDownloader {
 
         @Override
         protected void onPostDownload(DownloadParam downloadParam) {
+            // Remove temporary file.
+            for(FileParam fileParam : downloadParam.fileParams)
+            {
+                final File temporaryFile = new File(PathUtils.getLocalTemporaryEmojiPath(
+                        downloadParam.name,
+                        PathUtils.convertLocalEmojiPathToEmojiFormat(fileParam.destination)
+                ));
+                temporaryFile.delete();
+            }
+
             // Norify to listener.
             listener.onPostOneEmojiDownload(downloadParam.name);
         }

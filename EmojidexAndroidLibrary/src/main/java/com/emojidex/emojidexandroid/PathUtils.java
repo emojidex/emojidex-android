@@ -2,6 +2,8 @@ package com.emojidex.emojidexandroid;
 
 import android.os.Environment;
 
+import java.io.File;
+
 /**
  * Created by kou on 14/10/03.
  */
@@ -21,6 +23,30 @@ class PathUtils {
                 + format.getRelativeDir() + "/"
                 + name + format.getExtension()
                 ;
+    }
+
+    /**
+     * Create temporary emoji path from local storage.
+     * @param name      Emoji name.
+     * @param format    Emoji format.
+     * @return          Temporary emoji path.
+     */
+    public static String getLocalTemporaryEmojiPath(String name, EmojiFormat format)
+    {
+        return LOCAL_ROOT_PATH + "/"
+                + format.getRelativeDir() + "/"
+                + "." + name
+                ;
+    }
+
+    /**
+     * Convert local emoji path to emoji format.
+     * @param path      Local emoji path.
+     * @return          Emoji format.
+     */
+    public static EmojiFormat convertLocalEmojiPathToEmojiFormat(String path)
+    {
+        return EmojiFormat.toFormat(new File(path).getParentFile().getName());
     }
 
     /**
