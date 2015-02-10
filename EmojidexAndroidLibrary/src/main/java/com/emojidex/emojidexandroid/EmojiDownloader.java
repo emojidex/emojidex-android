@@ -248,6 +248,7 @@ public class EmojiDownloader {
         // If need download, create temporary file.
         try
         {
+            temporaryFile.getParentFile().mkdirs();
             temporaryFile.createNewFile();
         }
         catch(IOException e)
