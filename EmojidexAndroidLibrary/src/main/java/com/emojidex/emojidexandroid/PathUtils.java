@@ -2,8 +2,6 @@ package com.emojidex.emojidexandroid;
 
 import android.os.Environment;
 
-import java.io.File;
-
 /**
  * Created by kou on 14/10/03.
  */
