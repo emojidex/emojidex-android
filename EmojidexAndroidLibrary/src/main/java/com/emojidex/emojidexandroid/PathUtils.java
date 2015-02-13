@@ -26,30 +26,6 @@ class PathUtils {
     }
 
     /**
-     * Create temporary emoji path from local storage.
-     * @param name      Emoji name.
-     * @param format    Emoji format.
-     * @return          Temporary emoji path.
-     */
-    public static String getLocalTemporaryEmojiPath(String name, EmojiFormat format)
-    {
-        return LOCAL_ROOT_PATH + "/"
-                + format.getRelativeDir() + "/"
-                + "." + name
-                ;
-    }
-
-    /**
-     * Convert local emoji path to emoji format.
-     * @param path      Local emoji path.
-     * @return          Emoji format.
-     */
-    public static EmojiFormat convertLocalEmojiPathToEmojiFormat(String path)
-    {
-        return EmojiFormat.toFormat(new File(path).getParentFile().getName());
-    }
-
-    /**
      * Create json path from local storage.
      * @return  Json path.
      */
