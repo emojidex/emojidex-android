@@ -105,6 +105,8 @@
 
     <string name="preference_key_start_category">startCategory</string>
     <string name="preference_key_default_keyboard">defaultKeyboard</string>
+    <string name="preference_key_last_update_time">lastUpdateTime</string>
+    <string name="preference_key_update_interval">updateInterval</string>
     <string name="preference_key_clear_favorite">clearFavorite</string>
     <string name="preference_key_clear_history">clearHistory</string>
     <string name="preference_key_clear_search_result">clearSearchResult</string>

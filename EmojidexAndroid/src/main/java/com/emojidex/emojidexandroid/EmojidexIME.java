@@ -27,6 +27,7 @@ import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 
@@ -81,11 +82,16 @@ public class EmojidexIME extends InputMethodService {
         searchManager = new SaveDataManager(this, SaveDataManager.Type.Search);
 
         // Emoji download.
-        final LinkedHashSet<EmojiFormat> formats = new LinkedHashSet<EmojiFormat>();
-        formats.add(EmojiFormat.toFormat(getString(R.string.emoji_format_default)));
-        formats.add(EmojiFormat.toFormat(getString(R.string.emoji_format_key)));
-        formats.add(EmojiFormat.toFormat(getString(R.string.emoji_format_seal)));
-        emojidex.download(formats.toArray(new EmojiFormat[formats.size()]), new CustomDownloadListener());
+        if(checkExecUpdate())
+        {
+Log.d("hoge", "checkExecUpdate : true");
+            final LinkedHashSet<EmojiFormat> formats = new LinkedHashSet<EmojiFormat>();
+            formats.add(EmojiFormat.toFormat(getString(R.string.emoji_format_default)));
+            formats.add(EmojiFormat.toFormat(getString(R.string.emoji_format_key)));
+            formats.add(EmojiFormat.toFormat(getString(R.string.emoji_format_seal)));
+            emojidex.download(formats.toArray(new EmojiFormat[formats.size()]), new CustomDownloadListener());
+        }
+else Log.d("hoge", "checkExecUpdate : false");
     }
 
     @Override
@@ -238,6 +244,23 @@ public class EmojidexIME extends InputMethodService {
     private void setKeyboard(String categoryName)
     {
         keyboardViewManager.initialize(emojidex.getEmojiList(categoryName));
+    }
+
+    /**
+     * Get update flag.
+     * @return  true when execution update.
+     */
+    private boolean checkExecUpdate()
+    {
+        final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        final long lastUpdateTime = pref.getLong(getString(R.string.preference_key_last_update_time), 0);
+        final long currentTime = new Date().getTime();
+        final long updateInterval = 1000*60*60*24;//pref.getLong(getString(R.string.preference_key_update_interval), 0);
+Log.d("hoge", "current = " + currentTime);
+Log.d("hoge", "last = " + lastUpdateTime);
+Log.d("hoge", "diff = " + (currentTime-lastUpdateTime));
+Log.d("hoge", "interval = " + updateInterval);
+        return (currentTime - lastUpdateTime) > updateInterval;
     }
 
     /**
@@ -683,6 +706,18 @@ public class EmojidexIME extends InputMethodService {
                     }
                 }
             }
+        }
+
+        @Override
+        public void onPostAllEmojiDownload() {
+            super.onPostAllEmojiDownload();
+
+            // Save update time.
+            final long updateTime = new Date().getTime();
+            final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(EmojidexIME.this);
+            final SharedPreferences.Editor prefEditor = pref.edit();
+            prefEditor.putLong(getString(R.string.preference_key_last_update_time), updateTime);
+            prefEditor.commit();
         }
     }
 }
