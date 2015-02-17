@@ -255,7 +255,7 @@ else Log.d("hoge", "checkExecUpdate : false");
         final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         final long lastUpdateTime = pref.getLong(getString(R.string.preference_key_last_update_time), 0);
         final long currentTime = new Date().getTime();
-        final long updateInterval = 1000*60*60*24;//pref.getLong(getString(R.string.preference_key_update_interval), 0);
+        final long updateInterval = Long.parseLong(pref.getString(getString(R.string.preference_key_update_interval), getString(R.string.preference_entryvalue_update_interval_default)));
 Log.d("hoge", "current = " + currentTime);
 Log.d("hoge", "last = " + lastUpdateTime);
 Log.d("hoge", "diff = " + (currentTime-lastUpdateTime));

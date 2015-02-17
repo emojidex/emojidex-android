@@ -79,6 +79,7 @@
     <string name="settings_keyboard_button">Default keyboard</string>
     <string name="settings_keyboard_button_summary">Set your default keyboard here</string>
     <string name="settings_entry_default_keyboard_nothing">Nothing</string>
+    <string name="settings_update_interval">Update interval</string>
 
     <!-- Japanese not needed -->
     <string name="download">Download</string>
@@ -111,4 +112,6 @@
     <string name="preference_key_clear_history">clearHistory</string>
     <string name="preference_key_clear_search_result">clearSearchResult</string>
     <string name="preference_entryvalue_default_keyboard_nothing">nothing</string>
+    <string name="preference_entryvalue_default_keyboard_default">@string/preference_entryvalue_default_keyboard_nothing</string>
+    <string name="preference_entryvalue_update_interval_default">604800000</string>
 </resources>

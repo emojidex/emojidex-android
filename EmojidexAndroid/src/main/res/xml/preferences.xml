@@ -4,7 +4,14 @@
         android:title="@string/settings_category_general">
         <ListPreference
             android:key="@string/preference_key_default_keyboard"
-            android:title="@string/settings_keyboard_button"/>
+            android:title="@string/settings_keyboard_button"
+            android:defaultValue="@string/preference_entryvalue_default_keyboard_default"/>
+        <ListPreference
+            android:key="@string/preference_key_update_interval"
+            android:title="@string/settings_update_interval"
+            android:defaultValue="@string/preference_entryvalue_update_interval_default"
+            android:entries="@array/settings_update_interval_entries"
+            android:entryValues="@array/settings_update_interval_entryvalues"/>
     </PreferenceCategory>
     <PreferenceCategory
         android:title="@string/settings_category_data">
