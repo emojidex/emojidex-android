@@ -28,9 +28,6 @@ public class SettingsActivity extends PreferenceActivity {
 
     private final Preference.OnPreferenceChangeListener onPreferenceChangeListener = new OnListPreferenceChangeListener();
 
-    private ListView listView;
-    private ArrayList<String> keyboardIds;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

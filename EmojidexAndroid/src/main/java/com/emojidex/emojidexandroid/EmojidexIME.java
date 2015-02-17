@@ -84,14 +84,12 @@ public class EmojidexIME extends InputMethodService {
         // Emoji download.
         if(checkExecUpdate())
         {
-Log.d("hoge", "checkExecUpdate : true");
             final LinkedHashSet<EmojiFormat> formats = new LinkedHashSet<EmojiFormat>();
             formats.add(EmojiFormat.toFormat(getString(R.string.emoji_format_default)));
             formats.add(EmojiFormat.toFormat(getString(R.string.emoji_format_key)));
             formats.add(EmojiFormat.toFormat(getString(R.string.emoji_format_seal)));
             emojidex.download(formats.toArray(new EmojiFormat[formats.size()]), new CustomDownloadListener());
         }
-else Log.d("hoge", "checkExecUpdate : false");
     }
 
     @Override
@@ -256,10 +254,6 @@ else Log.d("hoge", "checkExecUpdate : false");
         final long lastUpdateTime = pref.getLong(getString(R.string.preference_key_last_update_time), 0);
         final long currentTime = new Date().getTime();
         final long updateInterval = Long.parseLong(pref.getString(getString(R.string.preference_key_update_interval), getString(R.string.preference_entryvalue_update_interval_default)));
-Log.d("hoge", "current = " + currentTime);
-Log.d("hoge", "last = " + lastUpdateTime);
-Log.d("hoge", "diff = " + (currentTime-lastUpdateTime));
-Log.d("hoge", "interval = " + updateInterval);
         return (currentTime - lastUpdateTime) > updateInterval;
     }
 
