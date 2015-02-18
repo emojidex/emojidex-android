@@ -14,7 +14,6 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodInfo;
@@ -23,7 +22,6 @@ import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.PopupWindow;
 import android.widget.RadioButton;
-import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import java.util.ArrayList;
