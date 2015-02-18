@@ -148,24 +148,9 @@ public class EmojiDownloader {
             // Add download task.
             for(EmojiFormat format : formats)
             {
-                // If file already downloaded, ignore file.
-                if(format == EmojiFormat.SVG)
-                {
-                    final String localChecksum = localJsonParam.checksums.svg;
-                    final String remoteChecksum = jsonParam.checksums.svg;
-                    if( remoteChecksum == null || remoteChecksum.equals(localChecksum) )
-                        continue;
-                    localJsonParam.checksums.svg = remoteChecksum;
-                }
-                else
-                {
-                    final String resolution = format.getRelativeDir();
-                    final String localChecksum = localJsonParam.checksums.png.get(resolution);
-                    final String remoteChecksum = jsonParam.checksums.png.get(resolution);
-                    if( remoteChecksum == null || remoteChecksum.equals(localChecksum) )
-                        continue;
-                    localJsonParam.checksums.png.put(resolution, remoteChecksum);
-                }
+                // Check need download.
+                if( !checkNeedDownload(jsonParam, localJsonParam, format) )
+                    continue;
 
                 // Add download task.
                 if(downloadParam == null)
@@ -226,6 +211,44 @@ public class EmojiDownloader {
     public void setListener(DownloadListener listener)
     {
         this.listener = (listener == null) ? new DownloadListener() : listener;
+    }
+
+    /**
+     * Check need download.
+     * @param newJsonParam      New json parameter.
+     * @param localJsonParam    Local json paramter.
+     * @param format            Emoji format.
+     * @return                  Return true if need download.
+     */
+    private boolean checkNeedDownload(JsonParam newJsonParam, JsonParam localJsonParam, EmojiFormat format)
+    {
+        final File file = new File(PathUtils.getLocalEmojiPath(localJsonParam.name, format));
+
+        // If file already downloaded, ignore file.
+        if(format == EmojiFormat.SVG)
+        {
+            final String localChecksum = localJsonParam.checksums.svg;
+            final String remoteChecksum = newJsonParam.checksums.svg;
+            if( file.exists() &&
+                (remoteChecksum == null || remoteChecksum.equals(localChecksum)) )
+                return false;
+            localJsonParam.checksums.svg = remoteChecksum;
+        }
+        else
+        {
+            final String resolution = format.getRelativeDir();
+            final String localChecksum = localJsonParam.checksums.png.get(resolution);
+            final String remoteChecksum = newJsonParam.checksums.png.get(resolution);
+            if( file.exists() &&
+                (remoteChecksum == null || remoteChecksum.equals(localChecksum)) )
+                return false;
+            localJsonParam.checksums.png.put(resolution, remoteChecksum);
+        }
+
+        // Delete old file when need download.
+        file.delete();
+
+        return true;
     }
 
 
