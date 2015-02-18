@@ -236,15 +236,6 @@ public class EmojidexIME extends InputMethodService {
     }
 
     /**
-     * Set categorized keyboard.
-     * @param categoryName category name
-     */
-    private void setKeyboard(String categoryName)
-    {
-        keyboardViewManager.initialize(emojidex.getEmojiList(categoryName));
-    }
-
-    /**
      * Get update flag.
      * @return  true when execution update.
      */
@@ -345,118 +336,90 @@ public class EmojidexIME extends InputMethodService {
      * show favorites keyboard
      * @param v view
      */
-    public void showFavorites(View v)
-    {
-        // load favorites
-        ArrayList<String> favorites = FileOperation.load(this, FileOperation.FAVORITES);
-        keyboardViewManager.initializeFromName(favorites);
-    }
+//    public void showFavorites(View v)
+//    {
+//        // load favorites
+//        ArrayList<String> favorites = FileOperation.load(this, FileOperation.FAVORITES);
+//        keyboardViewManager.initializeFromName(favorites);
+//    }
 
     /**
      * show settings
      * @param v view
      */
-    public void showSettings(View v)
-    {
-        closePopupWindow(v);
-        View view = getLayoutInflater().inflate(R.layout.settings, null);
-        createPopupWindow(view);
-    }
+//    public void showSettings(View v)
+//    {
+//        closePopupWindow(v);
+//        View view = getLayoutInflater().inflate(R.layout.settings, null);
+//        createPopupWindow(view);
+//    }
 
     /**
      * create popup window
      * @param v view
      */
-    public void createDeleteFavoritesWindow(View v)
-    {
-        closePopupWindow(v);
-        View view = getLayoutInflater().inflate(R.layout.popup_delete_all_favorites, null);
-        createPopupWindow(view);
-    }
+//    public void createDeleteFavoritesWindow(View v)
+//    {
+//        closePopupWindow(v);
+//        View view = getLayoutInflater().inflate(R.layout.popup_delete_all_favorites, null);
+//        createPopupWindow(view);
+//    }
 
     /**
      * delete all favorites data
      * @param v view
      */
-    public void deleteAllFavorites(View v)
-    {
-        closePopupWindow(v);
-
-        // delete
-        boolean result = FileOperation.deleteFile(getApplicationContext(), FileOperation.FAVORITES);
-        showResultToast(result);
-        currentCategory = null;
-        categoryAllButton.performClick();
-    }
-
-    /**
-     * create popup window
-     * @param v view
-     */
-    public void createDeleteHistoriesWindow(View v)
-    {
-        closePopupWindow(v);
-
-        View view = getLayoutInflater().inflate(R.layout.popup_delete_all_histories, null);
-        createPopupWindow(view);
-    }
-
-    /**
-     * delete all histories data
-     * @param v
-     */
-    public void deleteAllHistories(View v)
-    {
-        closePopupWindow(v);
-
-        // delete
-        historyManager.clear();
-        historyManager.save();
-        showResultToast(true);
-        currentCategory = null;
-        categoryAllButton.performClick();
-    }
+//    public void deleteAllFavorites(View v)
+//    {
+//        closePopupWindow(v);
+//
+//        // delete
+//        boolean result = FileOperation.deleteFile(getApplicationContext(), FileOperation.FAVORITES);
+//        showResultToast(result);
+//        currentCategory = null;
+//        categoryAllButton.performClick();
+//    }
 
     /**
      * create popup window
      * @param view view
      */
-    private void createPopupWindow(View view)
-    {
-        int height = keyboardViewFlipper.getHeight();
-
-        // create popup window
-        popup = new PopupWindow(this);
-        popup.setContentView(view);
-        popup.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
-        popup.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
-        popup.showAtLocation(layout, Gravity.CENTER_HORIZONTAL, 0, -height);
-    }
+//    private void createPopupWindow(View view)
+//    {
+//        int height = keyboardViewFlipper.getHeight();
+//
+//        // create popup window
+//        popup = new PopupWindow(this);
+//        popup.setContentView(view);
+//        popup.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
+//        popup.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
+//        popup.showAtLocation(layout, Gravity.CENTER_HORIZONTAL, 0, -height);
+//    }
 
     /**
      * close popup window
      * @param v view
      */
-    public void closePopupWindow(View v)
-    {
-        if (popup != null)
-        {
-            popup.dismiss();
-            popup = null;
-        }
-    }
+//    public void closePopupWindow(View v)
+//    {
+//        if (popup != null)
+//        {
+//            popup.dismiss();
+//            popup = null;
+//        }
+//    }
 
     /**
      * show toast
      * @param result success or failure
      */
-    private void showResultToast(boolean result)
-    {
-        if (result)
-            Toast.makeText(this, R.string.delete_success, Toast.LENGTH_SHORT).show();
-        else
-            Toast.makeText(this, R.string.delete_failure, Toast.LENGTH_SHORT).show();
-    }
+//    private void showResultToast(boolean result)
+//    {
+//        if (result)
+//            Toast.makeText(this, R.string.delete_success, Toast.LENGTH_SHORT).show();
+//        else
+//            Toast.makeText(this, R.string.delete_failure, Toast.LENGTH_SHORT).show();
+//    }
 
 
     /**
