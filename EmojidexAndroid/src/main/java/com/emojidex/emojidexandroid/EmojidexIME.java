@@ -16,7 +16,6 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodInfo;
@@ -25,11 +24,11 @@ import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.PopupWindow;
 import android.widget.RadioButton;
-import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 
@@ -87,11 +86,14 @@ public class EmojidexIME extends InputMethodService {
         searchManager = new SaveDataManager(this, SaveDataManager.Type.Search);
 
         // Emoji download.
-        final LinkedHashSet<EmojiFormat> formats = new LinkedHashSet<EmojiFormat>();
-        formats.add(EmojiFormat.toFormat(getString(R.string.emoji_format_default)));
-        formats.add(EmojiFormat.toFormat(getString(R.string.emoji_format_key)));
-        formats.add(EmojiFormat.toFormat(getString(R.string.emoji_format_seal)));
-        emojidex.download(formats.toArray(new EmojiFormat[formats.size()]), new CustomDownloadListener());
+        if(checkExecUpdate())
+        {
+            final LinkedHashSet<EmojiFormat> formats = new LinkedHashSet<EmojiFormat>();
+            formats.add(EmojiFormat.toFormat(getString(R.string.emoji_format_default)));
+            formats.add(EmojiFormat.toFormat(getString(R.string.emoji_format_key)));
+            formats.add(EmojiFormat.toFormat(getString(R.string.emoji_format_seal)));
+            emojidex.download(formats.toArray(new EmojiFormat[formats.size()]), new CustomDownloadListener());
+        }
     }
 
     @Override
@@ -272,12 +274,16 @@ public class EmojidexIME extends InputMethodService {
     }
 
     /**
-     * Set categorized keyboard.
-     * @param categoryName category name
+     * Get update flag.
+     * @return  true when execution update.
      */
-    private void setKeyboard(String categoryName)
+    private boolean checkExecUpdate()
     {
-        keyboardViewManager.initialize(emojidex.getEmojiList(categoryName));
+        final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        final long lastUpdateTime = pref.getLong(getString(R.string.preference_key_last_update_time), 0);
+        final long currentTime = new Date().getTime();
+        final long updateInterval = Long.parseLong(pref.getString(getString(R.string.preference_key_update_interval), getString(R.string.preference_entryvalue_update_interval_default)));
+        return (currentTime - lastUpdateTime) > updateInterval;
     }
 
     /**
@@ -368,118 +374,90 @@ public class EmojidexIME extends InputMethodService {
      * show favorites keyboard
      * @param v view
      */
-    public void showFavorites(View v)
-    {
-        // load favorites
-        ArrayList<String> favorites = FileOperation.load(this, FileOperation.FAVORITES);
-        keyboardViewManager.initializeFromName(favorites);
-    }
+//    public void showFavorites(View v)
+//    {
+//        // load favorites
+//        ArrayList<String> favorites = FileOperation.load(this, FileOperation.FAVORITES);
+//        keyboardViewManager.initializeFromName(favorites);
+//    }
 
     /**
      * show settings
      * @param v view
      */
-    public void showSettings(View v)
-    {
-        closePopupWindow(v);
-        View view = getLayoutInflater().inflate(R.layout.settings, null);
-        createPopupWindow(view);
-    }
+//    public void showSettings(View v)
+//    {
+//        closePopupWindow(v);
+//        View view = getLayoutInflater().inflate(R.layout.settings, null);
+//        createPopupWindow(view);
+//    }
 
     /**
      * create popup window
      * @param v view
      */
-    public void createDeleteFavoritesWindow(View v)
-    {
-        closePopupWindow(v);
-        View view = getLayoutInflater().inflate(R.layout.popup_delete_all_favorites, null);
-        createPopupWindow(view);
-    }
+//    public void createDeleteFavoritesWindow(View v)
+//    {
+//        closePopupWindow(v);
+//        View view = getLayoutInflater().inflate(R.layout.popup_delete_all_favorites, null);
+//        createPopupWindow(view);
+//    }
 
     /**
      * delete all favorites data
      * @param v view
      */
-    public void deleteAllFavorites(View v)
-    {
-        closePopupWindow(v);
-
-        // delete
-        boolean result = FileOperation.deleteFile(getApplicationContext(), FileOperation.FAVORITES);
-        showResultToast(result);
-        currentCategory = null;
-        categoryAllButton.performClick();
-    }
-
-    /**
-     * create popup window
-     * @param v view
-     */
-    public void createDeleteHistoriesWindow(View v)
-    {
-        closePopupWindow(v);
-
-        View view = getLayoutInflater().inflate(R.layout.popup_delete_all_histories, null);
-        createPopupWindow(view);
-    }
-
-    /**
-     * delete all histories data
-     * @param v
-     */
-    public void deleteAllHistories(View v)
-    {
-        closePopupWindow(v);
-
-        // delete
-        historyManager.clear();
-        historyManager.save();
-        showResultToast(true);
-        currentCategory = null;
-        categoryAllButton.performClick();
-    }
+//    public void deleteAllFavorites(View v)
+//    {
+//        closePopupWindow(v);
+//
+//        // delete
+//        boolean result = FileOperation.deleteFile(getApplicationContext(), FileOperation.FAVORITES);
+//        showResultToast(result);
+//        currentCategory = null;
+//        categoryAllButton.performClick();
+//    }
 
     /**
      * create popup window
      * @param view view
      */
-    private void createPopupWindow(View view)
-    {
-        int height = keyboardViewFlipper.getHeight();
-
-        // create popup window
-        popup = new PopupWindow(this);
-        popup.setContentView(view);
-        popup.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
-        popup.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
-        popup.showAtLocation(layout, Gravity.CENTER_HORIZONTAL, 0, -height);
-    }
+//    private void createPopupWindow(View view)
+//    {
+//        int height = keyboardViewFlipper.getHeight();
+//
+//        // create popup window
+//        popup = new PopupWindow(this);
+//        popup.setContentView(view);
+//        popup.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
+//        popup.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
+//        popup.showAtLocation(layout, Gravity.CENTER_HORIZONTAL, 0, -height);
+//    }
 
     /**
      * close popup window
      * @param v view
      */
-    public void closePopupWindow(View v)
-    {
-        if (popup != null)
-        {
-            popup.dismiss();
-            popup = null;
-        }
-    }
+//    public void closePopupWindow(View v)
+//    {
+//        if (popup != null)
+//        {
+//            popup.dismiss();
+//            popup = null;
+//        }
+//    }
 
     /**
      * show toast
      * @param result success or failure
      */
-    private void showResultToast(boolean result)
-    {
-        if (result)
-            Toast.makeText(this, R.string.delete_success, Toast.LENGTH_SHORT).show();
-        else
-            Toast.makeText(this, R.string.delete_failure, Toast.LENGTH_SHORT).show();
-    }
+//    private void showResultToast(boolean result)
+//    {
+//        if (result)
+//            Toast.makeText(this, R.string.delete_success, Toast.LENGTH_SHORT).show();
+//        else
+//            Toast.makeText(this, R.string.delete_failure, Toast.LENGTH_SHORT).show();
+//    }
 
 
     /**
@@ -728,6 +706,18 @@ public class EmojidexIME extends InputMethodService {
                     }
                 }
             }
+        }
+
+        @Override
+        public void onPostAllEmojiDownload() {
+            super.onPostAllEmojiDownload();
+
+            // Save update time.
+            final long updateTime = new Date().getTime();
+            final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(EmojidexIME.this);
+            final SharedPreferences.Editor prefEditor = pref.edit();
+            prefEditor.putLong(getString(R.string.preference_key_last_update_time), updateTime);
+            prefEditor.commit();
         }
     }
 }
