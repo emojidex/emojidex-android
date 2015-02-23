@@ -8,9 +8,11 @@ import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.text.InputType;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +43,7 @@ public class EmojidexIME extends InputMethodService {
     private InputMethodManager inputMethodManager = null;
     private int showIMEPickerCode = 0;
     private int showSearchWindowCode = 0;
+    private int imeOptions;
 
     private View layout;
     private HorizontalScrollView categoryScrollView;
@@ -111,6 +114,15 @@ public class EmojidexIME extends InputMethodService {
             historyManager.load();
             searchManager.load();
         }
+    }
+
+    @Override
+    public void onStartInput(EditorInfo attribute, boolean restarting) {
+        super.onStartInput(attribute, restarting);
+        if( (attribute.inputType & InputType.TYPE_TEXT_FLAG_MULTI_LINE) != 0 )
+            imeOptions = EditorInfo.IME_ACTION_NONE;
+        else
+            imeOptions = attribute.imeOptions;
     }
 
     @Override
@@ -501,6 +513,11 @@ public class EmojidexIME extends InputMethodService {
                 {
                     getCurrentInputConnection().commitText(emoji.toEmojidexString(), 1);
                     historyManager.addFirst(emoji.getName());
+                }
+                // Input enter key.
+                else if(primaryCode == KeyEvent.KEYCODE_ENTER && imeOptions != EditorInfo.IME_ACTION_NONE)
+                {
+                    getCurrentInputConnection().performEditorAction(imeOptions);
                 }
                 // Input other.
                 else
