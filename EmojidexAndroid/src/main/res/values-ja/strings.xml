@@ -82,5 +82,6 @@
     <string name="settings_keyboard_button">既定のキーボード</string>
     <string name="settings_keyboard_button_summary">キーボードアイコンボタンを押した時に変更されるキーボードを設定します。</string>
     <string name="settings_entry_default_keyboard_nothing">なし</string>
+    <string name="settings_update_interval">絵文字を更新する間隔</string>
 
 </resources>

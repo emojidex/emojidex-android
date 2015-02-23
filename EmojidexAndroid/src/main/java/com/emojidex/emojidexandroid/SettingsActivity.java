@@ -8,9 +8,11 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -22,8 +24,7 @@ import java.util.List;
 public class SettingsActivity extends PreferenceActivity {
     private Context context;
 
-    private ListView listView;
-    private ArrayList<String> keyboardIds;
+    private final Preference.OnPreferenceChangeListener onPreferenceChangeListener = new OnListPreferenceChangeListener();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,14 +78,20 @@ public class SettingsActivity extends PreferenceActivity {
             addPreferencesFromResource(R.xml.preferences);
 
             // Initialize.
-            createGeneralPreference();
-            createDataPreference();
+            createDefaultKeyboardPreference();
+            createUpdateIntervalPreference();
+            createClearDataPreference();
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            return super.onCreateView(inflater, container, savedInstanceState);
         }
 
         /**
-         * Create general category preference.
+         * Create default keyboard preference.
          */
-        private void createGeneralPreference()
+        private void createDefaultKeyboardPreference()
         {
             final ListPreference defaultKeyboard = (ListPreference)findPreference(getString(R.string.preference_key_default_keyboard));
             final ArrayList<CharSequence> entries = new ArrayList<CharSequence>();
@@ -107,27 +114,30 @@ public class SettingsActivity extends PreferenceActivity {
             defaultKeyboard.setEntryValues(entryValues.toArray(new CharSequence[entryValues.size()]));
 
             // Set summary.
-            if(defaultKeyboard.getEntry() == null)
-                defaultKeyboard.setValueIndex(0);
             defaultKeyboard.setSummary(defaultKeyboard.getEntry());
 
             // Set changed event.
-            defaultKeyboard.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    final ListPreference lp = (ListPreference) preference;
-                    final int newIndex = lp.findIndexOfValue((String) newValue);
-                    final CharSequence newEntry = lp.getEntries()[newIndex];
-                    lp.setSummary(newEntry);
-                    return true;
-                }
-            });
+            defaultKeyboard.setOnPreferenceChangeListener(onPreferenceChangeListener);
         }
 
         /**
-         * Create data category preference.
+         * Create update interval preference.
          */
-        private void createDataPreference()
+        private void createUpdateIntervalPreference()
+        {
+            final ListPreference updateInterval = (ListPreference)findPreference(getString(R.string.preference_key_update_interval));
+
+            // Set summary.
+            updateInterval.setSummary(updateInterval.getEntry());
+
+            // Set changed event.
+            updateInterval.setOnPreferenceChangeListener(onPreferenceChangeListener);
+        }
+
+        /**
+         * Create clear data preference.
+         */
+        private void createClearDataPreference()
         {
             final Preference clearFavorite = findPreference(getString(R.string.preference_key_clear_favorite));
             clearFavorite.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -155,6 +165,21 @@ public class SettingsActivity extends PreferenceActivity {
                     return true;
                 }
             });
+        }
+    }
+
+    /**
+     * List preference change event listener.
+     */
+    private class OnListPreferenceChangeListener implements Preference.OnPreferenceChangeListener
+    {
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+            final ListPreference lp = (ListPreference)preference;
+            final int newIndex = lp.findIndexOfValue((String)newValue);
+            final CharSequence newEntry = lp.getEntries()[newIndex];
+            lp.setSummary(newEntry);
+            return true;
         }
     }
 }
