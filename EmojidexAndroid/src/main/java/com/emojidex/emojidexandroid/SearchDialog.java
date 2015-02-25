@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -277,21 +278,22 @@ public class SearchDialog extends AbstractDialog {
 
     private class CustomDownloadListener extends DownloadListener
     {
+        private final ArrayList<String> emojiNames = new ArrayList<String>();
+
         @Override
         public void onPostOneJsonDownload(String source, String destination) {
             super.onPostOneJsonDownload(source, destination);
 
             final File file = new File(destination);
             final ArrayList<JsonParam> emojies = JsonParam.readFromFile(file);
+            emojiNames.ensureCapacity(emojies.size());
             for(JsonParam emoji : emojies)
             {
                 // Convert emoji name.
                 emoji.name = emoji.name.replaceAll(" ", "_");
 
-                // Add emoji button to result space.
-                final Message message = handler.obtainMessage();
-                message.obj = emoji.name;
-                handler.sendMessage(message);
+                // Add emoji name.
+                emojiNames.add(emoji.name);
             }
             JsonParam.writeToFile(file, emojies);
         }
@@ -299,6 +301,20 @@ public class SearchDialog extends AbstractDialog {
         @Override
         public void onPostAllJsonDownload(EmojiDownloader downloader) {
             super.onPostAllJsonDownload(downloader);
+
+            // If downloader has download task, update emojidex database.
+            if(downloader.hasDownloadTask())
+                Emojidex.getInstance().reload();
+
+            // Add emoji button to result space.
+            for(String emojiName : emojiNames)
+            {
+                final Message message = handler.obtainMessage();
+                message.obj = emojiName;
+                handler.sendMessage(message);
+            }
+
+            // Save shared preferences.
             final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
             final SharedPreferences.Editor prefEditor = pref.edit();
             prefEditor.putString(
@@ -308,6 +324,11 @@ public class SearchDialog extends AbstractDialog {
             prefEditor.commit();
             loadingDialog.close();
             loadingDialog = null;
+        }
+
+        @Override
+        public void onPostOneEmojiDownload(String emojiName) {
+            super.onPostOneEmojiDownload(emojiName);
         }
     }
 }

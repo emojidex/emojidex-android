@@ -214,6 +214,15 @@ public class EmojiDownloader {
     }
 
     /**
+     * Get has download task flag.
+     * @return  true if has download task.
+     */
+    public boolean hasDownloadTask()
+    {
+        return downloadEmojiCount > 0;
+    }
+
+    /**
      * Check need download.
      * @param newJsonParam      New json parameter.
      * @param localJsonParam    Local json paramter.
