@@ -87,6 +87,18 @@ public class EmojiDownloader {
      */
     public void add(String jsonPath, EmojiFormat[] formats, String sourceRootPath)
     {
+        add(jsonPath, formats, sourceRootPath, false);
+    }
+
+    /**
+     * Add download task from json file.
+     * @param jsonPath          Json file path.
+     * @param formats           Format of download images.
+     * @param sourceRootPath    Root path of download image files.
+     * @param forceDownload     Force download flag.
+     */
+    public void add(String jsonPath, EmojiFormat[] formats, String sourceRootPath, boolean forceDownload)
+    {
         // If sourceRootPath is null, create it from jsonPath.
         if(sourceRootPath == null)
         {
@@ -113,6 +125,7 @@ public class EmojiDownloader {
         downloadParam.fileParams.add(fileParam);
 
         final JsonDownloadTask task = new JsonDownloadTask(formats, sourceRootPath);
+        task.forceDownload = forceDownload;
         task.execute(downloadParam);
     }
 
@@ -123,6 +136,18 @@ public class EmojiDownloader {
      * @param sourceRootPath    Root path of download image files.
      */
     public void add(ArrayList<JsonParam> jsonParams, EmojiFormat[] formats, String sourceRootPath)
+    {
+        add(jsonParams, formats, sourceRootPath, false);
+    }
+
+    /**
+     * Add download task from JsonParam objects.
+     * @param jsonParams    JsonParam objects.
+     * @param formats       Format of download images.
+     * @param sourceRootPath    Root path of download image files.
+     * @param forceDownload     Force download flag.
+     */
+    public void add(ArrayList<JsonParam> jsonParams, EmojiFormat[] formats, String sourceRootPath, boolean forceDownload)
     {
         for(JsonParam jsonParam : jsonParams)
         {
@@ -149,8 +174,12 @@ public class EmojiDownloader {
             for(EmojiFormat format : formats)
             {
                 // Check need download.
-                if( !checkNeedDownload(jsonParam, localJsonParam, format) )
+                if( !forceDownload && !checkNeedDownload(jsonParam, localJsonParam, format) )
                     continue;
+
+                // Delete old file when need download.
+                final File file = new File(PathUtils.getLocalEmojiPath(localJsonParam.name, format));
+                file.delete();
 
                 // Add download task.
                 if(downloadParam == null)
@@ -253,9 +282,6 @@ public class EmojiDownloader {
                 return false;
             localJsonParam.checksums.png.put(resolution, remoteChecksum);
         }
-
-        // Delete old file when need download.
-        file.delete();
 
         return true;
     }
@@ -444,6 +470,8 @@ public class EmojiDownloader {
         private final EmojiFormat[] formats;
         private final String sourceRootPath;
 
+        private boolean forceDownload = false;
+
         public JsonDownloadTask(EmojiFormat[] formats, String sourceRootPath)
         {
             this.formats = formats;
@@ -473,7 +501,7 @@ public class EmojiDownloader {
                 final ArrayList<JsonParam> jsonParams = JsonParam.readFromFile(file);
 
                 // Add download task.
-                add(jsonParams, formats, sourceRootPath);
+                add(jsonParams, formats, sourceRootPath, forceDownload);
 
                 // Clean temporary file.
                 file.delete();
