@@ -9,7 +9,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -38,7 +37,8 @@ import java.util.LinkedHashSet;
 public class SearchDialog extends AbstractDialog {
     private final Context context;
     private final InputMethodManager inputMethodManager;
-    private final Handler handler;
+    private final Handler addButtonHandler;
+    private final Handler invalidateHandler;
     private final SaveDataManager saveDataManager;
     private final String oldIME;
 
@@ -88,10 +88,16 @@ public class SearchDialog extends AbstractDialog {
         // Initialize fields.
         saveDataManager = new SaveDataManager(this.context, SaveDataManager.Type.Search);
         saveDataManager.load();
-        handler = new Handler(){
+        addButtonHandler = new Handler(){
             @Override
             public void handleMessage(Message msg) {
                 addButton((String)msg.obj);
+            }
+        };
+        invalidateHandler = new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                ((View)msg.obj).invalidate();
             }
         };
     }
@@ -309,9 +315,9 @@ public class SearchDialog extends AbstractDialog {
             // Add emoji button to result space.
             for(String emojiName : emojiNames)
             {
-                final Message message = handler.obtainMessage();
+                final Message message = addButtonHandler.obtainMessage();
                 message.obj = emojiName;
-                handler.sendMessage(message);
+                addButtonHandler.sendMessage(message);
             }
 
             // Save shared preferences.
@@ -328,7 +334,18 @@ public class SearchDialog extends AbstractDialog {
 
         @Override
         public void onPostOneEmojiDownload(String emojiName) {
-            super.onPostOneEmojiDownload(emojiName);
+            final Emoji emoji = Emojidex.getInstance().getEmoji(emojiName);
+
+            if(emoji == null)
+                return;
+
+            emoji.reloadImage();
+
+            final int index = emojiNames.indexOf(emojiName);
+            final View view = resultGridLayout.getChildAt(index);
+            final Message message = invalidateHandler.obtainMessage();
+            message.obj = view;
+            invalidateHandler.sendMessage(message);
         }
     }
 }
