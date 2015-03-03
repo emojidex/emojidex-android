@@ -6,6 +6,7 @@ import android.os.Environment;
  * Created by kou on 14/10/03.
  */
 class PathUtils {
+    static final String REMOTE_ROOT_PATH_DEFAULT = "http://cdn.emojidex.com";
     static final String LOCAL_ROOT_PATH = Environment.getExternalStorageDirectory().getPath() + "/.emojidex";
     static final String JSON_FILENAME = "emoji.json";
 
@@ -30,6 +31,15 @@ class PathUtils {
     public static String getLocalJsonPath()
     {
         return LOCAL_ROOT_PATH + "/" + JSON_FILENAME;
+    }
+
+    /**
+     * Get default root path from remote server.
+     * @return      Default root path.
+     */
+    public static String getRemoteRootPathDefault()
+    {
+        return REMOTE_ROOT_PATH_DEFAULT;
     }
 
     /**

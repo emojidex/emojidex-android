@@ -227,7 +227,7 @@ public class SearchActivity extends Activity {
                 downloader.add(
                         url,
                         formats.toArray(new EmojiFormat[formats.size()]),
-                        "http://assets.emojidex.com/emoji"
+                        PathUtils.getRemoteRootPathDefault() + "/emoji"
                 );
             }
         }, 1000);
