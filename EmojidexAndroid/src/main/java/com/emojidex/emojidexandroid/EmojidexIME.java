@@ -9,8 +9,10 @@ import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.text.InputType;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +27,7 @@ import android.widget.RadioButton;
 import android.widget.ViewFlipper;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -41,6 +44,9 @@ public class EmojidexIME extends InputMethodService {
     private InputMethodManager inputMethodManager = null;
     private int showIMEPickerCode = 0;
     private int showSearchWindowCode = 0;
+    private EmojidexSubKeyboardView subKeyboardView = null;
+    private Keyboard.Key keyEnter = null;
+    private int imeOptions;
 
     private View layout;
     private HorizontalScrollView categoryScrollView;
@@ -116,6 +122,32 @@ public class EmojidexIME extends InputMethodService {
             historyManager.load();
             searchManager.load();
         }
+
+        // Get ime options.
+        if( (info.inputType & InputType.TYPE_TEXT_FLAG_MULTI_LINE) != 0 )
+            imeOptions = EditorInfo.IME_ACTION_NONE;
+        else
+            imeOptions = info.imeOptions;
+
+        // Set enter key parameter.
+        if(keyEnter == null)
+            return;
+
+        switch(imeOptions)
+        {
+            case EditorInfo.IME_ACTION_NONE:
+                keyEnter.icon = getResources().getDrawable(R.drawable.key_enter);
+                keyEnter.label = null;
+                break;
+            default:
+                keyEnter.icon = null;
+                keyEnter.iconPreview = null;
+                keyEnter.label = getTextForImeAction(imeOptions);
+                break;
+        }
+
+        // Redraw keyboard view.
+        subKeyboardView.setKeyboard(subKeyboardView.getKeyboard());
     }
 
     @Override
@@ -223,7 +255,7 @@ public class EmojidexIME extends InputMethodService {
     private void createSubKeyboardView()
     {
         // Create KeyboardView.
-        EmojidexSubKeyboardView subKeyboardView = new EmojidexSubKeyboardView(this, null, R.attr.subKeyboardViewStyle);
+        subKeyboardView = new EmojidexSubKeyboardView(this, null, R.attr.subKeyboardViewStyle);
         subKeyboardView.setOnKeyboardActionListener(new CustomOnKeyboardActionListener());
         subKeyboardView.setPreviewEnabled(false);
 
@@ -234,6 +266,14 @@ public class EmojidexIME extends InputMethodService {
         // Add KeyboardView to IME layout.
         ViewGroup targetView = (ViewGroup)layout.findViewById(R.id.ime_sub_keyboard);
         targetView.addView(subKeyboardView);
+
+        // Get enter key object.
+        final int[] enterCodes = { KeyEvent.KEYCODE_ENTER };
+        for(Keyboard.Key key : keyboard.getKeys())
+        {
+            if( Arrays.equals(key.codes, enterCodes) )
+                keyEnter = key;
+        }
     }
 
     /**
@@ -483,6 +523,11 @@ public class EmojidexIME extends InputMethodService {
                     getCurrentInputConnection().commitText(emoji.toEmojidexString(), 1);
                     historyManager.addFirst(emoji.getName());
                 }
+                // Input enter key.
+                else if(primaryCode == KeyEvent.KEYCODE_ENTER && imeOptions != EditorInfo.IME_ACTION_NONE)
+                {
+                    getCurrentInputConnection().performEditorAction(imeOptions);
+                }
                 // Input other.
                 else
                 {
@@ -523,8 +568,6 @@ public class EmojidexIME extends InputMethodService {
             final Intent intent = new Intent(EmojidexIME.this, SearchActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
-//            final SearchDialog test = new SearchDialog(EmojidexIME.this);
-//            test.showAtLocation(layout, Gravity.CENTER, 0, 0);
         }
     }
 
