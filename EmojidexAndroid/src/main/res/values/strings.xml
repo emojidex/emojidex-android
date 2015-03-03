@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="app_name">emojidex</string>
     <string name="action_settings">Settings</string>
 
@@ -81,6 +82,10 @@
     <string name="settings_entry_default_keyboard_nothing">Nothing</string>
     <string name="settings_update_interval">Update interval</string>
 
+    <string name="search_dialog_title">Searching...</string>
+    <string name="search_dialog_message">Please wait a moment.</string>
+    <string name="search_dialog_cancel">Cancel</string>
+
     <!-- Japanese not needed -->
     <string name="download">Download</string>
     <string name="search_result">Search result</string>
@@ -114,4 +119,5 @@
     <string name="preference_entryvalue_default_keyboard_nothing">nothing</string>
     <string name="preference_entryvalue_default_keyboard_default">@string/preference_entryvalue_default_keyboard_nothing</string>
     <string name="preference_entryvalue_update_interval_default">604800000</string>
+
 </resources>

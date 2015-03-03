@@ -1,6 +1,7 @@
 package com.emojidex.emojidexandroid;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.inputmethodservice.InputMethodService;
@@ -33,6 +34,7 @@ import java.util.List;
  * Created by kou on 13/08/11.
  */
 public class EmojidexIME extends InputMethodService {
+    static EmojidexIME currentInstance = null;
     static final String TAG = MainActivity.TAG + "::EmojidexIME";
 
     private Emojidex emojidex;
@@ -66,6 +68,8 @@ public class EmojidexIME extends InputMethodService {
 
     @Override
     public void onInitializeInterface() {
+        currentInstance = this;
+
         // Get InputMethodManager object.
         inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
         showIMEPickerCode = getResources().getInteger(R.integer.ime_keycode_show_ime_picker);
@@ -517,8 +521,11 @@ public class EmojidexIME extends InputMethodService {
          * Show emoji search window.
          */
         private void showSearchWindow() {
-            final SearchDialog test = new SearchDialog(EmojidexIME.this);
-            test.showAtLocation(layout, Gravity.CENTER, 0, 0);
+            final Intent intent = new Intent(EmojidexIME.this, SearchActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+//            final SearchDialog test = new SearchDialog(EmojidexIME.this);
+//            test.showAtLocation(layout, Gravity.CENTER, 0, 0);
         }
     }
 

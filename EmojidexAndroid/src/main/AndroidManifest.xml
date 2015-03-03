@@ -54,6 +54,12 @@
             <meta-data android:name="android.view.im" android:resource="@xml/method" />
         </service>
 
+        <activity
+            android:name="com.emojidex.emojidexandroid.SearchActivity"
+            android:label="@string/app_name"
+            android:theme="@style/IMETheme" >
+        </activity>
+
     </application>
 
 </manifest>
