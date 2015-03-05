@@ -1,5 +1,6 @@
 package com.emojidex.emojidexandroid;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -22,56 +23,30 @@ import java.util.List;
  * Created by nazuki on 2014/01/31.
  */
 public class SettingsActivity extends PreferenceActivity {
-    private Context context;
-
-    private final Preference.OnPreferenceChangeListener onPreferenceChangeListener = new OnListPreferenceChangeListener();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         getFragmentManager().beginTransaction().replace(android.R.id.content, new CustomPreferenceFragment()).commit();
-
-        context = getApplicationContext();
-    }
-
-    /**
-     * create dialog
-     * @param textRes favorites or histories text resources
-     * @param mode favorites or histories
-     */
-    private void createDeleteDialog(int textRes, final String mode)
-    {
-        // create dialog
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setMessage(textRes);
-        dialog.setPositiveButton(R.string.yes,
-            new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    boolean result = FileOperation.deleteFile(context, mode);
-                    if (result)
-                        Toast.makeText(context, R.string.delete_success, Toast.LENGTH_SHORT).show();
-                    else
-                        Toast.makeText(context, R.string.delete_failure, Toast.LENGTH_SHORT).show();
-                }
-            });
-        dialog.setNegativeButton(R.string.no,
-            new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
-        dialog.show();
     }
 
 
     /**
      * Custom PreferenceFragment.
      */
-    private class CustomPreferenceFragment extends PreferenceFragment
+    public static class CustomPreferenceFragment extends PreferenceFragment
     {
+        private final Preference.OnPreferenceChangeListener onPreferenceChangeListener = new OnListPreferenceChangeListener();
+
+        private Activity parentActivity;
+
+        @Override
+        public void onAttach(Activity activity) {
+            super.onAttach(activity);
+
+            parentActivity = activity;
+        }
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -98,16 +73,16 @@ public class SettingsActivity extends PreferenceActivity {
             final ArrayList<CharSequence> entryValues = new ArrayList<CharSequence>();
 
             // Create entries and entryValues.
-            final InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+            final InputMethodManager inputMethodManager = (InputMethodManager)parentActivity.getSystemService(INPUT_METHOD_SERVICE);
             final List<InputMethodInfo> inputMethodInfos = inputMethodManager.getEnabledInputMethodList();
             entries.add(getString(R.string.settings_entry_default_keyboard_nothing));
             entryValues.add(getString(R.string.preference_entryvalue_default_keyboard_nothing));
             for(InputMethodInfo info : inputMethodInfos)
             {
                 final CharSequence id = info.getId();
-                if(id.equals(getPackageName() + "/.EmojidexIME"))
+                if(id.equals(parentActivity.getPackageName() + "/.EmojidexIME"))
                     continue;
-                entries.add(info.loadLabel(getPackageManager()));
+                entries.add(info.loadLabel(parentActivity.getPackageManager()));
                 entryValues.add(info.getId());
             }
             defaultKeyboard.setEntries(entries.toArray(new CharSequence[entries.size()]));
@@ -166,20 +141,52 @@ public class SettingsActivity extends PreferenceActivity {
                 }
             });
         }
-    }
 
-    /**
-     * List preference change event listener.
-     */
-    private class OnListPreferenceChangeListener implements Preference.OnPreferenceChangeListener
-    {
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object newValue) {
-            final ListPreference lp = (ListPreference)preference;
-            final int newIndex = lp.findIndexOfValue((String)newValue);
-            final CharSequence newEntry = lp.getEntries()[newIndex];
-            lp.setSummary(newEntry);
-            return true;
+        /**
+         * create dialog
+         * @param textRes favorites or histories text resources
+         * @param mode favorites or histories
+         */
+        private void createDeleteDialog(int textRes, final String mode)
+        {
+            // create dialog
+            AlertDialog.Builder dialog = new AlertDialog.Builder(parentActivity);
+            dialog.setMessage(textRes);
+            dialog.setPositiveButton(R.string.yes,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            boolean result = FileOperation.deleteFile(parentActivity, mode);
+                            if (result)
+                                Toast.makeText(parentActivity, R.string.delete_success, Toast.LENGTH_SHORT).show();
+                            else
+                                Toast.makeText(parentActivity, R.string.delete_failure, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+            dialog.setNegativeButton(R.string.no,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+            dialog.show();
+        }
+
+
+        /**
+         * List preference change event listener.
+         */
+        private static class OnListPreferenceChangeListener implements Preference.OnPreferenceChangeListener
+        {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                final ListPreference lp = (ListPreference)preference;
+                final int newIndex = lp.findIndexOfValue((String)newValue);
+                final CharSequence newEntry = lp.getEntries()[newIndex];
+                lp.setSummary(newEntry);
+                return true;
+            }
         }
     }
 }
