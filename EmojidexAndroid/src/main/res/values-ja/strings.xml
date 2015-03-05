@@ -84,4 +84,8 @@
     <string name="settings_entry_default_keyboard_nothing">なし</string>
     <string name="settings_update_interval">絵文字を更新する間隔</string>
 
+    <string name="search_dialog_title">検索中……</string>
+    <string name="search_dialog_message">しばらくお待ちください。</string>
+    <string name="search_dialog_cancel">キャンセル</string>
+
 </resources>

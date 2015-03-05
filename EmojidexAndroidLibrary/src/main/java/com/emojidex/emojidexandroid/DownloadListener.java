@@ -73,4 +73,12 @@ public class DownloadListener {
     {
         Log.d(TAG, "onPostAllEmojiDownload");
     }
+
+    /**
+     * Called when cancelled emoji download.
+     */
+    public void onCancelled()
+    {
+        Log.d(TAG, "onCancelled");
+    }
 }

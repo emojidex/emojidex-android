@@ -415,8 +415,5 @@ public class MainActivity extends Activity {
     protected void onDestroy()
     {
         super.onDestroy();
-
-        // Delete the search results file.
-        FileOperation.deleteFile(getApplicationContext(), FileOperation.SEARCH_RESULT);
     }
 }

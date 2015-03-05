@@ -30,7 +30,7 @@ public class EmojiDownloader {
     private final Result resultTotal = new Result();
 
     private DownloadListener listener = new DownloadListener();
-    private int runningThreadCount = 0;
+    private final ArrayList<AbstractDownloadTask> runningTasks = new ArrayList<AbstractDownloadTask>();
 
     private ArrayList<JsonParam> localJsonParams;
     private final HashMap<String, JsonParam> localJsonParamMap = new HashMap<String, JsonParam>();
@@ -87,6 +87,18 @@ public class EmojiDownloader {
      */
     public void add(String jsonPath, EmojiFormat[] formats, String sourceRootPath)
     {
+        add(jsonPath, formats, sourceRootPath, false);
+    }
+
+    /**
+     * Add download task from json file.
+     * @param jsonPath          Json file path.
+     * @param formats           Format of download images.
+     * @param sourceRootPath    Root path of download image files.
+     * @param forceDownload     Force download flag.
+     */
+    public void add(String jsonPath, EmojiFormat[] formats, String sourceRootPath, boolean forceDownload)
+    {
         // If sourceRootPath is null, create it from jsonPath.
         if(sourceRootPath == null)
         {
@@ -113,6 +125,8 @@ public class EmojiDownloader {
         downloadParam.fileParams.add(fileParam);
 
         final JsonDownloadTask task = new JsonDownloadTask(formats, sourceRootPath);
+        task.forceDownload = forceDownload;
+        task.result.total += downloadParam.fileParams.size();
         task.execute(downloadParam);
     }
 
@@ -123,6 +137,18 @@ public class EmojiDownloader {
      * @param sourceRootPath    Root path of download image files.
      */
     public void add(ArrayList<JsonParam> jsonParams, EmojiFormat[] formats, String sourceRootPath)
+    {
+        add(jsonParams, formats, sourceRootPath, false);
+    }
+
+    /**
+     * Add download task from JsonParam objects.
+     * @param jsonParams    JsonParam objects.
+     * @param formats       Format of download images.
+     * @param sourceRootPath    Root path of download image files.
+     * @param forceDownload     Force download flag.
+     */
+    public void add(ArrayList<JsonParam> jsonParams, EmojiFormat[] formats, String sourceRootPath, boolean forceDownload)
     {
         for(JsonParam jsonParam : jsonParams)
         {
@@ -149,8 +175,12 @@ public class EmojiDownloader {
             for(EmojiFormat format : formats)
             {
                 // Check need download.
-                if( !checkNeedDownload(jsonParam, localJsonParam, format) )
+                if( !forceDownload && !checkNeedDownload(jsonParam, localJsonParam, format) )
                     continue;
+
+                // Delete old file when need download.
+                final File file = new File(PathUtils.getLocalEmojiPath(localJsonParam.name, format));
+                file.delete();
 
                 // Add download task.
                 if(downloadParam == null)
@@ -200,7 +230,20 @@ public class EmojiDownloader {
                 continue;
 
             final EmojiDownloadTask task = new EmojiDownloadTask();
+            for(DownloadParam param : downloadParams)
+                task.result.total += param.fileParams.size();
             task.execute(downloadParams.toArray(new DownloadParam[downloadParams.size()]));
+        }
+    }
+
+    /**
+     * Cancel download.
+     */
+    public void cancel()
+    {
+        for(AbstractDownloadTask task : runningTasks)
+        {
+            task.cancel(true);
         }
     }
 
@@ -211,6 +254,15 @@ public class EmojiDownloader {
     public void setListener(DownloadListener listener)
     {
         this.listener = (listener == null) ? new DownloadListener() : listener;
+    }
+
+    /**
+     * Get has download task flag.
+     * @return  true if has download task.
+     */
+    public boolean hasDownloadTask()
+    {
+        return downloadEmojiCount > 0;
     }
 
     /**
@@ -245,9 +297,6 @@ public class EmojiDownloader {
             localJsonParam.checksums.png.put(resolution, remoteChecksum);
         }
 
-        // Delete old file when need download.
-        file.delete();
-
         return true;
     }
 
@@ -276,7 +325,6 @@ public class EmojiDownloader {
     private static class Result
     {
         private int succeeded = 0;
-        private int failed = 0;
         private int total = 0;
     }
 
@@ -285,6 +333,8 @@ public class EmojiDownloader {
      */
     private abstract class AbstractDownloadTask extends AsyncTask<DownloadParam, Void, Result>
     {
+        public final Result result = new Result();
+
         private final byte[] buffer = new byte[4096];
 
         private long startTime, endTime;
@@ -292,21 +342,17 @@ public class EmojiDownloader {
         @Override
         protected void onPreExecute()
         {
-            ++runningThreadCount;
+            resultTotal.total += result.total;
+            runningTasks.add(this);
             startTime = System.currentTimeMillis();
-            Log.d(TAG, "Task start.(runningThreadCount = " + runningThreadCount + ")");
+            Log.d(TAG, "Task start.(runningThreadCount = " + runningTasks.size() + ")");
         }
 
         @Override
         protected Result doInBackground(DownloadParam... params)
         {
-            final Result result = new Result();
-
             for(DownloadParam downloadParam : params)
             {
-                // Add total count.
-                result.total += downloadParam.fileParams.size();
-
                 // Skip if download cancelled.
                 if(isCancelled())
                     continue;
@@ -349,17 +395,14 @@ public class EmojiDownloader {
                     }
                     catch(MalformedURLException e)
                     {
-                        ++result.failed;
                         e.printStackTrace();
                     }
                     catch(IOException e)
                     {
-                        ++result.failed;
                         e.printStackTrace();
                     }
                     catch(HttpException e)
                     {
-                        ++result.failed;
                         e.printStackTrace();
                     }
                 }
@@ -372,13 +415,37 @@ public class EmojiDownloader {
         @Override
         protected void onPostExecute(Result result)
         {
-            onTaskCompleted(result);
+            runningTasks.remove(this);
+
+            endTime = System.currentTimeMillis();
+
+            if(result != null)
+            {
+                putResultLog(result, "Download task end.(runningThreadCount = " + runningTasks.size() + ")");
+
+                resultTotal.succeeded += result.succeeded;
+            }
         }
 
         @Override
         protected void onCancelled(Result result)
         {
-            onTaskCompleted(result);
+            runningTasks.remove(this);
+
+            endTime = System.currentTimeMillis();
+
+            if(result != null)
+            {
+                putResultLog(result, "Download task cancelled.(runningThreadCount = " + runningTasks.size() + ")");
+
+                resultTotal.succeeded += result.succeeded;
+            }
+
+            if(runningTasks.isEmpty())
+            {
+                listener.onCancelled();
+                putResultLog(resultTotal, "All download task end.");
+            }
         }
 
         /**
@@ -399,18 +466,6 @@ public class EmojiDownloader {
             // nop
         }
 
-        protected void onTaskCompleted(Result result)
-        {
-            --runningThreadCount;
-
-            endTime = System.currentTimeMillis();
-            putResultLog(result, "Download task end.(runningThreadCount = " + runningThreadCount + ")");
-
-            resultTotal.succeeded += result.succeeded;
-            resultTotal.failed += result.failed;
-            resultTotal.total += result.total;
-        }
-
         /**
          * Put result log.
          * @param result    Download result.
@@ -419,8 +474,7 @@ public class EmojiDownloader {
         {
             Log.d(TAG, preMessage + " : "
                             + "(S" + result.succeeded + " + "
-                            + "F" + result.failed + " = "
-                            + (result.succeeded + result.failed) + ") / "
+                            + "F" + (result.total-result.succeeded) + ") / "
                             + result.total + " : "
                             + ((endTime-startTime) / 1000.0) + "sec"
             );
@@ -435,10 +489,27 @@ public class EmojiDownloader {
         private final EmojiFormat[] formats;
         private final String sourceRootPath;
 
+        private boolean forceDownload = false;
+
         public JsonDownloadTask(EmojiFormat[] formats, String sourceRootPath)
         {
             this.formats = formats;
             this.sourceRootPath = sourceRootPath;
+        }
+
+        @Override
+        protected void onPostExecute(Result result) {
+            super.onPostExecute(result);
+
+            if(runningTasks.isEmpty())
+            {
+                // Notify to listener.
+                listener.onPostAllJsonDownload(EmojiDownloader.this);
+
+                // Put log if downloadEmojiCount equal 0.
+                if(downloadEmojiCount == 0)
+                    putResultLog(resultTotal, "All download task end.");
+            }
         }
 
         @Override
@@ -464,25 +535,10 @@ public class EmojiDownloader {
                 final ArrayList<JsonParam> jsonParams = JsonParam.readFromFile(file);
 
                 // Add download task.
-                add(jsonParams, formats, sourceRootPath);
+                add(jsonParams, formats, sourceRootPath, forceDownload);
 
                 // Clean temporary file.
                 file.delete();
-            }
-        }
-
-        @Override
-        protected void onTaskCompleted(Result result) {
-            super.onTaskCompleted(result);
-
-            if(runningThreadCount <= 0)
-            {
-                // Notify to listener.
-                listener.onPostAllJsonDownload(EmojiDownloader.this);
-
-                // Put log if downloadEmojiCount equal 0.
-                if(downloadEmojiCount == 0)
-                    putResultLog(resultTotal, "All download task end.");
             }
         }
     }
@@ -493,6 +549,20 @@ public class EmojiDownloader {
     private class EmojiDownloadTask extends AbstractDownloadTask
     {
         @Override
+        protected void onPostExecute(Result result) {
+            super.onPostExecute(result);
+
+            if(runningTasks.isEmpty())
+            {
+                // Notify to listener.
+                listener.onPostAllEmojiDownload();
+
+                // Put log.
+                putResultLog(resultTotal, "All download task end.");
+            }
+        }
+
+        @Override
         protected void onPreDownload(DownloadParam downloadParam) {
             // Notify to listener.
             listener.onPreOneEmojiDownload(downloadParam.name);
@@ -502,21 +572,6 @@ public class EmojiDownloader {
         protected void onPostDownload(DownloadParam downloadParam) {
             // Norify to listener.
             listener.onPostOneEmojiDownload(downloadParam.name);
-        }
-
-        @Override
-        protected void onTaskCompleted(Result result) {
-            super.onTaskCompleted(result);
-
-            // Notify to listener.
-            if(runningThreadCount == 0)
-            {
-                // Notify to listener.
-                listener.onPostAllEmojiDownload();
-
-                // Put log.
-                putResultLog(resultTotal, "All download task end.");
-            }
         }
     }
 }

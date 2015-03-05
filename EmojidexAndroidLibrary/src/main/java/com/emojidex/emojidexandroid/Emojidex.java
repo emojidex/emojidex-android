@@ -70,7 +70,7 @@ public class Emojidex {
             throw new EmojidexIsNotInitializedException();
 
         final EmojiDownloader downloader = new EmojiDownloader(context);
-        final String rootPath = "http://assets.emojidex.com";
+        final String rootPath = PathUtils.getRemoteRootPathDefault();
         if(listener != null)
             downloader.setListener(listener);
         downloader.add(
