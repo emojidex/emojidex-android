@@ -212,28 +212,39 @@ public class Emoji extends SimpleJsonParam {
     {
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPurgeable = true;
-        InputStream is;
+        Bitmap result = null;
 
-        try
+        // Load bitmap from file.
+        final File file = new File(getImageFilePath(format));
+        if(file.exists())
         {
-            final File file = new File(getImageFilePath(format));
-            is = new FileInputStream(file);
+            try
+            {
+                final InputStream is = new FileInputStream(file);
+                result = BitmapFactory.decodeStream(is, null, options);
+            }
+            catch(FileNotFoundException e)
+            {
+                e.printStackTrace();
+            }
         }
-        catch(FileNotFoundException e)
+
+        // If load failed, use default image.
+        if(result == null)
         {
             // If file not found, use default image.
             try
             {
-                is = res.getAssets().open(PathUtils.getAssetsEmojiPath("not_found", format));
+                final InputStream is = res.getAssets().open(PathUtils.getAssetsEmojiPath("not_found", format));
+                result = BitmapFactory.decodeStream(is, null, options);
             }
-            catch(IOException e2)
+            catch(IOException e)
             {
-                is = null;
-                e2.printStackTrace();
+                e.printStackTrace();
             }
         }
 
-        return BitmapFactory.decodeStream(is, null, options);
+        return result;
     }
 
     /**
