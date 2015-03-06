@@ -63,7 +63,6 @@ public class EmojidexKeyboard extends Keyboard {
         for(int i = 0;  i < count;  ++i)
         {
             final Key newKey = createKey(emojies.get(i));
-
             newKey.x = i % columnCount * (getKeyWidth() + getHorizontalGap()) + leftMargin;
             newKey.y = i / columnCount * (getKeyHeight() + getVerticalGap());
 

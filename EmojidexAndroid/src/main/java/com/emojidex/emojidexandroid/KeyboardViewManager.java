@@ -15,6 +15,7 @@ public class KeyboardViewManager {
     private final EmojidexKeyboardView[] views = new EmojidexKeyboardView[PAGE_COUNT];
     private final EmojidexKeyboard[] keyboards = new EmojidexKeyboard[PAGE_COUNT];
     private final ArrayList<List<Emoji>> pages = new ArrayList<List<Emoji>>();
+    private final Context context;
 
     private int currentView;
     private int currentPage;
@@ -28,6 +29,8 @@ public class KeyboardViewManager {
      */
     public KeyboardViewManager(Context context, KeyboardView.OnKeyboardActionListener onKeyboardActionListener, View.OnTouchListener onTouchListener)
     {
+        this.context = context;
+
         for(int i = 0;  i < PAGE_COUNT;  ++i)
         {
             views[i] = new EmojidexKeyboardView(context, null, R.attr.keyboardViewStyle);
@@ -141,7 +144,10 @@ public class KeyboardViewManager {
      */
     private void initializePage(int destIndex, int pageIndex)
     {
-        keyboards[destIndex].initialize(pages.get(pageIndex));
+        final List<Emoji> page = pages.get(pageIndex);
+        if(keyboards[destIndex].getKeys().size() != page.size())
+            keyboards[destIndex] = EmojidexKeyboard.create(context);
+        keyboards[destIndex].initialize(page);
         views[destIndex].setKeyboard(keyboards[destIndex]);
     }
 }
