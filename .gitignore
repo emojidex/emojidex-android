@@ -15,3 +15,5 @@ build/
 !.idea/runConfiguretions/*
 !.idea/.name
 
+EmojidexAndroid*.apk
+manifest-merger-release-report.txt
