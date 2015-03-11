@@ -276,6 +276,12 @@ public class EmojiDownloader {
     {
         final File file = new File(PathUtils.getLocalEmojiPath(localJsonParam.name, format));
 
+//if(downloadEmojiCount < 18*3)
+//{
+//    file.delete();
+//    return true;
+//}
+
         // If file already downloaded, ignore file.
         if(format == EmojiFormat.SVG)
         {
