@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -20,7 +21,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -50,6 +50,24 @@ public class MainActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId())
         {
+            case R.id.action_text_copy:
+                copyText(null);
+                return true;
+            case R.id.action_clear_and_paste:
+                clearAndPaste(null);
+                return true;
+            case R.id.action_clear:
+                clearText(null);
+                return true;
+            case R.id.action_clear_search:
+                clearSearchResult();
+                return true;
+            case R.id.action_conversion_switch:
+                switchToggle();
+                return true;
+            case R.id.action_emojidex_web:
+                openEmojidexWebSite();
+                return true;
             case R.id.action_settings:
                 openSettings(null);
                 return true;
@@ -136,6 +154,7 @@ public class MainActivity extends Activity {
      */
     public void shareDataLastSelected(View v)
     {
+        // TODO: 不要になる？
         if (editText.getText().toString().equals(""))
             return;
 
@@ -324,36 +343,37 @@ public class MainActivity extends Activity {
      */
     private void setShareButtonIcon()
     {
-        ImageButton button = (ImageButton)findViewById(R.id.last_share_button);
-
-        // set image
-        String packageName = FileOperation.loadPreferences(getApplicationContext(), FileOperation.SHARE);
-        if (packageName.equals(""))
-        {
-            // default
-            button.setImageResource(android.R.drawable.ic_menu_send);
-        }
-        else
-        {
-            boolean set = false;
-            PackageManager packageManager = getPackageManager();
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.setType("text/plain");
-            List<ResolveInfo> appInfo = packageManager.queryIntentActivities(intent, 0);
-            for (ResolveInfo info : appInfo)
-            {
-                // get application's icon
-                if (info.activityInfo.packageName.equals(packageName))
-                {
-                    button.setImageDrawable(info.loadIcon(packageManager));
-                    set = true;
-                    break;
-                }
-            }
-            // set default icon when could not get icon
-            if (!set)
-                button.setImageResource(android.R.drawable.ic_menu_send);
-        }
+        // TODO: 不要になる？
+//        ImageButton button = (ImageButton)findViewById(R.id.last_share_button);
+//
+//        // set image
+//        String packageName = FileOperation.loadPreferences(getApplicationContext(), FileOperation.SHARE);
+//        if (packageName.equals(""))
+//        {
+//            // default
+//            button.setImageResource(android.R.drawable.ic_menu_send);
+//        }
+//        else
+//        {
+//            boolean set = false;
+//            PackageManager packageManager = getPackageManager();
+//            Intent intent = new Intent(Intent.ACTION_SEND);
+//            intent.setType("text/plain");
+//            List<ResolveInfo> appInfo = packageManager.queryIntentActivities(intent, 0);
+//            for (ResolveInfo info : appInfo)
+//            {
+//                // get application's icon
+//                if (info.activityInfo.packageName.equals(packageName))
+//                {
+//                    button.setImageDrawable(info.loadIcon(packageManager));
+//                    set = true;
+//                    break;
+//                }
+//            }
+//            // set default icon when could not get icon
+//            if (!set)
+//                button.setImageResource(android.R.drawable.ic_menu_send);
+//        }
     }
 
     /**
@@ -409,6 +429,47 @@ public class MainActivity extends Activity {
 
         // Move cursor to last.
         editText.setSelection(editText.length());
+    }
+
+    /**
+     * Auto conversion switching.
+     */
+    public void switchToggle() {
+        toggleButton.performClick();
+    }
+
+    /**
+     * Copy the text in the text editor.
+     * @param v view
+     */
+    public void copyText(View v) {
+        String text = setShareData();
+        ClipboardManager clipboardManager = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
+        clipboardManager.setPrimaryClip(ClipData.newPlainText("emojidex", text));
+    }
+
+    /**
+     * Clear the search results.
+     */
+    public void clearSearchResult() {
+        // TODO: 実装
+    }
+
+    /**
+     * Open the emojidex web site.
+     */
+    public void openEmojidexWebSite() {
+        Uri uri = Uri.parse(getString(R.string.emojidex_url));
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(intent);
+    }
+
+    /**
+     * Open option menu.
+     * @param v view
+     */
+    public void openOptions(View v) {
+        openOptionsMenu();
     }
 
     @Override

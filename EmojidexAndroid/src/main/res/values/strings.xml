@@ -4,6 +4,15 @@
     <string name="app_name">emojidex</string>
     <string name="action_settings">Settings</string>
 
+    <string name="menu_text_copy">Text copy</string>
+    <string name="menu_clear_and_paste">Clear &amp; paste</string>
+    <string name="menu_clear">Clear</string>
+    <string name="menu_clear_search">Clear search results</string>
+    <string name="menu_conversion_switch">Conversion switch</string>
+    <string name="menu_emojidex_web">emojidex web</string>
+    <string name="menu_settings">Settings</string>
+    <string name="emojidex_url">http://www.emojidex.com</string>
+
     <string name="search">Search</string>
     <string name="favorite">Favorites</string>
     <string name="history">History</string>

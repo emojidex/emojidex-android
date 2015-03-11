@@ -1,6 +1,23 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/action_text_copy"
+          android:title="@string/menu_text_copy"
+          android:orderInCategory="100"/>
+    <item android:id="@+id/action_clear_and_paste"
+          android:title="@string/menu_clear_and_paste"
+          android:orderInCategory="101"/>
+    <item android:id="@+id/action_clear"
+          android:title="@string/menu_clear"
+          android:orderInCategory="102"/>
+    <item android:id="@+id/action_clear_search"
+          android:title="@string/menu_clear_search"
+          android:orderInCategory="103"/>
+    <item android:id="@+id/action_conversion_switch"
+          android:title="@string/menu_conversion_switch"
+          android:orderInCategory="104"/>
+    <item android:id="@+id/action_emojidex_web"
+        android:title="@string/menu_emojidex_web"
+        android:orderInCategory="105"/>
     <item android:id="@+id/action_settings"
-        android:title="@string/action_settings"
-        android:orderInCategory="100"
-        android:showAsAction="never" />
+          android:title="@string/menu_settings"
+          android:orderInCategory="106"/>
 </menu>
