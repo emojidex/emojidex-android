@@ -37,8 +37,8 @@ import java.util.List;
  * Created by kou on 13/08/11.
  */
 public class EmojidexIME extends InputMethodService {
-    static EmojidexIME currentInstance = null;
     static final String TAG = MainActivity.TAG + "::EmojidexIME";
+    static EmojidexIME currentInstance = null;
 
     private final Handler invalidateHandler;
 
@@ -49,6 +49,7 @@ public class EmojidexIME extends InputMethodService {
     private int showSearchWindowCode = 0;
     private EmojidexSubKeyboardView subKeyboardView = null;
     private Keyboard.Key keyEnter = null;
+    private int keyEnterIndex;
     private int imeOptions;
 
     private View layout;
@@ -155,7 +156,7 @@ public class EmojidexIME extends InputMethodService {
         }
 
         // Redraw keyboard view.
-        subKeyboardView.setKeyboard(subKeyboardView.getKeyboard());
+        subKeyboardView.invalidateKey(keyEnterIndex);
 
         // Set current instance.
         currentInstance = this;
@@ -281,10 +282,16 @@ public class EmojidexIME extends InputMethodService {
 
         // Get enter key object.
         final int[] enterCodes = { KeyEvent.KEYCODE_ENTER };
-        for(Keyboard.Key key : keyboard.getKeys())
+        final List<Keyboard.Key> keys = keyboard.getKeys();
+        final int count = keys.size();
+        for(keyEnterIndex = 0;  keyEnterIndex < count;  ++keyEnterIndex)
         {
+            final Keyboard.Key key = keys.get(keyEnterIndex);
             if( Arrays.equals(key.codes, enterCodes) )
+            {
                 keyEnter = key;
+                break;
+            }
         }
     }
 
