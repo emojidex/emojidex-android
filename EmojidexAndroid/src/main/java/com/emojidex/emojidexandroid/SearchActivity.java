@@ -347,7 +347,7 @@ public class SearchActivity extends Activity {
 
                 // Add emoji name.
 //                emojiNames.add(emoji.name);
-                searchManager.addFirst(emoji.name);
+                searchManager.addLast(emoji.name);
             }
             JsonParam.writeToFile(file, emojies);
         }
