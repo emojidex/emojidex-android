@@ -83,8 +83,6 @@ public class EmojidexIME extends InputMethodService {
 
     @Override
     public void onInitializeInterface() {
-        currentInstance = this;
-
         // Get InputMethodManager object.
         inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
         showIMEPickerCode = getResources().getInteger(R.integer.ime_keycode_show_ime_picker);
@@ -158,10 +156,14 @@ public class EmojidexIME extends InputMethodService {
 
         // Redraw keyboard view.
         subKeyboardView.setKeyboard(subKeyboardView.getKeyboard());
+
+        // Set current instance.
+        currentInstance = this;
     }
 
     @Override
     public void onFinishInputView(boolean finishingInput) {
+        currentInstance = null;
         super.onFinishInputView(finishingInput);
         historyManager.save();
     }
