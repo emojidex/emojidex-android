@@ -81,7 +81,6 @@ public class SearchActivity extends Activity {
 
     @Override
     protected void onDestroy() {
-        searchManager.save();
         resetIME();
         super.onDestroy();
     }
@@ -383,6 +382,7 @@ public class SearchActivity extends Activity {
             }
 
             // Close search activity.
+            searchManager.save();
             SearchActivity.this.finish();
         }
 
