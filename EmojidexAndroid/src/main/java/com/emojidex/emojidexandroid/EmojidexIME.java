@@ -528,8 +528,8 @@ public class EmojidexIME extends InputMethodService {
                 return;
             }
 
-            List<Integer> codes = new ArrayList<Integer>();
-            for(int i = 0;  keyCodes[i] != -1;  ++i)
+            final List<Integer> codes = new ArrayList<Integer>();
+            for(int i = 0;  i < keyCodes.length && keyCodes[i] != -1;  ++i)
                 codes.add(keyCodes[i]);
 
             // Input show ime picker or default keyboard.
