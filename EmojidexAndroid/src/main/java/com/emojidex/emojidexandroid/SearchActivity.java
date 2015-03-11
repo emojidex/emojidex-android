@@ -395,11 +395,8 @@ public class SearchActivity extends Activity {
 
             emoji.reloadImage();
 
-//            final int index = emojiNames.indexOf(emojiName);
-//            final View view = resultLayout.getChildAt(index);
-//            final Message message = invalidateHandler.obtainMessage();
-//            message.obj = view;
-//            invalidateHandler.sendMessage(message);
+            if(EmojidexIME.currentInstance != null)
+                EmojidexIME.currentInstance.invalidate(emojiName);
         }
     }
 }
