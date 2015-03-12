@@ -14,67 +14,14 @@
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_margin="10dp">
-
-        <LinearLayout
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_height="40dp"
-                android:layout_width="170dp"
-                android:background="@drawable/logo"
-                android:layout_gravity="center_vertical"
-                android:contentDescription="@string/app_name" />
-
-            <ImageButton
-                android:id="@+id/settings_button"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:src="@android:drawable/ic_menu_preferences"
-                android:background="@drawable/background_blank"
-                android:contentDescription="@string/settings"
-                android:layout_marginLeft="5dp"
-                android:onClick="openSettings"/>
-
-            <ImageView
-                android:id="@+id/blank"
-                android:layout_height="wrap_content"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:visibility="invisible"/>
-
-            <ImageButton
-                android:id="@+id/last_share_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:background="@drawable/background_blank"
-                android:contentDescription="@string/share"
-                android:layout_marginLeft="5dp"
-                android:onClick="shareDataLastSelected" />
-
-        </LinearLayout>
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp">
-
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:padding="10dp"
-                android:layout_marginRight="10dp"
-                android:src="@drawable/clear"
-                android:background="@color/transparency"
-                android:onClick="clearText"/>
 
             <ToggleButton
                 android:id="@+id/toggle_button"
@@ -88,30 +35,58 @@
                 android:textOff=""
                 android:onClick="clickToggleButton"/>
 
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <ImageView
+                android:layout_width="2dp"
+                android:layout_height="25dp"
                 android:layout_gravity="center_vertical"
-                android:padding="10dp"
-                android:src="@drawable/paste"
-                android:background="@color/transparency"
-                android:onClick="clearAndPaste"/>
+                android:scaleType="fitXY"
+                android:src="@drawable/abc_list_divider_holo_light"/>
 
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
                 android:padding="10dp"
-                android:src="@drawable/mail"
+                android:src="@drawable/paste"
                 android:background="@color/transparency"
+                android:onClick="copyText"/>
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:src="@drawable/clear"
+                android:background="@color/transparency"
+                android:onClick="clearText"/>
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:src="@drawable/abc_ic_menu_share_holo_light"
+                android:background="@null"
                 android:onClick="shareData"/>
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:src="@drawable/abc_ic_menu_moreoverflow_normal_holo_light"
+                android:background="@null"
+                android:onClick="openOptions"/>
 
         </LinearLayout>
 
         <EditText
             android:id="@+id/edit_text"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_weight="1"
             android:padding="10dp"
             android:gravity="top"
