@@ -6,6 +6,7 @@ import android.util.Log;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -153,6 +154,20 @@ public class SaveDataManager {
     public void clear()
     {
         emojiNames.clear();
+    }
+
+    /**
+     * Delete save data file.
+     * @return  true if delete succeeded.
+     */
+    public boolean deleteFile()
+    {
+        clear();
+
+        final File file = context.getFileStreamPath(type.fileName);
+        if(file.exists())
+            return file.delete();
+        return true;
     }
 
     /**

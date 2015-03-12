@@ -452,7 +452,7 @@ public class MainActivity extends Activity {
      * Clear the search results.
      */
     public void clearSearchResult() {
-        // TODO: 実装
+        new SaveDataManager(this, SaveDataManager.Type.Search).deleteFile();
     }
 
     /**
