@@ -27,8 +27,6 @@
                 android:id="@+id/toggle_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginRight="10dp"
                 android:background="@drawable/toggle"
                 android:checked="true"
                 android:textOn=""
@@ -36,16 +34,13 @@
                 android:onClick="clickToggleButton"/>
 
             <ImageView
-                android:layout_width="2dp"
-                android:layout_height="25dp"
-                android:layout_gravity="center_vertical"
-                android:scaleType="fitXY"
-                android:src="@drawable/abc_list_divider_holo_light"/>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/separator"/>
 
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
                 android:src="@drawable/paste"
                 android:background="@color/transparency"
                 android:onClick="copyText"/>
@@ -53,21 +48,19 @@
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
+                android:layout_marginLeft="8dp"
                 android:src="@drawable/clear"
                 android:background="@color/transparency"
                 android:onClick="clearText"/>
 
-            <ImageView
+            <View
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:layout_weight="1"/>
 
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
                 android:src="@drawable/abc_ic_menu_share_holo_light"
                 android:background="@null"
                 android:onClick="shareData"/>
@@ -75,8 +68,7 @@
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
+                android:layout_marginLeft="8dp"
                 android:src="@drawable/abc_ic_menu_moreoverflow_normal_holo_light"
                 android:background="@null"
                 android:onClick="openOptions"/>
