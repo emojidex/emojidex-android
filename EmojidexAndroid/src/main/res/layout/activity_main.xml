@@ -27,7 +27,7 @@
                 android:id="@+id/toggle_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/toggle"
+                android:background="@drawable/editor_button_toggle"
                 android:checked="true"
                 android:textOn=""
                 android:textOff=""
@@ -36,12 +36,12 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/separator"/>
+                android:src="@drawable/editor_separator"/>
 
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/paste"
+                android:src="@drawable/editor_button_paste"
                 android:background="@color/transparency"
                 android:onClick="copyText"/>
 
@@ -49,7 +49,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
-                android:src="@drawable/clear"
+                android:src="@drawable/editor_button_clear"
                 android:background="@color/transparency"
                 android:onClick="clearText"/>
 
