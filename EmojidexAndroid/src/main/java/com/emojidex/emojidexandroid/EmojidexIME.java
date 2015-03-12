@@ -8,6 +8,7 @@ import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.text.InputType;
 import android.util.Log;
@@ -36,8 +37,10 @@ import java.util.List;
  * Created by kou on 13/08/11.
  */
 public class EmojidexIME extends InputMethodService {
-    static EmojidexIME currentInstance = null;
     static final String TAG = MainActivity.TAG + "::EmojidexIME";
+    static EmojidexIME currentInstance = null;
+
+    private final Handler invalidateHandler;
 
     private Emojidex emojidex;
 
@@ -46,6 +49,7 @@ public class EmojidexIME extends InputMethodService {
     private int showSearchWindowCode = 0;
     private EmojidexSubKeyboardView subKeyboardView = null;
     private Keyboard.Key keyEnter = null;
+    private int keyEnterIndex;
     private int imeOptions;
 
     private View layout;
@@ -69,12 +73,17 @@ public class EmojidexIME extends InputMethodService {
     public EmojidexIME()
     {
         setTheme(R.style.IMETheme);
+
+        invalidateHandler = new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                keyboardViewManager.getCurrentView().invalidateKey(msg.arg1);
+            }
+        };
     }
 
     @Override
     public void onInitializeInterface() {
-        currentInstance = this;
-
         // Get InputMethodManager object.
         inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
         showIMEPickerCode = getResources().getInteger(R.integer.ime_keycode_show_ime_picker);
@@ -147,11 +156,15 @@ public class EmojidexIME extends InputMethodService {
         }
 
         // Redraw keyboard view.
-        subKeyboardView.setKeyboard(subKeyboardView.getKeyboard());
+        subKeyboardView.invalidateKey(keyEnterIndex);
+
+        // Set current instance.
+        currentInstance = this;
     }
 
     @Override
     public void onFinishInputView(boolean finishingInput) {
+        currentInstance = null;
         super.onFinishInputView(finishingInput);
         historyManager.save();
     }
@@ -269,10 +282,16 @@ public class EmojidexIME extends InputMethodService {
 
         // Get enter key object.
         final int[] enterCodes = { KeyEvent.KEYCODE_ENTER };
-        for(Keyboard.Key key : keyboard.getKeys())
+        final List<Keyboard.Key> keys = keyboard.getKeys();
+        final int count = keys.size();
+        for(keyEnterIndex = 0;  keyEnterIndex < count;  ++keyEnterIndex)
         {
+            final Keyboard.Key key = keys.get(keyEnterIndex);
             if( Arrays.equals(key.codes, enterCodes) )
+            {
                 keyEnter = key;
+                break;
+            }
         }
     }
 
@@ -461,6 +480,29 @@ public class EmojidexIME extends InputMethodService {
 //        else
 //            Toast.makeText(this, R.string.delete_failure, Toast.LENGTH_SHORT).show();
 //    }
+
+    /**
+     * Re-draw key.
+     * @param emojiName     Emoji name.
+     */
+    void invalidate(String emojiName)
+    {
+        final EmojidexKeyboardView view = keyboardViewManager.getCurrentView();
+        final Keyboard keyboard = view.getKeyboard();
+        final List<Keyboard.Key> keys = keyboard.getKeys();
+
+        for(int i = 0;  i < keys.size();  ++i)
+        {
+            if(keys.get(i).popupCharacters.equals(emojiName))
+            {
+                final Message msg = invalidateHandler.obtainMessage();
+                msg.arg1 = i;
+                invalidateHandler.sendMessage(msg);
+
+                break;
+            }
+        }
+    }
 
 
     /**
@@ -665,8 +707,6 @@ public class EmojidexIME extends InputMethodService {
      */
     private class CustomDownloadListener extends DownloadListener
     {
-        private final Handler handler = new Handler();
-
         @Override
         public void onPostAllJsonDownload(EmojiDownloader downloader) {
             super.onPostAllJsonDownload(downloader);
@@ -688,27 +728,8 @@ public class EmojidexIME extends InputMethodService {
             {
                 emoji.reloadImage();
 
-                // Find emoji in current keyboard.
-                final EmojidexKeyboardView view = keyboardViewManager.getCurrentView();
-                final Keyboard keyboard = view.getKeyboard();
-                final List<Keyboard.Key> keys = keyboard.getKeys();
-
-                for(int i = 0;  i < keys.size();  ++i)
-                {
-                    if(keys.get(i).popupCharacters.equals(emojiName))
-                    {
-                        final int index = i;
-
-                        handler.post(new Runnable(){
-                            @Override
-                            public void run() {
-                                keyboardViewManager.getCurrentView().invalidateKey(index);
-                            }
-                        });
-
-                        break;
-                    }
-                }
+                if(currentInstance != null)
+                    currentInstance.invalidate(emojiName);
             }
         }
 

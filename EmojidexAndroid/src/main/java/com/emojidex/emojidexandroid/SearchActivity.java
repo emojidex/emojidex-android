@@ -5,16 +5,12 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.preference.PreferenceManager;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
@@ -23,8 +19,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.GridLayout;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -36,11 +30,8 @@ import java.util.LinkedHashSet;
 
 public class SearchActivity extends Activity {
     private SaveDataManager searchManager;
-    private Handler addButtonHandler;
-    private Handler invalidateHandler;
 
     private EditText editText;
-    private GridLayout resultLayout;
 
     private String category;
     private ProgressDialog loadingDialog = null;
@@ -56,21 +47,6 @@ public class SearchActivity extends Activity {
 
         // Initialize fields.
         searchManager = new SaveDataManager(this, SaveDataManager.Type.Search);
-        searchManager.load();
-
-        addButtonHandler = new Handler(){
-            @Override
-            public void handleMessage(Message msg) {
-                addButton((String)msg.obj);
-            }
-        };
-
-        invalidateHandler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                ((View)msg.obj).invalidate();
-            }
-        };
     }
 
     @Override
@@ -81,7 +57,6 @@ public class SearchActivity extends Activity {
 
     @Override
     protected void onDestroy() {
-        searchManager.save();
         resetIME();
         super.onDestroy();
     }
@@ -105,9 +80,6 @@ public class SearchActivity extends Activity {
                 return false;
             }
         });
-
-        // Show result space.
-        resultLayout = (GridLayout)findViewById(R.id.search_result_layout);
 
         // Search button.
         findViewById(R.id.search_action).setOnClickListener(new View.OnClickListener() {
@@ -207,9 +179,6 @@ public class SearchActivity extends Activity {
         if(searchText.isEmpty())
             return;
 
-        // Clear result.
-        resultLayout.removeAllViews();
-
         // Search emoji.
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -276,54 +245,6 @@ public class SearchActivity extends Activity {
         loadingDialog.show();
     }
 
-    /**
-     * Add emoji button to result area.
-     * @param emojiName     Emoji name.
-     */
-    private void addButton(final String emojiName)
-    {
-        final Emojidex emojidex = Emojidex.getInstance();
-        final EmojiFormat emojiFormat = EmojiFormat.toFormat(getString(R.string.emoji_format_key));
-        final ImageView button = new ImageView(this);
-        button.setScaleType(ImageView.ScaleType.CENTER);
-
-        // Set drawable.
-        final BitmapDrawable drawable = emojidex.getEmoji(emojiName).getDrawable(emojiFormat);
-        final float drawableSize = getResources().getDimension(R.dimen.ime_search_emoji_button_icon_size);
-        drawable.setTargetDensity((int) (drawable.getBitmap().getDensity() * drawableSize / drawable.getIntrinsicWidth()));
-        button.setImageDrawable(drawable);
-
-        // Set size.
-        final float buttonSize = getResources().getDimension(R.dimen.ime_search_emoji_button_size);
-        final ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams((int)buttonSize, (int)buttonSize);
-        button.setLayoutParams(lp);
-
-        // Set click event.
-        final Drawable background = getResources().getDrawable(R.drawable.ime_search_emoji_button_background_checked);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(v.getBackground() == null)
-                {
-                    v.setBackground(background);
-                    searchManager.addFirst(emojiName);
-                }
-                else
-                {
-                    v.setBackground(null);
-                    searchManager.remove(emojiName);
-                }
-            }
-        });
-
-        // Add to grid layout.
-        if(resultLayout.getChildCount() == 0)
-        {
-            resultLayout.setColumnCount((int)(resultLayout.getWidth() / buttonSize));
-        }
-        resultLayout.addView(button);
-    }
-
 
 
     /**
@@ -331,22 +252,19 @@ public class SearchActivity extends Activity {
      */
     private class CustomDownloadListener extends DownloadListener
     {
-        private final ArrayList<String> emojiNames = new ArrayList<String>();
-
         @Override
         public void onPostOneJsonDownload(String source, String destination) {
             super.onPostOneJsonDownload(source, destination);
 
             final File file = new File(destination);
             final ArrayList<JsonParam> emojies = JsonParam.readFromFile(file);
-            emojiNames.ensureCapacity(emojies.size());
             for(JsonParam emoji : emojies)
             {
                 // Convert emoji name.
                 emoji.name = emoji.name.replaceAll(" ", "_");
 
                 // Add emoji name.
-                emojiNames.add(emoji.name);
+                searchManager.addLast(emoji.name);
             }
             JsonParam.writeToFile(file, emojies);
         }
@@ -358,14 +276,6 @@ public class SearchActivity extends Activity {
             // If downloader has download task, update emojidex database.
             if(downloader.hasDownloadTask())
                 Emojidex.getInstance().reload();
-
-            // Add emoji button to result space.
-            for(String emojiName : emojiNames)
-            {
-                final Message message = addButtonHandler.obtainMessage();
-                message.obj = emojiName;
-                addButtonHandler.sendMessage(message);
-            }
 
             // Save shared preferences.
             final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(SearchActivity.this);
@@ -380,6 +290,10 @@ public class SearchActivity extends Activity {
                 loadingDialog.dismiss();
                 loadingDialog = null;
             }
+
+            // Close search activity.
+            searchManager.save();
+            SearchActivity.this.finish();
         }
 
         @Override
@@ -391,11 +305,8 @@ public class SearchActivity extends Activity {
 
             emoji.reloadImage();
 
-            final int index = emojiNames.indexOf(emojiName);
-            final View view = resultLayout.getChildAt(index);
-            final Message message = invalidateHandler.obtainMessage();
-            message.obj = view;
-            invalidateHandler.sendMessage(message);
+            if(EmojidexIME.currentInstance != null)
+                EmojidexIME.currentInstance.invalidate(emojiName);
         }
     }
 }
