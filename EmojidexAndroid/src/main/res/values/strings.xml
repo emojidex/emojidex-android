@@ -4,14 +4,14 @@
     <string name="app_name">emojidex</string>
     <string name="action_settings">Settings</string>
 
-    <string name="menu_text_copy">Text copy</string>
-    <string name="menu_clear_and_paste">Clear &amp; paste</string>
+    <string name="menu_text_copy">Copy Text</string>
+    <string name="menu_clear_and_paste">Clear &amp; Paste</string>
     <string name="menu_clear">Clear</string>
-    <string name="menu_clear_search">Clear search results</string>
-    <string name="menu_conversion_switch">Conversion switch</string>
-    <string name="menu_emojidex_web">emojidex web</string>
+    <string name="menu_clear_search">Clear Search Results</string>
+    <string name="menu_conversion_switch">Toggle Conversion</string>
+    <string name="menu_emojidex_web">emojidex Web</string>
     <string name="menu_settings">Settings</string>
-    <string name="emojidex_url">http://www.emojidex.com</string>
+    <string name="emojidex_url" translatable="false">http://www.emojidex.com</string>
 
     <string name="search">Search</string>
     <string name="favorite">Favorites</string>
@@ -27,11 +27,11 @@
     <string name="clear_and_paste">Clear &amp; Paste</string>
     <string name="convert">Convert</string>
 
-    <string name="register_favorite">Favorite this emoji?</string>
-    <string name="register_success">Registered.</string>
-    <string name="register_done">Already registered.</string>
-    <string name="register_failure">Registration failed.</string>
-    <string name="delete_favorite">Remove this emoji from your favorites?</string>
+    <string name="register_favorite">Add this emoji to your favorites?</string>
+    <string name="register_success">Registered</string>
+    <string name="register_done">Already registered</string>
+    <string name="register_failure">Registration failed</string>
+    <string name="delete_favorite">Remove emoji from your favorites?</string>
     <!--<string name="delete_success">Emoji removed.</string>-->
     <!--<string name="delete_failure">Emoji removal failed.</string>-->
     <string name="clipboard">Copied to the clipboard.</string>
@@ -39,7 +39,7 @@
     <string name="download_done">Already downloaded.</string>
     <string name="download_success">Downloaded.</string>
     <string name="download_failure">Downloading failed.</string>
-    <string name="delete_download_confirm">Remove this emoji from your storage?</string>
+    <string name="delete_download_confirm">Remove emoji from your storage?</string>
     <string name="delete_download">Remove</string>
     <string name="seal_send">Send</string>
 
@@ -55,11 +55,11 @@
     <string name="popular">Popular</string>
     <string name="category">Category</string>
     <string name="emoji">Emoji</string>
-    <string name="search_category">Please enter the category name you want to search.</string>
-    <string name="search_emoji">Please enter the emoji name you want to search.</string>
+    <string name="search_category">Please enter the category name you want to search in.</string>
+    <string name="search_emoji">Enter an emoji code to search for</string>
     <string name="hit"> hits.</string>
 
-    <string name="message_unsupported_seal">Unsupported seal.</string>
+    <string name="message_unsupported_seal">Seals not supported</string>
 
     <string name="ime_category_text_history">History</string>
     <string name="ime_category_text_search">Search</string>
@@ -84,15 +84,15 @@
     <string name="settings_keyboard_button_summary">Set your default keyboard here</string>
     <string name="settings_entry_default_keyboard_nothing">Nothing</string>
     <string name="settings_update_interval">Update interval</string>
-    <string name="settings_delete_favorite_button">Clear favorite</string>
-    <string name="settings_delete_favorite_confirm">Clear all favorite?</string>
-    <string name="settings_delete_favorite_succeeded">Succeeded clear favorite.</string>
-    <string name="settings_delete_favorite_failed">Failed clear favorite.</string>
-    <string name="settings_delete_history_button">Clear history</string>
+    <string name="settings_delete_favorite_button">Clear Favorites</string>
+    <string name="settings_delete_favorite_confirm">Clear all favorites?</string>
+    <string name="settings_delete_favorite_succeeded">Favorites cleared</string>
+    <string name="settings_delete_favorite_failed">Failed to clear favorites</string>
+    <string name="settings_delete_history_button">Clear History</string>
     <string name="settings_delete_history_confirm">Clear all history?</string>
-    <string name="settings_delete_history_succeeded">Succeeded clear history.</string>
-    <string name="settings_delete_history_failed">Failed clear history.</string>
-    <string name="settings_delete_search_button">Clear search result</string>
+    <string name="settings_delete_history_succeeded">History cleared</string>
+    <string name="settings_delete_history_failed">Failed to clear history</string>
+    <string name="settings_delete_search_button">Clear search results</string>
     <string name="settings_delete_search_confirm">Clear all search result?</string>
     <string name="settings_delete_search_succeeded">Succeeded clear search result.</string>
     <string name="settings_delete_search_failed">Failed clear search result.</string>
@@ -103,7 +103,7 @@
 
     <!-- Japanese not needed -->
     <string name="download">Download</string>
-    <string name="search_result">Search result</string>
+    <string name="search_result">Search Results</string>
 
     <string name="ime_category_id_history" translatable="false">history</string>
     <string name="ime_category_id_search" translatable="false">search</string>
