@@ -17,12 +17,12 @@
         android:title="@string/settings_category_data">
         <Preference
             android:key="@string/preference_key_clear_favorite"
-            android:title="@string/delete_favorites_all"/>
+            android:title="@string/settings_delete_favorite_button"/>
         <Preference
             android:key="@string/preference_key_clear_history"
-            android:title="@string/delete_histories_all"/>
+            android:title="@string/settings_delete_history_button"/>
         <Preference
             android:key="@string/preference_key_clear_search_result"
-            android:title="@string/delete_search_results_all"/>
+            android:title="@string/settings_delete_search_button"/>
     </PreferenceCategory>
 </PreferenceScreen>

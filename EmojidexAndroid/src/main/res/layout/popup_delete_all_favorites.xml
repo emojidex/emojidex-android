@@ -10,7 +10,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/delete_favorites_all_confirm"
+        android:text="@string/settings_delete_favorite_confirm"
         android:textSize="20dp"
         android:textColor="@color/white"
         android:layout_margin="15dp" />
