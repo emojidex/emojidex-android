@@ -145,7 +145,7 @@ public class EmojidexIME extends InputMethodService {
         switch(imeOptions)
         {
             case EditorInfo.IME_ACTION_NONE:
-                keyEnter.icon = getResources().getDrawable(R.drawable.key_enter);
+                keyEnter.icon = getResources().getDrawable(R.drawable.ime_key_enter);
                 keyEnter.label = null;
                 break;
             default:
