@@ -28,7 +28,7 @@ public class FileOperation
     public static final int DONE = 1;
     public static final int FAILURE = 2;
 
-    public static final String FAVORITES = "favorites";
+    public static final String FAVORITES = "favorite";
     public static final String HISTORIES = "history";
     public static final String SEARCH_RESULT = "search";
     public static final String SHARE = "share";

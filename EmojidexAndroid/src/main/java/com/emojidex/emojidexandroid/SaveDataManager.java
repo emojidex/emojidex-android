@@ -34,6 +34,7 @@ public class SaveDataManager {
     {
         History("history.json", 18),
         Search("search.json", CAPACITY_INFINITY),
+        Favorite("favorite.json", CAPACITY_INFINITY),
         ;
 
         private final String fileName;

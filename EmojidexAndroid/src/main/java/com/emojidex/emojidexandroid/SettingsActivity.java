@@ -117,7 +117,7 @@ public class SettingsActivity extends PreferenceActivity {
             clearFavorite.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    createDeleteDialog(R.string.delete_favorites_all_confirm, FileOperation.FAVORITES);
+                    createDeleteDialog(SaveDataManager.Type.Favorite);
                     return true;
                 }
             });
@@ -126,7 +126,7 @@ public class SettingsActivity extends PreferenceActivity {
             clearHistory.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    createDeleteDialog(R.string.delete_histories_all_confirm, FileOperation.HISTORIES);
+                    createDeleteDialog(SaveDataManager.Type.History);
                     return true;
                 }
             });
@@ -135,7 +135,7 @@ public class SettingsActivity extends PreferenceActivity {
             clearSearchResult.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    createDeleteDialog(R.string.delete_search_results_all_confirm, FileOperation.SEARCH_RESULT);
+                    createDeleteDialog(SaveDataManager.Type.Search);
                     return true;
                 }
             });
@@ -143,23 +143,49 @@ public class SettingsActivity extends PreferenceActivity {
 
         /**
          * create dialog
-         * @param textRes favorites or histories text resources
-         * @param mode favorites or histories
+         * @param type  Save data type.
          */
-        private void createDeleteDialog(int textRes, final String mode)
+        private void createDeleteDialog(final SaveDataManager.Type type)
         {
+            int confirmMessageResId;
+            int succeededMessageResId;
+            int failedMessageResId;
+
+            switch(type)
+            {
+                case History:
+                    confirmMessageResId = R.string.settings_delete_history_confirm;
+                    succeededMessageResId = R.string.settings_delete_history_succeeded;
+                    failedMessageResId = R.string.settings_delete_history_failed;
+                    break;
+                case Search:
+                    confirmMessageResId = R.string.settings_delete_search_confirm;
+                    succeededMessageResId = R.string.settings_delete_search_succeeded;
+                    failedMessageResId = R.string.settings_delete_search_failed;
+                    break;
+                case Favorite:
+                    confirmMessageResId = R.string.settings_delete_favorite_confirm;
+                    succeededMessageResId = R.string.settings_delete_favorite_succeeded;
+                    failedMessageResId = R.string.settings_delete_favorite_failed;
+                    break;
+                default:
+                    return;
+            }
+
             // create dialog
+            final int successId = succeededMessageResId;
+            final int failedId = failedMessageResId;
             AlertDialog.Builder dialog = new AlertDialog.Builder(parentActivity);
-            dialog.setMessage(textRes);
+            dialog.setMessage(confirmMessageResId);
             dialog.setPositiveButton(R.string.yes,
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            boolean result = FileOperation.deleteFile(parentActivity, mode);
+                            boolean result = new SaveDataManager(parentActivity, type).deleteFile();
                             if (result)
-                                Toast.makeText(parentActivity, R.string.delete_success, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(parentActivity, successId, Toast.LENGTH_SHORT).show();
                             else
-                                Toast.makeText(parentActivity, R.string.delete_failure, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(parentActivity, failedId, Toast.LENGTH_SHORT).show();
                         }
                     });
             dialog.setNegativeButton(R.string.no,

@@ -32,14 +32,8 @@
     <string name="register_done">Already registered.</string>
     <string name="register_failure">Registration failed.</string>
     <string name="delete_favorite">Remove this emoji from your favorites?</string>
-    <string name="delete_success">Emoji removed.</string>
-    <string name="delete_failure">Emoji removal failed.</string>
-    <string name="delete_favorites_all">Clear favorites</string>
-    <string name="delete_histories_all">Clear history</string>
-    <string name="delete_search_results_all">Clear search results</string>
-    <string name="delete_favorites_all_confirm">Clear all favorites?</string>
-    <string name="delete_histories_all_confirm">Clear all history?</string>
-    <string name="delete_search_results_all_confirm">Clear all search results?</string>
+    <!--<string name="delete_success">Emoji removed.</string>-->
+    <!--<string name="delete_failure">Emoji removal failed.</string>-->
     <string name="clipboard">Copied to the clipboard.</string>
     <string name="close">Close</string>
     <string name="download_done">Already downloaded.</string>
@@ -90,6 +84,18 @@
     <string name="settings_keyboard_button_summary">Set your default keyboard here</string>
     <string name="settings_entry_default_keyboard_nothing">Nothing</string>
     <string name="settings_update_interval">Update interval</string>
+    <string name="settings_delete_favorite_button">Clear favorite</string>
+    <string name="settings_delete_favorite_confirm">Clear all favorite?</string>
+    <string name="settings_delete_favorite_succeeded">Succeeded clear favorite.</string>
+    <string name="settings_delete_favorite_failed">Failed clear favorite.</string>
+    <string name="settings_delete_history_button">Clear history</string>
+    <string name="settings_delete_history_confirm">Clear all history?</string>
+    <string name="settings_delete_history_succeeded">Succeeded clear history.</string>
+    <string name="settings_delete_history_failed">Failed clear history.</string>
+    <string name="settings_delete_search_button">Clear search result</string>
+    <string name="settings_delete_search_confirm">Clear all search result?</string>
+    <string name="settings_delete_search_succeeded">Succeeded clear search result.</string>
+    <string name="settings_delete_search_failed">Failed clear search result.</string>
 
     <string name="search_dialog_title">Searching...</string>
     <string name="search_dialog_message">Please wait a moment.</string>
