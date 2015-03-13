@@ -453,6 +453,8 @@ public class MainActivity extends Activity {
      */
     public void clearSearchResult() {
         new SaveDataManager(this, SaveDataManager.Type.Search).deleteFile();
+        if(EmojidexIME.currentInstance != null)
+            EmojidexIME.currentInstance.reloadSearchResult();
     }
 
     /**

@@ -356,14 +356,14 @@ public class EmojidexIME extends InputMethodService {
     {
         final String categoryName = v.getContentDescription().toString();
         Log.d(TAG, "Click category button : category = " + categoryName);
-        ChangeCategory(categoryName);
+        changeCategory(categoryName);
     }
 
     /**
      * Change category.
      * @param category  Category.
      */
-    public void ChangeCategory(String category)
+    public void changeCategory(String category)
     {
         if(currentCategory != null && currentCategory.equals(category))
             return;
@@ -501,6 +501,20 @@ public class EmojidexIME extends InputMethodService {
 
                 break;
             }
+        }
+    }
+
+    /**
+     * Reload search result tab.
+     */
+    void reloadSearchResult()
+    {
+        searchManager.load();
+        if(currentCategory.equals(getString(R.string.ime_category_id_search)))
+        {
+            final String category = currentCategory;
+            currentCategory = null;
+            changeCategory(category);
         }
     }
 
@@ -718,7 +732,7 @@ public class EmojidexIME extends InputMethodService {
 
             final String category = currentCategory;
             currentCategory = null;
-            ChangeCategory(category);
+            changeCategory(category);
         }
 
         @Override
