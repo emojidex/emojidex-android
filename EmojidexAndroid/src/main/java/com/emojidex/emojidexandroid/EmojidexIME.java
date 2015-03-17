@@ -365,7 +365,8 @@ public class EmojidexIME extends InputMethodService {
      */
     public void changeCategory(String category)
     {
-        if(currentCategory != null && currentCategory.equals(category))
+        if( category == null ||
+            (currentCategory != null && currentCategory.equals(category))   )
             return;
 
         currentCategory = category;
