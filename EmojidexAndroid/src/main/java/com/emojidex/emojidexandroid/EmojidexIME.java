@@ -27,6 +27,7 @@ import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.ViewFlipper;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -84,6 +85,8 @@ public class EmojidexIME extends InputMethodService {
 
     @Override
     public void onInitializeInterface() {
+        deleteCache();
+
         // Get InputMethodManager object.
         inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
         showIMEPickerCode = getResources().getInteger(R.integer.ime_keycode_show_ime_picker);
@@ -518,6 +521,17 @@ public class EmojidexIME extends InputMethodService {
         }
     }
 
+    /**
+     * Delete the cache files from the default cache directory.
+     */
+    private void deleteCache()
+    {
+        File cacheDir = getExternalCacheDir();
+        if (cacheDir == null) return;
+
+        File[] list = cacheDir.listFiles();
+        for (File f : list) f.delete();
+    }
 
     /**
      * Custom OnKeyboardActionListener.
