@@ -6,6 +6,10 @@ import android.content.ClipDescription;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.net.Uri;
@@ -22,6 +26,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * Created by nazuki on 14/01/08.
@@ -130,8 +136,29 @@ public class EmojidexKeyboardView extends KeyboardView {
                 final String formatName = context.getResources().getString(R.string.emoji_format_seal);
                 final EmojiFormat format = EmojiFormat.toFormat(formatName);
 
+                // Add white background.
+                Bitmap bitmap = BitmapFactory.decodeFile(emoji.getImageFilePath(format));
+                Bitmap newBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.RGB_565);
+                newBitmap.eraseColor(Color.WHITE);
+                Canvas canvas = new Canvas(newBitmap);
+                canvas.drawBitmap(bitmap, 0, 0, null);
+
+                // Save tmp file.
+                String tmpFilename = "tmp" + String.valueOf(System.currentTimeMillis()) + ".png";
+                File tmpFile = new File(context.getExternalCacheDir(), tmpFilename);
+                try
+                {
+                    FileOutputStream stream = new FileOutputStream(tmpFile);
+                    newBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    stream.close();
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+
                 // Send intent.
-                final File file = new File(emoji.getImageFilePath(format));
+                final File file = new File(context.getExternalCacheDir(), tmpFilename);
                 final Uri uri = Uri.fromFile(file);
                 final ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
                 final ActivityManager.RunningTaskInfo taskInfo = am.getRunningTasks(1).get(0);
