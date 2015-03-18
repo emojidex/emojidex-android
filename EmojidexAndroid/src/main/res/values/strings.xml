@@ -61,6 +61,10 @@
 
     <string name="message_unsupported_seal">Seals not supported</string>
 
+    <string name="editor_enable_check_message">emojidex keyboard is disable.\nSwitch to enable?</string>
+    <string name="editor_enable_check_yes">Yes</string>
+    <string name="editor_enable_check_no">No</string>
+
     <string name="ime_category_text_history">History</string>
     <string name="ime_category_text_search">Search</string>
     <string name="ime_category_text_all">All</string>

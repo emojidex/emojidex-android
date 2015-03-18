@@ -60,6 +60,10 @@
 
     <string name="message_unsupported_seal">シールに対応していません。</string>
 
+    <string name="editor_enable_check_message">emojidexキーボードが無効です。\n有効にしますか？</string>
+    <string name="editor_enable_check_yes">はい</string>
+    <string name="editor_enable_check_no">いいえ</string>
+
     <string name="ime_category_text_history">履歴</string>
     <string name="ime_category_text_search">検索</string>
     <string name="ime_category_text_all">全て</string>
