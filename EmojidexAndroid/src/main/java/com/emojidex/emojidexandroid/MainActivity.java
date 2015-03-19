@@ -5,11 +5,13 @@ import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.style.ImageSpan;
@@ -18,6 +20,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -45,6 +49,13 @@ public class MainActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        imeEnableCheck();
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -304,6 +315,38 @@ public class MainActivity extends Activity {
                 setShareButtonIcon();
             }
         });
+    }
+
+    /**
+     * Check IME enable.
+     */
+    private void imeEnableCheck()
+    {
+        // Skip if ime enable.
+        final InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+        for(InputMethodInfo info : imm.getEnabledInputMethodList())
+        {
+            if(info.getServiceName().equals(EmojidexIME.class.getName()))
+                return;
+        }
+
+        // Show dialog and go to settings.
+        final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setMessage(R.string.editor_enable_check_message);
+        dialog.setNegativeButton(R.string.editor_enable_check_no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // nop
+            }
+        });
+        dialog.setPositiveButton(R.string.editor_enable_check_yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                final Intent intent = new Intent(Settings.ACTION_INPUT_METHOD_SETTINGS);
+                startActivity(intent);
+            }
+        });
+        dialog.show();
     }
 
     /**
