@@ -388,7 +388,13 @@ public class MainActivity extends Activity {
         if (action.equals(Intent.ACTION_SEND) && type != null)
         {
             if (type.equals("text/plain"))
-                editText.setText(intent.getStringExtra(Intent.EXTRA_TEXT));
+            {
+                final String text = intent.getStringExtra(Intent.EXTRA_TEXT);
+                if(toggleState)
+                    editText.setText(emojify(deEmojify(text)));
+                else
+                    editText.setText(toUnicodeString(deEmojify(text)));
+            }
         }
     }
 
