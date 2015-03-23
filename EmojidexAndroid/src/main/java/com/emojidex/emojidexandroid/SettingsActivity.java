@@ -99,13 +99,20 @@ public class SettingsActivity extends PreferenceActivity {
          */
         private void createUpdateIntervalPreference()
         {
+            // Auto update list.
             final ListPreference updateInterval = (ListPreference)findPreference(getString(R.string.preference_key_update_interval));
-
-            // Set summary.
             updateInterval.setSummary(updateInterval.getEntry());
-
-            // Set changed event.
             updateInterval.setOnPreferenceChangeListener(onPreferenceChangeListener);
+
+            // Manual update.
+            final Preference updateNow = findPreference(getString(R.string.preference_key_update_now));
+            updateNow.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    new EmojidexUpdater(parentActivity).startUpdateThread();
+                    return true;
+                }
+            });
         }
 
         /**

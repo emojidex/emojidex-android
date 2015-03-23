@@ -103,11 +103,7 @@ public class EmojidexIME extends InputMethodService {
         // Emoji download.
         if(checkExecUpdate())
         {
-            final LinkedHashSet<EmojiFormat> formats = new LinkedHashSet<EmojiFormat>();
-            formats.add(EmojiFormat.toFormat(getString(R.string.emoji_format_default)));
-            formats.add(EmojiFormat.toFormat(getString(R.string.emoji_format_key)));
-            formats.add(EmojiFormat.toFormat(getString(R.string.emoji_format_seal)));
-            emojidex.download(formats.toArray(new EmojiFormat[formats.size()]), new CustomDownloadListener());
+            new EmojidexUpdater(this).startUpdateThread();
         }
     }
 
@@ -523,6 +519,16 @@ public class EmojidexIME extends InputMethodService {
     }
 
     /**
+     * Reload current category.
+     */
+    void reloadCategory()
+    {
+        final String category = currentCategory;
+        currentCategory = null;
+        changeCategory(category);
+    }
+
+    /**
      * Delete the cache files from the default cache directory.
      */
     private void deleteCache()
@@ -727,51 +733,6 @@ public class EmojidexIME extends InputMethodService {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             return detector.onTouchEvent(event);
-        }
-    }
-
-
-    /**
-     * Custom download listener.
-     */
-    private class CustomDownloadListener extends DownloadListener
-    {
-        @Override
-        public void onPostAllJsonDownload(EmojiDownloader downloader) {
-            super.onPostAllJsonDownload(downloader);
-        }
-
-        @Override
-        public void onPreAllEmojiDownload() {
-            emojidex.reload();
-
-            final String category = currentCategory;
-            currentCategory = null;
-            changeCategory(category);
-        }
-
-        @Override
-        public void onPostOneEmojiDownload(String emojiName) {
-            final Emoji emoji = Emojidex.getInstance().getEmoji(emojiName);
-            if(emoji != null)
-            {
-                emoji.reloadImage();
-
-                if(currentInstance != null)
-                    currentInstance.invalidate(emojiName);
-            }
-        }
-
-        @Override
-        public void onPostAllEmojiDownload() {
-            super.onPostAllEmojiDownload();
-
-            // Save update time.
-            final long updateTime = new Date().getTime();
-            final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(EmojidexIME.this);
-            final SharedPreferences.Editor prefEditor = pref.edit();
-            prefEditor.putLong(getString(R.string.preference_key_last_update_time), updateTime);
-            prefEditor.commit();
         }
     }
 }

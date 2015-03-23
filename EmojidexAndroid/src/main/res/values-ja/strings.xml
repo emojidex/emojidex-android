@@ -84,11 +84,13 @@
 
     <string name="settings_title">emojidexキーボードの設定</string>
     <string name="settings_category_general">全般</string>
+    <string name="settings_category_update">更新</string>
     <string name="settings_category_data">データ</string>
     <string name="settings_keyboard_button">既定のキーボード</string>
     <string name="settings_keyboard_button_summary">キーボードアイコンボタンを押した時に変更されるキーボードを設定します。</string>
     <string name="settings_entry_default_keyboard_nothing">なし</string>
     <string name="settings_update_interval">絵文字を更新する間隔</string>
+    <string name="settings_update_now">今すぐ更新</string>
     <string name="settings_delete_favorite_button">お気に入りを全て削除</string>
     <string name="settings_delete_favorite_confirm">お気に入りを全て削除しますか？</string>
     <string name="settings_delete_favorite_succeeded">お気に入りを削除しました。</string>

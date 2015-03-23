@@ -2,7 +2,6 @@
 <resources>
 
     <string-array name="settings_update_interval_entries">
-        <item>常に更新する</item>
         <item>1日</item>
         <item>3日</item>
         <item>7日</item>
