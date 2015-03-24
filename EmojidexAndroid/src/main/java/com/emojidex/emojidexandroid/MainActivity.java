@@ -248,7 +248,7 @@ public class MainActivity extends Activity {
                 if(imageSpans.length > 0)
                 {
                     editText.removeTextChangedListener(this);
-                    editText.setText(deEmojify(s));
+                    editText.setText(toUnicodeString(deEmojify(s)));
                     editText.addTextChangedListener(this);
                 }
             }
@@ -431,7 +431,13 @@ public class MainActivity extends Activity {
         if (action.equals(Intent.ACTION_SEND) && type != null)
         {
             if (type.equals("text/plain"))
-                editText.setText(intent.getStringExtra(Intent.EXTRA_TEXT));
+            {
+                final String text = intent.getStringExtra(Intent.EXTRA_TEXT);
+                if(toggleState)
+                    editText.setText(emojify(deEmojify(text)));
+                else
+                    editText.setText(toUnicodeString(deEmojify(text)));
+            }
         }
     }
 
@@ -466,9 +472,9 @@ public class MainActivity extends Activity {
 
         // convert text
         if (toggleState)
-            editText.setText(emojify(editText.getText()));
+            editText.setText(emojify(deEmojify(editText.getText())));
         else
-            editText.setText(deEmojify(editText.getText()));
+            editText.setText(toUnicodeString(deEmojify(editText.getText())));
 
         // Move cursor to last.
         editText.setSelection(editText.length());
