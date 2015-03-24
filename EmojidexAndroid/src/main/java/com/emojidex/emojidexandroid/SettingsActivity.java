@@ -109,7 +109,10 @@ public class SettingsActivity extends PreferenceActivity {
             updateNow.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    new EmojidexUpdater(parentActivity).startUpdateThread();
+                    if( new EmojidexUpdater(parentActivity).startUpdateThread() )
+                        Toast.makeText(parentActivity, R.string.ime_message_update_start, Toast.LENGTH_SHORT).show();
+                    else
+                        Toast.makeText(parentActivity, R.string.ime_message_already_update, Toast.LENGTH_SHORT).show();
                     return true;
                 }
             });

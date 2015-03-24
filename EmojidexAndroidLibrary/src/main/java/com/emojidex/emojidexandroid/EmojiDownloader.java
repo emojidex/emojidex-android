@@ -225,7 +225,12 @@ public class EmojiDownloader {
     {
         // Error check.
         if(downloadEmojiCount == 0 || !runningTasks.isEmpty())
+        {
+            // Notify to listener.
+            listener.onFinish();
+
             return;
+        }
 
         // Update local json file.
         JsonParam.writeToFile(new File(PathUtils.getLocalJsonPath()), localJsonParams);
@@ -584,6 +589,9 @@ public class EmojiDownloader {
 
                 // Put log.
                 putResultLog(resultTotal, "All download task end.");
+
+                // Notify to listener.
+                listener.onFinish();
             }
         }
 

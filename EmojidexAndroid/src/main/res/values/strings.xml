@@ -80,6 +80,9 @@
     <string name="ime_category_text_places">Places</string>
     <string name="ime_category_text_people">People</string>
     <string name="ime_category_text_objects">Objects</string>
+    <string name="ime_message_update_start">Start update emojidex.</string>
+    <string name="ime_message_update_complete">Complete update emojidex.</string>
+    <string name="ime_message_already_update">Already update emojidex.</string>
 
     <string name="settings_title">emojidex keyboard settings</string>
     <string name="settings_category_general">General</string>
@@ -108,9 +111,6 @@
     <string name="search_dialog_cancel">Cancel</string>
 
     <!-- Japanese not needed -->
-    <string name="download">Download</string>
-    <string name="search_result">Search Results</string>
-
     <string name="ime_category_id_history" translatable="false">history</string>
     <string name="ime_category_id_search" translatable="false">search</string>
     <string name="ime_category_id_all" translatable="false">all</string>

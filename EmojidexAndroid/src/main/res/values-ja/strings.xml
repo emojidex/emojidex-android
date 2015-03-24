@@ -79,8 +79,9 @@
     <string name="ime_category_text_places">場所</string>
     <string name="ime_category_text_people">人</string>
     <string name="ime_category_text_objects">物</string>
-    <string name="download">ダウンロード</string>
-    <string name="search_result">検索結果</string>
+    <string name="ime_message_update_start">emojidexの更新を開始します。</string>
+    <string name="ime_message_update_complete">emojidexを更新しました。</string>
+    <string name="ime_message_already_update">emojidexを更新中です。</string>
 
     <string name="settings_title">emojidexキーボードの設定</string>
     <string name="settings_category_general">全般</string>

@@ -3,6 +3,8 @@ package com.emojidex.emojidexandroid;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
+import android.widget.Toast;
 
 import java.util.Date;
 import java.util.LinkedHashSet;
@@ -69,6 +71,11 @@ class EmojidexUpdater {
         @Override
         public void onPostAllEmojiDownload() {
             super.onPostAllEmojiDownload();
+        }
+
+        @Override
+        public void onFinish() {
+            super.onFinish();
 
             // Save update time.
             final long updateTime = new Date().getTime();
@@ -76,6 +83,9 @@ class EmojidexUpdater {
             final SharedPreferences.Editor prefEditor = pref.edit();
             prefEditor.putLong(context.getString(R.string.preference_key_last_update_time), updateTime);
             prefEditor.commit();
+
+            // Show message.
+            Toast.makeText(context, R.string.ime_message_update_complete, Toast.LENGTH_SHORT);
         }
     }
 }
