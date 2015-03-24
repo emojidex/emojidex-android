@@ -67,7 +67,7 @@ class TextConverter {
                     result.append(createEmojidexText(emoji, format));
                 }
                 else if(emoji.hasOriginalCodes())
-                    result.append( text.subSequence(startIndex, endIndex) );
+                    result.append( text.subSequence(startIndex, endIndex + charCount) );
                 else
                     result.append(emoji.getText());
                 startIndex = endIndex + charCount;
