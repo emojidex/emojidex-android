@@ -64,6 +64,12 @@
     <string name="editor_enable_check_message">emojidex keyboard is disable.\nSwitch to enable?</string>
     <string name="editor_enable_check_yes">Yes</string>
     <string name="editor_enable_check_no">No</string>
+    <string name="editor_message_text_copy">Copy text.</string>
+    <string name="editor_message_text_clear_and_paste">Clear and paste text.</string>
+    <string name="editor_message_text_clear">Clear text.</string>
+    <string name="editor_message_search_clear">Clear search results.</string>
+    <string name="editor_message_conversion_on">Conversion on.</string>
+    <string name="editor_message_conversion_off">Conversion off.</string>
 
     <string name="ime_category_text_history">History</string>
     <string name="ime_category_text_search">Search</string>
