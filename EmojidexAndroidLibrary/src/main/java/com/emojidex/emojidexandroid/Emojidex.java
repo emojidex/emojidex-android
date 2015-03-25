@@ -23,6 +23,8 @@ public class Emojidex {
     private EmojiManager manager;
     private EmojiFormat defaultFormat;
 
+    private EmojiDownloader downloader = null;
+
     /**
      * Get singleton instance.
      * @return  Singleton instance.
@@ -63,13 +65,17 @@ public class Emojidex {
      * Download emoji image to local storage.
      * @param formats       Emoji format array.
      * @param listener      Download event listener.
+     * @return  false when already downloading now.
      */
-    public void download(EmojiFormat[] formats, DownloadListener listener)
+    public boolean download(EmojiFormat[] formats, DownloadListener listener)
     {
         if( !isInitialized() )
             throw new EmojidexIsNotInitializedException();
 
-        final EmojiDownloader downloader = new EmojiDownloader(context);
+        if(downloader != null && downloader.getState() == EmojiDownloader.State.DOWNLOAD)
+            return false;
+
+        downloader = new EmojiDownloader(context);
         final String rootPath = PathUtils.getRemoteRootPathDefault();
         if(listener != null)
             downloader.setListener(listener);
@@ -81,6 +87,8 @@ public class Emojidex {
                 PathUtils.getRemoteJsonPath("extended", rootPath),
                 formats
         );
+
+        return true;
     }
 
     /**
