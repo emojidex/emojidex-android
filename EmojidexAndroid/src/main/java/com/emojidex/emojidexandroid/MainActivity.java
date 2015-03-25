@@ -15,6 +15,7 @@ import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.style.ImageSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,6 +29,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import java.util.List;
@@ -236,11 +238,23 @@ public class MainActivity extends Activity {
             final ImageSpan[] imageSpans = s.getSpans(start, end, ImageSpan.class);
             if (toggleState)
             {
-                if(imageSpans.length == 0 && s.subSequence(start, end).toString().indexOf(Emojidex.SEPARATOR) != -1)
+                if(imageSpans.length == 0)
                 {
-                    editText.removeTextChangedListener(this);
-                    editText.setText(emojify(deEmojify(s)));
-                    editText.addTextChangedListener(this);
+                    final String subSequence = s.subSequence(start, end).toString();
+                    // Text has separator.
+                    if(subSequence.indexOf(Emojidex.SEPARATOR) != -1)
+                    {
+                        editText.removeTextChangedListener(this);
+                        editText.setText(emojify(deEmojify(s)));
+                        editText.addTextChangedListener(this);
+                    }
+                    else
+                    {
+                        editText.removeTextChangedListener(this);
+                        s.replace(start, end, emojify(deEmojify(subSequence)));
+                        editText.setText(s);
+                        editText.addTextChangedListener(this);
+                    }
                 }
             }
             else
@@ -448,6 +462,8 @@ public class MainActivity extends Activity {
     public void clearText(View v)
     {
         editText.setText("");
+
+        Toast.makeText(this, R.string.editor_message_text_clear, Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -460,6 +476,8 @@ public class MainActivity extends Activity {
         ClipData clipData = clipboard.getPrimaryClip();
         CharSequence newText = (clipData == null) ? "" : clipData.getItemAt(0).getText();
         editText.setText(newText);
+
+        Toast.makeText(this, R.string.editor_message_text_clear_and_paste, Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -472,9 +490,15 @@ public class MainActivity extends Activity {
 
         // convert text
         if (toggleState)
+        {
             editText.setText(emojify(deEmojify(editText.getText())));
+            Toast.makeText(this, R.string.editor_message_conversion_on, Toast.LENGTH_SHORT).show();
+        }
         else
+        {
             editText.setText(toUnicodeString(deEmojify(editText.getText())));
+            Toast.makeText(this, R.string.editor_message_conversion_off, Toast.LENGTH_SHORT).show();
+        }
 
         // Move cursor to last.
         editText.setSelection(editText.length());
@@ -495,6 +519,8 @@ public class MainActivity extends Activity {
         String text = setShareData();
         ClipboardManager clipboardManager = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
         clipboardManager.setPrimaryClip(ClipData.newPlainText("emojidex", text));
+
+        Toast.makeText(this, R.string.editor_message_text_copy, Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -504,6 +530,8 @@ public class MainActivity extends Activity {
         new SaveDataManager(this, SaveDataManager.Type.Search).deleteFile();
         if(EmojidexIME.currentInstance != null)
             EmojidexIME.currentInstance.reloadSearchResult();
+
+        Toast.makeText(this, R.string.editor_message_search_clear, Toast.LENGTH_SHORT).show();
     }
 
     /**

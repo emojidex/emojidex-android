@@ -63,6 +63,12 @@
     <string name="editor_enable_check_message">emojidexキーボードが無効です。\n有効にしますか？</string>
     <string name="editor_enable_check_yes">はい</string>
     <string name="editor_enable_check_no">いいえ</string>
+    <string name="editor_message_text_copy">テキストをコピーしました。</string>
+    <string name="editor_message_text_clear_and_paste">テキストを貼り付けました。</string>
+    <string name="editor_message_text_clear">テキストをクリアしました。</string>
+    <string name="editor_message_search_clear">検索結果をクリアしました。</string>
+    <string name="editor_message_conversion_on">自動変換を有効にしました。</string>
+    <string name="editor_message_conversion_off">自動変換を無効にしました。</string>
 
     <string name="ime_category_text_history">履歴</string>
     <string name="ime_category_text_search">検索</string>
