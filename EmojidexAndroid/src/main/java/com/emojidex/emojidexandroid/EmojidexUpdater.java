@@ -85,7 +85,7 @@ class EmojidexUpdater {
             prefEditor.commit();
 
             // Show message.
-            Toast.makeText(context, R.string.ime_message_update_complete, Toast.LENGTH_SHORT);
+            Toast.makeText(context, R.string.ime_message_update_complete, Toast.LENGTH_SHORT).show();
         }
     }
 }
