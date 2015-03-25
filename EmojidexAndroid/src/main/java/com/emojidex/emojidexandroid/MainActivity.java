@@ -15,6 +15,7 @@ import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.style.ImageSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -237,11 +238,23 @@ public class MainActivity extends Activity {
             final ImageSpan[] imageSpans = s.getSpans(start, end, ImageSpan.class);
             if (toggleState)
             {
-                if(imageSpans.length == 0 && s.subSequence(start, end).toString().indexOf(Emojidex.SEPARATOR) != -1)
+                if(imageSpans.length == 0)
                 {
-                    editText.removeTextChangedListener(this);
-                    editText.setText(emojify(deEmojify(s)));
-                    editText.addTextChangedListener(this);
+                    final String subSequence = s.subSequence(start, end).toString();
+                    // Text has separator.
+                    if(subSequence.indexOf(Emojidex.SEPARATOR) != -1)
+                    {
+                        editText.removeTextChangedListener(this);
+                        editText.setText(emojify(deEmojify(s)));
+                        editText.addTextChangedListener(this);
+                    }
+                    else
+                    {
+                        editText.removeTextChangedListener(this);
+                        s.replace(start, end, emojify(deEmojify(subSequence)));
+                        editText.setText(s);
+                        editText.addTextChangedListener(this);
+                    }
                 }
             }
             else
