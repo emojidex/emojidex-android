@@ -80,14 +80,19 @@
     <string name="ime_category_text_places">Places</string>
     <string name="ime_category_text_people">People</string>
     <string name="ime_category_text_objects">Objects</string>
+    <string name="ime_message_update_start">Start update emojidex.</string>
+    <string name="ime_message_update_complete">Complete update emojidex.</string>
+    <string name="ime_message_already_update">Already update emojidex.</string>
 
     <string name="settings_title">emojidex keyboard settings</string>
     <string name="settings_category_general">General</string>
+    <string name="settings_category_update">Update</string>
     <string name="settings_category_data">Data</string>
     <string name="settings_keyboard_button">Default keyboard</string>
     <string name="settings_keyboard_button_summary">Set your default keyboard here</string>
     <string name="settings_entry_default_keyboard_nothing">Nothing</string>
     <string name="settings_update_interval">Update interval</string>
+    <string name="settings_update_now">Update now</string>
     <string name="settings_delete_favorite_button">Clear Favorites</string>
     <string name="settings_delete_favorite_confirm">Clear all favorites?</string>
     <string name="settings_delete_favorite_succeeded">Favorites cleared</string>
@@ -106,9 +111,6 @@
     <string name="search_dialog_cancel">Cancel</string>
 
     <!-- Japanese not needed -->
-    <string name="download">Download</string>
-    <string name="search_result">Search Results</string>
-
     <string name="ime_category_id_history" translatable="false">history</string>
     <string name="ime_category_id_search" translatable="false">search</string>
     <string name="ime_category_id_all" translatable="false">all</string>
@@ -132,6 +134,7 @@
     <string name="preference_key_default_keyboard" translatable="false">defaultKeyboard</string>
     <string name="preference_key_last_update_time" translatable="false">lastUpdateTime</string>
     <string name="preference_key_update_interval" translatable="false">updateInterval</string>
+    <string name="preference_key_update_now" translatable="false">updateNow</string>
     <string name="preference_key_clear_favorite" translatable="false">clearFavorite</string>
     <string name="preference_key_clear_history" translatable="false">clearHistory</string>
     <string name="preference_key_clear_search_result" translatable="false">clearSearchResult</string>

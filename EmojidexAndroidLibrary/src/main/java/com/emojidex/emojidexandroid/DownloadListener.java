@@ -75,6 +75,14 @@ public class DownloadListener {
     }
 
     /**
+     * Called when finish download task.
+     */
+    public void onFinish()
+    {
+        // nop
+    }
+
+    /**
      * Called when cancelled emoji download.
      */
     public void onCancelled()

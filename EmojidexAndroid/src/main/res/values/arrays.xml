@@ -2,7 +2,6 @@
 <resources>
 
     <string-array name="settings_update_interval_entries">
-        <item>Always</item>
         <item>1days</item>
         <item>3days</item>
         <item>7days</item>
@@ -10,7 +9,6 @@
     </string-array>
 
     <string-array name="settings_update_interval_entryvalues" translatable="false">
-        <item>0</item>
         <item>86400000</item>
         <item>259200000</item>
         <item>604800000</item>

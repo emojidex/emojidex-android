@@ -79,16 +79,19 @@
     <string name="ime_category_text_places">場所</string>
     <string name="ime_category_text_people">人</string>
     <string name="ime_category_text_objects">物</string>
-    <string name="download">ダウンロード</string>
-    <string name="search_result">検索結果</string>
+    <string name="ime_message_update_start">emojidexの更新を開始します。</string>
+    <string name="ime_message_update_complete">emojidexを更新しました。</string>
+    <string name="ime_message_already_update">emojidexを更新中です。</string>
 
     <string name="settings_title">emojidexキーボードの設定</string>
     <string name="settings_category_general">全般</string>
+    <string name="settings_category_update">更新</string>
     <string name="settings_category_data">データ</string>
     <string name="settings_keyboard_button">既定のキーボード</string>
     <string name="settings_keyboard_button_summary">キーボードアイコンボタンを押した時に変更されるキーボードを設定します。</string>
     <string name="settings_entry_default_keyboard_nothing">なし</string>
     <string name="settings_update_interval">絵文字を更新する間隔</string>
+    <string name="settings_update_now">今すぐ更新</string>
     <string name="settings_delete_favorite_button">お気に入りを全て削除</string>
     <string name="settings_delete_favorite_confirm">お気に入りを全て削除しますか？</string>
     <string name="settings_delete_favorite_succeeded">お気に入りを削除しました。</string>

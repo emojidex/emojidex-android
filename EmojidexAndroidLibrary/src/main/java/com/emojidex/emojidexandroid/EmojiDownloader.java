@@ -40,6 +40,16 @@ public class EmojiDownloader {
     private int downloadEmojiCount = 0;
 
     /**
+     * Download state.
+     */
+    public enum State
+    {
+        IDLE,
+        DOWNLOAD,
+        ;
+    }
+
+    /**
      * Construct EmojiDownloader object.
      * @param context   Context.
      */
@@ -214,8 +224,13 @@ public class EmojiDownloader {
     public void download()
     {
         // Error check.
-        if(downloadEmojiCount == 0)
+        if(downloadEmojiCount == 0 || !runningTasks.isEmpty())
+        {
+            // Notify to listener.
+            listener.onFinish();
+
             return;
+        }
 
         // Update local json file.
         JsonParam.writeToFile(new File(PathUtils.getLocalJsonPath()), localJsonParams);
@@ -263,6 +278,15 @@ public class EmojiDownloader {
     public boolean hasDownloadTask()
     {
         return downloadEmojiCount > 0;
+    }
+
+    /**
+     * Get state.
+     * @return  State.
+     */
+    public State getState()
+    {
+        return runningTasks.isEmpty() ? State.IDLE : State.DOWNLOAD;
     }
 
     /**
@@ -565,6 +589,9 @@ public class EmojiDownloader {
 
                 // Put log.
                 putResultLog(resultTotal, "All download task end.");
+
+                // Notify to listener.
+                listener.onFinish();
             }
         }
 
