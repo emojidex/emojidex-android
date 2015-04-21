@@ -38,7 +38,7 @@
         </activity>
 
         <activity
-            android:name="com.emojidex.emojidexandroid.ProxyActivity"
+            android:name=".SendSealActivity"
             android:label="emojidex"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
 

@@ -131,47 +131,9 @@ public class EmojidexKeyboardView extends KeyboardView {
             public void onClick(View v) {
                 closePopup();
 
-                // Get emoji data.
-                final Emoji emoji = Emojidex.getInstance().getEmoji(emojiName);
-                final String formatName = context.getResources().getString(R.string.emoji_format_seal);
-                final EmojiFormat format = EmojiFormat.toFormat(formatName);
-
-                // Add white background.
-                Bitmap bitmap = BitmapFactory.decodeFile(emoji.getImageFilePath(format));
-                Bitmap newBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.RGB_565);
-                newBitmap.eraseColor(Color.WHITE);
-                Canvas canvas = new Canvas(newBitmap);
-                canvas.drawBitmap(bitmap, 0, 0, null);
-
-                // Save tmp file.
-                String tmpFilename = "tmp" + String.valueOf(System.currentTimeMillis()) + ".png";
-                File tmpFile = new File(context.getExternalCacheDir(), tmpFilename);
-                try
-                {
-                    FileOutputStream stream = new FileOutputStream(tmpFile);
-                    newBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                    stream.close();
-                }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                }
-
                 // Send intent.
-                final File file = new File(context.getExternalCacheDir(), tmpFilename);
-                final Uri uri = Uri.fromFile(file);
-                final ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-                final ActivityManager.RunningTaskInfo taskInfo = am.getRunningTasks(1).get(0);
-
-                final Intent intent = new Intent(Intent.ACTION_SEND);
-                intent.setType("image/png");
-                intent.putExtra(Intent.EXTRA_STREAM, uri);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
-                intent.setPackage(taskInfo.baseActivity.getPackageName());
-
-                final Intent proxyIntent = new Intent(context, ProxyActivity.class);
-                proxyIntent.putExtra(Intent.EXTRA_INTENT, intent);
+                final Intent proxyIntent = new Intent(context, SendSealActivity.class);
+                proxyIntent.putExtra(Intent.EXTRA_TEXT, emojiName);
                 proxyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
                 context.startActivity(proxyIntent);
