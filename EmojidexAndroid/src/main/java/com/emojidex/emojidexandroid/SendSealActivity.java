@@ -3,6 +3,7 @@ package com.emojidex.emojidexandroid;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,6 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,56 +30,111 @@ import java.util.List;
 public class SendSealActivity extends Activity {
     static final String TAG = MainActivity.TAG + "::SendSealActivity";
 
+    private final Intent sendIntent = new Intent(Intent.ACTION_SEND);
+    private EmojiDownloader downloader = null;
+    private ProgressDialog dialog = null;
+
+    private boolean isCanceled = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Create intent.
+        // Initialize intent.
         final ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         final String targetPackageName = am.getRunningTasks(2).get(1).baseActivity.getPackageName();
-        final Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType("image/png");
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
-        intent.setPackage(targetPackageName);
+        sendIntent.setType("image/png");
+        sendIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        sendIntent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+        sendIntent.setPackage(targetPackageName);
 
-        // Check.
+        // Error check.
         final PackageManager pm = getPackageManager();
-        final List<ResolveInfo> resolveInfos = pm.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+        final List<ResolveInfo> resolveInfos = pm.queryIntentActivities(sendIntent, PackageManager.MATCH_DEFAULT_ONLY);
 
-        // Error.
-        if( resolveInfos.isEmpty() )
+        if(resolveInfos.isEmpty())
         {
-            Log.d(TAG, "Proxy: Intent send failed.(Target package name = " + intent.getPackage() + ")");
+            Log.d(TAG, "Intent send failed.(Target package name = " + sendIntent.getPackage() + ")");
 
             // Create error dialog.
             // TODO Set error detail.
             final AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Error");
-            builder.setMessage(getString(R.string.message_unsupported_seal));
+            builder.setMessage(R.string.message_unsupported_seal);
             builder.setPositiveButton(R.string.close, null);
             builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
                 @Override
                 public void onDismiss(DialogInterface dialog) {
-                    // Close proxy activity if closed error dialog.
+                    // Close activity if closed error dialog.
                     SendSealActivity.this.finish();
                 }
             });
 
             // Show dialog.
             builder.create().show();
-        }
-        // Send shared parameter.
-        else
-        {
-            final String emojiName = getIntent().getStringExtra(Intent.EXTRA_TEXT);
-            intent.putExtra(Intent.EXTRA_STREAM, getURI(emojiName));
-            startActivity(intent);
-            Log.d(TAG, "Proxy: Intent send succeeded.");
 
-            // Close proxy activity.
-            finish();
+            return;
         }
+
+        // Send seal.
+        sendSeal();
+    }
+
+    /**
+     * Send seal.
+     */
+    private void sendSeal()
+    {
+        final String emojiName = getIntent().getStringExtra(Intent.EXTRA_TEXT);
+
+        // Download seal.
+        final String url = "https://www.emojidex.com/api/v1/search/emoji?detailed=true&code_sw=" + emojiName + "&code_ew=" + emojiName;
+        final EmojiFormat[] formats = {EmojiFormat.toFormat(getString(R.string.emoji_format_seal))};
+        downloader = new EmojiDownloader(this);
+        downloader.setListener(new CustomDownloadListener());
+        downloader.add(url, formats, PathUtils.getRemoteRootPathDefault() + "/emoji");
+
+        // Show downloading dialog.
+        dialog = new ProgressDialog(this);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setTitle(R.string.send_seal_dialog_title);
+        dialog.setMessage(getString(R.string.send_seal_dialog_message));
+
+        dialog.setButton(
+                DialogInterface.BUTTON_NEGATIVE,
+                getString(R.string.send_seal_dialog_cancel),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                }
+        );
+        dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                downloader.cancel();
+                isCanceled = true;
+            }
+        });
+        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                if(isCanceled)
+                {
+                    Log.d(TAG, "Intent send canceled.(Target package name = " + sendIntent.getPackage() + ")");
+                }
+                else
+                {
+                    sendIntent.putExtra(Intent.EXTRA_STREAM, getURI(emojiName));
+                    startActivity(sendIntent);
+                    Log.d(TAG, "Intent send succeeded.(Target package name = " + sendIntent.getPackage() + ")");
+                }
+                finish();
+            }
+        });
+
+        dialog.show();
     }
 
     /**
@@ -88,10 +145,12 @@ public class SendSealActivity extends Activity {
     private Uri getURI(String emojiName)
     {
         final Emoji emoji = Emojidex.getInstance().getEmoji(emojiName);
-        final String formatName = getString(R.string.emoji_format_seal);
-        final EmojiFormat format = EmojiFormat.toFormat(formatName);
-        final File file = new File(emoji.getImageFilePath(format));
         final File temporaryFile = new File(getExternalCacheDir(), "tmp" + System.currentTimeMillis() + ".png");
+
+        // If file not found, use default format.
+        File file = new File(emoji.getImageFilePath(EmojiFormat.toFormat(getString(R.string.emoji_format_seal))));
+        if( !file.exists() )
+            file = new File(emoji.getImageFilePath(EmojiFormat.toFormat(getString(R.string.emoji_format_default))));
 
         // Create temporary file.
         try
@@ -118,5 +177,37 @@ public class SendSealActivity extends Activity {
         }
 
         return Uri.fromFile(temporaryFile);
+    }
+
+
+    /**
+     * Custom download listener.
+     */
+    private class CustomDownloadListener extends DownloadListener
+    {
+        @Override
+        public void onPostOneJsonDownload(String source, String destination) {
+            super.onPostOneJsonDownload(source, destination);
+
+            // Replace whitespace to underbar.
+            final File file = new File(destination);
+            final ArrayList<JsonParam> emojies = JsonParam.readFromFile(file);
+            for(JsonParam emoji : emojies)
+            {
+                emoji.name = emoji.name.replaceAll(" ", "_");
+            }
+            JsonParam.writeToFile(file, emojies);
+        }
+
+        @Override
+        public void onFinish() {
+            super.onFinish();
+
+            if(dialog != null)
+            {
+                dialog.dismiss();
+                dialog = null;
+            }
+        }
     }
 }
