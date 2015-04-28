@@ -27,7 +27,7 @@
     <string name="clear_and_paste">Clear &amp; Paste</string>
     <string name="convert">Convert</string>
 
-    <string name="register_favorite">Add this emoji to your favorites?</string>
+    <string name="register_favorite">Favorite this emoji?</string>
     <string name="register_success">Registered</string>
     <string name="register_done">Already registered</string>
     <string name="register_failure">Registration failed</string>
@@ -55,13 +55,13 @@
     <string name="popular">Popular</string>
     <string name="category">Category</string>
     <string name="emoji">Emoji</string>
-    <string name="search_category">Please enter the category name you want to search in.</string>
+    <string name="search_category">Select a Category</string>
     <string name="search_emoji">Enter an emoji code to search for</string>
     <string name="hit"> hits.</string>
 
-    <string name="message_unsupported_seal">Seals not supported</string>
+    <string name="message_unsupported_seal">This app does not support Seals</string>
 
-    <string name="editor_enable_check_message">emojidex keyboard is disable.\nSwitch to enable?</string>
+    <string name="editor_enable_check_message">The emojidex keyboard is not enabled.\nWould you like to enable it?</string>
     <string name="editor_enable_check_yes">Yes</string>
     <string name="editor_enable_check_no">No</string>
     <string name="editor_message_text_copy">Copy text.</string>
@@ -109,7 +109,7 @@
     <string name="settings_delete_history_failed">Failed to clear history</string>
     <string name="settings_delete_search_button">Clear search results</string>
     <string name="settings_delete_search_confirm">Clear all search result?</string>
-    <string name="settings_delete_search_succeeded">Succeeded clear search result.</string>
+    <string name="settings_delete_search_succeeded">Search results cleared.</string>
     <string name="settings_delete_search_failed">Failed clear search result.</string>
 
     <string name="search_dialog_title">Searching...</string>
