@@ -19,6 +19,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * Created by kou on 14/11/26.
@@ -55,7 +56,7 @@ public class EmojiDownloader {
      */
     public EmojiDownloader(Context context)
     {
-        this(context, 8);
+        this(context, 0);
     }
 
     /**
@@ -65,6 +66,9 @@ public class EmojiDownloader {
      */
     public EmojiDownloader(Context context, int threadCount)
     {
+        if(threadCount <= 0)
+            threadCount = ((ThreadPoolExecutor)AsyncTask.THREAD_POOL_EXECUTOR).getCorePoolSize();
+
         // Initialize fields.
         this.context = context.getApplicationContext();
         downloadEmojiesArray = new ArrayList[threadCount];
@@ -137,7 +141,7 @@ public class EmojiDownloader {
         final JsonDownloadTask task = new JsonDownloadTask(formats, sourceRootPath);
         task.forceDownload = forceDownload;
         task.result.total += downloadParam.fileParams.size();
-        task.execute(downloadParam);
+        task.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, downloadParam);
     }
 
     /**
@@ -247,7 +251,7 @@ public class EmojiDownloader {
             final EmojiDownloadTask task = new EmojiDownloadTask();
             for(DownloadParam param : downloadParams)
                 task.result.total += param.fileParams.size();
-            task.execute(downloadParams.toArray(new DownloadParam[downloadParams.size()]));
+            task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, downloadParams.toArray(new DownloadParam[downloadParams.size()]));
         }
     }
 

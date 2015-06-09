@@ -3,7 +3,6 @@ package com.emojidex.emojidexandroid;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.widget.Toast;
 
 import java.util.Date;
@@ -36,7 +35,6 @@ class EmojidexUpdater {
         formats.add(EmojiFormat.toFormat(context.getString(R.string.emoji_format_key)));
         return emojidex.download(formats.toArray(new EmojiFormat[formats.size()]), new CustomDownloadListener());
     }
-
 
     /**
      * Custom download listener.
