@@ -2,9 +2,9 @@ package com.emojidex.emojidexandroid;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
@@ -14,20 +14,11 @@ import java.util.List;
 public class CatalogAdapter extends BaseAdapter
 {
     private Context context;
-    private LayoutInflater layoutInflater;
-
     private ArrayList<Drawable> images = new ArrayList<>();
-
-    private static class ViewHolder
-    {
-        public ImageView imageView;
-    }
 
     public CatalogAdapter (Context context, List<Emoji> emojis)
     {
         this.context = context;
-        layoutInflater = LayoutInflater.from(context);
-
         setImages(emojis);
     }
 
@@ -62,21 +53,18 @@ public class CatalogAdapter extends BaseAdapter
     @Override
     public View getView(int position, View convertView, ViewGroup parent)
     {
-        ViewHolder holder;
-        if (convertView == null)
+        ImageView imageView = (ImageView)convertView;
+
+        if (imageView == null)
         {
-            convertView = layoutInflater.inflate(R.layout.grid_item, null);
-            holder = new ViewHolder();
-            holder.imageView = (ImageView)convertView.findViewById(R.id.grid_image);
-            convertView.setTag(holder);
-        }
-        else
-        {
-            holder = (ViewHolder)convertView.getTag();
+            imageView = new ImageView(context);
+            int size = (int)(context.getResources().getDisplayMetrics().density * 75);
+            imageView.setLayoutParams(new AbsListView.LayoutParams(size, size));
+            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
         }
 
-        holder.imageView.setImageDrawable(images.get(position));
+        imageView.setImageDrawable(images.get(position));
 
-        return convertView;
+        return imageView;
     }
 }
