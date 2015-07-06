@@ -88,7 +88,7 @@ public class SendSealActivity extends Activity {
         final String emojiName = getIntent().getStringExtra(Intent.EXTRA_TEXT);
 
         // Download seal.
-        final String url = "https://www.emojidex.com/api/v1/search/emoji?detailed=true&code_sw=" + emojiName + "&code_ew=" + emojiName;
+        final String url = "https://www.emojidex.com/api/v1/emoji/" + emojiName + "?detailed=true";
         final EmojiFormat[] formats = {EmojiFormat.toFormat(getString(R.string.emoji_format_seal))};
         downloader = new EmojiDownloader(this);
         downloader.setListener(new CustomDownloadListener());
