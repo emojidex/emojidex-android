@@ -35,6 +35,7 @@ public class SendSealActivity extends Activity {
     private ProgressDialog dialog = null;
 
     private boolean isCanceled = false;
+    private Uri sealUri = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,11 +125,30 @@ public class SendSealActivity extends Activity {
                 {
                     Log.d(TAG, "Intent send canceled.(Target package name = " + sendIntent.getPackage() + ")");
                 }
+                else if(createTemporaryFile(emojiName))
+                {
+                    sendIntent();
+                }
                 else
                 {
-                    sendIntent.putExtra(Intent.EXTRA_STREAM, getURI(emojiName));
-                    startActivity(sendIntent);
-                    Log.d(TAG, "Intent send succeeded.(Target package name = " + sendIntent.getPackage() + ")");
+                    final AlertDialog.Builder alertDialog = new AlertDialog.Builder(SendSealActivity.this);
+                    alertDialog.setMessage(R.string.send_seal_not_found);
+                    alertDialog.setPositiveButton(R.string.send_seal_not_found_ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    alertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            sendIntent();
+                            finish();
+                        }
+                    });
+                    alertDialog.show();
+
+                    return;
                 }
                 finish();
             }
@@ -138,19 +158,23 @@ public class SendSealActivity extends Activity {
     }
 
     /**
-     * Get URI of send emoji file.
+     * Create temporary file.
      * @param emojiName     Emoji name.
-     * @return              URI of send emoji file.
+     * @return              true if seal exists.
      */
-    private Uri getURI(String emojiName)
+    private boolean createTemporaryFile(String emojiName)
     {
         final Emoji emoji = Emojidex.getInstance().getEmoji(emojiName);
         final File temporaryFile = new File(getExternalCacheDir(), "tmp" + System.currentTimeMillis() + ".png");
+        boolean result = true;
 
         // If file not found, use default format.
         File file = new File(emoji.getImageFilePath(EmojiFormat.toFormat(getString(R.string.emoji_format_seal))));
         if( !file.exists() )
+        {
             file = new File(emoji.getImageFilePath(EmojiFormat.toFormat(getString(R.string.emoji_format_default))));
+            result = false;
+        }
 
         // Create temporary file.
         try
@@ -176,7 +200,17 @@ public class SendSealActivity extends Activity {
             e.printStackTrace();
         }
 
-        return Uri.fromFile(temporaryFile);
+        sealUri = Uri.fromFile(temporaryFile);
+        return result;
+    }
+
+    /**
+     * Send intent.
+     */
+    private void sendIntent() {
+        sendIntent.putExtra(Intent.EXTRA_STREAM, sealUri);
+        startActivity(sendIntent);
+        Log.d(TAG, "Intent send succeeded.(Target package name = " + sendIntent.getPackage() + ")");
     }
 
 

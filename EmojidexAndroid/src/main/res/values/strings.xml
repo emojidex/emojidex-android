@@ -119,6 +119,8 @@
     <string name="send_seal_dialog_title">Seal sending...</string>
     <string name="send_seal_dialog_message">Please wait a moment.</string>
     <string name="send_seal_dialog_cancel">Cancel</string>
+    <string name="send_seal_not_found">Seal is not found.</string>
+    <string name="send_seal_not_found_ok">OK</string>
 
     <!-- Japanese not needed -->
     <string name="ime_category_id_history" translatable="false">history</string>

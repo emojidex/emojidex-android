@@ -118,5 +118,7 @@
     <string name="send_seal_dialog_title">シール送信中……</string>
     <string name="send_seal_dialog_message">しばらくお待ちください。</string>
     <string name="send_seal_dialog_cancel">キャンセル</string>
+    <string name="send_seal_not_found">シールが見つかりません。</string>
+    <string name="send_seal_not_found_ok">OK</string>
 
 </resources>
