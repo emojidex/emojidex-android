@@ -1,7 +1,5 @@
 package com.emojidex.emojidexandroid;
 
-import android.util.Log;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
