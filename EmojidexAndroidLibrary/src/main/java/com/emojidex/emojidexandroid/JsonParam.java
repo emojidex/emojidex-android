@@ -23,6 +23,7 @@ class JsonParam extends SimpleJsonParam {
     @JsonProperty("code_ja")    protected String name_ja = null;
     @JsonProperty("checksums")  protected Checksums checksums = null;
     @JsonProperty("variants")   protected List<String> variants = null;
+    @JsonProperty("base")       protected String base = null;
 
     public static class Checksums
     {

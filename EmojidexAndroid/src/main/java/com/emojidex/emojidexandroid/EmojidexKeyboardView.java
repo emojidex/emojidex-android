@@ -5,6 +5,7 @@ import android.content.ClipDescription;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.util.AttributeSet;
@@ -15,9 +16,12 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
 
 /**
  * Created by nazuki on 14/01/08.
@@ -28,7 +32,13 @@ public class EmojidexKeyboardView extends KeyboardView {
 
     protected PopupWindow popup;
     protected Keyboard.Key key;
+
+    protected TextView popupTextView;
+    protected ImageView popupIcon;
+    protected LinearLayout variantsLayout;
     protected String emojiName;
+    protected EmojiFormat format;
+    protected final float iconSize;
 
     protected ImageButton imageButton;
     protected boolean first;
@@ -44,6 +54,9 @@ public class EmojidexKeyboardView extends KeyboardView {
         super(context, attrs, defStyle);
         this.context = context;
         this.inflater = LayoutInflater.from(context);
+
+        format = EmojiFormat.toFormat(context.getResources().getString(R.string.emoji_format_key));
+        iconSize = context.getResources().getDimension(R.dimen.ime_key_icon_size);
     }
 
     /**
@@ -80,9 +93,9 @@ public class EmojidexKeyboardView extends KeyboardView {
         popup.showAtLocation(this, Gravity.CENTER, 0, -this.getHeight());
 
         // Set emoji data.
-        TextView textView = (TextView)view.findViewById(R.id.favorite_name);
-        textView.setText(":" + key.popupCharacters + ":");
-        textView.setOnLongClickListener(new OnLongClickListener() {
+        popupTextView = (TextView)view.findViewById(R.id.favorite_name);
+        popupTextView.setText(":" + key.popupCharacters + ":");
+        popupTextView.setOnLongClickListener(new OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 ClipboardManager manager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
@@ -95,8 +108,8 @@ public class EmojidexKeyboardView extends KeyboardView {
                 return true;
             }
         });
-        ImageView icon = (ImageView)view.findViewById(R.id.popup_favorite_image);
-        icon.setImageDrawable(key.icon);
+        popupIcon = (ImageView)view.findViewById(R.id.popup_favorite_image);
+        popupIcon.setImageDrawable(key.icon);
 
         // Set register button.
         imageButton = (ImageButton)view.findViewById(R.id.favorite_register_button);
@@ -129,6 +142,74 @@ public class EmojidexKeyboardView extends KeyboardView {
                 context.startActivity(proxyIntent);
             }
         });
+
+        // Set variants.
+        variantsLayout = (LinearLayout) view.findViewById(R.id.favorite_variants);
+        setVariants();
+    }
+
+    protected void setVariants()
+    {
+        final Emojidex emojidex = Emojidex.getInstance();
+        Emoji emoji = emojidex.getEmoji(emojiName);
+
+        if (emoji == null || emoji.getVariants().size() == 0 && emoji.getBase() == null) return;
+
+        if (emoji.getBase() != null)
+        {
+            emoji = emojidex.getEmoji(emoji.getBase());
+        }
+
+        ArrayList<Emoji> variants = new ArrayList<>();
+        if (emoji.getVariants().size() != 0)
+        {
+            variants.add(emoji);
+
+            for (String name : emoji.getVariants())
+            {
+                Emoji variant = emojidex.getEmoji(name);
+                variants.add(variant);
+            }
+        }
+
+        variantsLayout.removeAllViews();
+        for (final Emoji variant : variants)
+        {
+            ImageButton button = new ImageButton(context);
+            button.setImageDrawable(variant.getDrawable(emojidex.getDefaultFormat()));
+            button.setBackground(null);
+            button.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int[] keyCodes = new int[variant.getCodes().size()];
+                    for(int i = 0;  i < variant.getCodes().size(); i++)
+                        keyCodes[i] = variant.getCodes().get(i);
+                    // TODO: 正しい入力先が取得できない
+                    getOnKeyboardActionListener().onKey(variant.getCodes().get(0), keyCodes);
+                }
+            });
+            button.setOnLongClickListener(new OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    changeEmoji(variant);
+                    return true;
+                }
+            });
+            variantsLayout.addView(button);
+        }
+    }
+
+    protected void changeEmoji(Emoji emoji)
+    {
+        emojiName = emoji.getName();
+        popupTextView.setText(":" + emojiName + ":");
+
+        final BitmapDrawable icon = emoji.getDrawable(format);
+        icon.setTargetDensity((int) (icon.getBitmap().getDensity() * iconSize / icon.getIntrinsicWidth()));
+        popupIcon.setImageDrawable(icon);
+
+        setCurrentState();
+        setVariants();
     }
 
     /**
