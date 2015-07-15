@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by kou on 14/10/10.
@@ -21,6 +22,7 @@ import java.util.HashMap;
 class JsonParam extends SimpleJsonParam {
     @JsonProperty("code_ja")    protected String name_ja = null;
     @JsonProperty("checksums")  protected Checksums checksums = null;
+    @JsonProperty("variants")   protected List<String> variants = null;
 
     public static class Checksums
     {

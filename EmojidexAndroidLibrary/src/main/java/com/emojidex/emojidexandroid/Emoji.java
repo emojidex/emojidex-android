@@ -23,6 +23,7 @@ public class Emoji extends SimpleJsonParam {
 
     private final List<Integer> codes = new ArrayList<Integer>();
     private final WeakReference<Bitmap>[] bitmaps = new WeakReference[EmojiFormat.values().length];
+    private final List<String> variants = new ArrayList<>();
 
     private Resources res;
     private boolean hasOriginalCodes = false;
@@ -156,6 +157,11 @@ public class Emoji extends SimpleJsonParam {
     public boolean hasOriginalCodes()
     {
         return hasOriginalCodes;
+    }
+
+    public List<String> getVariants()
+    {
+        return variants;
     }
 
     /**
