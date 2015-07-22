@@ -185,7 +185,8 @@ public class EmojidexKeyboardView extends KeyboardView {
                     for(int i = 0;  i < variant.getCodes().size(); i++)
                         keyCodes[i] = variant.getCodes().get(i);
                     // TODO: 正しい入力先が取得できない
-                    getOnKeyboardActionListener().onKey(variant.getCodes().get(0), keyCodes);
+                    ((EmojidexIME.CustomOnKeyboardActionListener)getOnKeyboardActionListener()).changeKeyboard(variant);
+//                    getOnKeyboardActionListener().onKey(variant.getCodes().get(0), keyCodes);
                 }
             });
             button.setOnLongClickListener(new OnLongClickListener() {

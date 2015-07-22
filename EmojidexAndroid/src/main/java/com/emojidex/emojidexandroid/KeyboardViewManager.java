@@ -137,6 +137,10 @@ public class KeyboardViewManager {
         return views;
     }
 
+    public int getCurrentPage() {
+        return currentPage;
+    }
+
     /**
      * Initialize page.
      * @param destIndex

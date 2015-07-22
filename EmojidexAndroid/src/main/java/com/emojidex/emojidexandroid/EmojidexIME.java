@@ -542,7 +542,7 @@ public class EmojidexIME extends InputMethodService {
     /**
      * Custom OnKeyboardActionListener.
      */
-    private class CustomOnKeyboardActionListener implements KeyboardView.OnKeyboardActionListener
+    public class CustomOnKeyboardActionListener implements KeyboardView.OnKeyboardActionListener
     {
         @Override
         public void onPress(int primaryCode) {
@@ -645,8 +645,41 @@ public class EmojidexIME extends InputMethodService {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }
-    }
 
+        public void changeKeyboard(Emoji emoji) {
+            keyboardViewManager.getCurrentView().closePopup();
+            ViewGroup categoriesView = (ViewGroup)layout.findViewById(R.id.ime_categories);
+
+            boolean exist = false;
+            for (int i = 0; i < categoriesView.getChildCount(); i++) {
+                RadioButton button = (RadioButton)categoriesView.getChildAt(i);
+
+                if (button.getContentDescription().equals(emoji.getCategory())) {
+                    button.performClick();
+                    exist = true;
+                    break;
+                }
+            }
+
+            if (exist) searchKey(emoji);
+        }
+
+        private void searchKey(Emoji emoji) {
+            EmojidexKeyboardView view = keyboardViewManager.getCurrentView();
+            List<Keyboard.Key> keys = view.getKeyboard().getKeys();
+
+            for (Keyboard.Key k : keys) {
+                if (k.popupCharacters == emoji.name)
+                    return;
+            }
+
+            keyboardViewManager.next();
+            keyboardViewFlipper.showNext();
+
+            if (keyboardViewManager.getCurrentPage() != 0)
+                searchKey(emoji);
+        }
+    }
 
     /**
      * Custom OnGestureListener.
