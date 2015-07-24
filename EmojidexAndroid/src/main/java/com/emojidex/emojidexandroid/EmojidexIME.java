@@ -539,10 +539,36 @@ public class EmojidexIME extends InputMethodService {
         for (File f : list) f.delete();
     }
 
+    public void changeKeyboard(Emoji emoji) {
+        // If current category is not have emoji, change category.
+        final String emojiCategory = emoji.getCategory();
+        if(     !currentCategory.equals(getString(R.string.all_category))
+            &&  !currentCategory.equals(emojiCategory) )
+        {
+            final ViewGroup categoriesView = (ViewGroup)layout.findViewById(R.id.ime_categories);
+            final int count = categoriesView.getChildCount();
+            for(int i = 0;  i < count;  ++i)
+            {
+                Button button = (Button)categoriesView.getChildAt(i);
+                if(emojiCategory.equals(button.getContentDescription()))
+                {
+                    button.performClick();
+                    break;
+                }
+            }
+        }
+
+        // Set page.
+        keyboardViewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_in));
+        keyboardViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_out));
+        keyboardViewManager.setPage(emoji.getName());
+        keyboardViewFlipper.showNext();
+    }
+
     /**
      * Custom OnKeyboardActionListener.
      */
-    public class CustomOnKeyboardActionListener implements KeyboardView.OnKeyboardActionListener
+    private class CustomOnKeyboardActionListener implements KeyboardView.OnKeyboardActionListener
     {
         @Override
         public void onPress(int primaryCode) {
@@ -644,40 +670,6 @@ public class EmojidexIME extends InputMethodService {
             final Intent intent = new Intent(EmojidexIME.this, SearchActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
-        }
-
-        public void changeKeyboard(Emoji emoji) {
-            keyboardViewManager.getCurrentView().closePopup();
-            ViewGroup categoriesView = (ViewGroup)layout.findViewById(R.id.ime_categories);
-
-            boolean exist = false;
-            for (int i = 0; i < categoriesView.getChildCount(); i++) {
-                RadioButton button = (RadioButton)categoriesView.getChildAt(i);
-
-                if (button.getContentDescription().equals(emoji.getCategory())) {
-                    button.performClick();
-                    exist = true;
-                    break;
-                }
-            }
-
-            if (exist) searchKey(emoji);
-        }
-
-        private void searchKey(Emoji emoji) {
-            EmojidexKeyboardView view = keyboardViewManager.getCurrentView();
-            List<Keyboard.Key> keys = view.getKeyboard().getKeys();
-
-            for (Keyboard.Key k : keys) {
-                if (k.popupCharacters == emoji.name)
-                    return;
-            }
-
-            keyboardViewManager.next();
-            keyboardViewFlipper.showNext();
-
-            if (keyboardViewManager.getCurrentPage() != 0)
-                searchKey(emoji);
         }
     }
 

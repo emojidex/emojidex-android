@@ -102,6 +102,42 @@ public class KeyboardViewManager {
     }
 
     /**
+     * Change view to specified page.
+     * @param page  page number.
+     */
+    public void setPage(int page)
+    {
+        currentView = (currentView + 1) % PAGE_COUNT;
+        currentPage = page % pages.size();
+
+        initializePage(currentView, currentPage);
+    }
+
+    /**
+     * Change view to specified emoji name.
+     * @param emojiName     Emoji name.
+     */
+    public void setPage(String emojiName)
+    {
+        final int count = pages.size();
+        for(int i = 0;  i < count;  ++i)
+        {
+            final List<Emoji> page = pages.get(i);
+            for(Emoji emoji : page)
+            {
+                if( emoji.name.equals(emojiName) )
+                {
+                    setPage(i);
+                    return;
+                }
+            }
+        }
+
+        // If not found.
+        setPage(0);
+    }
+
+    /**
      * Get current view.
      * @return  Current view.
      */
@@ -135,10 +171,6 @@ public class KeyboardViewManager {
     public EmojidexKeyboardView[] getViews()
     {
         return views;
-    }
-
-    public int getCurrentPage() {
-        return currentPage;
     }
 
     /**
