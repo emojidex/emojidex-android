@@ -86,7 +86,7 @@ public class EmojidexKeyboardView extends KeyboardView {
         popup = new PopupWindow(this);
         popup.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.background_blank));
         popup.setOutsideTouchable(true);
-        popup.setFocusable(true);
+        popup.setFocusable(false);
         popup.setContentView(view);
         popup.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
         popup.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
@@ -181,13 +181,14 @@ public class EmojidexKeyboardView extends KeyboardView {
             button.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    int[] keyCodes = new int[variant.getCodes().size()];
-                    for(int i = 0;  i < variant.getCodes().size(); i++)
-                        keyCodes[i] = variant.getCodes().get(i);
-                    // TODO: 正しい入力先が取得できない
-                    closePopup();
+                    // Input emoji to current input connection.
+                    EmojidexIME.currentInstance.commitEmoji(variant);
+
+                    // Change keyboard page.
                     EmojidexIME.currentInstance.changeKeyboard(variant);
-//                    getOnKeyboardActionListener().onKey(variant.getCodes().get(0), keyCodes);
+
+                    // Close popup.
+                    closePopup();
                 }
             });
             button.setOnLongClickListener(new OnLongClickListener() {

@@ -539,7 +539,17 @@ public class EmojidexIME extends InputMethodService {
         for (File f : list) f.delete();
     }
 
-    public void changeKeyboard(Emoji emoji) {
+    /**
+     * Commit emoji to current input connection..
+     * @param emoji     Emoji.
+     */
+    void commitEmoji(Emoji emoji)
+    {
+        getCurrentInputConnection().commitText(emoji.toEmojidexString(), 1);
+        historyManager.addFirst(emoji.getName());
+    }
+
+    void changeKeyboard(Emoji emoji) {
         // If current category is not have emoji, change category.
         final String emojiCategory = emoji.getCategory();
         if(     !currentCategory.equals(getString(R.string.all_category))
@@ -622,8 +632,7 @@ public class EmojidexIME extends InputMethodService {
                 final Emoji emoji = emojidex.getEmoji(codes);
                 if(emoji != null)
                 {
-                    getCurrentInputConnection().commitText(emoji.toEmojidexString(), 1);
-                    historyManager.addFirst(emoji.getName());
+                    commitEmoji(emoji);
                 }
                 // Input enter key.
                 else if(primaryCode == KeyEvent.KEYCODE_ENTER && imeOptions != EditorInfo.IME_ACTION_NONE)
