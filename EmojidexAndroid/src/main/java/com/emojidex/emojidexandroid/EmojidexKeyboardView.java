@@ -5,6 +5,7 @@ import android.content.ClipDescription;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.util.AttributeSet;
@@ -18,6 +19,10 @@ import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.nhaarman.supertooltips.ToolTip;
+import com.nhaarman.supertooltips.ToolTipRelativeLayout;
+import com.nhaarman.supertooltips.ToolTipView;
 
 /**
  * Created by nazuki on 14/01/08.
@@ -127,6 +132,20 @@ public class EmojidexKeyboardView extends KeyboardView {
                 proxyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
                 context.startActivity(proxyIntent);
+            }
+        });
+
+        ToolTipRelativeLayout toolTipRelativeLayout = (ToolTipRelativeLayout)view.findViewById(R.id.popup_tooltip1);
+        ToolTip toolTip = new ToolTip()
+                .withText("Send seal!")
+                .withColor(Color.WHITE)
+                .withShadow()
+                .withAnimationType(ToolTip.AnimationType.FROM_TOP);
+        ToolTipView myToolTipView = toolTipRelativeLayout.showToolTipForView(toolTip, sealSendButton);
+        myToolTipView.setOnToolTipViewClickedListener(new ToolTipView.OnToolTipViewClickedListener() {
+            @Override
+            public void onToolTipViewClicked(ToolTipView toolTipView) {
+
             }
         });
     }

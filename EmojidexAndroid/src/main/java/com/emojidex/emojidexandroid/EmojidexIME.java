@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
@@ -26,6 +27,10 @@ import android.widget.HorizontalScrollView;
 import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.ViewFlipper;
+
+import com.nhaarman.supertooltips.ToolTip;
+import com.nhaarman.supertooltips.ToolTipRelativeLayout;
+import com.nhaarman.supertooltips.ToolTipView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -66,6 +71,8 @@ public class EmojidexIME extends InputMethodService {
     private KeyboardViewManager keyboardViewManager;
 
     private String currentCategory = null;
+
+    private ToolTipView toolTipView;
 
     /**
      * Construct EmojidexIME object.
@@ -197,6 +204,29 @@ public class EmojidexIME extends InputMethodService {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         hideWindow();
+    }
+
+    @Override
+    public void showWindow(boolean showInput) {
+        super.showWindow(showInput);
+
+        if (toolTipView == null || !toolTipView.isShown()) {
+            ViewGroup categoriesView = (ViewGroup) layout.findViewById(R.id.ime_categories);
+            RadioButton button = (RadioButton) categoriesView.getChildAt(0);
+            ToolTipRelativeLayout toolTipRelativeLayout = (ToolTipRelativeLayout) layout.findViewById(R.id.ime_tooltip1);
+            ToolTip toolTip = new ToolTip()
+                    .withText("Please long press.")
+                    .withColor(Color.WHITE)
+                    .withShadow()
+                    .withAnimationType(ToolTip.AnimationType.FROM_MASTER_VIEW);
+            toolTipView = toolTipRelativeLayout.showToolTipForView(toolTip, button);
+            toolTipView.setOnToolTipViewClickedListener(new ToolTipView.OnToolTipViewClickedListener() {
+                @Override
+                public void onToolTipViewClicked(ToolTipView toolTipView) {
+
+                }
+            });
+        }
     }
 
     @Override
