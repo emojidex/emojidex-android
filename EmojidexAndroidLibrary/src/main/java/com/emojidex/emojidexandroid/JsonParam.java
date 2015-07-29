@@ -39,11 +39,23 @@ class JsonParam extends SimpleJsonParam {
         try
         {
             final InputStream is = new FileInputStream(file);
-            final TypeReference<ArrayList<JsonParam>> typeReference = new TypeReference<ArrayList<JsonParam>>(){};
-            final JsonNode jsonNode = objectMapper.readTree(is);
-            final JsonParser jsonParser = jsonNode.has("emoji") ? jsonNode.get("emoji").traverse() : jsonNode.traverse();
-            final ArrayList<JsonParam> result = objectMapper.readValue(jsonParser, typeReference);
+            JsonNode jsonNode = objectMapper.readTree(is);
             is.close();
+            if(jsonNode.has("emoji"))
+                jsonNode = jsonNode.get("emoji");
+
+            final JsonParser jsonParser = jsonNode.traverse();
+            ArrayList<JsonParam> result;
+            if(jsonNode.isArray())
+            {
+                final TypeReference<ArrayList<JsonParam>> typeReference = new TypeReference<ArrayList<JsonParam>>(){};
+                result = objectMapper.readValue(jsonParser, typeReference);
+            }
+            else
+            {
+                result = new ArrayList<JsonParam>();
+                result.add(objectMapper.readValue(jsonParser, JsonParam.class));
+            }
             return result;
         }
         catch(IOException e)

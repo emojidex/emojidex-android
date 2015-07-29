@@ -190,7 +190,8 @@ public class SearchActivity extends Activity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                final String url = "https://www.emojidex.com/api/v1/search/emoji?detailed=true&code_cont=" + searchText + (category == null ? "" : "&categories[]=" + category);
+                final String escapeText = searchText.replaceAll("[\\\\()]", "\\\\$0");
+                final String url = "https://www.emojidex.com/api/v1/search/emoji?detailed=true&code_cont=" + escapeText + (category == null ? "" : "&categories[]=" + category);
 
                 final LinkedHashSet<EmojiFormat> formats = new LinkedHashSet<EmojiFormat>();
                 formats.add(EmojiFormat.toFormat(getString(R.string.emoji_format_default)));
