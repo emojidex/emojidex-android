@@ -3,7 +3,6 @@ package com.emojidex.emojidexandroid;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,7 +20,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,10 +29,7 @@ public class SendSealActivity extends Activity {
     static final String TAG = MainActivity.TAG + "::SendSealActivity";
 
     private final Intent sendIntent = new Intent(Intent.ACTION_SEND);
-    private EmojiDownloader downloader = null;
-    private ProgressDialog dialog = null;
 
-    private boolean isCanceled = false;
     private Uri sealUri = null;
 
     @Override
@@ -89,39 +84,12 @@ public class SendSealActivity extends Activity {
         final String emojiName = getIntent().getStringExtra(Intent.EXTRA_TEXT);
 
         // Download seal.
-        final String url = "https://www.emojidex.com/api/v1/emoji/" + emojiName + "?detailed=true";
-        final EmojiFormat[] formats = {EmojiFormat.toFormat(getString(R.string.emoji_format_seal))};
-        downloader = new EmojiDownloader(this);
-        downloader.setListener(new CustomDownloadListener());
-        downloader.add(url, formats, PathUtils.getRemoteRootPathDefault() + "/emoji");
+        final SealDownloader downloader = new SealDownloader(this);
 
-        // Show downloading dialog.
-        dialog = new ProgressDialog(this);
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.setTitle(R.string.send_seal_dialog_title);
-        dialog.setMessage(getString(R.string.send_seal_dialog_message));
-
-        dialog.setButton(
-                DialogInterface.BUTTON_NEGATIVE,
-                getString(R.string.send_seal_dialog_cancel),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                }
-        );
-        dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialog) {
-                downloader.cancel();
-                isCanceled = true;
-            }
-        });
-        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        downloader.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-                if(isCanceled)
+                if(downloader.isCanceled())
                 {
                     Log.d(TAG, "Intent send canceled.(Target package name = " + sendIntent.getPackage() + ")");
                 }
@@ -154,7 +122,7 @@ public class SendSealActivity extends Activity {
             }
         });
 
-        dialog.show();
+        downloader.download(emojiName);
     }
 
     /**
@@ -211,37 +179,5 @@ public class SendSealActivity extends Activity {
         sendIntent.putExtra(Intent.EXTRA_STREAM, sealUri);
         startActivity(sendIntent);
         Log.d(TAG, "Intent send succeeded.(Target package name = " + sendIntent.getPackage() + ")");
-    }
-
-
-    /**
-     * Custom download listener.
-     */
-    private class CustomDownloadListener extends DownloadListener
-    {
-        @Override
-        public void onPostOneJsonDownload(String source, String destination) {
-            super.onPostOneJsonDownload(source, destination);
-
-            // Replace whitespace to underbar.
-            final File file = new File(destination);
-            final ArrayList<JsonParam> emojies = JsonParam.readFromFile(file);
-            for(JsonParam emoji : emojies)
-            {
-                emoji.name = emoji.name.replaceAll(" ", "_");
-            }
-            JsonParam.writeToFile(file, emojies);
-        }
-
-        @Override
-        public void onFinish() {
-            super.onFinish();
-
-            if(dialog != null)
-            {
-                dialog.dismiss();
-                dialog = null;
-            }
-        }
     }
 }
