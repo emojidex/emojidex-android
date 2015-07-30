@@ -1,6 +1,8 @@
 package com.emojidex.emojidexandroid;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -37,6 +39,19 @@ public class CatalogActivity extends Activity
         initData();
         initGridView();
         initCategory();
+
+        // Check intent.
+        final Intent intent = getIntent();
+        final String action = intent.getAction();
+        final String type = intent.getType();
+
+        if(action.equals(Intent.ACTION_PICK))
+        {
+            if("image/png".equals(type))
+            {
+                // nop?
+            }
+        }
     }
 
     private void initData()
@@ -138,13 +153,47 @@ public class CatalogActivity extends Activity
 
     private void sendEmoji(Emoji emoji)
     {
-        historyManager.addFirst(emoji.getName());
+        final SealDownloader downloader = new SealDownloader(this);
+        final String emojiName = emoji.getName();
 
-        // TODO: シールを送る
-//        Intent intent = new Intent(this, SendSealActivity.class);
-//        intent.putExtra(Intent.EXTRA_TEXT, emoji.getName());
-//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        startActivity(intent);
+        downloader.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                historyManager.addFirst(emojiName);
+
+                final SealGenerator generator = new SealGenerator(CatalogActivity.this);
+                generator.generate(emojiName);
+
+                final Intent resultIntent = new Intent();
+                resultIntent.setData(generator.getUri());
+                setResult(RESULT_OK, resultIntent);
+
+                if(generator.useLowQuality())
+                {
+                    final AlertDialog.Builder alertDialog = new AlertDialog.Builder(CatalogActivity.this);
+                    alertDialog.setMessage(R.string.send_seal_not_found);
+                    alertDialog.setPositiveButton(R.string.send_seal_not_found_ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    alertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            finish();
+                        }
+                    });
+                    alertDialog.show();
+
+                    return;
+                }
+
+                finish();
+            }
+        });
+
+        downloader.download(emojiName);
     }
 
     private ArrayList<Emoji> createEmojiList(List<String> emojiNames)
