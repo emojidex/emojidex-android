@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by nazuki on 14/01/08.
@@ -153,27 +154,33 @@ public class EmojidexKeyboardView extends KeyboardView {
         final Emojidex emojidex = Emojidex.getInstance();
         Emoji emoji = emojidex.getEmoji(emojiName);
 
-        if (emoji == null || emoji.getVariants().size() == 0 && emoji.getBase() == null) return;
+        // Skip if emoji is not found.
+        if(emoji == null)
+            return;
 
-        if (emoji.getBase() != null)
+        // Reference base emoji if has base emoji.
+        final String base = emoji.getBase();
+        if(base != null)
         {
-            emoji = emojidex.getEmoji(emoji.getBase());
+            emoji = emojidex.getEmoji(base);
+            if(emoji == null)
+                return;
         }
 
-        ArrayList<Emoji> variants = new ArrayList<>();
-        if (emoji.getVariants().size() != 0)
-        {
-            variants.add(emoji);
+        // Skip if emoji not has variants.
+        final List<String> variants = emoji.getVariants();
+        if(variants == null || variants.isEmpty())
+            return;
 
-            for (String name : emoji.getVariants())
-            {
-                Emoji variant = emojidex.getEmoji(name);
-                variants.add(variant);
-            }
-        }
+        // Create variants emoji list.
+        final ArrayList<Emoji> variantsEmojies = new ArrayList<Emoji>();
+        variantsEmojies.add(emoji);
+        for (String name : variants)
+            variantsEmojies.add(emojidex.getEmoji(name));
 
+        // Create variants buttons.
         variantsLayout.removeAllViews();
-        for (final Emoji variant : variants)
+        for (final Emoji variant : variantsEmojies)
         {
             ImageButton button = new ImageButton(context);
             button.setImageDrawable(variant.getDrawable(emojidex.getDefaultFormat()));
