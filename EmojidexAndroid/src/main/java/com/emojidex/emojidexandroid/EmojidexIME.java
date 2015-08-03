@@ -363,6 +363,16 @@ public class EmojidexIME extends InputMethodService {
      */
     public void changeCategory(String category)
     {
+        changeCategory(category, 0);
+    }
+
+    /**
+     * Change category.
+     * @param category      Category.
+     * @param defaultPage   Default page number.
+     */
+    public void changeCategory(String category, int defaultPage)
+    {
         if( category == null ||
             (currentCategory != null && currentCategory.equals(category))   )
             return;
@@ -372,22 +382,22 @@ public class EmojidexIME extends InputMethodService {
         if(category.equals(getString(R.string.ime_category_id_history)))
         {
             final List<String> emojiNames = historyManager.getEmojiNames();
-            keyboardViewManager.initializeFromName(emojiNames);
+            keyboardViewManager.initializeFromName(emojiNames, defaultPage);
         }
         else if(category.equals(getString(R.string.ime_category_id_search)))
         {
             final List<String> emojiNames = searchManager.getEmojiNames();
-            keyboardViewManager.initializeFromName(emojiNames);
+            keyboardViewManager.initializeFromName(emojiNames, defaultPage);
         }
         else if(category.equals(getString(R.string.ime_category_id_all)))
         {
             final List<Emoji> emojies = emojidex.getAllEmojiList();
-            keyboardViewManager.initialize(emojies);
+            keyboardViewManager.initialize(emojies, defaultPage);
         }
         else
         {
             final List<Emoji> emojies = emojidex.getEmojiList(category);
-            keyboardViewManager.initialize(emojies);
+            keyboardViewManager.initialize(emojies, defaultPage);
         }
     }
 
@@ -524,7 +534,7 @@ public class EmojidexIME extends InputMethodService {
     {
         final String category = currentCategory;
         currentCategory = null;
-        changeCategory(category);
+        changeCategory(category, keyboardViewManager.getCurrentPage());
     }
 
     /**

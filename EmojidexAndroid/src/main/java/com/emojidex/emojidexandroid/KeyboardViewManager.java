@@ -50,10 +50,19 @@ public class KeyboardViewManager {
      */
     public void initialize(List<Emoji> emojies)
     {
-        currentPage = 0;
+        initialize(emojies, 0);
+    }
 
+    /**
+     * Initialize manager.
+     * @param emojies       Emoji of regist to manager.
+     * @param defaultPage   Default page number.
+     */
+    public void initialize(List<Emoji> emojies, int defaultPage)
+    {
         pages.clear();
 
+        // Create pages.
         final int keyCountMax = keyboards[0].getKeyCountMax();
         final int emojiCount = emojies == null ? 0 : emojies.size();
         for(int i = 0;  i < emojiCount;  i += keyCountMax)
@@ -67,16 +76,34 @@ public class KeyboardViewManager {
         if(pages.isEmpty())
             pages.add(new ArrayList<Emoji>());
 
+        // Set default page.
+        currentPage = defaultPage % pages.size();
+
+        // Apply page to view.
         initializePage(currentView, currentPage);
     }
 
+    /**
+     * Initialize manager from emoji name.
+     * @param emojiNames    Emoji name of regist to manager.
+     */
     public void initializeFromName(List<String> emojiNames)
+    {
+        initializeFromName(emojiNames, 0);
+    }
+
+    /**
+     * Initialize manager from emoji name.
+     * @param emojiNames    Emoji name of regist to manager.
+     * @param defaultPage   Default page number.
+     */
+    public void initializeFromName(List<String> emojiNames, int defaultPage)
     {
         final Emojidex emojidex = Emojidex.getInstance();
         final ArrayList<Emoji> emojies = new ArrayList<Emoji>(emojiNames.size());
         for(String emojiName : emojiNames)
             emojies.add(emojidex.getEmoji(emojiName));
-        initialize(emojies);
+        initialize(emojies, defaultPage);
     }
 
     /**
@@ -171,6 +198,15 @@ public class KeyboardViewManager {
     public EmojidexKeyboardView[] getViews()
     {
         return views;
+    }
+
+    /**
+     * Get current page number.
+     * @return  Current page number.
+     */
+    public int getCurrentPage()
+    {
+        return currentPage;
     }
 
     /**
