@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">emojidex</string>
+    <string name="app_name_catalog">emojidex catalog</string>
     <string name="action_settings">設定</string>
 
     <string name="menu_text_copy">テキストコピー</string>
