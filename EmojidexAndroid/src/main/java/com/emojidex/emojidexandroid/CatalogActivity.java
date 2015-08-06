@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -28,6 +29,8 @@ public class CatalogActivity extends Activity
     private boolean showResult = false;
     private RadioButton searchButton;
 
+    private boolean isPick = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -47,9 +50,9 @@ public class CatalogActivity extends Activity
 
         if(action.equals(Intent.ACTION_PICK))
         {
-            if("image/png".equals(type))
+            if("image/png".equals(type) || "image/*".equals(type))
             {
-                // nop?
+                isPick = true;
             }
         }
     }
@@ -164,10 +167,6 @@ public class CatalogActivity extends Activity
                 final SealGenerator generator = new SealGenerator(CatalogActivity.this);
                 generator.generate(emojiName);
 
-                final Intent resultIntent = new Intent();
-                resultIntent.setData(generator.getUri());
-                setResult(RESULT_OK, resultIntent);
-
                 if(generator.useLowQuality())
                 {
                     final AlertDialog.Builder alertDialog = new AlertDialog.Builder(CatalogActivity.this);
@@ -181,7 +180,7 @@ public class CatalogActivity extends Activity
                     alertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                         @Override
                         public void onDismiss(DialogInterface dialog) {
-                            finish();
+                            sendIntent(generator.getUri());
                         }
                     });
                     alertDialog.show();
@@ -189,11 +188,30 @@ public class CatalogActivity extends Activity
                     return;
                 }
 
-                finish();
+                sendIntent(generator.getUri());
             }
         });
 
         downloader.download(emojiName);
+    }
+
+    private void sendIntent(Uri uri)
+    {
+        if(isPick)
+        {
+            final Intent intent = new Intent();
+            intent.setData(uri);
+            setResult(RESULT_OK, intent);
+        }
+        else
+        {
+            final Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("image/png");
+            intent.putExtra(Intent.EXTRA_STREAM, uri);
+            startActivity(Intent.createChooser(intent, null));
+        }
+
+        finish();
     }
 
     private ArrayList<Emoji> createEmojiList(List<String> emojiNames)
