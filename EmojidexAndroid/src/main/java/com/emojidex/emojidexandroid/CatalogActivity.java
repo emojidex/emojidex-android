@@ -162,6 +162,9 @@ public class CatalogActivity extends Activity
         downloader.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
+                if(downloader.isCanceled())
+                    return;
+
                 historyManager.addFirst(emojiName);
 
                 final SealGenerator generator = new SealGenerator(CatalogActivity.this);
