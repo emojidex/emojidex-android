@@ -182,8 +182,10 @@ public class EmojidexKeyboardView extends KeyboardView {
         variantsLayout.removeAllViews();
         for (final Emoji variant : variantsEmojies)
         {
-            ImageButton button = new ImageButton(context);
-            button.setImageDrawable(variant.getDrawable(emojidex.getDefaultFormat()));
+            final ImageButton button = new ImageButton(context);
+            final BitmapDrawable drawable = variant.getDrawable(format);
+            drawable.setTargetDensity((int) (drawable.getBitmap().getDensity() * iconSize / drawable.getIntrinsicWidth()));
+            button.setImageDrawable(drawable);
             button.setBackground(null);
             button.setOnClickListener(new OnClickListener() {
                 @Override
