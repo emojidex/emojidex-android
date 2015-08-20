@@ -8,12 +8,16 @@ import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -36,6 +40,9 @@ public class EmojidexKeyboardView extends KeyboardView {
 
     protected TextView popupTextView;
     protected ImageView popupIcon;
+    protected LinearLayout variantsLayoutArea;
+    protected View variantsArrowLeft;
+    protected View variantsArrowRight;
     protected LinearLayout variantsLayout;
     protected String emojiName;
     protected EmojiFormat format;
@@ -145,7 +152,38 @@ public class EmojidexKeyboardView extends KeyboardView {
         });
 
         // Set variants.
-        variantsLayout = (LinearLayout) view.findViewById(R.id.favorite_variants);
+        final Context viewContext = view.getContext();
+        final FrameLayout variantsMain = (FrameLayout)view.findViewById(R.id.favorite_variants_main);
+        final HorizontalScrollView scrollView = new CustomHorizontalScrollView(viewContext);
+        variantsLayout = new LinearLayout(viewContext);
+        variantsLayout.setOrientation(LinearLayout.HORIZONTAL);
+        scrollView.addView(variantsLayout);
+        variantsMain.addView(scrollView);
+
+        variantsLayoutArea = (LinearLayout)view.findViewById(R.id.favorite_variants_area);
+
+        final int repeatInterval = 100;
+        final int scrollSpeed = 500 * repeatInterval / 1000;
+
+        variantsArrowLeft = view.findViewById(R.id.favorite_variants_button_left);
+        new RepeatClickHelper(variantsArrowLeft, repeatInterval);
+        variantsArrowLeft.setVisibility(INVISIBLE);
+        variantsArrowLeft.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                scrollView.smoothScrollBy(-scrollSpeed, 0);
+            }
+        });
+
+        variantsArrowRight = view.findViewById(R.id.favorite_variants_button_right);
+        new RepeatClickHelper(variantsArrowRight, repeatInterval);
+        variantsArrowRight.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                scrollView.smoothScrollBy(scrollSpeed, 0);
+            }
+        });
+
         setVariants();
     }
 
@@ -153,6 +191,8 @@ public class EmojidexKeyboardView extends KeyboardView {
     {
         final Emojidex emojidex = Emojidex.getInstance();
         Emoji emoji = emojidex.getEmoji(emojiName);
+
+        variantsLayoutArea.setVisibility(GONE);
 
         // Skip if emoji is not found.
         if(emoji == null)
@@ -209,6 +249,9 @@ public class EmojidexKeyboardView extends KeyboardView {
             });
             variantsLayout.addView(button);
         }
+
+        // Visible variants are.
+        variantsLayoutArea.setVisibility(VISIBLE);
     }
 
     protected void changeEmoji(Emoji emoji)
@@ -289,5 +332,103 @@ public class EmojidexKeyboardView extends KeyboardView {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Custom HorizontalScrollView.
+     */
+    private class CustomHorizontalScrollView extends HorizontalScrollView
+    {
+        public CustomHorizontalScrollView(Context context) {
+            super(context);
+        }
+
+        @Override
+        protected void onScrollChanged(int l, int t, int oldl, int oldt) {
+            super.onScrollChanged(l, t, oldl, oldt);
+
+            final int maxl = variantsLayout.getWidth() - getWidth();
+
+            if(l <= 0 && oldl > 0)
+                variantsArrowLeft.setVisibility(INVISIBLE);
+            else if(l > 0 && oldl <= 0)
+                variantsArrowLeft.setVisibility(VISIBLE);
+
+            else if(l >= maxl && oldl < maxl)
+                variantsArrowRight.setVisibility(INVISIBLE);
+            else if(l < maxl && oldl >= maxl)
+                variantsArrowRight.setVisibility(VISIBLE);
+        }
+    }
+
+    /**
+     * Repeat click helper.
+     */
+    private class RepeatClickHelper implements OnTouchListener
+    {
+        final View targetView;
+        final Handler handler = new Handler();
+        final Runnable runnable;
+
+        boolean isRepeatFinish;
+
+        /**
+         * Construct object.
+         * @param view              Target view.
+         */
+        public RepeatClickHelper(View view)
+        {
+            this(view, 100);
+        }
+
+        @Override
+        protected void finalize() throws Throwable {
+            targetView.setOnTouchListener(null);
+            isRepeatFinish = true;
+
+            super.finalize();
+        }
+
+        /**
+         * Construct object.
+         * @param view              Target view.
+         * @param repeatInterval    Repeat interval.(ms)
+         */
+        public RepeatClickHelper(View view, final int repeatInterval)
+        {
+            targetView = view;
+
+            targetView.setOnTouchListener(this);
+
+            runnable = new Runnable() {
+                @Override
+                public void run() {
+                    if(isRepeatFinish)
+                        return;
+
+                    targetView.performClick();
+
+                    handler.postDelayed(this, repeatInterval);
+                }
+            };
+        }
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            final int action = event.getAction();
+            switch(action)
+            {
+                case MotionEvent.ACTION_DOWN:
+                    isRepeatFinish = false;
+                    handler.post(runnable);
+                    break;
+                case MotionEvent.ACTION_UP:
+                    isRepeatFinish = true;
+                    break;
+                default:
+                    break;
+            }
+            return true;
+        }
     }
 }
