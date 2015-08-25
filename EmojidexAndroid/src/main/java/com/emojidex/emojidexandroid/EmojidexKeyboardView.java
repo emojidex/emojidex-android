@@ -1,10 +1,12 @@
 package com.emojidex.emojidexandroid;
 
+import android.app.ActivityManager;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.BitmapDrawable;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
@@ -136,20 +138,37 @@ public class EmojidexKeyboardView extends KeyboardView {
         });
 
         // Set seal send button.
-        Button sealSendButton = (Button)view.findViewById(R.id.popup_seal_send_button);
-        sealSendButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                closePopup();
+        final ActivityManager am = (ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
+        final String targetPackageName = am.getRunningTasks(1).get(0).baseActivity.getPackageName();
+        final Button sealSendButton = (Button)view.findViewById(R.id.popup_seal_send_button);
 
-                // Send intent.
-                final Intent proxyIntent = new Intent(context, SendSealActivity.class);
-                proxyIntent.putExtra(Intent.EXTRA_TEXT, emojiName);
-                proxyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        final Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("image/png");
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+        intent.setPackage(targetPackageName);
 
-                context.startActivity(proxyIntent);
-            }
-        });
+        if(context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY).isEmpty())
+        {
+            sealSendButton.setVisibility(GONE);
+        }
+        else
+        {
+            sealSendButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    closePopup();
+
+                    // Send intent.
+                    final Intent proxyIntent = new Intent(context, SendSealActivity.class);
+                    proxyIntent.putExtra(SendSealActivity.EXTRA_EMOJI_NAME, emojiName);
+                    proxyIntent.putExtra(SendSealActivity.EXTRA_PACKAGE_NAME, targetPackageName);
+                    proxyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                    context.startActivity(proxyIntent);
+                }
+            });
+        }
 
         // Set variants.
         final Context viewContext = view.getContext();

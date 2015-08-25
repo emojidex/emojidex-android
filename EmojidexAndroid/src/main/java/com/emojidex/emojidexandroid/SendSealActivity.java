@@ -1,10 +1,8 @@
 package com.emojidex.emojidexandroid;
 
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -30,6 +28,9 @@ import java.util.List;
 public class SendSealActivity extends Activity {
     static final String TAG = MainActivity.TAG + "::SendSealActivity";
 
+    public static final String EXTRA_EMOJI_NAME = "EmojiName";
+    public static final String EXTRA_PACKAGE_NAME = "PackageName";
+
     private final Intent sendIntent = new Intent(Intent.ACTION_SEND);
     private EmojiDownloader downloader = null;
     private ProgressDialog dialog = null;
@@ -42,8 +43,7 @@ public class SendSealActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         // Initialize intent.
-        final ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        final String targetPackageName = am.getRunningTasks(2).get(1).baseActivity.getPackageName();
+        final String targetPackageName = getIntent().getStringExtra(EXTRA_PACKAGE_NAME);
         sendIntent.setType("image/png");
         sendIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         sendIntent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
@@ -86,7 +86,7 @@ public class SendSealActivity extends Activity {
      */
     private void sendSeal()
     {
-        final String emojiName = getIntent().getStringExtra(Intent.EXTRA_TEXT);
+        final String emojiName = getIntent().getStringExtra(EXTRA_EMOJI_NAME);
 
         // Download seal.
         final String url = "https://www.emojidex.com/api/v1/emoji/" + emojiName + "?detailed=true";
