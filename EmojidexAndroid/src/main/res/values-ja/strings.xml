@@ -121,4 +121,7 @@
     <string name="send_seal_not_found">シールが見つかりません。</string>
     <string name="send_seal_not_found_ok">OK</string>
 
+    <!-- チュートリアル -->
+    <string name="tutorial_title">絵文字デックスキーボードの使い方</string>
+
 </resources>

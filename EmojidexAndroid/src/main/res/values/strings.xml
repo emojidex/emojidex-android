@@ -154,4 +154,7 @@
     <string name="preference_entryvalue_default_keyboard_default" translatable="false">@string/preference_entryvalue_default_keyboard_nothing</string>
     <string name="preference_entryvalue_update_interval_default" translatable="false">604800000</string>
 
+    <!-- tutorial -->
+    <string name="tutorial_title">How to use emojidex keyboard</string>
+
 </resources>
