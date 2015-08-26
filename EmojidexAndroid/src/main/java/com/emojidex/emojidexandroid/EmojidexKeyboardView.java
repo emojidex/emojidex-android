@@ -45,6 +45,7 @@ public class EmojidexKeyboardView extends KeyboardView {
     protected LinearLayout variantsLayoutArea;
     protected View variantsArrowLeft;
     protected View variantsArrowRight;
+    protected HorizontalScrollView variantsScrollView;
     protected LinearLayout variantsLayout;
     protected String emojiName;
     protected EmojiFormat format;
@@ -173,11 +174,11 @@ public class EmojidexKeyboardView extends KeyboardView {
         // Set variants.
         final Context viewContext = view.getContext();
         final FrameLayout variantsMain = (FrameLayout)view.findViewById(R.id.favorite_variants_main);
-        final HorizontalScrollView scrollView = new CustomHorizontalScrollView(viewContext);
-        variantsLayout = new LinearLayout(viewContext);
+        variantsScrollView = new CustomHorizontalScrollView(viewContext);
+        variantsLayout = new CustomLinearLayout(viewContext);
         variantsLayout.setOrientation(LinearLayout.HORIZONTAL);
-        scrollView.addView(variantsLayout);
-        variantsMain.addView(scrollView);
+        variantsScrollView.addView(variantsLayout);
+        variantsMain.addView(variantsScrollView);
 
         variantsLayoutArea = (LinearLayout)view.findViewById(R.id.favorite_variants_area);
 
@@ -190,7 +191,7 @@ public class EmojidexKeyboardView extends KeyboardView {
         variantsArrowLeft.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                scrollView.smoothScrollBy(-scrollSpeed, 0);
+                variantsScrollView.smoothScrollBy(-scrollSpeed, 0);
             }
         });
 
@@ -199,7 +200,7 @@ public class EmojidexKeyboardView extends KeyboardView {
         variantsArrowRight.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                scrollView.smoothScrollBy(scrollSpeed, 0);
+                variantsScrollView.smoothScrollBy(scrollSpeed, 0);
             }
         });
 
@@ -377,6 +378,24 @@ public class EmojidexKeyboardView extends KeyboardView {
                 variantsArrowRight.setVisibility(INVISIBLE);
             else if(l < maxl && oldl >= maxl)
                 variantsArrowRight.setVisibility(VISIBLE);
+        }
+    }
+
+    /**
+     * Custom LinearLayout.
+     */
+    private class CustomLinearLayout extends LinearLayout
+    {
+        public CustomLinearLayout(Context context) {
+            super(context);
+        }
+
+        @Override
+        protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+            super.onSizeChanged(w, h, oldw, oldh);
+
+            if(getWidth() <= variantsScrollView.getWidth())
+                variantsArrowRight.setVisibility(INVISIBLE);
         }
     }
 
