@@ -39,7 +39,7 @@
 
         <activity
             android:name=".SendSealActivity"
-            android:label="emojidex"
+            android:label="@string/app_name"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
 
         <service
@@ -60,6 +60,11 @@
             android:theme="@style/IMETheme"
             android:windowSoftInputMode="stateAlwaysVisible">
         </activity>
+
+        <activity
+            android:name=".TutorialActivity"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.NoTitleBar"/>
 
     </application>
 

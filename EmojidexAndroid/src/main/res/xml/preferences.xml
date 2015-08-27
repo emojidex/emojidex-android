@@ -31,4 +31,10 @@
             android:key="@string/preference_key_clear_search_result"
             android:title="@string/settings_delete_search_button"/>
     </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/settings_category_other">
+        <Preference
+            android:key="@string/preference_key_tutorial"
+            android:title="@string/settings_tutorial_button"/>
+    </PreferenceCategory>
 </PreferenceScreen>

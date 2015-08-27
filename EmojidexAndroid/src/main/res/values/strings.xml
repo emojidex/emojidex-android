@@ -94,6 +94,7 @@
     <string name="settings_category_general">General</string>
     <string name="settings_category_update">Update</string>
     <string name="settings_category_data">Data</string>
+    <string name="settings_category_other">Other</string>
     <string name="settings_keyboard_button">Default keyboard</string>
     <string name="settings_keyboard_button_summary">Set your default keyboard here</string>
     <string name="settings_entry_default_keyboard_nothing">Nothing</string>
@@ -111,6 +112,7 @@
     <string name="settings_delete_search_confirm">Clear all search result?</string>
     <string name="settings_delete_search_succeeded">Search results cleared.</string>
     <string name="settings_delete_search_failed">Failed clear search result.</string>
+    <string name="settings_tutorial_button">Tutorial</string>
 
     <string name="search_dialog_title">Searching...</string>
     <string name="search_dialog_message">Please wait a moment.</string>
@@ -150,6 +152,7 @@
     <string name="preference_key_clear_favorite" translatable="false">clearFavorite</string>
     <string name="preference_key_clear_history" translatable="false">clearHistory</string>
     <string name="preference_key_clear_search_result" translatable="false">clearSearchResult</string>
+    <string name="preference_key_tutorial" translatable="false">tutorial</string>
     <string name="preference_entryvalue_default_keyboard_nothing" translatable="false">nothing</string>
     <string name="preference_entryvalue_default_keyboard_default" translatable="false">@string/preference_entryvalue_default_keyboard_nothing</string>
     <string name="preference_entryvalue_update_interval_default" translatable="false">604800000</string>

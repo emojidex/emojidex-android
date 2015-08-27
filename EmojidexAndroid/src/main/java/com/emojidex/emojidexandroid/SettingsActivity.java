@@ -3,6 +3,7 @@ package com.emojidex.emojidexandroid;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -55,6 +56,7 @@ public class SettingsActivity extends PreferenceActivity {
             createDefaultKeyboardPreference();
             createUpdateIntervalPreference();
             createClearDataPreference();
+            createTutorialPreference();
         }
 
         @Override
@@ -109,7 +111,7 @@ public class SettingsActivity extends PreferenceActivity {
             updateNow.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    if( new EmojidexUpdater(parentActivity).startUpdateThread() )
+                    if (new EmojidexUpdater(parentActivity).startUpdateThread())
                         Toast.makeText(parentActivity, R.string.ime_message_update_start, Toast.LENGTH_SHORT).show();
                     else
                         Toast.makeText(parentActivity, R.string.ime_message_already_update, Toast.LENGTH_SHORT).show();
@@ -146,6 +148,22 @@ public class SettingsActivity extends PreferenceActivity {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     createDeleteDialog(SaveDataManager.Type.Search);
+                    return true;
+                }
+            });
+        }
+
+        /**
+         * Create tutorial preference.
+         */
+        private void createTutorialPreference()
+        {
+            final Preference tutorial = findPreference(getString(R.string.preference_key_tutorial));
+            tutorial.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    final Intent intent = new Intent(getActivity(), TutorialActivity.class);
+                    startActivity(intent);
                     return true;
                 }
             });
