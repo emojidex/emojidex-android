@@ -144,6 +144,7 @@
     <string name="emoji_format_seal" translatable="false">seal</string>
     <string name="emoji_format_key" translatable="false">px64</string>
 
+    <string name="preference_key_is_first" translatable="false">isFirst</string>
     <string name="preference_key_start_category" translatable="false">startCategory</string>
     <string name="preference_key_default_keyboard" translatable="false">defaultKeyboard</string>
     <string name="preference_key_last_update_time" translatable="false">lastUpdateTime</string>

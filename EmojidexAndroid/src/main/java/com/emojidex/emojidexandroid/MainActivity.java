@@ -7,10 +7,12 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -50,6 +52,24 @@ public class MainActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        // Show tutorial when first.
+        final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        final String key = getString(R.string.preference_key_is_first);
+        final boolean isFirst = pref.getBoolean(key, true);
+
+        if(!isFirst)
+            return;
+
+        pref.edit().putBoolean(key, false).commit();
+
+        final Intent intent = new Intent(this, TutorialActivity.class);
+        startActivity(intent);
     }
 
     @Override
@@ -103,7 +123,6 @@ public class MainActivity extends Activity {
         toggleState = savedInstanceState.getBoolean("toggle");
         editText.setText(savedInstanceState.getCharSequence("text"));
     }
-
 
     /**
      * Emojidex
