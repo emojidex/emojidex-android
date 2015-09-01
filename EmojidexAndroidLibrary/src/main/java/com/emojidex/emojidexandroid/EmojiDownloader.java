@@ -185,6 +185,14 @@ public class EmojiDownloader {
             if(localJsonParam.checksums.png == null)
                 localJsonParam.checksums.png = new HashMap<String, String>();
 
+            // Copy json parameter to local.
+            localJsonParam.name = jsonParam.name;
+            localJsonParam.text = jsonParam.text;
+            localJsonParam.category = jsonParam.category;
+            localJsonParam.name_ja = jsonParam.name_ja;
+            localJsonParam.variants = jsonParam.variants;
+            localJsonParam.base = jsonParam.base;
+
             // Add download task.
             for(EmojiFormat format : formats)
             {
@@ -199,12 +207,6 @@ public class EmojiDownloader {
                 // Add download task.
                 if(downloadParam == null)
                 {
-                    // Copy json parameter to local.
-                    localJsonParam.name = jsonParam.name;
-                    localJsonParam.text = jsonParam.text;
-                    localJsonParam.category = jsonParam.category;
-                    localJsonParam.name_ja = jsonParam.name_ja;
-
                     // Create DownloadParam.
                     downloadParam = new DownloadParam();
                     downloadParam.name = localJsonParam.name;
@@ -227,6 +229,12 @@ public class EmojiDownloader {
      */
     public void download()
     {
+        // Update local json file.
+        JsonParam.writeToFile(new File(PathUtils.getLocalJsonPath()), localJsonParams);
+
+        // Notify to listener.
+        listener.onPreAllEmojiDownload();
+
         // Error check.
         if(downloadEmojiCount == 0 || !runningTasks.isEmpty())
         {
@@ -235,12 +243,6 @@ public class EmojiDownloader {
 
             return;
         }
-
-        // Update local json file.
-        JsonParam.writeToFile(new File(PathUtils.getLocalJsonPath()), localJsonParams);
-
-        // Notify to listener.
-        listener.onPreAllEmojiDownload();
 
         // Start download task.
         for(ArrayList<DownloadParam> downloadParams : downloadEmojiesArray)

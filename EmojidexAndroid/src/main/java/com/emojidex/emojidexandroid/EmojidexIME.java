@@ -363,6 +363,16 @@ public class EmojidexIME extends InputMethodService {
      */
     public void changeCategory(String category)
     {
+        changeCategory(category, 0);
+    }
+
+    /**
+     * Change category.
+     * @param category      Category.
+     * @param defaultPage   Default page number.
+     */
+    public void changeCategory(String category, int defaultPage)
+    {
         if( category == null ||
             (currentCategory != null && currentCategory.equals(category))   )
             return;
@@ -372,22 +382,22 @@ public class EmojidexIME extends InputMethodService {
         if(category.equals(getString(R.string.ime_category_id_history)))
         {
             final List<String> emojiNames = historyManager.getEmojiNames();
-            keyboardViewManager.initializeFromName(emojiNames);
+            keyboardViewManager.initializeFromName(emojiNames, defaultPage);
         }
         else if(category.equals(getString(R.string.ime_category_id_search)))
         {
             final List<String> emojiNames = searchManager.getEmojiNames();
-            keyboardViewManager.initializeFromName(emojiNames);
+            keyboardViewManager.initializeFromName(emojiNames, defaultPage);
         }
         else if(category.equals(getString(R.string.ime_category_id_all)))
         {
             final List<Emoji> emojies = emojidex.getAllEmojiList();
-            keyboardViewManager.initialize(emojies);
+            keyboardViewManager.initialize(emojies, defaultPage);
         }
         else
         {
             final List<Emoji> emojies = emojidex.getEmojiList(category);
-            keyboardViewManager.initialize(emojies);
+            keyboardViewManager.initialize(emojies, defaultPage);
         }
     }
 
@@ -524,7 +534,7 @@ public class EmojidexIME extends InputMethodService {
     {
         final String category = currentCategory;
         currentCategory = null;
-        changeCategory(category);
+        changeCategory(category, keyboardViewManager.getCurrentPage());
     }
 
     /**
@@ -537,6 +547,42 @@ public class EmojidexIME extends InputMethodService {
 
         File[] list = cacheDir.listFiles();
         for (File f : list) f.delete();
+    }
+
+    /**
+     * Commit emoji to current input connection..
+     * @param emoji     Emoji.
+     */
+    void commitEmoji(Emoji emoji)
+    {
+        getCurrentInputConnection().commitText(emoji.toEmojidexString(), 1);
+        historyManager.addFirst(emoji.getName());
+    }
+
+    void changeKeyboard(Emoji emoji) {
+        // If current category is not have emoji, change category.
+        final String emojiCategory = emoji.getCategory();
+        if(     !currentCategory.equals(getString(R.string.all_category))
+            &&  !currentCategory.equals(emojiCategory) )
+        {
+            final ViewGroup categoriesView = (ViewGroup)layout.findViewById(R.id.ime_categories);
+            final int count = categoriesView.getChildCount();
+            for(int i = 0;  i < count;  ++i)
+            {
+                Button button = (Button)categoriesView.getChildAt(i);
+                if(emojiCategory.equals(button.getContentDescription()))
+                {
+                    button.performClick();
+                    break;
+                }
+            }
+        }
+
+        // Set page.
+        keyboardViewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_in));
+        keyboardViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_out));
+        keyboardViewManager.setPage(emoji.getName());
+        keyboardViewFlipper.showNext();
     }
 
     /**
@@ -596,8 +642,7 @@ public class EmojidexIME extends InputMethodService {
                 final Emoji emoji = emojidex.getEmoji(codes);
                 if(emoji != null)
                 {
-                    getCurrentInputConnection().commitText(emoji.toEmojidexString(), 1);
-                    historyManager.addFirst(emoji.getName());
+                    commitEmoji(emoji);
                 }
                 // Input enter key.
                 else if(primaryCode == KeyEvent.KEYCODE_ENTER && imeOptions != EditorInfo.IME_ACTION_NONE)
@@ -646,7 +691,6 @@ public class EmojidexIME extends InputMethodService {
             startActivity(intent);
         }
     }
-
 
     /**
      * Custom OnGestureListener.

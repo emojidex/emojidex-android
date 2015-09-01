@@ -42,7 +42,7 @@
     <string name="download_failure">Downloading failed.</string>
     <string name="delete_download_confirm">Remove emoji from your storage?</string>
     <string name="delete_download">Remove</string>
-    <string name="seal_send">Send</string>
+    <string name="seal_send">Send seal</string>
 
     <string name="yes">Yes</string>
     <string name="no">No</string>

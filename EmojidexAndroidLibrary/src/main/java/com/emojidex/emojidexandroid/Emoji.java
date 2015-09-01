@@ -158,6 +158,16 @@ public class Emoji extends SimpleJsonParam {
         return hasOriginalCodes;
     }
 
+    public List<String> getVariants()
+    {
+        return variants;
+    }
+
+    public String getBase()
+    {
+        return base;
+    }
+
     /**
      * Initialize emoji object.
      * @param kind  Emoji kind.
