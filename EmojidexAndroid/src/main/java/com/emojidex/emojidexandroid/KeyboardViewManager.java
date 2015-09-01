@@ -50,10 +50,19 @@ public class KeyboardViewManager {
      */
     public void initialize(List<Emoji> emojies)
     {
-        currentPage = 0;
+        initialize(emojies, 0);
+    }
 
+    /**
+     * Initialize manager.
+     * @param emojies       Emoji of regist to manager.
+     * @param defaultPage   Default page number.
+     */
+    public void initialize(List<Emoji> emojies, int defaultPage)
+    {
         pages.clear();
 
+        // Create pages.
         final int keyCountMax = keyboards[0].getKeyCountMax();
         final int emojiCount = emojies == null ? 0 : emojies.size();
         for(int i = 0;  i < emojiCount;  i += keyCountMax)
@@ -67,16 +76,34 @@ public class KeyboardViewManager {
         if(pages.isEmpty())
             pages.add(new ArrayList<Emoji>());
 
+        // Set default page.
+        currentPage = defaultPage % pages.size();
+
+        // Apply page to view.
         initializePage(currentView, currentPage);
     }
 
+    /**
+     * Initialize manager from emoji name.
+     * @param emojiNames    Emoji name of regist to manager.
+     */
     public void initializeFromName(List<String> emojiNames)
+    {
+        initializeFromName(emojiNames, 0);
+    }
+
+    /**
+     * Initialize manager from emoji name.
+     * @param emojiNames    Emoji name of regist to manager.
+     * @param defaultPage   Default page number.
+     */
+    public void initializeFromName(List<String> emojiNames, int defaultPage)
     {
         final Emojidex emojidex = Emojidex.getInstance();
         final ArrayList<Emoji> emojies = new ArrayList<Emoji>(emojiNames.size());
         for(String emojiName : emojiNames)
             emojies.add(emojidex.getEmoji(emojiName));
-        initialize(emojies);
+        initialize(emojies, defaultPage);
     }
 
     /**
@@ -99,6 +126,42 @@ public class KeyboardViewManager {
         currentPage = (currentPage + pages.size() - 1) % pages.size();
 
         initializePage(currentView, currentPage);
+    }
+
+    /**
+     * Change view to specified page.
+     * @param page  page number.
+     */
+    public void setPage(int page)
+    {
+        currentView = (currentView + 1) % PAGE_COUNT;
+        currentPage = page % pages.size();
+
+        initializePage(currentView, currentPage);
+    }
+
+    /**
+     * Change view to specified emoji name.
+     * @param emojiName     Emoji name.
+     */
+    public void setPage(String emojiName)
+    {
+        final int count = pages.size();
+        for(int i = 0;  i < count;  ++i)
+        {
+            final List<Emoji> page = pages.get(i);
+            for(Emoji emoji : page)
+            {
+                if( emoji.name.equals(emojiName) )
+                {
+                    setPage(i);
+                    return;
+                }
+            }
+        }
+
+        // If not found.
+        setPage(0);
     }
 
     /**
@@ -135,6 +198,15 @@ public class KeyboardViewManager {
     public EmojidexKeyboardView[] getViews()
     {
         return views;
+    }
+
+    /**
+     * Get current page number.
+     * @return  Current page number.
+     */
+    public int getCurrentPage()
+    {
+        return currentPage;
     }
 
     /**
