@@ -24,7 +24,7 @@ public class CatalogAdapter extends BaseAdapter
 
     private void setImages(List<Emoji> emojis)
     {
-        EmojiFormat format = EmojiFormat.toFormat(context.getString(R.string.emoji_format_default));
+        EmojiFormat format = EmojiFormat.toFormat(context.getString(R.string.emoji_format_catalog));
 
         for (Emoji emoji : emojis)
         {

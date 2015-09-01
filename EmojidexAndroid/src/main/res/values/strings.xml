@@ -142,6 +142,7 @@
 
     <string name="emoji_format_seal" translatable="false">seal</string>
     <string name="emoji_format_key" translatable="false">px64</string>
+    <string name="emoji_format_catalog" translatable="false">@string/emoji_format_key</string>
 
     <string name="preference_key_start_category" translatable="false">startCategory</string>
     <string name="preference_key_default_keyboard" translatable="false">defaultKeyboard</string>
