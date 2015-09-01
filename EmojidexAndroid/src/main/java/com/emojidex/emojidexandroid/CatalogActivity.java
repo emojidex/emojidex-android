@@ -205,6 +205,7 @@ public class CatalogActivity extends Activity
             final Intent intent = new Intent();
             intent.setData(uri);
             setResult(RESULT_OK, intent);
+            finish();
         }
         else
         {
@@ -213,8 +214,6 @@ public class CatalogActivity extends Activity
             intent.putExtra(Intent.EXTRA_STREAM, uri);
             startActivity(Intent.createChooser(intent, null));
         }
-
-        finish();
     }
 
     private ArrayList<Emoji> createEmojiList(List<String> emojiNames)
