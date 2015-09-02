@@ -20,4 +20,7 @@
     <item android:id="@+id/action_settings"
           android:title="@string/menu_settings"
           android:orderInCategory="106"/>
+    <item android:id="@+id/action_tutorial"
+          android:title="@string/tutorial"
+          android:orderInCategory="107"/>
 </menu>

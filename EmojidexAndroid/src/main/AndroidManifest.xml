@@ -61,6 +61,11 @@
             android:windowSoftInputMode="stateAlwaysVisible">
         </activity>
 
+        <activity
+            android:name="com.emojidex.emojidexandroid.TutorialActivity"
+            android:label="@string/tutorial_title">
+        </activity>
+
     </application>
 
 </manifest>

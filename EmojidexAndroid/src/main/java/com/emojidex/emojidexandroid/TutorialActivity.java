@@ -12,6 +12,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 public class TutorialActivity extends Activity {
@@ -19,6 +20,7 @@ public class TutorialActivity extends Activity {
     private ViewFlipper viewFlipper;
     private GestureDetector gestureDetector;
 
+    private TextView textView;
     private ImageButton nextButton;
     private ImageButton prevButton;
 
@@ -91,6 +93,9 @@ public class TutorialActivity extends Activity {
                 return false;
             }
         });
+
+        textView = (TextView)findViewById(R.id.tutorial_header);
+        textView.setText(R.string.tutorial_header_1);
     }
 
     public void tutorialShowNext(View v) {
@@ -98,6 +103,7 @@ public class TutorialActivity extends Activity {
 
         page++;
         setImage();
+        setText();
         setButtonVisibility();
 
         viewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_in));
@@ -124,6 +130,7 @@ public class TutorialActivity extends Activity {
 
         page--;
         setImage();
+        setText();
         setButtonVisibility();
 
         viewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_in));
@@ -152,6 +159,29 @@ public class TutorialActivity extends Activity {
         int resourceId = getResources().getIdentifier("tutorial_0" + (page + 1), "drawable", getPackageName());
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), resourceId);
         imageView.setImageBitmap(bitmap);
+    }
+
+    private void setText() {
+        switch (page) {
+            case 0:
+            case 1:
+                textView.setText(R.string.tutorial_header_1);
+                break;
+            case 2:
+            case 3:
+                textView.setText("");
+                break;
+            case 4:
+            case 5:
+                textView.setText(R.string.tutorial_header_2);
+                break;
+            case 6:
+                textView.setText(R.string.tutorial_header_3);
+                break;
+            case 7:
+                textView.setText(R.string.tutorial_header_4);
+                break;
+        }
     }
 
     private void setButtonVisibility() {

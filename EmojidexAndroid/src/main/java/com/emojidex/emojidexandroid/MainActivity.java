@@ -7,6 +7,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
@@ -44,6 +45,7 @@ public class MainActivity extends Activity {
         initEmojidexEditor();
         setShareButtonIcon();
         getIntentData();
+        showTutorialDialog();
     }
 
     @Override
@@ -82,6 +84,9 @@ public class MainActivity extends Activity {
                 return true;
             case R.id.action_settings:
                 openSettings(null);
+                return true;
+            case R.id.action_tutorial:
+                showTutorial();
                 return true;
         }
         return false;
@@ -554,5 +559,51 @@ public class MainActivity extends Activity {
     protected void onDestroy()
     {
         super.onDestroy();
+    }
+
+    /**
+     * Show tutorial dialog.
+     */
+    private void showTutorialDialog() {
+        // Whether first launch.
+        boolean isFirst = getSharedPreferences("Tutorial", Context.MODE_PRIVATE).getBoolean("isFirst", true);
+        if (!isFirst) return;
+
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setMessage(R.string.tutorial_invitation);
+        dialog.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                saveTutorialFlag();
+                showTutorial();
+            }
+        });
+        dialog.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                saveTutorialFlag();
+            }
+        });
+        dialog.show();
+    }
+
+    /**
+     * Save state.
+     */
+    private void saveTutorialFlag() {
+        SharedPreferences pref = getSharedPreferences("Tutorial", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putBoolean("isFirst", false);
+        editor.apply();
+    }
+
+    /**
+     * Show tutorial page.
+     */
+    private void showTutorial() {
+        Intent intent = new Intent(getApplicationContext(), TutorialActivity.class);
+        startActivity(intent);
     }
 }

@@ -155,6 +155,12 @@
     <string name="preference_entryvalue_update_interval_default" translatable="false">604800000</string>
 
     <!-- tutorial -->
-    <string name="tutorial_title">How to use emojidex keyboard</string>
+    <string name="tutorial">Tutorial</string>
+    <string name="tutorial_invitation">Do you look at the tutorial?</string>
+    <string name="tutorial_title">How to use emojidex keyboard.</string>
+    <string name="tutorial_header_1">Prepare keyboard.</string>
+    <string name="tutorial_header_2">How to search Emoji.</string>
+    <string name="tutorial_header_3">How to send seal.</string>
+    <string name="tutorial_header_4">Convert and share.</string>
 
 </resources>
