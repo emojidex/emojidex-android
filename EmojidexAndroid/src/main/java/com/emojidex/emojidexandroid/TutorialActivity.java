@@ -12,12 +12,19 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 public class TutorialActivity extends Activity {
     private int page;
     private ViewFlipper viewFlipper;
+    private Animation rightInAnimation;
+    private Animation rightOutAnimation;
+    private Animation leftInAnimation;
+    private Animation leftOutAnimation;
+    private RadioGroup radioGroup;
     private GestureDetector gestureDetector;
 
     private TextView textView;
@@ -54,6 +61,42 @@ public class TutorialActivity extends Activity {
 
             viewFlipper.addView(imageView);
         }
+
+        rightInAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_in);
+        rightOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_out);
+        rightOutAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                releaseImage((ImageView) viewFlipper.getChildAt(page + 1));
+                setIndicator(page + 1);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
+
+        leftInAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_in);
+        leftOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_out);
+        leftOutAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                releaseImage((ImageView) viewFlipper.getChildAt(page - 1));
+                setIndicator(page - 1);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
 
         gestureDetector = new GestureDetector(this, new GestureDetector.OnGestureListener() {
             @Override
@@ -96,6 +139,17 @@ public class TutorialActivity extends Activity {
 
         textView = (TextView)findViewById(R.id.tutorial_header);
         textView.setText(R.string.tutorial_header_1);
+
+        // Instead of page indicator.
+        radioGroup = (RadioGroup)findViewById(R.id.tutorial_indicator);
+        for (int i = 0; i < 8; i++) {
+            RadioButton button = new RadioButton(getApplicationContext());
+            button.setId(i);
+            button.setEnabled(false);
+            radioGroup.addView(button);
+        }
+        radioGroup.check(0);
+        radioGroup.getChildAt(0).setEnabled(true);
     }
 
     public void tutorialShowNext(View v) {
@@ -106,22 +160,8 @@ public class TutorialActivity extends Activity {
         setText();
         setButtonVisibility();
 
-        viewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_in));
-        viewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_out));
-        viewFlipper.setLayoutAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                releaseImage((ImageView) viewFlipper.getChildAt(page - 1));
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-        });
+        viewFlipper.setInAnimation(rightInAnimation);
+        viewFlipper.setOutAnimation(leftOutAnimation);
         viewFlipper.showNext();
     }
 
@@ -133,22 +173,8 @@ public class TutorialActivity extends Activity {
         setText();
         setButtonVisibility();
 
-        viewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_in));
-        viewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_out));
-        viewFlipper.setLayoutAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                releaseImage((ImageView) viewFlipper.getChildAt(page + 1));
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-        });
+        viewFlipper.setInAnimation(leftInAnimation);
+        viewFlipper.setOutAnimation(rightOutAnimation);
         viewFlipper.showPrevious();
     }
 
@@ -162,26 +188,8 @@ public class TutorialActivity extends Activity {
     }
 
     private void setText() {
-        switch (page) {
-            case 0:
-            case 1:
-                textView.setText(R.string.tutorial_header_1);
-                break;
-            case 2:
-            case 3:
-                textView.setText("");
-                break;
-            case 4:
-            case 5:
-                textView.setText(R.string.tutorial_header_2);
-                break;
-            case 6:
-                textView.setText(R.string.tutorial_header_3);
-                break;
-            case 7:
-                textView.setText(R.string.tutorial_header_4);
-                break;
-        }
+        int resourceId = getResources().getIdentifier("tutorial_header_" + (page + 1), "string", getPackageName());
+        textView.setText(resourceId);
     }
 
     private void setButtonVisibility() {
@@ -195,6 +203,12 @@ public class TutorialActivity extends Activity {
             nextButton.setVisibility(View.VISIBLE);
             prevButton.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void setIndicator(int disablePage) {
+        radioGroup.getChildAt(disablePage).setEnabled(false);
+        radioGroup.getChildAt(page).setEnabled(true);
+        radioGroup.check(page);
     }
 
     public void closeTutorial(View v) {
