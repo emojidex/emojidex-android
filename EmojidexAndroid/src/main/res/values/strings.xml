@@ -160,5 +160,13 @@
 
     <!-- tutorial -->
     <string name="tutorial_title">How to use emojidex keyboard</string>
+    <string name="tutorial_header_1">Prepare keyboard (1)</string>
+    <string name="tutorial_header_2">Prepare keyboard (2)</string>
+    <string name="tutorial_header_3">Basic functions (1)</string>
+    <string name="tutorial_header_4">Basic functions (2)</string>
+    <string name="tutorial_header_5">How to search Emoji. (1)</string>
+    <string name="tutorial_header_6">How to search Emoji. (2)</string>
+    <string name="tutorial_header_7">How to send seal</string>
+    <string name="tutorial_header_8">Convert and share</string>
 
 </resources>
