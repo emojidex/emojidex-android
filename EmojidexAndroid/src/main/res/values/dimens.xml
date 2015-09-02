@@ -14,4 +14,7 @@
 
     <!-- Search dialog layout size. -->
     <dimen name="search_dialog_edittext_width">200dp</dimen>
+
+    <!-- Catalog layout size. -->
+    <dimen name="catalog_icon_size">48dp</dimen>
 </resources>

@@ -50,7 +50,7 @@ public class CatalogAdapter extends BaseAdapter
         if (imageView == null)
         {
             imageView = new ImageView(context);
-            int size = (int)(context.getResources().getDisplayMetrics().density * 75);
+            int size = (int)context.getResources().getDimension(R.dimen.catalog_icon_size);
             imageView.setLayoutParams(new AbsListView.LayoutParams(size, size));
             imageView.setScaleType(ImageView.ScaleType.FIT_XY);
         }
