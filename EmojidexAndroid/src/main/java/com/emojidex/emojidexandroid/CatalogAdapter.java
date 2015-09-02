@@ -13,35 +13,27 @@ import java.util.List;
 
 public class CatalogAdapter extends BaseAdapter
 {
-    private Context context;
-    private ArrayList<Drawable> images = new ArrayList<>();
+    private final Context context;
+    private final EmojiFormat format;
+    private final ArrayList<Emoji> emojies;
 
-    public CatalogAdapter (Context context, List<Emoji> emojis)
+    public CatalogAdapter (Context context, List<Emoji> emojies)
     {
         this.context = context;
-        setImages(emojis);
-    }
-
-    private void setImages(List<Emoji> emojis)
-    {
-        EmojiFormat format = EmojiFormat.toFormat(context.getString(R.string.emoji_format_catalog));
-
-        for (Emoji emoji : emojis)
-        {
-            images.add(emoji.getDrawable(format));
-        }
+        format = EmojiFormat.toFormat(context.getString(R.string.emoji_format_catalog));
+        this.emojies = new ArrayList<Emoji>(emojies);
     }
 
     @Override
     public int getCount()
     {
-        return images.size();
+        return emojies.size();
     }
 
     @Override
     public Object getItem(int position)
     {
-        return images.get(position);
+        return emojies.get(position).getDrawable(format);
     }
 
     @Override
@@ -63,7 +55,7 @@ public class CatalogAdapter extends BaseAdapter
             imageView.setScaleType(ImageView.ScaleType.FIT_XY);
         }
 
-        imageView.setImageDrawable(images.get(position));
+        imageView.setImageDrawable(emojies.get(position).getDrawable(format));
 
         return imageView;
     }
