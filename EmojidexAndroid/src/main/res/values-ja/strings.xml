@@ -124,6 +124,7 @@
     <!-- チュートリアル -->
     <string name="tutorial">チュートリアル</string>
     <string name="tutorial_invitation">チュートリアルを見ますか？</string>
+    <string name="tutorial_again">今後このメッセージを表示しない。</string>
     <string name="tutorial_title">絵文字デックスキーボードの使い方</string>
     <string name="tutorial_header_1">キーボードの準備</string>
     <string name="tutorial_header_2">検索の仕方</string>

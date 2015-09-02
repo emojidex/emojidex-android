@@ -157,6 +157,7 @@
     <!-- tutorial -->
     <string name="tutorial">Tutorial</string>
     <string name="tutorial_invitation">Do you look at the tutorial?</string>
+    <string name="tutorial_again">Do not show this message again.</string>
     <string name="tutorial_title">How to use emojidex keyboard.</string>
     <string name="tutorial_header_1">Prepare keyboard.</string>
     <string name="tutorial_header_2">How to search Emoji.</string>

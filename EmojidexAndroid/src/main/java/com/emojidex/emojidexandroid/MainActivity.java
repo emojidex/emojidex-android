@@ -25,6 +25,7 @@ import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -565,17 +566,21 @@ public class MainActivity extends Activity {
      * Show tutorial dialog.
      */
     private void showTutorialDialog() {
-        // Whether first launch.
-        boolean isFirst = getSharedPreferences("Tutorial", Context.MODE_PRIVATE).getBoolean("isFirst", true);
-        if (!isFirst) return;
+        // Whether show tutorial dialog.
+        boolean isShow = getSharedPreferences("Tutorial", Context.MODE_PRIVATE).getBoolean("isShow", true);
+        if (!isShow) return;
+
+        LayoutInflater inflater = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
+        final View dialogLayout = inflater.inflate(R.layout.dialog_tutorial, null);
+        final CheckBox checkBox = (CheckBox) dialogLayout.findViewById(R.id.tutorial_dialog_checkbox);
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setMessage(R.string.tutorial_invitation);
+        dialog.setView(dialogLayout);
         dialog.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                saveTutorialFlag();
+                saveTutorialFlag(checkBox.isChecked());
                 showTutorial();
             }
         });
@@ -583,7 +588,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                saveTutorialFlag();
+                saveTutorialFlag(checkBox.isChecked());
             }
         });
         dialog.show();
@@ -592,10 +597,10 @@ public class MainActivity extends Activity {
     /**
      * Save state.
      */
-    private void saveTutorialFlag() {
+    private void saveTutorialFlag(boolean isChecked) {
         SharedPreferences pref = getSharedPreferences("Tutorial", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
-        editor.putBoolean("isFirst", false);
+        editor.putBoolean("isShow", !isChecked);
         editor.apply();
     }
 
