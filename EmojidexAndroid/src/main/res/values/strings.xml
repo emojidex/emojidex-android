@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">emojidex</string>
-    <string name="app_name_catalog">emojidex Seal Kit</string>
+    <string name="app_name" translatable="false">emojidex</string>
+    <string name="app_name_catalog" translatable="false">emojidex Seal Kit</string>
+
     <string name="action_settings">Settings</string>
 
     <string name="menu_text_copy">Copy Text</string>
