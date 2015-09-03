@@ -60,10 +60,10 @@ public class MainActivity extends Activity {
 
         // Show tutorial when first.
         final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        final String key = getString(R.string.preference_key_is_first);
-        final boolean isFirst = pref.getBoolean(key, true);
+        final String key = getString(R.string.preference_key_show_tutorial);
+        final boolean showTutorial = pref.getBoolean(key, true);
 
-        if(!isFirst)
+        if(!showTutorial)
             return;
 
         pref.edit().putBoolean(key, false).commit();
