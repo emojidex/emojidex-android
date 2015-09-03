@@ -156,6 +156,9 @@ public class EmojidexIME extends InputMethodService {
         // Redraw keyboard view.
         subKeyboardView.invalidateKey(keyEnterIndex);
 
+        // Initialize.
+        initStartCategory();
+
         // Set current instance.
         currentInstance = this;
     }
@@ -168,32 +171,6 @@ public class EmojidexIME extends InputMethodService {
     }
 
     @Override
-    public void onWindowShown() {
-        // Reset IME
-        currentCategory = null;
-        categoryScrollView.scrollTo(0, 0);
-
-        final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        final String defaultCategory = getString(R.string.ime_category_id_all);
-        final String startCategory = pref.getString("startCategory", defaultCategory);
-        final ViewGroup categoriesView = (ViewGroup)layout.findViewById(R.id.ime_categories);
-        final int childCount = categoriesView.getChildCount();
-        for(int i = 0;  i < childCount;  ++i)
-        {
-            final Button button = (Button)categoriesView.getChildAt(i);
-            if(button.getContentDescription().equals(startCategory))
-            {
-                pref.edit().putString("startCategory", defaultCategory).commit();
-                button.performClick();
-                return;
-            }
-        }
-
-        pref.edit().putString("startCategory", defaultCategory).commit();
-        categoryAllButton.performClick();
-    }
-
-    @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         hideWindow();
@@ -203,7 +180,10 @@ public class EmojidexIME extends InputMethodService {
     public void hideWindow()
     {
         if( !keyboardViewManager.getCurrentView().closePopup() )
+        {
+            currentCategory = null;
             super.hideWindow();
+        }
     }
 
     /**
@@ -291,6 +271,47 @@ public class EmojidexIME extends InputMethodService {
                 break;
             }
         }
+    }
+
+    /**
+     * Initialize start category.
+     */
+    private void initStartCategory()
+    {
+        // Load start category from preference.
+        final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        final String defaultCategory = getString(R.string.ime_category_id_all);
+        final String searchCategory = getString(R.string.ime_category_id_search);
+        final String startCategory = pref.getString("startCategory", defaultCategory);
+
+        // If start category is "search", always initialize keyboard.
+        if(startCategory.equals(searchCategory))
+            currentCategory = null;
+
+        // If current category is not null, skip initialize.
+        if(currentCategory != null)
+            return;
+
+        // Initialize scroll position.
+        categoryScrollView.scrollTo(0, 0);
+
+        // Search category.
+        final ViewGroup categoriesView = (ViewGroup)layout.findViewById(R.id.ime_categories);
+        final int childCount = categoriesView.getChildCount();
+        for(int i = 0;  i < childCount;  ++i)
+        {
+            final Button button = (Button)categoriesView.getChildAt(i);
+            if(button.getContentDescription().equals(startCategory))
+            {
+                pref.edit().putString("startCategory", defaultCategory).commit();
+                button.performClick();
+                return;
+            }
+        }
+
+        // If start category is not found, use category "all".
+        pref.edit().putString("startCategory", defaultCategory).commit();
+        categoryAllButton.performClick();
     }
 
     /**
