@@ -280,9 +280,10 @@ public class EmojidexIME extends InputMethodService {
     {
         // Load start category from preference.
         final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        final String key = getString(R.string.preference_key_start_category);
         final String defaultCategory = getString(R.string.ime_category_id_all);
         final String searchCategory = getString(R.string.ime_category_id_search);
-        final String startCategory = pref.getString("startCategory", defaultCategory);
+        final String startCategory = pref.getString(key, defaultCategory);
 
         // If start category is "search", always initialize keyboard.
         if(startCategory.equals(searchCategory))
@@ -303,14 +304,14 @@ public class EmojidexIME extends InputMethodService {
             final Button button = (Button)categoriesView.getChildAt(i);
             if(button.getContentDescription().equals(startCategory))
             {
-                pref.edit().putString("startCategory", defaultCategory).commit();
+                pref.edit().putString(key, defaultCategory).commit();
                 button.performClick();
                 return;
             }
         }
 
         // If start category is not found, use category "all".
-        pref.edit().putString("startCategory", defaultCategory).commit();
+        pref.edit().putString(key, defaultCategory).commit();
         categoryAllButton.performClick();
     }
 

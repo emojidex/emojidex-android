@@ -1,7 +1,6 @@
 package com.emojidex.emojidexandroid;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -33,7 +32,7 @@ public class CatalogAdapter extends BaseAdapter
     @Override
     public Object getItem(int position)
     {
-        return emojies.get(position).getDrawable(format);
+        return emojies.get(position);
     }
 
     @Override

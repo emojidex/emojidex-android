@@ -4,13 +4,17 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.GridView;
+import android.widget.HorizontalScrollView;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,14 +24,14 @@ public class CatalogActivity extends Activity
     private GridView gridView;
 
     private Emojidex emojidex;
-    private List<Emoji> currentCatalog;
-    private String currentCategory;
+    private String currentCategory = null;
 
     private SaveDataManager historyManager;
     private SaveDataManager searchManager;
 
-    private boolean showResult = false;
-    private RadioButton searchButton;
+    private HorizontalScrollView categoryScrollView;
+    private ViewGroup categoriesView;
+    private Button categoryAllButton;
 
     private boolean isPick = false;
 
@@ -62,24 +66,18 @@ public class CatalogActivity extends Activity
         emojidex = Emojidex.getInstance();
         emojidex.initialize(this);
 
-        currentCatalog = emojidex.getAllEmojiList();
-        currentCategory = getString(R.string.ime_category_id_all);
-
         historyManager = new SaveDataManager(this, SaveDataManager.Type.CatalogHistory);
         historyManager.load();
         searchManager = new SaveDataManager(this, SaveDataManager.Type.CatalogSearch);
         searchManager.load();
-
-        searchButton = (RadioButton)findViewById(R.id.catalog_search);
     }
 
     private void initGridView()
     {
         gridView = (GridView)findViewById(R.id.grid_view);
-        gridView.setAdapter(new CatalogAdapter(this, currentCatalog));
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Emoji emoji = currentCatalog.get(position);
+                final Emoji emoji = (Emoji)parent.getAdapter().getItem(position);
                 sendEmoji(emoji);
             }
         });
@@ -90,7 +88,9 @@ public class CatalogActivity extends Activity
         CategoryManager categoryManager = CategoryManager.getInstance();
         categoryManager.initialize(this);
 
-        RadioGroup group = (RadioGroup)findViewById(R.id.grid_button);
+        categoryScrollView = (HorizontalScrollView)findViewById(R.id.catalog_category_scrollview);
+        categoriesView = (ViewGroup)findViewById(R.id.catalog_categories);
+        categoryAllButton = (Button)findViewById(R.id.catalog_category_button_all);
 
         for(int i = 0; i < categoryManager.getCategoryCount(); i++)
         {
@@ -105,7 +105,7 @@ public class CatalogActivity extends Activity
                 }
             });
 
-            group.addView(newButton);
+            categoriesView.addView(newButton);
         }
     }
 
@@ -120,34 +120,33 @@ public class CatalogActivity extends Activity
 
         currentCategory = categoryName;
 
+        List<Emoji> currentCatalog;
+
         if (categoryName.equals(getString(R.string.ime_category_id_history)))
         {
             List<String> emojiNames = historyManager.getEmojiNames();
             currentCatalog = createEmojiList(emojiNames);
-            gridView.setAdapter(new CatalogAdapter(this, currentCatalog));
         }
         else if (categoryName.equals(getString(R.string.ime_category_id_search)))
         {
             List<String> emojiNames = searchManager.getEmojiNames();
             currentCatalog = createEmojiList(emojiNames);
-            gridView.setAdapter(new CatalogAdapter(this, currentCatalog));
         }
         else if (categoryName.equals(getString(R.string.ime_category_id_all)))
         {
             currentCatalog = emojidex.getAllEmojiList();
-            gridView.setAdapter(new CatalogAdapter(this, currentCatalog));
         }
         else
         {
             currentCatalog = emojidex.getEmojiList(categoryName);
-            gridView.setAdapter(new CatalogAdapter(this, currentCatalog));
         }
+
+        if(currentCatalog != null)
+            gridView.setAdapter(new CatalogAdapter(this, currentCatalog));
     }
 
     public void onClickSearchButton(View view)
     {
-        showResult = true;
-
         Intent intent = new Intent(CatalogActivity.this, SearchActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("Catalog", true);
@@ -162,7 +161,7 @@ public class CatalogActivity extends Activity
         downloader.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-                if(downloader.isCanceled())
+                if (downloader.isCanceled())
                     return;
 
                 historyManager.addFirst(emojiName);
@@ -170,8 +169,7 @@ public class CatalogActivity extends Activity
                 final SealGenerator generator = new SealGenerator(CatalogActivity.this);
                 generator.generate(emojiName);
 
-                if(generator.useLowQuality())
-                {
+                if (generator.useLowQuality()) {
                     final AlertDialog.Builder alertDialog = new AlertDialog.Builder(CatalogActivity.this);
                     alertDialog.setMessage(R.string.send_seal_not_found);
                     alertDialog.setPositiveButton(R.string.send_seal_not_found_ok, new DialogInterface.OnClickListener() {
@@ -241,11 +239,47 @@ public class CatalogActivity extends Activity
     protected void onResume()
     {
         super.onResume();
-        if (showResult)
+        initStartCategory();
+    }
+
+    /**
+     * Initialize start category.
+     */
+    private void initStartCategory()
+    {
+        // Load start category from preference.
+        final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        final String key = getString(R.string.preference_key_start_category);
+        final String defaultCategory = getString(R.string.ime_category_id_all);
+        final String searchCategory = getString(R.string.ime_category_id_search);
+        final String startCategory = pref.getString(key, defaultCategory);
+
+        // If start category is "search", always initialize keyboard.
+        if(startCategory.equals(searchCategory))
+            currentCategory = null;
+
+        // If current category is not null, skip initialize.
+        if(currentCategory != null)
+            return;
+
+        // Initialize scroll position.
+        categoryScrollView.scrollTo(0, 0);
+
+        // Search category.
+        final int childCount = categoriesView.getChildCount();
+        for(int i = 0;  i < childCount;  ++i)
         {
-            showResult = false;
-            searchManager.load();
-            searchButton.performClick();
+            final Button button = (Button)categoriesView.getChildAt(i);
+            if(button.getContentDescription().equals(startCategory))
+            {
+                pref.edit().putString(key, defaultCategory).commit();
+                button.performClick();
+                return;
+            }
         }
+
+        // If start category is not found, use category "all".
+        pref.edit().putString(key, defaultCategory).commit();
+        categoryAllButton.performClick();
     }
 }
