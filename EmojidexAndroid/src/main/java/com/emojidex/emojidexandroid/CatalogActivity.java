@@ -256,7 +256,10 @@ public class CatalogActivity extends Activity
 
         // If start category is "search", always initialize keyboard.
         if(startCategory.equals(searchCategory))
+        {
+            searchManager.load();
             currentCategory = null;
+        }
 
         // If current category is not null, skip initialize.
         if(currentCategory != null)
