@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">emojidex</string>
+    <!--<string name="app_name">emojidex</string>-->
+    <!--<string name="app_name_catalog">emojidex catalog</string>-->
     <string name="action_settings">設定</string>
 
     <string name="menu_text_copy">テキストコピー</string>
@@ -115,7 +116,7 @@
     <string name="search_dialog_message">しばらくお待ちください。</string>
     <string name="search_dialog_cancel">キャンセル</string>
 
-    <string name="send_seal_dialog_title">シール送信中……</string>
+    <string name="send_seal_dialog_title">シール送信準備中……</string>
     <string name="send_seal_dialog_message">しばらくお待ちください。</string>
     <string name="send_seal_dialog_cancel">キャンセル</string>
     <string name="send_seal_not_found">シールが見つかりません。</string>

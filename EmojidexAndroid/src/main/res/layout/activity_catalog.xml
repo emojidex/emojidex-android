@@ -1,0 +1,70 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white"
+    tools:context=".CatalogActivity">
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:id="@+id/catalog_category_scrollview"
+        style="@style/IMEHorizontalScrollViewStyle">
+
+        <RadioGroup
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/catalog_categories"
+            android:orientation="horizontal" >
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ime_category_text_history"
+                android:onClick="onClickCategoryButton"
+                android:contentDescription="@string/ime_category_id_history"
+                style="@style/IMERadioButtonStyle"/>
+
+            <RadioButton
+                android:id="@+id/catalog_search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ime_category_text_search"
+                android:onClick="onClickCategoryButton"
+                android:contentDescription="@string/ime_category_id_search"
+                style="@style/IMERadioButtonStyle"/>
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ime_category_text_all"
+                android:id="@+id/catalog_category_button_all"
+                android:onClick="onClickCategoryButton"
+                android:contentDescription="@string/ime_category_id_all"
+                style="@style/IMERadioButtonStyle"/>
+
+        </RadioGroup>
+
+    </HorizontalScrollView>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="@string/search"
+        android:background="@null"
+        android:onClick="onClickSearchButton"/>
+
+    <GridView
+        android:id="@+id/grid_view"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:columnWidth="@dimen/catalog_icon_size"
+        android:minHeight="@dimen/catalog_icon_size"
+        android:numColumns="auto_fit"
+        android:verticalSpacing="5dp"
+        android:horizontalSpacing="5dp"
+        android:stretchMode="columnWidth"
+        android:gravity="center"/>
+
+</LinearLayout>
