@@ -160,13 +160,18 @@
 
     <!-- tutorial -->
     <string name="tutorial_title">How to use emojidex keyboard</string>
-    <string name="tutorial_header_1">Prepare keyboard (1)</string>
-    <string name="tutorial_header_2">Prepare keyboard (2)</string>
-    <string name="tutorial_header_3">Basic functions (1)</string>
-    <string name="tutorial_header_4">Basic functions (2)</string>
-    <string name="tutorial_header_5">How to search Emoji. (1)</string>
-    <string name="tutorial_header_6">How to search Emoji. (2)</string>
-    <string name="tutorial_header_7">How to send seal</string>
-    <string name="tutorial_header_8">Convert and share</string>
+    <string name="tutorial_header_01">Prepare keyboard (1)</string>
+    <string name="tutorial_header_02">Prepare keyboard (2)</string>
+    <string name="tutorial_header_03">Basic functions (1)</string>
+    <string name="tutorial_header_04">Basic functions (2)</string>
+    <string name="tutorial_header_05">How to search emoji (1)</string>
+    <string name="tutorial_header_06">How to search emoji (2)</string>
+    <string name="tutorial_header_07">How to send seal (1)</string>
+    <string name="tutorial_header_08">How to send seal (2)</string>
+    <string name="tutorial_header_09">How to send seal (3)</string>
+    <string name="tutorial_header_10">Convert and share</string>
+    <string name="tutorial_header_11">How to use catalog (1)</string>
+    <string name="tutorial_header_12">How to use catalog (2)</string>
+    <string name="tutorial_header_13">How to use catalog (3)</string>
 
 </resources>

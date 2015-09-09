@@ -125,13 +125,18 @@
 
     <!-- チュートリアル -->
     <string name="tutorial_title">絵文字デックスキーボードの使い方</string>
-    <string name="tutorial_header_1">キーボードの準備(1)</string>
-    <string name="tutorial_header_2">キーボードの準備(2)</string>
-    <string name="tutorial_header_3">基本機能(1)</string>
-    <string name="tutorial_header_4">基本機能(2)</string>
-    <string name="tutorial_header_5">検索の仕方(1)</string>
-    <string name="tutorial_header_6">検索の仕方(2)</string>
-    <string name="tutorial_header_7">シールの送信の仕方</string>
-    <string name="tutorial_header_8">変換・共有</string>
+    <string name="tutorial_header_01">キーボードの準備(1)</string>
+    <string name="tutorial_header_02">キーボードの準備(2)</string>
+    <string name="tutorial_header_03">基本機能(1)</string>
+    <string name="tutorial_header_04">基本機能(2)</string>
+    <string name="tutorial_header_05">検索の仕方(1)</string>
+    <string name="tutorial_header_06">検索の仕方(2)</string>
+    <string name="tutorial_header_07">シールの送信の仕方(1)</string>
+    <string name="tutorial_header_08">シールの送信の仕方(2)</string>
+    <string name="tutorial_header_09">シールの送信の仕方(3)</string>
+    <string name="tutorial_header_10">変換・共有</string>
+    <string name="tutorial_header_11">カタログの使い方(1)</string>
+    <string name="tutorial_header_12">カタログの使い方(2)</string>
+    <string name="tutorial_header_13">カタログの使い方(3)</string>
 
 </resources>

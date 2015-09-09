@@ -3,7 +3,9 @@ package com.emojidex.emojidexandroid;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -18,6 +20,8 @@ import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 public class TutorialActivity extends Activity {
+    private static final int PAGE_NUM = 13;
+
     private int page;
     private ViewFlipper viewFlipper;
     private Animation rightInAnimation;
@@ -40,18 +44,20 @@ public class TutorialActivity extends Activity {
     }
 
     private void createTutorial() {
+        // Close keyboard.
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         page = 0;
 
+        // Set next/prev button.
         nextButton = (ImageButton)findViewById(R.id.tutotial_next_button);
         prevButton = (ImageButton)findViewById(R.id.tutotial_prev_button);
         prevButton.setVisibility(View.INVISIBLE);
 
         // TODO: 英語版の時は？
-        // TODO: Dropboxの画像を追加、差し替え。それに伴ってヘッダーテキストも修正。
+        // Create view flipper.
         viewFlipper = (ViewFlipper)findViewById(R.id.tutorial_view_flipper);
-        for (int i = 1; i <= 8; i++) {
+        for (int i = 1; i <= PAGE_NUM; i++) {
             ImageView imageView = new ImageView(getApplicationContext());
 
             if (i <= 2) {
@@ -63,6 +69,7 @@ public class TutorialActivity extends Activity {
             viewFlipper.addView(imageView);
         }
 
+        // Create paging animation.
         rightInAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_in);
         rightOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_out);
         rightOutAnimation.setAnimationListener(new Animation.AnimationListener() {
@@ -72,8 +79,9 @@ public class TutorialActivity extends Activity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                releaseImage((ImageView) viewFlipper.getChildAt(page + 1));
-                setIndicator(page + 1);
+                ImageView imageView = (ImageView) viewFlipper.getChildAt(page + 1);
+                releaseImage(imageView);
+                radioGroup.check(page);
             }
 
             @Override
@@ -90,8 +98,9 @@ public class TutorialActivity extends Activity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                releaseImage((ImageView) viewFlipper.getChildAt(page - 1));
-                setIndicator(page - 1);
+                ImageView imageView = (ImageView) viewFlipper.getChildAt(page - 1);
+                releaseImage(imageView);
+                radioGroup.check(page);
             }
 
             @Override
@@ -99,6 +108,7 @@ public class TutorialActivity extends Activity {
             }
         });
 
+        // Create gesture.
         gestureDetector = new GestureDetector(this, new GestureDetector.OnGestureListener() {
             @Override
             public boolean onDown(MotionEvent e) {
@@ -138,23 +148,31 @@ public class TutorialActivity extends Activity {
             }
         });
 
+        // Set header text.
         textView = (TextView)findViewById(R.id.tutorial_header);
-        textView.setText(R.string.tutorial_header_1);
+        textView.setText(R.string.tutorial_header_01);
 
-        // Instead of page indicator.
+        // Create radio button. (Instead of page indicator.)
         radioGroup = (RadioGroup)findViewById(R.id.tutorial_indicator);
-        for (int i = 0; i < 8; i++) {
+
+        WindowManager windowManager = (WindowManager)getSystemService(WINDOW_SERVICE);
+        Display display = windowManager.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+
+        for (int i = 0; i < PAGE_NUM; i++) {
             RadioButton button = new RadioButton(getApplicationContext());
             button.setId(i);
-            button.setEnabled(false);
+            button.setClickable(false);
+            button.setMaxWidth(size.x / PAGE_NUM);
             radioGroup.addView(button);
         }
         radioGroup.check(0);
-        radioGroup.getChildAt(0).setEnabled(true);
     }
 
     public void tutorialShowNext(View v) {
-        if (page == 7) return;
+        // Last page.
+        if (page == PAGE_NUM - 1) return;
 
         page++;
         setImage();
@@ -167,6 +185,7 @@ public class TutorialActivity extends Activity {
     }
 
     public void tutorialShowPrevious(View v) {
+        // First page.
         if (page == 0) return;
 
         page--;
@@ -181,40 +200,36 @@ public class TutorialActivity extends Activity {
 
     private void setImage() {
         ImageView imageView = (ImageView)viewFlipper.getChildAt(page);
-        releaseImage(imageView);
-
-        int resourceId = getResources().getIdentifier("tutorial_0" + (page + 1), "drawable", getPackageName());
+        String pageString = "tutorial_" + String.format("%1$02d", (page + 1));
+        int resourceId = getResources().getIdentifier(pageString, "drawable", getPackageName());
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), resourceId);
         imageView.setImageBitmap(bitmap);
     }
 
     private void setText() {
-        int resourceId = getResources().getIdentifier("tutorial_header_" + (page + 1), "string", getPackageName());
+        String pageString = "tutorial_header_" + String.format("%1$02d", (page + 1));
+        int resourceId = getResources().getIdentifier(pageString, "string", getPackageName());
         textView.setText(resourceId);
     }
 
     private void setButtonVisibility() {
         if (page == 0) {
+            // First page.
             nextButton.setVisibility(View.VISIBLE);
             prevButton.setVisibility(View.INVISIBLE);
-        } else if (page == 7) {
+        } else if (page == PAGE_NUM - 1) {
+            // Last page.
             nextButton.setVisibility(View.INVISIBLE);
             prevButton.setVisibility(View.VISIBLE);
         } else {
+            // Other page.
             nextButton.setVisibility(View.VISIBLE);
             prevButton.setVisibility(View.VISIBLE);
         }
     }
 
-    private void setIndicator(int disablePage) {
-        radioGroup.getChildAt(disablePage).setEnabled(false);
-        radioGroup.getChildAt(page).setEnabled(true);
-        radioGroup.check(page);
-    }
-
     public void closeTutorial(View v) {
         releaseImages();
-
         finish();
     }
 
@@ -224,7 +239,7 @@ public class TutorialActivity extends Activity {
     }
 
     private void releaseImages() {
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < PAGE_NUM; i++) {
             ImageView imageView = (ImageView) viewFlipper.getChildAt(i);
             releaseImage(imageView);
         }
