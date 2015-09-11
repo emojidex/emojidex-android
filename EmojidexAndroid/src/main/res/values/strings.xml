@@ -64,6 +64,7 @@
     <string name="editor_enable_check_message">The emojidex keyboard is not enabled.\nWould you like to enable it?</string>
     <string name="editor_enable_check_yes">Yes</string>
     <string name="editor_enable_check_no">No</string>
+    <string name="editor_show_tutorial_message">Show tutorial?</string>
     <string name="editor_message_text_copy">Copy text.</string>
     <string name="editor_message_text_clear_and_paste">Clear and paste text.</string>
     <string name="editor_message_text_clear">Clear text.</string>

@@ -46,37 +46,15 @@ public class MainActivity extends Activity {
         initEmojidexEditor();
         setShareButtonIcon();
         getIntentData();
+
+        showTutorial();
+        imeEnableCheck();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        // Show tutorial when first.
-        final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        final String key = getString(R.string.preference_key_show_tutorial);
-        final boolean showTutorial = pref.getBoolean(key, true);
-
-        if(!showTutorial)
-            return;
-
-        pref.edit().putBoolean(key, false).commit();
-
-        final Intent intent = new Intent(this, TutorialActivity.class);
-        startActivity(intent);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        imeEnableCheck();
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -376,6 +354,41 @@ public class MainActivity extends Activity {
             public void onClick(DialogInterface dialog, int which) {
                 final Intent intent = new Intent(Settings.ACTION_INPUT_METHOD_SETTINGS);
                 startActivity(intent);
+            }
+        });
+        dialog.show();
+    }
+
+    /**
+     * Show tutorial.
+     */
+    private void showTutorial()
+    {
+        final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        final String key = getString(R.string.preference_key_show_tutorial);
+        final boolean showTutorialFlag = pref.getBoolean(key, true);
+
+        // Skip tutorial if show flag is false.
+        if(!showTutorialFlag)
+            return;
+
+        // Set show flag false.
+        pref.edit().putBoolean(key, false).commit();
+
+        // Show choise dialog.
+        final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setMessage(R.string.editor_show_tutorial_message);
+        dialog.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                final Intent intent = new Intent(MainActivity.this, TutorialActivity.class);
+                startActivity(intent);
+            }
+        });
+        dialog.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // nop
             }
         });
         dialog.show();
