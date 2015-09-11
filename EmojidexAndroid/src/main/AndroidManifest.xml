@@ -62,6 +62,23 @@
         </activity>
 
         <activity
+            android:name="com.emojidex.emojidexandroid.CatalogActivity"
+            android:label="@string/app_name_catalog"
+            android:icon="@drawable/ic_catalog"
+            android:theme="@android:style/Theme.NoTitleBar">
+            <intent-filter>
+                <action android:name="android.intent.action.PICK"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="image/png"/>
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
             android:name=".TutorialActivity"
             android:label="@string/tutorial_title"/>
 

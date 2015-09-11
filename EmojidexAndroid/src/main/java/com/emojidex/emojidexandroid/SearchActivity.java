@@ -37,16 +37,23 @@ public class SearchActivity extends Activity {
     private ProgressDialog loadingDialog = null;
     private EmojiDownloader downloader = null;
 
+    private boolean fromCatalog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.window_search);
 
-        switchIME();
+        fromCatalog = getIntent().getBooleanExtra("Catalog", false);
+
+        if (!fromCatalog) switchIME();
         initializeContentView();
 
         // Initialize fields.
-        searchManager = new SaveDataManager(this, SaveDataManager.Type.Search);
+        if (fromCatalog)
+            searchManager = new SaveDataManager(this, SaveDataManager.Type.CatalogSearch);
+        else
+            searchManager = new SaveDataManager(this, SaveDataManager.Type.Search);
     }
 
     @Override
@@ -57,7 +64,7 @@ public class SearchActivity extends Activity {
 
     @Override
     protected void onDestroy() {
-        resetIME();
+        if (!fromCatalog) resetIME();
         super.onDestroy();
     }
 
