@@ -163,19 +163,19 @@
     <string name="preference_entryvalue_update_interval_default" translatable="false">604800000</string>
 
     <!-- tutorial -->
-    <string name="tutorial_title">How to use emojidex keyboard</string>
-    <string name="tutorial_header_01">Prepare keyboard (1)</string>
-    <string name="tutorial_header_02">Prepare keyboard (2)</string>
-    <string name="tutorial_header_03">Basic functions (1)</string>
-    <string name="tutorial_header_04">Basic functions (2)</string>
-    <string name="tutorial_header_05">How to search emoji (1)</string>
-    <string name="tutorial_header_06">How to search emoji (2)</string>
-    <string name="tutorial_header_07">How to send seal (1)</string>
-    <string name="tutorial_header_08">How to send seal (2)</string>
-    <string name="tutorial_header_09">How to send seal (3)</string>
-    <string name="tutorial_header_10">Convert and share</string>
-    <string name="tutorial_header_11">How to use catalog (1)</string>
-    <string name="tutorial_header_12">How to use catalog (2)</string>
-    <string name="tutorial_header_13">How to use catalog (3)</string>
+    <string name="tutorial_title">Using emojidex</string>
+    <string name="tutorial_header_01">Keyboard Settings (1)</string>
+    <string name="tutorial_header_02">Keyboard Settings (2)</string>
+    <string name="tutorial_header_03">Keyboard Basics (1)</string>
+    <string name="tutorial_header_04">Keyboard Basics (2)</string>
+    <string name="tutorial_header_05">emoji Search (1)</string>
+    <string name="tutorial_header_06">emoji Search (2)</string>
+    <string name="tutorial_header_07">Sending a seal (1)</string>
+    <string name="tutorial_header_08">Sending a seal (2)</string>
+    <string name="tutorial_header_09">Sending a seal (3)</string>
+    <string name="tutorial_header_10">Text conversion</string>
+    <string name="tutorial_header_11">Using the Seal Kit (1)</string>
+    <string name="tutorial_header_12">Using the Seal Kit (2)</string>
+    <string name="tutorial_header_13">Using the Seal Kit (3)</string>
 
 </resources>
