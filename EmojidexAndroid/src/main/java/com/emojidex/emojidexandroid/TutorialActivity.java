@@ -19,10 +19,14 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
+import java.util.Locale;
+
 public class TutorialActivity extends Activity {
     private static final int PAGE_NUM = 13;
 
     private int page;
+    private String localeString;
+
     private ViewFlipper viewFlipper;
     private Animation rightInAnimation;
     private Animation rightOutAnimation;
@@ -54,14 +58,25 @@ public class TutorialActivity extends Activity {
         prevButton = (ImageButton)findViewById(R.id.tutotial_prev_button);
         prevButton.setVisibility(View.INVISIBLE);
 
-        // TODO: 英語版の時は？
+        // TODO: 英語版画像は仮につき後で上書きする。
+        // TODO: 画像が増える予定なのでstringsにも追加する。
+
+        // Get locale.
+        Locale locale = Locale.getDefault();
+        if (Locale.JAPAN.equals(locale)) {
+            localeString = "tutorial_ja_";
+        } else {
+            localeString = "tutorial_en_";
+        }
+
         // Create view flipper.
         viewFlipper = (ViewFlipper)findViewById(R.id.tutorial_view_flipper);
         for (int i = 1; i <= PAGE_NUM; i++) {
             ImageView imageView = new ImageView(getApplicationContext());
 
             if (i <= 2) {
-                int resourceId = getResources().getIdentifier("tutorial_0" + i, "drawable", getPackageName());
+                String pageString = localeString + String.format("%1$02d", i);
+                int resourceId = getResources().getIdentifier(pageString, "drawable", getPackageName());
                 Bitmap bitmap = BitmapFactory.decodeResource(getResources(), resourceId);
                 imageView.setImageBitmap(bitmap);
             }
@@ -75,6 +90,7 @@ public class TutorialActivity extends Activity {
         rightOutAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
+                // nop
             }
 
             @Override
@@ -86,6 +102,7 @@ public class TutorialActivity extends Activity {
 
             @Override
             public void onAnimationRepeat(Animation animation) {
+                // nop
             }
         });
 
@@ -94,6 +111,7 @@ public class TutorialActivity extends Activity {
         leftOutAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
+                // nop
             }
 
             @Override
@@ -105,6 +123,7 @@ public class TutorialActivity extends Activity {
 
             @Override
             public void onAnimationRepeat(Animation animation) {
+                // nop
             }
         });
 
@@ -117,6 +136,7 @@ public class TutorialActivity extends Activity {
 
             @Override
             public void onShowPress(MotionEvent e) {
+                // nop
             }
 
             @Override
@@ -131,6 +151,7 @@ public class TutorialActivity extends Activity {
 
             @Override
             public void onLongPress(MotionEvent e) {
+                // nop
             }
 
             @Override
@@ -200,7 +221,7 @@ public class TutorialActivity extends Activity {
 
     private void setImage() {
         ImageView imageView = (ImageView)viewFlipper.getChildAt(page);
-        String pageString = "tutorial_" + String.format("%1$02d", (page + 1));
+        String pageString = localeString + String.format("%1$02d", (page + 1));
         int resourceId = getResources().getIdentifier(pageString, "drawable", getPackageName());
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), resourceId);
         imageView.setImageBitmap(bitmap);

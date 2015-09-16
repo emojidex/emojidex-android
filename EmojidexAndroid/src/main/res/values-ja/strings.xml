@@ -137,8 +137,8 @@
     <string name="tutorial_header_08">シールの送信の仕方(2)</string>
     <string name="tutorial_header_09">シールの送信の仕方(3)</string>
     <string name="tutorial_header_10">変換・共有</string>
-    <string name="tutorial_header_11">カタログの使い方(1)</string>
-    <string name="tutorial_header_12">カタログの使い方(2)</string>
-    <string name="tutorial_header_13">カタログの使い方(3)</string>
+    <string name="tutorial_header_11">シールキットの使い方(1)</string>
+    <string name="tutorial_header_12">シールキットの使い方(2)</string>
+    <string name="tutorial_header_13">シールキットの使い方(3)</string>
 
 </resources>
