@@ -3,9 +3,7 @@ package com.emojidex.emojidexandroid;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Point;
 import android.os.Bundle;
-import android.view.Display;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -14,15 +12,13 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 import java.util.Locale;
 
 public class TutorialActivity extends Activity {
-    private static final int PAGE_NUM = 13;
+    private static final int PAGE_NUM = 17;
 
     private int page;
     private String localeString;
@@ -32,12 +28,12 @@ public class TutorialActivity extends Activity {
     private Animation rightOutAnimation;
     private Animation leftInAnimation;
     private Animation leftOutAnimation;
-    private RadioGroup radioGroup;
     private GestureDetector gestureDetector;
 
-    private TextView textView;
+    private TextView headerTextView;
     private ImageButton nextButton;
     private ImageButton prevButton;
+    private TextView nowPageTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,9 +53,6 @@ public class TutorialActivity extends Activity {
         nextButton = (ImageButton)findViewById(R.id.tutotial_next_button);
         prevButton = (ImageButton)findViewById(R.id.tutotial_prev_button);
         prevButton.setVisibility(View.INVISIBLE);
-
-        // TODO: 英語版画像は仮につき後で上書きする。
-        // TODO: 画像が増える予定なのでstringsにも追加する。
 
         // Get locale.
         Locale locale = Locale.getDefault();
@@ -97,7 +90,7 @@ public class TutorialActivity extends Activity {
             public void onAnimationEnd(Animation animation) {
                 ImageView imageView = (ImageView) viewFlipper.getChildAt(page + 1);
                 releaseImage(imageView);
-                radioGroup.check(page);
+                nowPageTextView.setText(String.valueOf(page + 1));
             }
 
             @Override
@@ -118,7 +111,7 @@ public class TutorialActivity extends Activity {
             public void onAnimationEnd(Animation animation) {
                 ImageView imageView = (ImageView) viewFlipper.getChildAt(page - 1);
                 releaseImage(imageView);
-                radioGroup.check(page);
+                nowPageTextView.setText(String.valueOf(page + 1));
             }
 
             @Override
@@ -170,25 +163,14 @@ public class TutorialActivity extends Activity {
         });
 
         // Set header text.
-        textView = (TextView)findViewById(R.id.tutorial_header);
-        textView.setText(R.string.tutorial_header_01);
+        headerTextView = (TextView)findViewById(R.id.tutorial_header);
+        headerTextView.setText(R.string.tutorial_header_01);
 
-        // Create radio button. (Instead of page indicator.)
-        radioGroup = (RadioGroup)findViewById(R.id.tutorial_indicator);
-
-        WindowManager windowManager = (WindowManager)getSystemService(WINDOW_SERVICE);
-        Display display = windowManager.getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-
-        for (int i = 0; i < PAGE_NUM; i++) {
-            RadioButton button = new RadioButton(getApplicationContext());
-            button.setId(i);
-            button.setClickable(false);
-            button.setMaxWidth(size.x / PAGE_NUM);
-            radioGroup.addView(button);
-        }
-        radioGroup.check(0);
+        // Create page text.
+        TextView totalTextView = (TextView)findViewById(R.id.tutorial_total_page);
+        totalTextView.setText(String.valueOf(PAGE_NUM));
+        nowPageTextView = (TextView)findViewById(R.id.tutorial_now_page);
+        nowPageTextView.setText("1");
     }
 
     public void tutorialShowNext(View v) {
@@ -230,7 +212,7 @@ public class TutorialActivity extends Activity {
     private void setText() {
         String pageString = "tutorial_header_" + String.format("%1$02d", (page + 1));
         int resourceId = getResources().getIdentifier(pageString, "string", getPackageName());
-        textView.setText(resourceId);
+        headerTextView.setText(resourceId);
     }
 
     private void setButtonVisibility() {

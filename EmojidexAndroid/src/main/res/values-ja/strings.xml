@@ -131,14 +131,18 @@
     <string name="tutorial_header_02">キーボードの準備(2)</string>
     <string name="tutorial_header_03">基本機能(1)</string>
     <string name="tutorial_header_04">基本機能(2)</string>
-    <string name="tutorial_header_05">検索の仕方(1)</string>
-    <string name="tutorial_header_06">検索の仕方(2)</string>
-    <string name="tutorial_header_07">シールの送信の仕方(1)</string>
-    <string name="tutorial_header_08">シールの送信の仕方(2)</string>
-    <string name="tutorial_header_09">シールの送信の仕方(3)</string>
-    <string name="tutorial_header_10">変換・共有</string>
-    <string name="tutorial_header_11">シールキットの使い方(1)</string>
-    <string name="tutorial_header_12">シールキットの使い方(2)</string>
-    <string name="tutorial_header_13">シールキットの使い方(3)</string>
+    <string name="tutorial_header_05">基本機能(3)</string>
+    <string name="tutorial_header_06">検索の仕方(1)</string>
+    <string name="tutorial_header_07">検索の仕方(2)</string>
+    <string name="tutorial_header_08">シールの送信の仕方(1)</string>
+    <string name="tutorial_header_09">シールの送信の仕方(2)</string>
+    <string name="tutorial_header_10">シールの送信の仕方(3)</string>
+    <string name="tutorial_header_11">変換・共有(1)</string>
+    <string name="tutorial_header_12">変換・共有(2)</string>
+    <string name="tutorial_header_13">変換・共有(3)</string>
+    <string name="tutorial_header_14">シールキットの使い方(1)</string>
+    <string name="tutorial_header_15">シールキットの使い方(2)</string>
+    <string name="tutorial_header_16">シールキットの使い方(3)</string>
+    <string name="tutorial_header_17">シールキットの使い方(4)</string>
 
 </resources>

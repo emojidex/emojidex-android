@@ -168,14 +168,18 @@
     <string name="tutorial_header_02">Keyboard Settings (2)</string>
     <string name="tutorial_header_03">Keyboard Basics (1)</string>
     <string name="tutorial_header_04">Keyboard Basics (2)</string>
-    <string name="tutorial_header_05">emoji Search (1)</string>
-    <string name="tutorial_header_06">emoji Search (2)</string>
-    <string name="tutorial_header_07">Sending a seal (1)</string>
-    <string name="tutorial_header_08">Sending a seal (2)</string>
-    <string name="tutorial_header_09">Sending a seal (3)</string>
-    <string name="tutorial_header_10">Text conversion</string>
-    <string name="tutorial_header_11">Using the Seal Kit (1)</string>
-    <string name="tutorial_header_12">Using the Seal Kit (2)</string>
-    <string name="tutorial_header_13">Using the Seal Kit (3)</string>
+    <string name="tutorial_header_05">Keyboard Basics (3)</string>
+    <string name="tutorial_header_06">emoji Search (1)</string>
+    <string name="tutorial_header_07">emoji Search (2)</string>
+    <string name="tutorial_header_08">Sending a seal (1)</string>
+    <string name="tutorial_header_09">Sending a seal (2)</string>
+    <string name="tutorial_header_10">Sending a seal (3)</string>
+    <string name="tutorial_header_11">Text conversion (1)</string>
+    <string name="tutorial_header_12">Text conversion (2)</string>
+    <string name="tutorial_header_13">Text conversion (3)</string>
+    <string name="tutorial_header_14">Using the Seal Kit (1)</string>
+    <string name="tutorial_header_15">Using the Seal Kit (2)</string>
+    <string name="tutorial_header_16">Using the Seal Kit (3)</string>
+    <string name="tutorial_header_17">Using the Seal Kit (4)</string>
 
 </resources>
