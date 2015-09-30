@@ -15,8 +15,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
-import java.util.Locale;
-
 public class TutorialActivity extends Activity {
     private static final int PAGE_NUM = 17;
 
@@ -55,12 +53,7 @@ public class TutorialActivity extends Activity {
         prevButton.setVisibility(View.INVISIBLE);
 
         // Get locale.
-        Locale locale = Locale.getDefault();
-        if (Locale.JAPAN.equals(locale)) {
-            localeString = "tutorial_ja_";
-        } else {
-            localeString = "tutorial_en_";
-        }
+        localeString = "tutorial_" + PathUtils.getLocaleString() + "_";
 
         // Create view flipper.
         viewFlipper = (ViewFlipper)findViewById(R.id.tutorial_view_flipper);

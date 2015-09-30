@@ -158,6 +158,7 @@
     <string name="preference_key_clear_history" translatable="false">clearHistory</string>
     <string name="preference_key_clear_search_result" translatable="false">clearSearchResult</string>
     <string name="preference_key_tutorial" translatable="false">tutorial</string>
+    <string name="preference_key_last_language" translatable="false">language</string>
     <string name="preference_entryvalue_default_keyboard_nothing" translatable="false">nothing</string>
     <string name="preference_entryvalue_default_keyboard_default" translatable="false">@string/preference_entryvalue_default_keyboard_nothing</string>
     <string name="preference_entryvalue_update_interval_default" translatable="false">604800000</string>

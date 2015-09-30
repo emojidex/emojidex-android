@@ -12,11 +12,13 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -216,7 +218,22 @@ public class EmojiDownloader {
                     nextThreadIndex = (nextThreadIndex + 1) % downloadEmojiesArray.length;
                 }
                 final FileParam fileParam = new FileParam();
-                fileParam.source = PathUtils.getRemoteEmojiPath(localJsonParam.name, format, sourceRootPath);
+                String emojiName = localJsonParam.name;
+                if (PathUtils.getLocaleString().equals("ja"))
+                {
+                    try
+                    {
+                        emojiName = URLEncoder.encode(localJsonParam.name, "UTF-8");
+                    }
+                    catch (UnsupportedEncodingException e)
+                    {
+                        e.printStackTrace();
+                    }
+                } else
+                {
+                    emojiName = emojiName.replaceAll(" ", "_");
+                }
+                fileParam.source = PathUtils.getRemoteEmojiPath(emojiName, format, sourceRootPath);
                 fileParam.destination = PathUtils.getLocalEmojiPath(localJsonParam.name, format);
                 downloadParam.fileParams.add(fileParam);
                 ++downloadEmojiCount;

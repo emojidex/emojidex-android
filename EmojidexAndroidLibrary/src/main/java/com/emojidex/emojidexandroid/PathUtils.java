@@ -2,12 +2,15 @@ package com.emojidex.emojidexandroid;
 
 import android.os.Environment;
 
+import java.util.Locale;
+
 /**
  * Created by kou on 14/10/03.
  */
 class PathUtils {
     static final String REMOTE_ROOT_PATH_DEFAULT = "http://cdn.emojidex.com";
     static final String LOCAL_ROOT_PATH = Environment.getExternalStorageDirectory().getPath() + "/.emojidex";
+    static final String API_ROOT_PATH = "https://www.emojidex.com/api/v1";
     static final String JSON_FILENAME = "emoji.json";
 
     /**
@@ -66,8 +69,8 @@ class PathUtils {
     public static String getRemoteJsonPath(String kind, String rootPath)
     {
         return rootPath + "/"
-                + kind + "/"
-                + JSON_FILENAME
+                + kind + "_emoji?detailed=true&locale="
+                + getLocaleString()
                 ;
     }
 
@@ -82,5 +85,31 @@ class PathUtils {
         return format.getRelativeDir() + "/"
                 + name + format.getExtension()
                 ;
+    }
+
+    /**
+     * Get api root path from remote server.
+     * @return      Default API root path.
+     */
+    public static String getAPIRootPath()
+    {
+        return API_ROOT_PATH;
+    }
+
+    /**
+     * Get locale string.
+     * @return      en or ja.
+     */
+    public static String getLocaleString()
+    {
+        Locale locale = Locale.getDefault();
+        if (Locale.JAPAN.equals(locale))
+        {
+            return "ja";
+        }
+        else
+        {
+            return "en";
+        }
     }
 }

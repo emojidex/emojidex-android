@@ -36,7 +36,7 @@ public class SealDownloader {
 
         // Download seal.
         final EmojiDownloader downloader = new EmojiDownloader(parentActivity);
-        final String url = "https://www.emojidex.com/api/v1/emoji/" + name + "?detailed=true";
+        final String url = PathUtils.getAPIRootPath() + "/emoji/" + name + "?detailed=true";
         final EmojiFormat[] formats = {EmojiFormat.toFormat(parentActivity.getString(R.string.emoji_format_seal))};
         downloader.setListener(new CustomDownloadListener());
         downloader.add(url, formats, PathUtils.getRemoteRootPathDefault() + "/emoji");

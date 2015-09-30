@@ -76,16 +76,19 @@ public class Emojidex {
             return false;
 
         downloader = new EmojiDownloader(context);
-        final String rootPath = PathUtils.getRemoteRootPathDefault();
+        final String rootPath = PathUtils.getAPIRootPath();
+        final String resourcePath = PathUtils.getRemoteRootPathDefault() + "/emoji";
         if(listener != null)
             downloader.setListener(listener);
         downloader.add(
                 PathUtils.getRemoteJsonPath("utf", rootPath),
-                formats
+                formats,
+                resourcePath
         );
         downloader.add(
                 PathUtils.getRemoteJsonPath("extended", rootPath),
-                formats
+                formats,
+                resourcePath
         );
 
         return true;

@@ -99,6 +99,11 @@ public class EmojidexIME extends InputMethodService {
         historyManager = new SaveDataManager(this, SaveDataManager.Type.History);
         searchManager = new SaveDataManager(this, SaveDataManager.Type.Search);
 
+        // Check language.
+        if (checkChangeLanguage()) {
+            // TODO: 言語が変更されているのでファイル削除する。
+        }
+
         // Emoji download.
         if(checkExecUpdate())
         {
@@ -326,6 +331,23 @@ public class EmojidexIME extends InputMethodService {
         final long currentTime = new Date().getTime();
         final long updateInterval = Long.parseLong(pref.getString(getString(R.string.preference_key_update_interval), getString(R.string.preference_entryvalue_update_interval_default)));
         return (currentTime - lastUpdateTime) > updateInterval;
+    }
+
+    /**
+     * Get change language flag.
+     * @return  true when the language settings have been changed.
+     */
+    private boolean checkChangeLanguage()
+    {
+        final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        final String lastLanguage = pref.getString(getString(R.string.preference_key_last_language), "en");
+        final String currentLanguage = PathUtils.getLocaleString();
+
+        final SharedPreferences.Editor editor = pref.edit();
+        editor.putString(getString(R.string.preference_key_last_language), currentLanguage);
+        editor.apply();
+
+        return !lastLanguage.equals(currentLanguage);
     }
 
     /**
