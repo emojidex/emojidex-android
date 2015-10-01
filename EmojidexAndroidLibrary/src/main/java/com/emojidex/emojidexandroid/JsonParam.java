@@ -19,7 +19,7 @@ import java.util.HashMap;
  * Created by kou on 14/10/10.
  */
 class JsonParam extends SimpleJsonParam {
-    @JsonProperty("code_ja")    protected String name_ja = null;
+//    @JsonProperty("code_ja")    protected String name_ja = null;
     @JsonProperty("checksums")  protected Checksums checksums = null;
 
     public static class Checksums

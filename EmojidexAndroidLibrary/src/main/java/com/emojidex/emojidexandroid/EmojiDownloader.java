@@ -191,7 +191,7 @@ public class EmojiDownloader {
             localJsonParam.name = jsonParam.name;
             localJsonParam.text = jsonParam.text;
             localJsonParam.category = jsonParam.category;
-            localJsonParam.name_ja = jsonParam.name_ja;
+//            localJsonParam.name_ja = jsonParam.name_ja;
             localJsonParam.variants = jsonParam.variants;
             localJsonParam.base = jsonParam.base;
 
