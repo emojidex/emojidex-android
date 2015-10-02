@@ -99,16 +99,8 @@ public class EmojidexIME extends InputMethodService {
         historyManager = new SaveDataManager(this, SaveDataManager.Type.History);
         searchManager = new SaveDataManager(this, SaveDataManager.Type.Search);
 
-        // Check language.
-        if (checkChangeLanguage()) {
-            // TODO: 言語が変更されているのでファイル削除する。
-        }
-
         // Emoji download.
-        if(checkExecUpdate())
-        {
-            new EmojidexUpdater(this).startUpdateThread();
-        }
+        downloadEmoji();
     }
 
     @Override
@@ -318,6 +310,25 @@ public class EmojidexIME extends InputMethodService {
         // If start category is not found, use category "all".
         pref.edit().putString(key, defaultCategory).commit();
         categoryAllButton.performClick();
+    }
+
+    /**
+     * Download emoji.
+     */
+    private void downloadEmoji()
+    {
+        if(checkChangeLanguage())
+        {
+            historyManager.clear();
+            historyManager.save();
+            searchManager.clear();
+            searchManager.save();
+            emojidex.deleteLocalCache();
+        }
+        else if(!checkExecUpdate())
+            return;
+
+        new EmojidexUpdater(this).startUpdateThread();
     }
 
     /**
