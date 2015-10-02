@@ -229,12 +229,12 @@ public class EmojidexKeyboardView extends KeyboardView {
 
         // Skip if emoji not has variants.
         final List<String> variants = emoji.getVariants();
-        if(variants == null || variants.isEmpty())
+        if(variants == null || variants.size() <= 1)
             return;
 
         // Create variants emoji list.
         final ArrayList<Emoji> variantsEmojies = new ArrayList<Emoji>();
-        variantsEmojies.add(emoji);
+//        variantsEmojies.add(emoji);
         for (String name : variants)
             variantsEmojies.add(emojidex.getEmoji(name));
 
