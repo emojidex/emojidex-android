@@ -324,11 +324,14 @@ public class EmojidexIME extends InputMethodService {
             searchManager.clear();
             searchManager.save();
             emojidex.deleteLocalCache();
-        }
-        else if(!checkExecUpdate())
-            return;
 
-        new EmojidexUpdater(this).startUpdateThread();
+            // Reset last update time log.
+            final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+            pref.edit().putLong(getString(R.string.preference_key_last_update_time), 0).commit();
+        }
+
+        if(checkExecUpdate())
+            new EmojidexUpdater(this).startUpdateThread();
     }
 
     /**
