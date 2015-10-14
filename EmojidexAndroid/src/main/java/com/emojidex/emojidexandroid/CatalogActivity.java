@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,10 +22,13 @@ import java.util.List;
 
 public class CatalogActivity extends Activity
 {
+    static CatalogActivity currentInstance = null;
+
     private GridView gridView;
 
     private Emojidex emojidex;
     private String currentCategory = null;
+    private List<Emoji> currentCatalog = null;
 
     private SaveDataManager historyManager;
     private SaveDataManager searchManager;
@@ -34,6 +38,8 @@ public class CatalogActivity extends Activity
     private Button categoryAllButton;
 
     private boolean isPick = false;
+
+    private Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -59,6 +65,13 @@ public class CatalogActivity extends Activity
                 isPick = true;
             }
         }
+
+        // Create handler.
+        handler = new Handler();
+
+        // Emoji download.
+        currentInstance = this;
+        new EmojidexUpdater(this).startUpdateThread();
     }
 
     private void initData()
@@ -119,8 +132,6 @@ public class CatalogActivity extends Activity
         if (categoryName.equals(currentCategory)) return;
 
         currentCategory = categoryName;
-
-        List<Emoji> currentCatalog;
 
         if (categoryName.equals(getString(R.string.ime_category_id_history)))
         {
@@ -284,5 +295,22 @@ public class CatalogActivity extends Activity
         // If start category is not found, use category "all".
         pref.edit().putString(key, defaultCategory).commit();
         categoryAllButton.performClick();
+    }
+
+    void reloadCategory()
+    {
+        final String category = currentCategory;
+        currentCategory = null;
+        changeCategory(category);
+    }
+
+    void invalidate()
+    {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                ((CatalogAdapter)gridView.getAdapter()).notifyDataSetChanged();
+            }
+        });
     }
 }

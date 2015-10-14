@@ -30,7 +30,6 @@ import android.widget.ViewFlipper;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -100,7 +99,7 @@ public class EmojidexIME extends InputMethodService {
         searchManager = new SaveDataManager(this, SaveDataManager.Type.Search);
 
         // Emoji download.
-        downloadEmoji();
+        new EmojidexUpdater(this).startUpdateThread();
     }
 
     @Override
@@ -310,58 +309,6 @@ public class EmojidexIME extends InputMethodService {
         // If start category is not found, use category "all".
         pref.edit().putString(key, defaultCategory).commit();
         categoryAllButton.performClick();
-    }
-
-    /**
-     * Download emoji.
-     */
-    private void downloadEmoji()
-    {
-        if(checkChangeLanguage())
-        {
-            historyManager.clear();
-            historyManager.save();
-            searchManager.clear();
-            searchManager.save();
-            emojidex.deleteLocalCache();
-
-            // Reset last update time log.
-            final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-            pref.edit().putLong(getString(R.string.preference_key_last_update_time), 0).commit();
-        }
-
-        if(checkExecUpdate())
-            new EmojidexUpdater(this).startUpdateThread();
-    }
-
-    /**
-     * Get update flag.
-     * @return  true when execution update.
-     */
-    private boolean checkExecUpdate()
-    {
-        final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        final long lastUpdateTime = pref.getLong(getString(R.string.preference_key_last_update_time), 0);
-        final long currentTime = new Date().getTime();
-        final long updateInterval = Long.parseLong(pref.getString(getString(R.string.preference_key_update_interval), getString(R.string.preference_entryvalue_update_interval_default)));
-        return (currentTime - lastUpdateTime) > updateInterval;
-    }
-
-    /**
-     * Get change language flag.
-     * @return  true when the language settings have been changed.
-     */
-    private boolean checkChangeLanguage()
-    {
-        final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        final String lastLanguage = pref.getString(getString(R.string.preference_key_last_language), "en");
-        final String currentLanguage = PathUtils.getLocaleString();
-
-        final SharedPreferences.Editor editor = pref.edit();
-        editor.putString(getString(R.string.preference_key_last_language), currentLanguage);
-        editor.apply();
-
-        return !lastLanguage.equals(currentLanguage);
     }
 
     /**
