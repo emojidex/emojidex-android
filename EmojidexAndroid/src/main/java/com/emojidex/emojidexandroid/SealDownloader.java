@@ -5,6 +5,8 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 /**
@@ -33,6 +35,16 @@ public class SealDownloader {
     public void download(String name)
     {
         canceled = false;
+
+        // URL encode.
+        try
+        {
+            name = URLEncoder.encode(name, "UTF-8");
+        }
+        catch(UnsupportedEncodingException e)
+        {
+            e.printStackTrace();
+        }
 
         // Download seal.
         final EmojiDownloader downloader = new EmojiDownloader(parentActivity);

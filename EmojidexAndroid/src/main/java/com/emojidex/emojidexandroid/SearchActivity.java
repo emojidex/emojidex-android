@@ -23,6 +23,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -190,7 +192,15 @@ public class SearchActivity extends Activity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                final String escapeText = searchText.replaceAll("[\\\\()]", "\\\\$0");
+                String escapeText = searchText;
+                try
+                {
+                    escapeText = URLEncoder.encode(escapeText, "UTF-8");
+                }
+                catch(UnsupportedEncodingException e)
+                {
+                    e.printStackTrace();
+                }
                 final String url = PathUtils.getAPIRootPath() + "/search/emoji?detailed=true&code_cont=" + escapeText + (category == null ? "" : "&categories[]=" + category);
 
                 final LinkedHashSet<EmojiFormat> formats = new LinkedHashSet<EmojiFormat>();
