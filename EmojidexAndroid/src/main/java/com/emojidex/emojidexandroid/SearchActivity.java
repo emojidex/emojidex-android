@@ -159,7 +159,7 @@ public class SearchActivity extends Activity {
             }
         }
 
-        if(hasDefaultIME)
+        if(hasDefaultIME && EmojidexIME.currentInstance != null)
             EmojidexIME.currentInstance.switchInputMethod(defaultIME);
         else
             inputMethodManager.showInputMethodPicker();

@@ -118,13 +118,23 @@ public class EmojidexIME extends InputMethodService {
     }
 
     @Override
-    public void onStartInputView(EditorInfo info, boolean restarting) {
-        super.onStartInputView(info, restarting);
+    public void onStartInput(EditorInfo attribute, boolean restarting) {
+        super.onStartInput(attribute, restarting);
+
+        // Load save data.
         if( !restarting )
         {
             historyManager.load();
             searchManager.load();
         }
+
+        // Set current instance.
+        currentInstance = this;
+    }
+
+    @Override
+    public void onStartInputView(EditorInfo info, boolean restarting) {
+        super.onStartInputView(info, restarting);
 
         // Get ime options.
         if( (info.inputType & InputType.TYPE_TEXT_FLAG_MULTI_LINE) != 0 )
@@ -154,16 +164,13 @@ public class EmojidexIME extends InputMethodService {
 
         // Initialize.
         initStartCategory();
-
-        // Set current instance.
-        currentInstance = this;
     }
 
     @Override
-    public void onFinishInputView(boolean finishingInput) {
+    public void onFinishInput() {
         currentInstance = null;
-        super.onFinishInputView(finishingInput);
         historyManager.save();
+        super.onFinishInput();
     }
 
     @Override
