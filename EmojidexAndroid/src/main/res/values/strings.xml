@@ -23,13 +23,13 @@
     <string name="right">Right</string>
 
     <string name="share">Share</string>
-    <string name="text_hint_emoji">You can preview or convert emoji + text here.</string>
+    <string name="text_hint_emoji">You can preview or convert text with emoji here.</string>
     <string name="text_hint_text">Enter or paste text with emoji here.</string>
     <string name="clear">Clear</string>
     <string name="clear_and_paste">Clear &amp; Paste</string>
     <string name="convert">Convert</string>
 
-    <string name="register_favorite">Favorite this emoji?</string>
+    <string name="register_favorite">Add this emoji to your favorites?</string>
     <string name="register_success">Registered</string>
     <string name="register_done">Already registered</string>
     <string name="register_failure">Registration failed</string>
@@ -41,7 +41,7 @@
     <string name="download_done">Already downloaded.</string>
     <string name="download_success">Downloaded.</string>
     <string name="download_failure">Downloading failed.</string>
-    <string name="delete_download_confirm">Remove emoji from your storage?</string>
+    <string name="delete_download_confirm">Remove all emoji data?</string>
     <string name="delete_download">Remove</string>
     <string name="seal_send">Send seal</string>
 
@@ -114,14 +114,14 @@
     <string name="settings_delete_search_button">Clear search results</string>
     <string name="settings_delete_search_confirm">Clear all search result?</string>
     <string name="settings_delete_search_succeeded">Search results cleared.</string>
-    <string name="settings_delete_search_failed">Failed clear search result.</string>
+    <string name="settings_delete_search_failed">Failed to clear search results.</string>
     <string name="settings_tutorial_button">Tutorial</string>
 
     <string name="search_dialog_title">Searching...</string>
     <string name="search_dialog_message">Please wait a moment.</string>
     <string name="search_dialog_cancel">Cancel</string>
 
-    <string name="send_seal_dialog_title">Seal sending...</string>
+    <string name="send_seal_dialog_title">Sending seal...</string>
     <string name="send_seal_dialog_message">Please wait a moment.</string>
     <string name="send_seal_dialog_cancel">Cancel</string>
     <string name="send_seal_not_found">A seal for this emoji could not be found.</string>
