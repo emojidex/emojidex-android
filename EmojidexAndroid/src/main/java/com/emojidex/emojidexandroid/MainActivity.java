@@ -38,6 +38,8 @@ import java.util.List;
 public class MainActivity extends Activity {
     static final String TAG = "EmojidexAndroid";
 
+    private static final int LOGIN_RESULT = 1000;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -586,5 +588,31 @@ public class MainActivity extends Activity {
     protected void onDestroy()
     {
         super.onDestroy();
+    }
+
+    /**
+     * Login to emojidex site.
+     * @param v view
+     */
+    public void loginEmojidex(View v) {
+        Intent intent = new Intent(getApplicationContext(), WebViewActivity.class);
+        // TODO: address
+        intent.putExtra("URL", "http://5eec524a.ngrok.com/test.html");
+        startActivityForResult(intent, LOGIN_RESULT);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Get login result.
+        // TODO: change button image.
+        if (requestCode == LOGIN_RESULT) {
+            if (resultCode == Activity.RESULT_OK) {
+                Toast.makeText(getApplicationContext(), "login : " + UserData.getInstance().getUsername(), Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getApplicationContext(), "login canceled", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }
