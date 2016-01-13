@@ -73,13 +73,28 @@
                 android:background="@null"
                 android:onClick="openOptions"/>
 
-            <ImageButton
+            <Button
+                android:id="@+id/login_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
-                android:src="@android:drawable/ic_menu_add"
-                android:background="@null"
+                android:padding="8dp"
+                android:text="@string/menu_login"
+                android:textColor="@android:color/white"
+                android:background="@drawable/button_blue"
                 android:onClick="loginEmojidex"/>
+
+            <Button
+                android:id="@+id/new_emoji_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:padding="8dp"
+                android:text="@string/menu_new_emoji"
+                android:textColor="@android:color/white"
+                android:background="@drawable/button_blue"
+                android:visibility="gone"
+                android:onClick="registerNewEmoji"/>
 
         </LinearLayout>
 

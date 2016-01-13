@@ -26,6 +26,7 @@ import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -37,7 +38,6 @@ import java.util.List;
 
 public class MainActivity extends Activity {
     static final String TAG = "EmojidexAndroid";
-
     private static final int LOGIN_RESULT = 1000;
 
     @Override
@@ -114,6 +114,9 @@ public class MainActivity extends Activity {
     private ToggleButton toggleButton;
     private boolean toggleState = true;
 
+    private Button loginButton;
+    private Button newEmojiButton;
+
     private void initEmojidexEditor()
     {
         // Initialize emojdiex.
@@ -129,6 +132,10 @@ public class MainActivity extends Activity {
         // toggle button state
         toggleButton = (ToggleButton)findViewById(R.id.toggle_button);
         toggleState = toggleButton.isChecked();
+
+        // other buttons
+        loginButton = (Button)findViewById(R.id.login_button);
+        newEmojiButton = (Button)findViewById(R.id.new_emoji_button);
     }
 
     private CharSequence emojify(final CharSequence cs)
@@ -591,7 +598,7 @@ public class MainActivity extends Activity {
     }
 
     /**
-     * Login to emojidex site.
+     * Login to emojidex web site.
      * @param v view
      */
     public void loginEmojidex(View v) {
@@ -606,13 +613,28 @@ public class MainActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
 
         // Get login result.
-        // TODO: change button image.
         if (requestCode == LOGIN_RESULT) {
             if (resultCode == Activity.RESULT_OK) {
-                Toast.makeText(getApplicationContext(), "login : " + UserData.getInstance().getUsername(), Toast.LENGTH_SHORT).show();
+                loginButton.setVisibility(View.GONE);
+                newEmojiButton.setVisibility(View.VISIBLE);
+                Toast.makeText(getApplicationContext(),
+                        getString(R.string.menu_login_success) + UserData.getInstance().getUsername(),
+                        Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(getApplicationContext(), "login canceled", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(),
+                        getString(R.string.menu_login_cancel), Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    /**
+     * Register a emoji in the emojidex web site.
+     * @param v view
+     */
+    public void registerNewEmoji(View v) {
+        Intent intent = new Intent(getApplicationContext(), WebViewActivity.class);
+        // TODO: address
+        intent.putExtra("URL", "http://5eec524a.ngrok.com/emoji/new");
+        startActivity(intent);
     }
 }

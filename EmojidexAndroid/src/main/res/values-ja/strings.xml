@@ -13,6 +13,12 @@
     <string name="menu_emojidex_web">emojidexウェブ</string>
     <string name="menu_settings">設定</string>
 
+    <string name="menu_login">ログイン</string>
+    <string name="menu_login_success">ログイン : </string>
+    <string name="menu_login_cancel">ログインをキャンセルしました。</string>
+    <string name="menu_new_emoji">+ 絵文字登録</string>
+    <string name="webview_loading">読み込み中…</string>
+
     <string name="search">検索</string>
     <string name="favorite">お気に入り</string>
     <string name="history">履歴</string>
