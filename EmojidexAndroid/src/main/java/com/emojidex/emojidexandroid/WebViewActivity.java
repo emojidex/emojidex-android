@@ -56,6 +56,14 @@ public class WebViewActivity extends Activity {
         });
 
         webView.setWebChromeClient(new WebChromeClient() {
+            public void openFileChooser(ValueCallback<Uri> uploadMsg) {
+                openFileChooser(uploadMsg, "");
+            }
+
+            public void openFileChooser(ValueCallback uploadMsg, String acceptType) {
+                openFileChooser(uploadMsg, acceptType, "");
+            }
+
             public void openFileChooser(ValueCallback<Uri> uploadMsg, String acceptType, String capture) {
                 if (callback != null) {
                     callback.onReceiveValue(null);
@@ -81,6 +89,8 @@ public class WebViewActivity extends Activity {
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
                 intent.setType("image/*");
+//                Intent intent = new Intent(Intent.ACTION_PICK);
+//                intent.setType("image/*");
                 startActivityForResult(Intent.createChooser(intent, "File Chooser"), SELECTED_IMAGE);
             }
         });
@@ -117,10 +127,18 @@ public class WebViewActivity extends Activity {
         }
 
         if (callback != null) {
-            if (data != null && data.getDataString() != null) {
+            if (data != null && data.getData() != null) {
+//                Uri selectedFile = data.getData();
+//                String[] filePathColumn = { MediaStore.Images.Media.DATA };
+//                Cursor cursor = getContentResolver().query(selectedFile, filePathColumn, null, null, null);
+//                cursor.moveToFirst();
+//                int index = cursor.getColumnIndex(filePathColumn[0]);
+//                String filePath = cursor.getString(index);
+//                cursor.close();
+//                String filenameSegments[] = filePath.split("/");
+//                String filename = filenameSegments[filenameSegments.length - 1];
+
                 Log.e(TAG, "image : " + data.getData());
-                Log.e(TAG, "image : " + data.getDataString());
-                Uri result = Uri.parse(data.getDataString());
                 callback.onReceiveValue(data.getData());
 //                callbacks.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(resultCode, data));
             }

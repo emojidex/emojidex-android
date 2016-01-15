@@ -116,6 +116,7 @@ public class MainActivity extends Activity {
 
     private Button loginButton;
     private Button newEmojiButton;
+    private UserData userData;
 
     private void initEmojidexEditor()
     {
@@ -133,9 +134,11 @@ public class MainActivity extends Activity {
         toggleButton = (ToggleButton)findViewById(R.id.toggle_button);
         toggleState = toggleButton.isChecked();
 
-        // other buttons
+        // for emojidex web.
         loginButton = (Button)findViewById(R.id.login_button);
         newEmojiButton = (Button)findViewById(R.id.new_emoji_button);
+        userData = UserData.getInstance();
+        userData.init(this);
     }
 
     private CharSequence emojify(final CharSequence cs)
@@ -618,7 +621,7 @@ public class MainActivity extends Activity {
                 loginButton.setVisibility(View.GONE);
                 newEmojiButton.setVisibility(View.VISIBLE);
                 Toast.makeText(getApplicationContext(),
-                        getString(R.string.menu_login_success) + UserData.getInstance().getUsername(),
+                        getString(R.string.menu_login_success) + userData.getUsername(),
                         Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(getApplicationContext(),
