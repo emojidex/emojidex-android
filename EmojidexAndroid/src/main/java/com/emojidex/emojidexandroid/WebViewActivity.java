@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
@@ -16,11 +17,13 @@ import android.webkit.WebViewClient;
 
 
 public class WebViewActivity extends Activity {
+    static final String TAG = "WebViewActivity";
     private static int SELECTED_IMAGE = 1000;
 
     private ProgressDialog dialog;
     private WebView webView;
-    private ValueCallback<Uri[]> callback;
+    private ValueCallback<Uri> callback;
+    private ValueCallback<Uri[]> callbacks;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -29,7 +32,7 @@ public class WebViewActivity extends Activity {
         setContentView(R.layout.activity_webview);
 
         // set loading dialog.
-        dialog = new ProgressDialog(this);
+        dialog = new ProgressDialog(WebViewActivity.this);
         dialog.setMessage("Loading...");
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 
@@ -48,24 +51,37 @@ public class WebViewActivity extends Activity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                dialog.hide();
+                dialog.dismiss();
             }
         });
 
         webView.setWebChromeClient(new WebChromeClient() {
-            public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback,
-                                          WebChromeClient.FileChooserParams fileChooserParams) {
+            public void openFileChooser(ValueCallback<Uri> uploadMsg, String acceptType, String capture) {
                 if (callback != null) {
                     callback.onReceiveValue(null);
                 }
-                callback = filePathCallback;
+                callback = uploadMsg;
 
+                fileChoose();
+            }
+
+            public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback,
+                                          WebChromeClient.FileChooserParams fileChooserParams) {
+                if (callbacks != null) {
+                    callbacks.onReceiveValue(null);
+                }
+                callbacks = filePathCallback;
+
+                fileChoose();
+
+                return true;
+            }
+
+            private void fileChoose() {
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
                 intent.setType("image/*");
-                startActivityForResult(intent, SELECTED_IMAGE);
-
-                return true;
+                startActivityForResult(Intent.createChooser(intent, "File Chooser"), SELECTED_IMAGE);
             }
         });
 
@@ -81,6 +97,7 @@ public class WebViewActivity extends Activity {
         public void setUserData(String authToken, String username) {
             UserData userData = UserData.getInstance();
             userData.setUserData(authToken, username);
+            Log.e(TAG, "token : " + authToken + "   user : " + username);
             setResult(Activity.RESULT_OK);
             finish();
         }
@@ -94,21 +111,30 @@ public class WebViewActivity extends Activity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode != SELECTED_IMAGE || callback == null) {
+        if (requestCode != SELECTED_IMAGE || (callback == null && callbacks == null) || resultCode != RESULT_OK) {
             super.onActivityResult(requestCode, resultCode, data);
             return;
         }
 
-        Uri[] results = null;
-
-        if (resultCode == RESULT_OK) {
+        if (callback != null) {
             if (data != null && data.getDataString() != null) {
-                results = new Uri[]{Uri.parse(data.getDataString())};
+                Log.e(TAG, "image : " + data.getData());
+                Log.e(TAG, "image : " + data.getDataString());
+                Uri result = Uri.parse(data.getDataString());
+                callback.onReceiveValue(data.getData());
+//                callbacks.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(resultCode, data));
             }
         }
 
-        callback.onReceiveValue(results);
+        if (callbacks != null) {
+            if (data != null && data.getDataString() != null) {
+                Uri[] results = new Uri[]{Uri.parse(data.getDataString())};
+                callbacks.onReceiveValue(results);
+            }
+        }
+
         callback = null;
+        callbacks = null;
     }
 
     @Override

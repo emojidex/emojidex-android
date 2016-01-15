@@ -604,7 +604,7 @@ public class MainActivity extends Activity {
     public void loginEmojidex(View v) {
         Intent intent = new Intent(getApplicationContext(), WebViewActivity.class);
         // TODO: address
-        intent.putExtra("URL", "http://5eec524a.ngrok.com/test.html");
+        intent.putExtra("URL", "http://3d1ce6cc.ngrok.com/android_webview/login");
         startActivityForResult(intent, LOGIN_RESULT);
     }
 
@@ -634,7 +634,7 @@ public class MainActivity extends Activity {
     public void registerNewEmoji(View v) {
         Intent intent = new Intent(getApplicationContext(), WebViewActivity.class);
         // TODO: address
-        intent.putExtra("URL", "http://5eec524a.ngrok.com/emoji/new");
+        intent.putExtra("URL", "http://3d1ce6cc.ngrok.com/emoji/new");
         startActivity(intent);
     }
 }
