@@ -4,6 +4,30 @@
               android:layout_height="match_parent"
               android:orientation="vertical">
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_gravity="center_vertical"
+            android:textSize="20sp"
+            android:text="@string/menu_emojidex_web"/>
+
+        <ImageButton android:id="@+id/title_bar_close_button"
+                     android:layout_width="25dp"
+                     android:layout_height="25dp"
+                     android:layout_marginRight="5dp"
+                     android:layout_gravity="right|center_vertical"
+                     android:src="@android:drawable/ic_notification_clear_all"
+                     android:background="@null"
+                     android:onClick="closeWebView"/>
+
+    </FrameLayout>
+
     <WebView
         android:id="@+id/webview"
         android:layout_width="match_parent"

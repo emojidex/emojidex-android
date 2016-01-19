@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
@@ -46,7 +47,9 @@ public class WebViewActivity extends Activity {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
-                dialog.show();
+
+                if (!url.contains("user_info"))
+                    dialog.show();
             }
 
             @Override
@@ -130,8 +133,7 @@ public class WebViewActivity extends Activity {
 
         @JavascriptInterface
         public void cancel() {
-            setResult(Activity.RESULT_CANCELED);
-            finish();
+            closeWebView(null);
         }
     }
 
@@ -178,5 +180,10 @@ public class WebViewActivity extends Activity {
             return true;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    public void closeWebView(View v) {
+        setResult(Activity.RESULT_CANCELED);
+        finish();
     }
 }
