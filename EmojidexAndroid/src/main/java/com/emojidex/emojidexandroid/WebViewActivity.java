@@ -22,6 +22,7 @@ public class WebViewActivity extends Activity {
     private static int SELECTED_IMAGE = 1000;
 
     private boolean isLogin;
+    private boolean isLogout;
     private ProgressDialog dialog;
     private WebView webView;
     private ValueCallback<Uri> callback;
@@ -47,9 +48,8 @@ public class WebViewActivity extends Activity {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
-
-                if (!url.contains("user_info"))
-                    dialog.show();
+                dialog.show();
+                Log.e(TAG, "url : " + url);
             }
 
             @Override
@@ -60,17 +60,23 @@ public class WebViewActivity extends Activity {
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                if (isLogin) {
-                    if (url.contains("?locale=")) {
-                        url += "&mobile=true";
-                    } else {
-                        url += "?mobile=true";
-                    }
-                    webView.loadUrl(url);
-                    return false;
-                }
+                if (!isLogin && !isLogout)
+                    return super.shouldOverrideUrlLoading(view, url);
 
-                return super.shouldOverrideUrlLoading(view, url);
+                String query;
+                if (isLogin)
+                    query = "mobile_login=true";
+                else
+                    query = "mobile_logout=true";
+
+
+                if (url.contains("?locale="))
+                    url += "&" + query;
+                else
+                    url += "?" + query;
+
+                webView.loadUrl(url);
+                return false;
             }
         });
 
@@ -118,6 +124,7 @@ public class WebViewActivity extends Activity {
         Intent intent = getIntent();
         String url = intent.getStringExtra("URL");
         isLogin = intent.getBooleanExtra("login", false);
+        isLogout = intent.getBooleanExtra("logout", false);
         webView.loadUrl(url);
     }
 
@@ -128,12 +135,20 @@ public class WebViewActivity extends Activity {
             UserData userData = UserData.getInstance();
             userData.setUserData(authToken, username);
             setResult(Activity.RESULT_OK);
+            dialog.dismiss();
             finish();
         }
 
         @JavascriptInterface
         public void cancel() {
             closeWebView(null);
+        }
+
+        @JavascriptInterface
+        public void close() {
+            setResult(Activity.RESULT_OK);
+            dialog.dismiss();
+            finish();
         }
     }
 
@@ -184,6 +199,7 @@ public class WebViewActivity extends Activity {
 
     public void closeWebView(View v) {
         setResult(Activity.RESULT_CANCELED);
+        dialog.dismiss();
         finish();
     }
 }

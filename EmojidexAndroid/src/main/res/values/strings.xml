@@ -16,6 +16,7 @@
     <string name="emojidex_url" translatable="false">http://www.emojidex.com</string>
 
     <string name="menu_login">Sign In</string>
+    <string name="menu_logout">Sign Out</string>
     <string name="menu_login_success">Sign in : </string>
     <string name="menu_login_cancel">Sign in canceled.</string>
     <string name="menu_new_emoji">+ New Emoji</string>

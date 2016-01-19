@@ -78,29 +78,36 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
             android:gravity="center">
 
             <Button
                 android:id="@+id/login_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:padding="8dp"
+                android:background="@drawable/button_blue"
                 android:text="@string/menu_login"
                 android:textColor="@android:color/white"
-                android:background="@drawable/button_blue"
                 android:onClick="loginEmojidex"/>
 
+            <Button
+                android:id="@+id/logout_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button_blue"
+                android:text="@string/menu_logout"
+                android:textColor="@android:color/white"
+                android:visibility="gone"
+                android:onClick="logoutEmojidex"/>
 
             <Button
                 android:id="@+id/new_emoji_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
-                android:padding="8dp"
+                android:background="@drawable/button_blue"
                 android:text="@string/menu_new_emoji"
                 android:textColor="@android:color/white"
-                android:background="@drawable/button_blue"
                 android:visibility="gone"
                 android:onClick="registerNewEmoji"/>
 
