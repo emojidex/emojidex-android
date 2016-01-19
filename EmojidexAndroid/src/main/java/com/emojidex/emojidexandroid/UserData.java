@@ -14,9 +14,7 @@ import com.facebook.crypto.util.SystemNativeCryptoLibrary;
 
 import java.io.IOException;
 
-/**
- * Created by Yoshida on 2016/01/12.
- */
+
 public class UserData {
     private static String KEY_TOKEN = "emojidex_auth_token";
     private static String KEY_NAME = "emojidex_username";

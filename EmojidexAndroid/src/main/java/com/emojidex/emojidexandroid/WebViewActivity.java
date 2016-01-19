@@ -20,6 +20,7 @@ public class WebViewActivity extends Activity {
     static final String TAG = "WebViewActivity";
     private static int SELECTED_IMAGE = 1000;
 
+    private boolean isLogin;
     private ProgressDialog dialog;
     private WebView webView;
     private ValueCallback<Uri> callback;
@@ -52,6 +53,21 @@ public class WebViewActivity extends Activity {
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 dialog.dismiss();
+            }
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                if (isLogin) {
+                    if (url.contains("?locale=")) {
+                        url += "&mobile=true";
+                    } else {
+                        url += "?mobile=true";
+                    }
+                    webView.loadUrl(url);
+                    return false;
+                }
+
+                return super.shouldOverrideUrlLoading(view, url);
             }
         });
 
@@ -98,6 +114,7 @@ public class WebViewActivity extends Activity {
         // set webView url.
         Intent intent = getIntent();
         String url = intent.getStringExtra("URL");
+        isLogin = intent.getBooleanExtra("login", false);
         webView.loadUrl(url);
     }
 
@@ -107,7 +124,6 @@ public class WebViewActivity extends Activity {
         public void setUserData(String authToken, String username) {
             UserData userData = UserData.getInstance();
             userData.setUserData(authToken, username);
-            Log.e(TAG, "token : " + authToken + "   user : " + username);
             setResult(Activity.RESULT_OK);
             finish();
         }
