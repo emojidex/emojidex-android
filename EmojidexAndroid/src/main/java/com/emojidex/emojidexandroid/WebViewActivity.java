@@ -49,7 +49,6 @@ public class WebViewActivity extends Activity {
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
                 dialog.show();
-                Log.e(TAG, "url : " + url);
             }
 
             @Override

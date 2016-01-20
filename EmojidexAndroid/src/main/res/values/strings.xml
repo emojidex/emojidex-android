@@ -19,6 +19,7 @@
     <string name="menu_logout">Sign Out</string>
     <string name="menu_login_success">Sign in : </string>
     <string name="menu_login_cancel">Sign in canceled.</string>
+    <string name="menu_login_failure">Sign in failed.</string>
     <string name="menu_new_emoji">+ New Emoji</string>
     <string name="webview_loading">Loading…</string>
 
