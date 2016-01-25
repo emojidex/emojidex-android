@@ -28,9 +28,9 @@
 
     </FrameLayout>
 
-    <WebView
-        android:id="@+id/webview"
+    <org.xwalk.core.XWalkView
+        android:id="@+id/xwalkView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
 </LinearLayout>

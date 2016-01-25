@@ -17,7 +17,6 @@
     <string name="menu_logout">ログアウト</string>
     <string name="menu_login_success">ログイン : </string>
     <string name="menu_login_cancel">ログインをキャンセルしました。</string>
-    <string name="menu_login_failure">ログインに失敗しました。</string>
     <string name="menu_new_emoji">+ 絵文字登録</string>
     <string name="webview_loading">読み込み中…</string>
 

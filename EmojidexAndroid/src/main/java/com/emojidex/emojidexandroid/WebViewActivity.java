@@ -4,29 +4,25 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
-import android.webkit.WebChromeClient;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+
+import org.xwalk.core.XWalkNavigationHistory;
+import org.xwalk.core.XWalkUIClient;
+import org.xwalk.core.XWalkView;
 
 
 public class WebViewActivity extends Activity {
     static final String TAG = "WebViewActivity";
     private static int SELECTED_IMAGE = 1000;
 
-    private boolean isLogin;
-    private boolean isLogout;
     private ProgressDialog dialog;
-    private WebView webView;
+    private XWalkView xWalkView;
     private ValueCallback<Uri> callback;
-    private ValueCallback<Uri[]> callbacks;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -36,100 +32,47 @@ public class WebViewActivity extends Activity {
 
         // set loading dialog.
         dialog = new ProgressDialog(WebViewActivity.this);
-        dialog.setMessage("Loading...");
+        dialog.setMessage(getString(R.string.webview_loading));
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 
-        // set webView.
-        webView = (WebView)findViewById(R.id.webview);
-        webView.getSettings().setJavaScriptEnabled(true);
-        webView.addJavascriptInterface(new LoginJavaScriptInterface(), "Android");
+        xWalkView = (XWalkView) findViewById(R.id.xwalkView);
+        xWalkView.addJavascriptInterface(new EmojidexJavaScriptInterface(), "Android");
 
-        webView.setWebViewClient(new WebViewClient(){
+        xWalkView.setUIClient(new XWalkUIClient(xWalkView){
             @Override
-            public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                super.onPageStarted(view, url, favicon);
+            public void onPageLoadStarted(XWalkView view, String url) {
+                super.onPageLoadStarted(view, url);
                 dialog.show();
             }
 
             @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
+            public void onPageLoadStopped(XWalkView view, String url, LoadStatus status) {
+                super.onPageLoadStopped(view, url, status);
                 dialog.dismiss();
             }
 
             @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                if (!isLogin && !isLogout)
-                    return super.shouldOverrideUrlLoading(view, url);
-
-                String query;
-                if (isLogin)
-                    query = "mobile_login=true";
-                else
-                    query = "mobile_logout=true";
-
-
-                if (url.contains("?locale="))
-                    url += "&" + query;
-                else
-                    url += "?" + query;
-
-                webView.loadUrl(url);
-                return false;
-            }
-        });
-
-        webView.setWebChromeClient(new WebChromeClient() {
-            public void openFileChooser(ValueCallback<Uri> uploadMsg) {
-                openFileChooser(uploadMsg, "");
-            }
-
-            public void openFileChooser(ValueCallback uploadMsg, String acceptType) {
-                openFileChooser(uploadMsg, acceptType, "");
-            }
-
-            public void openFileChooser(ValueCallback<Uri> uploadMsg, String acceptType, String capture) {
+            public void openFileChooser(XWalkView view, ValueCallback<Uri> uploadFile, String acceptType, String capture) {
                 if (callback != null) {
                     callback.onReceiveValue(null);
                 }
-                callback = uploadMsg;
+                callback = uploadFile;
 
-                fileChoose();
-            }
-
-            public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback,
-                                          WebChromeClient.FileChooserParams fileChooserParams) {
-                if (callbacks != null) {
-                    callbacks.onReceiveValue(null);
-                }
-                callbacks = filePathCallback;
-
-                fileChoose();
-
-                return true;
-            }
-
-            private void fileChoose() {
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
                 intent.setType("image/*");
-//                Intent intent = new Intent(Intent.ACTION_PICK);
-//                intent.setType("image/*");
                 startActivityForResult(Intent.createChooser(intent, "File Chooser"), SELECTED_IMAGE);
             }
         });
 
-        // set webView url.
         Intent intent = getIntent();
         String url = intent.getStringExtra("URL");
-        isLogin = intent.getBooleanExtra("login", false);
-        isLogout = intent.getBooleanExtra("logout", false);
-        webView.loadUrl(url);
+        xWalkView.load(url, null);
     }
 
     // for javascript.
-    class LoginJavaScriptInterface {
-        @JavascriptInterface
+    class EmojidexJavaScriptInterface {
+        @org.xwalk.core.JavascriptInterface
         public void setUserData(String authToken, String username) {
             UserData userData = UserData.getInstance();
             userData.setUserData(authToken, username);
@@ -138,12 +81,12 @@ public class WebViewActivity extends Activity {
             finish();
         }
 
-        @JavascriptInterface
+        @org.xwalk.core.JavascriptInterface
         public void cancel() {
             closeWebView(null);
         }
 
-        @JavascriptInterface
+        @org.xwalk.core.JavascriptInterface
         public void close() {
             setResult(Activity.RESULT_OK);
             dialog.dismiss();
@@ -151,54 +94,69 @@ public class WebViewActivity extends Activity {
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode != SELECTED_IMAGE || (callback == null && callbacks == null) || resultCode != RESULT_OK) {
-            super.onActivityResult(requestCode, resultCode, data);
-            return;
-        }
-
-        if (callback != null) {
-            if (data != null && data.getData() != null) {
-//                Uri selectedFile = data.getData();
-//                String[] filePathColumn = { MediaStore.Images.Media.DATA };
-//                Cursor cursor = getContentResolver().query(selectedFile, filePathColumn, null, null, null);
-//                cursor.moveToFirst();
-//                int index = cursor.getColumnIndex(filePathColumn[0]);
-//                String filePath = cursor.getString(index);
-//                cursor.close();
-//                String filenameSegments[] = filePath.split("/");
-//                String filename = filenameSegments[filenameSegments.length - 1];
-
-                Log.e(TAG, "image : " + data.getData());
-                callback.onReceiveValue(data.getData());
-//                callbacks.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(resultCode, data));
-            }
-        }
-
-        if (callbacks != null) {
-            if (data != null && data.getDataString() != null) {
-                Uri[] results = new Uri[]{Uri.parse(data.getDataString())};
-                callbacks.onReceiveValue(results);
-            }
-        }
-
-        callback = null;
-        callbacks = null;
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode == KeyEvent.KEYCODE_BACK && webView.canGoBack()) {
-            webView.goBack();
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
     public void closeWebView(View v) {
         setResult(Activity.RESULT_CANCELED);
         dialog.dismiss();
         finish();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (xWalkView != null) {
+            xWalkView.onActivityResult(requestCode, resultCode, data);
+        }
+
+        if (requestCode != SELECTED_IMAGE || callback == null || resultCode != RESULT_OK) {
+            super.onActivityResult(requestCode, resultCode, data);
+            return;
+        }
+
+        if (data != null && data.getData() != null) {
+            callback.onReceiveValue(data.getData());
+        }
+        callback = null;
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_BACK && xWalkView.getNavigationHistory().canGoBack()) {
+            xWalkView.getNavigationHistory().navigate(XWalkNavigationHistory.Direction.BACKWARD, 1);
+            return true;
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (xWalkView != null) {
+            xWalkView.pauseTimers();
+            xWalkView.onHide();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (xWalkView != null) {
+            xWalkView.resumeTimers();
+            xWalkView.onShow();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (xWalkView != null) {
+            xWalkView.onDestroy();
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        if (xWalkView != null) {
+            xWalkView.onNewIntent(intent);
+        }
     }
 }

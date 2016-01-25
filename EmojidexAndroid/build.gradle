@@ -1,4 +1,4 @@
-apply plugin: 'android'
+apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 21
@@ -32,9 +32,16 @@ android {
     }
 }
 
+repositories {
+    maven {
+        url 'https://download.01.org/crosswalk/releases/crosswalk/android/maven2'
+    }
+}
+
 dependencies {
     compile 'com.android.support:appcompat-v7:19.+'
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':EmojidexAndroidLibrary')
     compile 'com.facebook.conceal:conceal:1.0.0@aar'
+    compile 'org.xwalk:xwalk_core_library:16.45.421.19'
 }
