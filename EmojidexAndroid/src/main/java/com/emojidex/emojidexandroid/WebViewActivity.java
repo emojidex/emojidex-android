@@ -92,6 +92,20 @@ public class WebViewActivity extends Activity {
             dialog.dismiss();
             finish();
         }
+
+        @org.xwalk.core.JavascriptInterface
+        public void registerEmoji(String result, String message) {
+            Intent intent = new Intent();
+            intent.putExtra("message", message);
+            if (result.equals("true")) {
+                setResult(Activity.RESULT_OK, intent);
+            } else {
+                setResult(Activity.RESULT_CANCELED, intent);
+            }
+
+            dialog.dismiss();
+            finish();
+        }
     }
 
     public void closeWebView(View v) {

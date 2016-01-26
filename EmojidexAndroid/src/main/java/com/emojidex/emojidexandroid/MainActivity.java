@@ -40,6 +40,7 @@ public class MainActivity extends Activity {
     static final String TAG = "EmojidexAndroid";
     private static final int LOGIN_RESULT = 1000;
     private static final int LOGOUT_RESULT = 1001;
+    private static final int REGISTER_RESULT = 1002;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,6 +119,7 @@ public class MainActivity extends Activity {
     private Button loginButton;
     private Button logoutButton;
     private Button newEmojiButton;
+    private Button myEmojiButton;
     private UserData userData;
 
     private void initEmojidexEditor()
@@ -140,6 +142,7 @@ public class MainActivity extends Activity {
         loginButton = (Button)findViewById(R.id.login_button);
         logoutButton = (Button)findViewById(R.id.logout_button);
         newEmojiButton = (Button)findViewById(R.id.new_emoji_button);
+        myEmojiButton = (Button)findViewById(R.id.my_emoji_button);
         userData = UserData.getInstance();
         userData.init(this);
 
@@ -614,7 +617,7 @@ public class MainActivity extends Activity {
     public void loginEmojidex(View v) {
         Intent intent = new Intent(MainActivity.this, WebViewActivity.class);
         // TODO: address
-        intent.putExtra("URL", "http://7bd96a9.ngrok.com/mobile_app/login");
+        intent.putExtra("URL", "http://7bd96a9.ngrok.com/mobile_app/login?mobile=true");
         startActivityForResult(intent, LOGIN_RESULT);
     }
 
@@ -623,23 +626,37 @@ public class MainActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
 
         // Get result.
-        if (requestCode == LOGIN_RESULT) {
-            if (resultCode == Activity.RESULT_OK) {
-                setLoginButtonVisibility(false);
-                Toast.makeText(getApplicationContext(),
-                        getString(R.string.menu_login_success) + userData.getUsername(),
-                        Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(getApplicationContext(),
-                        getString(R.string.menu_login_cancel), Toast.LENGTH_SHORT).show();
-            }
-        } else if (requestCode == LOGOUT_RESULT) {
-            if (resultCode == Activity.RESULT_OK) {
-                setLoginButtonVisibility(true);
-                userData.reset();
-                Toast.makeText(getApplicationContext(),
-                        getString(R.string.menu_logout), Toast.LENGTH_SHORT).show();
-            }
+        switch (requestCode) {
+            case LOGIN_RESULT:
+                if (resultCode == Activity.RESULT_OK) {
+                    setLoginButtonVisibility(false);
+                    Toast.makeText(getApplicationContext(),
+                            getString(R.string.menu_login_success) + userData.getUsername(),
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(),
+                            getString(R.string.menu_login_cancel), Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case LOGOUT_RESULT:
+                if (resultCode == Activity.RESULT_OK) {
+                    setLoginButtonVisibility(true);
+                    userData.reset();
+                    Toast.makeText(getApplicationContext(),
+                            getString(R.string.menu_logout), Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case REGISTER_RESULT:
+                if (resultCode == Activity.RESULT_OK) {
+                    Toast.makeText(getApplicationContext(),
+                            data.getStringExtra("message") + getString(R.string.menu_new_success),
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(),
+                            data.getStringExtra("message"), Toast.LENGTH_SHORT).show();
+                }
+                break;
+
         }
     }
 
@@ -650,8 +667,8 @@ public class MainActivity extends Activity {
     public void registerNewEmoji(View v) {
         Intent intent = new Intent(MainActivity.this, WebViewActivity.class);
         // TODO: address
-        intent.putExtra("URL", "http://7bd96a9.ngrok.com/emoji/new");
-        startActivity(intent);
+        intent.putExtra("URL", "http://7bd96a9.ngrok.com/emoji/new?mobile=true");
+        startActivityForResult(intent, REGISTER_RESULT);
     }
 
     /**
@@ -661,8 +678,20 @@ public class MainActivity extends Activity {
     public void logoutEmojidex(View v) {
         Intent intent = new Intent(MainActivity.this, WebViewActivity.class);
         // TODO: address
-        intent.putExtra("URL", "http://7bd96a9.ngrok.com/mobile_app/logout");
+        intent.putExtra("URL", "http://7bd96a9.ngrok.com/mobile_app/logout?mobile=true");
         startActivityForResult(intent, LOGOUT_RESULT);
+    }
+
+    /**
+     * show the user's emojis in the emojidex web site.
+     * @param v view
+     */
+    public void showMyEmoji(View v) {
+        Intent intent = new Intent(MainActivity.this, WebViewActivity.class);
+        // TODO: address
+        intent.putExtra("URL", "http://7bd96a9.ngrok.com/users/"
+                + UserData.getInstance().getUsername() + "?mobile=true");
+        startActivity(intent);
     }
 
     public void setLoginButtonVisibility(boolean isVisible) {
@@ -671,10 +700,12 @@ public class MainActivity extends Activity {
             loginButton.setVisibility(View.VISIBLE);
             logoutButton.setVisibility(View.GONE);
             newEmojiButton.setVisibility(View.GONE);
+            myEmojiButton.setVisibility(View.GONE);
         } else {
             loginButton.setVisibility(View.GONE);
             logoutButton.setVisibility(View.VISIBLE);
             newEmojiButton.setVisibility(View.VISIBLE);
+            myEmojiButton.setVisibility(View.VISIBLE);
         }
     }
 }

@@ -111,6 +111,17 @@
                 android:visibility="gone"
                 android:onClick="registerNewEmoji"/>
 
+            <Button
+                android:id="@+id/my_emoji_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:background="@drawable/button_blue"
+                android:text="My emoji"
+                android:textColor="@android:color/white"
+                android:visibility="gone"
+                android:onClick="showMyEmoji"/>
+
         </LinearLayout>
 
         <EditText
