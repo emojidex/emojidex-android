@@ -41,7 +41,10 @@ public class MainActivity extends Activity {
     private static final int LOGIN_RESULT = 1000;
     private static final int LOGOUT_RESULT = 1001;
     private static final int REGISTER_RESULT = 1002;
-    private static final String EMOJIDEX_URL = "https://www.emojidex.com";
+//    private static final String EMOJIDEX_URL = "https://www.emojidex.com";
+    // TODO: address
+    private static final String EMOJIDEX_URL = "http://7bd96a9.ngrok.com";
+    private static final String QUERY = "?crosswalk=true";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -617,7 +620,7 @@ public class MainActivity extends Activity {
      */
     public void loginEmojidex(View v) {
         Intent intent = new Intent(MainActivity.this, WebViewActivity.class);
-        intent.putExtra("URL", EMOJIDEX_URL + "/mobile_app/login?mobile=true");
+        intent.putExtra("URL", EMOJIDEX_URL + "/mobile_app/login" + QUERY);
         startActivityForResult(intent, LOGIN_RESULT);
     }
 
@@ -666,7 +669,7 @@ public class MainActivity extends Activity {
      */
     public void registerNewEmoji(View v) {
         Intent intent = new Intent(MainActivity.this, WebViewActivity.class);
-        intent.putExtra("URL", EMOJIDEX_URL + "/emoji/new?mobile=true");
+        intent.putExtra("URL", EMOJIDEX_URL + "/emoji/new" + QUERY);
         startActivityForResult(intent, REGISTER_RESULT);
     }
 
@@ -676,7 +679,7 @@ public class MainActivity extends Activity {
      */
     public void logoutEmojidex(View v) {
         Intent intent = new Intent(MainActivity.this, WebViewActivity.class);
-        intent.putExtra("URL", EMOJIDEX_URL + "/mobile_app/logout?mobile=true");
+        intent.putExtra("URL", EMOJIDEX_URL + "/mobile_app/logout" + QUERY);
         startActivityForResult(intent, LOGOUT_RESULT);
     }
 
@@ -686,7 +689,7 @@ public class MainActivity extends Activity {
      */
     public void showMyEmoji(View v) {
         Intent intent = new Intent(MainActivity.this, WebViewActivity.class);
-        intent.putExtra("URL", EMOJIDEX_URL + "/users/" + UserData.getInstance().getUsername() + "?mobile=true");
+        intent.putExtra("URL", EMOJIDEX_URL + "/users/" + UserData.getInstance().getUsername() + QUERY);
         startActivity(intent);
     }
 
