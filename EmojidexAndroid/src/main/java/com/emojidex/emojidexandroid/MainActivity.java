@@ -651,7 +651,7 @@ public class MainActivity extends Activity {
                     Toast.makeText(getApplicationContext(),
                             data.getStringExtra("message") + getString(R.string.menu_new_success),
                             Toast.LENGTH_SHORT).show();
-                } else {
+                } else if (resultCode == Activity.RESULT_FIRST_USER){
                     Toast.makeText(getApplicationContext(),
                             data.getStringExtra("message"), Toast.LENGTH_SHORT).show();
                 }

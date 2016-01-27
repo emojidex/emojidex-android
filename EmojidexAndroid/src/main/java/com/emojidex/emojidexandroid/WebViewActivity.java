@@ -6,7 +6,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.webkit.ValueCallback;
@@ -100,7 +99,7 @@ public class WebViewActivity extends Activity {
             if (result.equals("true")) {
                 setResult(Activity.RESULT_OK, intent);
             } else {
-                setResult(Activity.RESULT_CANCELED, intent);
+                setResult(Activity.RESULT_FIRST_USER, intent);
             }
 
             dialog.dismiss();
