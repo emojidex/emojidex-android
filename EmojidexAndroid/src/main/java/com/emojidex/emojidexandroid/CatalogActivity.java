@@ -58,7 +58,7 @@ public class CatalogActivity extends Activity
         final String action = intent.getAction();
         final String type = intent.getType();
 
-        if(action.equals(Intent.ACTION_PICK))
+        if(action.equals(Intent.ACTION_PICK) || action.equals(Intent.ACTION_GET_CONTENT))
         {
             if("image/png".equals(type) || "image/*".equals(type))
             {
