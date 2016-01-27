@@ -13,7 +13,7 @@
     <string name="menu_emojidex_web">emojidexウェブ</string>
     <string name="menu_settings">設定</string>
 
-    <string name="menu_login">ログイン</string>
+    <string name="menu_login">Emojidex ログイン</string>
     <string name="menu_logout">ログアウト</string>
     <string name="menu_login_success">ログイン : </string>
     <string name="menu_login_cancel">ログインをキャンセルしました。</string>
