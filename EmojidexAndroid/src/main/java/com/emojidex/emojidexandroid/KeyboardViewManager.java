@@ -2,6 +2,7 @@ package com.emojidex.emojidexandroid;
 
 import android.content.Context;
 import android.inputmethodservice.KeyboardView;
+import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;

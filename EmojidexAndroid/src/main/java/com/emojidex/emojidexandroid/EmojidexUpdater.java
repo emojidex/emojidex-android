@@ -3,6 +3,7 @@ package com.emojidex.emojidexandroid;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.util.Date;
@@ -12,6 +13,8 @@ import java.util.LinkedHashSet;
  * Created by kou on 15/03/23.
  */
 class EmojidexUpdater {
+    static final String TAG = MainActivity.TAG + "::EmojidexUpdater";
+
     private final Context context;
     private final Emojidex emojidex;
 
@@ -42,7 +45,12 @@ class EmojidexUpdater {
     public boolean startUpdateThread(boolean forceFlag)
     {
         if( !checkExecUpdate() && !forceFlag )
+        {
+            Log.d(TAG, "Skip update.");
             return false;
+        }
+
+        Log.d(TAG, "Start update.");
 
         final LinkedHashSet<EmojiFormat> formats = new LinkedHashSet<EmojiFormat>();
         formats.add(EmojiFormat.toFormat(context.getString(R.string.emoji_format_default)));

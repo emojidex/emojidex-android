@@ -232,8 +232,13 @@ public class Emoji extends SimpleJsonParam {
             {
                 final InputStream is = new FileInputStream(file);
                 result = BitmapFactory.decodeStream(is, null, options);
+                is.close();
             }
             catch(FileNotFoundException e)
+            {
+                e.printStackTrace();
+            }
+            catch(IOException e)
             {
                 e.printStackTrace();
             }
@@ -247,6 +252,7 @@ public class Emoji extends SimpleJsonParam {
             {
                 final InputStream is = res.getAssets().open(PathUtils.getAssetsEmojiPath("not_found", format));
                 result = BitmapFactory.decodeStream(is, null, options);
+                is.close();
             }
             catch(IOException e)
             {

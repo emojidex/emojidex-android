@@ -27,6 +27,8 @@ import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.ViewFlipper;
 
+import com.emojidex.libemojidex.Emojidex.Client;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;

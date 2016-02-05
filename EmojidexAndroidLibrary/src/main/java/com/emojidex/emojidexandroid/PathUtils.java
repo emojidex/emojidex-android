@@ -2,6 +2,8 @@ package com.emojidex.emojidexandroid;
 
 import android.os.Environment;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Locale;
 
 /**
@@ -54,6 +56,14 @@ class PathUtils {
      */
     public static String getRemoteEmojiPath(String name, EmojiFormat format, String rootPath)
     {
+        try
+        {
+            name = URLEncoder.encode(name, "UTF-8");
+        }
+        catch (UnsupportedEncodingException e)
+        {
+            e.printStackTrace();
+        }
         return rootPath + "/"
                 + format.getRelativeDir() + "/"
                 + name + format.getExtension()

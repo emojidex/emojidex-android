@@ -19,6 +19,14 @@ public class DownloadListener {
     }
 
     /**
+     * Called when before one json download.
+     */
+    public void onPreOneJsonDownload()
+    {
+        // nop
+    }
+
+    /**
      * Called when after one json download.
      * @param source        Download from.
      * @param destination   Save to.
@@ -26,6 +34,14 @@ public class DownloadListener {
     public void onPostOneJsonDownload(String source, String destination)
     {
         Log.d(TAG, "onPostOneJsonDownload: source = " + source + ", destination = " + destination);
+    }
+
+    /**
+     * Called when after one json download.
+     */
+    public void onPostOneJsonDownload()
+    {
+        Log.d(TAG, "onPostOneJsonDownload:");
     }
 
     /**
@@ -38,6 +54,18 @@ public class DownloadListener {
 
         // Start download.
         downloader.download();
+    }
+
+    /**
+     * Called when after all json download.
+     * @param downloader    EmojiDownloader object.
+     */
+    public void onPostAllJsonDownload(NewEmojiDownloader downloader)
+    {
+        Log.d(TAG, "onPostAllJsonDownload");
+
+        // Start download.
+        downloader.startDownload();
     }
 
     /**
