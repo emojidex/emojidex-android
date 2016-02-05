@@ -184,7 +184,7 @@ public class EmojidexIME extends InputMethodService {
     @Override
     public void hideWindow()
     {
-        if( !keyboardViewManager.getCurrentView().closePopup() )
+        if( keyboardViewManager == null || !keyboardViewManager.getCurrentView().closePopup() )
         {
             currentCategory = null;
             super.hideWindow();
