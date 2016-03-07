@@ -28,7 +28,7 @@ public class DownloadListener {
      * Called when after all json download.
      * @param downloader    EmojiDownloader object.
      */
-    public void onPostAllJsonDownload(NewEmojiDownloader downloader)
+    public void onPostAllJsonDownload(EmojiDownloader downloader)
     {
         Log.d(TAG, "onPostAllJsonDownload");
 

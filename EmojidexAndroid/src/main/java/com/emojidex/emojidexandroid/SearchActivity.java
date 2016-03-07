@@ -22,10 +22,8 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 
@@ -37,7 +35,7 @@ public class SearchActivity extends Activity {
 
     private String category;
     private ProgressDialog loadingDialog = null;
-    private NewEmojiDownloader downloader = null;
+    private EmojiDownloader downloader = null;
 
     private boolean fromCatalog;
 
@@ -208,7 +206,7 @@ public class SearchActivity extends Activity {
                 formats.add(EmojiFormat.toFormat(getString(R.string.emoji_format_key)));
                 formats.add(EmojiFormat.toFormat(getString(R.string.emoji_format_seal)));
 
-                downloader = new NewEmojiDownloader();
+                downloader = new EmojiDownloader();
                 downloader.setListener(new CustomDownloadListener());
 
                 final DownloadConfig config = new DownloadConfig(
@@ -289,7 +287,7 @@ public class SearchActivity extends Activity {
 //        }
 
         @Override
-        public void onPostAllJsonDownload(NewEmojiDownloader downloader) {
+        public void onPostAllJsonDownload(EmojiDownloader downloader) {
             super.onPostAllJsonDownload(downloader);
 
             // If downloader has download task, update emojidex database.

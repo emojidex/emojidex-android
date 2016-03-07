@@ -23,7 +23,7 @@ public class Emojidex {
     private EmojiManager manager;
     private EmojiFormat defaultFormat;
 
-    private NewEmojiDownloader downloader = null;
+    private EmojiDownloader downloader = null;
 
     /**
      * Get singleton instance.
@@ -77,7 +77,7 @@ public class Emojidex {
             return false;
 
         // Create downloader.
-        downloader = new NewEmojiDownloader();
+        downloader = new EmojiDownloader();
         if(listener != null)
             downloader.setListener(listener);
 

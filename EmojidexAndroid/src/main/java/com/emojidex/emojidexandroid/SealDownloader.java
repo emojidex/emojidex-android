@@ -4,10 +4,8 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 
-import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 
 /**
  * Created by kou on 15/04/20.
@@ -47,7 +45,7 @@ public class SealDownloader {
         }
 
         // Download seal.
-        final NewEmojiDownloader downloader = new NewEmojiDownloader();
+        final EmojiDownloader downloader = new EmojiDownloader();
         final DownloadConfig config = new DownloadConfig(EmojiFormat.toFormat(parentActivity.getString(R.string.emoji_format_seal)));
         downloader.setListener(new CustomDownloadListener());
         downloader.downloadEmoji(name, config);

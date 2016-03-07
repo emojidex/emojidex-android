@@ -7,7 +7,6 @@ import com.emojidex.libemojidex.EmojiVector;
 import com.emojidex.libemojidex.Emojidex.Client;
 import com.emojidex.libemojidex.Emojidex.Data.Collection;
 import com.emojidex.libemojidex.Emojidex.Data.Emoji;
-import com.emojidex.libemojidex.Emojidex.Service.Indexes;
 import com.emojidex.libemojidex.Emojidex.Service.QueryOpts;
 import com.emojidex.libemojidex.StringVector;
 
@@ -30,7 +29,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 /**
  * Created by kou on 15/12/24.
  */
-public class NewEmojiDownloader
+public class EmojiDownloader
 {
     static final String TAG = Emojidex.TAG + "::EmojiDownloader";
 
@@ -50,7 +49,7 @@ public class NewEmojiDownloader
     /**
      * Construct EmojiDownloader object.
      */
-    public NewEmojiDownloader()
+    public EmojiDownloader()
     {
         this(0);
     }
@@ -59,7 +58,7 @@ public class NewEmojiDownloader
      * Construct EmojiDownloader object.
      * @param threadCount   Download thread count.
      */
-    public NewEmojiDownloader(int threadCount)
+    public EmojiDownloader(int threadCount)
     {
         // Initialize download thread count.
         if(threadCount <= 0)
@@ -512,7 +511,7 @@ public class NewEmojiDownloader
             if(runningTasks.isEmpty())
             {
                 // Notify to listener.
-                listener.onPostAllJsonDownload(NewEmojiDownloader.this);
+                listener.onPostAllJsonDownload(EmojiDownloader.this);
 
                 // Put log if new emoji is nothing.
                 if(downloadEmojiCount == 0)
