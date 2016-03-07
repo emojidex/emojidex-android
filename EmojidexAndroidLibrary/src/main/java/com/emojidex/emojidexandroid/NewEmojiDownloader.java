@@ -39,7 +39,6 @@ public class NewEmojiDownloader
     private final LinkedHashMap<String, JsonParam> localJsonParams = new LinkedHashMap<String, JsonParam>();
 
     private final Client client;
-    private final Indexes indexes;
     private final String locale;
 
     private final EmojiDownloadTask[] emojiDownloadTasks;
@@ -76,7 +75,6 @@ public class NewEmojiDownloader
 
         // Create libemojidex object.
         client = new Client();
-        indexes = client.getIndexes();
         locale = "en";//Locale.getDefault().equals(Locale.JAPAN) ? "ja" : "en";
     }
 
@@ -91,7 +89,7 @@ public class NewEmojiDownloader
             @Override
             protected Collection downloadJson()
             {
-                return indexes.emoji(0, 50, true);
+                return client.getIndexes().emoji(0, 50, true);
             }
         });
     }
@@ -107,7 +105,7 @@ public class NewEmojiDownloader
             @Override
             protected Collection downloadJson()
             {
-                return indexes.utfEmoji(locale, true);
+                return client.getIndexes().utfEmoji(locale, true);
             }
         });
     }
@@ -123,7 +121,7 @@ public class NewEmojiDownloader
             @Override
             protected Collection downloadJson()
             {
-                return indexes.extendedEmoji(locale, true);
+                return client.getIndexes().extendedEmoji(locale, true);
             }
         });
     }
@@ -133,9 +131,19 @@ public class NewEmojiDownloader
 
     }
 
-    public void downloadEmoji(String name, DownloadConfig config)
+    public void downloadEmoji(final String name, DownloadConfig config)
     {
-
+        final JsonDownloadTask task = new JsonDownloadTask(config);
+        task.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, task.new AbstractJsonDownloadExecutor() {
+            @Override
+            protected Collection downloadJson()
+            {
+                final Emoji emoji = client.getSearch().find(name, true);
+                final Collection collection = new Collection();
+                collection.add(emoji);
+                return collection;
+            }
+        });
     }
 
     /**

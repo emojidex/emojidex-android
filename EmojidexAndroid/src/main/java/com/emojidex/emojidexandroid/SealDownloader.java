@@ -47,11 +47,10 @@ public class SealDownloader {
         }
 
         // Download seal.
-        final EmojiDownloader downloader = new EmojiDownloader(parentActivity);
-        final String url = PathUtils.getAPIRootPath() + "/emoji/" + name + "?detailed=true";
-        final EmojiFormat[] formats = {EmojiFormat.toFormat(parentActivity.getString(R.string.emoji_format_seal))};
+        final NewEmojiDownloader downloader = new NewEmojiDownloader();
+        final DownloadConfig config = new DownloadConfig(EmojiFormat.toFormat(parentActivity.getString(R.string.emoji_format_seal)));
         downloader.setListener(new CustomDownloadListener());
-        downloader.add(url, formats, PathUtils.getRemoteRootPathDefault() + "/emoji");
+        downloader.downloadEmoji(name, config);
 
         // Show progress dialog.
         dialog = new ProgressDialog(parentActivity);
@@ -73,7 +72,7 @@ public class SealDownloader {
         dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
-                downloader.cancel();
+                downloader.cancelDownload();
                 canceled = true;
             }
         });
