@@ -107,20 +107,6 @@ public class SealDownloader {
     private class CustomDownloadListener extends DownloadListener
     {
         @Override
-        public void onPostOneJsonDownload(String source, String destination) {
-            super.onPostOneJsonDownload(source, destination);
-
-            // Replace whitespace to underbar.
-            final File file = new File(destination);
-            final ArrayList<JsonParam> emojies = JsonParam.readFromFile(file);
-            for(JsonParam emoji : emojies)
-            {
-                emoji.name = emoji.name.replaceAll(" ", "_");
-            }
-            JsonParam.writeToFile(file, emojies);
-        }
-
-        @Override
         public void onFinish() {
             super.onFinish();
 

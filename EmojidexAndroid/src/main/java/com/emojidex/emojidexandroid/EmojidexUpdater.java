@@ -120,11 +120,6 @@ class EmojidexUpdater {
      */
     class CustomDownloadListener extends DownloadListener {
         @Override
-        public void onPostAllJsonDownload(EmojiDownloader downloader) {
-            super.onPostAllJsonDownload(downloader);
-        }
-
-        @Override
         public void onPreAllEmojiDownload() {
             emojidex.reload();
 
@@ -148,11 +143,6 @@ class EmojidexUpdater {
                 if(CatalogActivity.currentInstance != null)
                     CatalogActivity.currentInstance.invalidate();
             }
-        }
-
-        @Override
-        public void onPostAllEmojiDownload() {
-            super.onPostAllEmojiDownload();
         }
 
         @Override

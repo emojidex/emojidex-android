@@ -271,25 +271,25 @@ public class SearchActivity extends Activity {
      */
     private class CustomDownloadListener extends DownloadListener
     {
+//        @Override
+//        public void onPostOneJsonDownload(String source, String destination) {
+//            super.onPostOneJsonDownload(source, destination);
+//
+//            final File file = new File(destination);
+//            final ArrayList<JsonParam> emojies = JsonParam.readFromFile(file);
+//            for(JsonParam emoji : emojies)
+//            {
+//                // Convert emoji name.
+//                emoji.name = emoji.name.replaceAll(" ", "_");
+//
+//                // Add emoji name.
+//                searchManager.addLast(emoji.name);
+//            }
+//            JsonParam.writeToFile(file, emojies);
+//        }
+
         @Override
-        public void onPostOneJsonDownload(String source, String destination) {
-            super.onPostOneJsonDownload(source, destination);
-
-            final File file = new File(destination);
-            final ArrayList<JsonParam> emojies = JsonParam.readFromFile(file);
-            for(JsonParam emoji : emojies)
-            {
-                // Convert emoji name.
-                emoji.name = emoji.name.replaceAll(" ", "_");
-
-                // Add emoji name.
-                searchManager.addLast(emoji.name);
-            }
-            JsonParam.writeToFile(file, emojies);
-        }
-
-        @Override
-        public void onPostAllJsonDownload(EmojiDownloader downloader) {
+        public void onPostAllJsonDownload(NewEmojiDownloader downloader) {
             super.onPostAllJsonDownload(downloader);
 
             // If downloader has download task, update emojidex database.
