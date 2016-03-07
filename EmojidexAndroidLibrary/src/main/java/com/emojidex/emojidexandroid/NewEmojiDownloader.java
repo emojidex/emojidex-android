@@ -8,6 +8,7 @@ import com.emojidex.libemojidex.Emojidex.Client;
 import com.emojidex.libemojidex.Emojidex.Data.Collection;
 import com.emojidex.libemojidex.Emojidex.Data.Emoji;
 import com.emojidex.libemojidex.Emojidex.Service.Indexes;
+import com.emojidex.libemojidex.Emojidex.Service.QueryOpts;
 import com.emojidex.libemojidex.StringVector;
 
 import java.io.BufferedOutputStream;
@@ -22,6 +23,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -75,7 +77,7 @@ public class NewEmojiDownloader
 
         // Create libemojidex object.
         client = new Client();
-        locale = "en";//Locale.getDefault().equals(Locale.JAPAN) ? "ja" : "en";
+        locale = Locale.getDefault().equals(Locale.JAPAN) ? "ja" : "en";
     }
 
     /**
@@ -128,7 +130,23 @@ public class NewEmojiDownloader
 
     public void downloadSearchEmoji(String word, DownloadConfig config)
     {
+        downloadSearchEmoji(word, null, config);
+    }
 
+    public void downloadSearchEmoji(final String word, final String category, DownloadConfig config)
+    {
+        final JsonDownloadTask task = new JsonDownloadTask(config);
+        task.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, task.new AbstractJsonDownloadExecutor() {
+            @Override
+            protected Collection downloadJson()
+            {
+                final QueryOpts options = new QueryOpts();
+                options.detailed(true);
+                if(category != null)
+                    options.category(category);
+                return client.getSearch().term(word, options);
+            }
+        });
     }
 
     public void downloadEmoji(final String name, DownloadConfig config)

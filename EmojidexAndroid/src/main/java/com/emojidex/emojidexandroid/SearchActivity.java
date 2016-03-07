@@ -37,7 +37,7 @@ public class SearchActivity extends Activity {
 
     private String category;
     private ProgressDialog loadingDialog = null;
-    private EmojiDownloader downloader = null;
+    private NewEmojiDownloader downloader = null;
 
     private boolean fromCatalog;
 
@@ -82,7 +82,7 @@ public class SearchActivity extends Activity {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if(actionId == EditorInfo.IME_ACTION_SEARCH)
                 {
-                    searchEmoji();
+//                    searchEmoji();
                     return true;
                 }
 
@@ -94,7 +94,7 @@ public class SearchActivity extends Activity {
         findViewById(R.id.search_action).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                searchEmoji();
+//                searchEmoji();
             }
         });
 
@@ -208,14 +208,15 @@ public class SearchActivity extends Activity {
                 formats.add(EmojiFormat.toFormat(getString(R.string.emoji_format_key)));
                 formats.add(EmojiFormat.toFormat(getString(R.string.emoji_format_seal)));
 
-                downloader = new EmojiDownloader(SearchActivity.this);
+                downloader = new NewEmojiDownloader();
                 downloader.setListener(new CustomDownloadListener());
 
-                downloader.add(
-                        url,
-                        formats.toArray(new EmojiFormat[formats.size()]),
-                        PathUtils.getRemoteRootPathDefault() + "/emoji"
+                final DownloadConfig config = new DownloadConfig(
+                        EmojiFormat.toFormat(getString(R.string.emoji_format_default)),
+                        EmojiFormat.toFormat(getString(R.string.emoji_format_key)),
+                        EmojiFormat.toFormat(getString(R.string.emoji_format_seal))
                 );
+                downloader.downloadSearchEmoji(escapeText, category, config);
             }
         }, 1000);
 
@@ -248,7 +249,7 @@ public class SearchActivity extends Activity {
         loadingDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
-                downloader.cancel();
+                downloader.cancelDownload();
                 downloader = null;
                 loadingDialog = null;
             }
