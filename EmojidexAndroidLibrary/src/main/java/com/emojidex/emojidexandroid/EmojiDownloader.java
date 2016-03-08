@@ -493,6 +493,7 @@ public class EmojiDownloader
     private class JsonDownloadTask extends AbstractDownloadTask<JsonDownloadTask.AbstractJsonDownloadExecutor>
     {
         private final DownloadConfig config;
+        private Collection collection;
 
         /**
          * Construct json download task.
@@ -528,7 +529,7 @@ public class EmojiDownloader
         @Override
         protected void onPostDownload(AbstractJsonDownloadExecutor executor)
         {
-            listener.onPostOneJsonDownload();
+            listener.onPostOneJsonDownload(collection);
         }
 
         /**
@@ -539,7 +540,7 @@ public class EmojiDownloader
             @Override
             public int download()
             {
-                final Collection collection = downloadJson();
+                collection = downloadJson();
                 final EmojiVector emojies = collection.all();
                 for(int i = 0;  i < emojies.size();  ++i)
                 {

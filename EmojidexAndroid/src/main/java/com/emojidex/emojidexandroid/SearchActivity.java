@@ -22,6 +22,9 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.emojidex.libemojidex.EmojiVector;
+import com.emojidex.libemojidex.Emojidex.Data.Collection;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -80,7 +83,7 @@ public class SearchActivity extends Activity {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if(actionId == EditorInfo.IME_ACTION_SEARCH)
                 {
-//                    searchEmoji();
+                    searchEmoji();
                     return true;
                 }
 
@@ -92,7 +95,7 @@ public class SearchActivity extends Activity {
         findViewById(R.id.search_action).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                searchEmoji();
+                searchEmoji();
             }
         });
 
@@ -269,22 +272,14 @@ public class SearchActivity extends Activity {
      */
     private class CustomDownloadListener extends DownloadListener
     {
-//        @Override
-//        public void onPostOneJsonDownload(String source, String destination) {
-//            super.onPostOneJsonDownload(source, destination);
-//
-//            final File file = new File(destination);
-//            final ArrayList<JsonParam> emojies = JsonParam.readFromFile(file);
-//            for(JsonParam emoji : emojies)
-//            {
-//                // Convert emoji name.
-//                emoji.name = emoji.name.replaceAll(" ", "_");
-//
-//                // Add emoji name.
-//                searchManager.addLast(emoji.name);
-//            }
-//            JsonParam.writeToFile(file, emojies);
-//        }
+        @Override
+        public void onPostOneJsonDownload(Collection collection) {
+            super.onPostOneJsonDownload(collection);
+
+            final EmojiVector emojies = collection.all();
+            for(int i = 0;  i < emojies.size();  ++i)
+                searchManager.addLast(emojies.get(i).getCode());
+        }
 
         @Override
         public void onPostAllJsonDownload(EmojiDownloader downloader) {
