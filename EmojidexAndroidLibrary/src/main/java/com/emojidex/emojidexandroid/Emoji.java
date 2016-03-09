@@ -176,6 +176,10 @@ public class Emoji extends SimpleJsonParam {
     {
         this.res = res;
 
+        // When text is empty, use name.
+        if(text == null || text.isEmpty())
+            text = Emojidex.SEPARATOR + name + Emojidex.SEPARATOR;
+
         // Set codes.
         final int count = text.codePointCount(0, text.length());
         int next = 0;
