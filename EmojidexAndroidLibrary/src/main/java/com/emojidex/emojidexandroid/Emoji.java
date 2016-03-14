@@ -263,6 +263,6 @@ public class Emoji extends SimpleJsonParam {
      */
     boolean hasCodes()
     {
-        return !codes.isEmpty() || text != null;
+        return !codes.isEmpty() || (text != null && text.length() > 0);
     }
 }
