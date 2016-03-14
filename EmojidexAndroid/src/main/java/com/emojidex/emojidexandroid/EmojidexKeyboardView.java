@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.graphics.drawable.BitmapDrawable;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
+import android.os.Build;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -140,8 +141,16 @@ public class EmojidexKeyboardView extends KeyboardView {
 
         // Set seal send button.
         final ActivityManager am = (ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
-        final String targetPackageName = am.getRunningTasks(1).get(0).baseActivity.getPackageName();
         final Button sealSendButton = (Button)view.findViewById(R.id.popup_seal_send_button);
+
+        String packageName;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            List<ActivityManager.RunningAppProcessInfo> tasks = am.getRunningAppProcesses();
+            packageName = tasks.get(1).processName;
+        } else {
+            packageName = am.getRunningTasks(1).get(0).baseActivity.getPackageName();
+        }
+        final String targetPackageName = packageName;
 
         final Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("image/png");
