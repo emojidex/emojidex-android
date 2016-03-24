@@ -27,6 +27,9 @@ import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.ViewFlipper;
 
+import com.emojidex.libemojidex.EmojiVector;
+import com.emojidex.libemojidex.Emojidex.Data.Collection;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,6 +65,7 @@ public class EmojidexIME extends InputMethodService {
 
     private SaveDataManager historyManager;
     private SaveDataManager searchManager;
+    private SaveDataManager indexManager;
     private KeyboardViewManager keyboardViewManager;
 
     private String currentCategory = null;
@@ -97,9 +101,42 @@ public class EmojidexIME extends InputMethodService {
         // Create PreferenceManager.
         historyManager = new SaveDataManager(this, SaveDataManager.Type.History);
         searchManager = new SaveDataManager(this, SaveDataManager.Type.Search);
+        indexManager = new SaveDataManager(this, SaveDataManager.Type.Index);
 
         // Emoji download.
         new EmojidexUpdater(this).startUpdateThread();
+
+        // test
+        final EmojiDownloader downloader = new EmojiDownloader();
+        final DownloadConfig config = new DownloadConfig(
+                EmojiFormat.toFormat(getString(R.string.emoji_format_default)),
+                EmojiFormat.toFormat(getString(R.string.emoji_format_key))
+        );
+        downloader.setListener(new DownloadListener()
+        {
+            @Override
+            public void onPostOneJsonDownload(Collection collection)
+            {
+                final EmojiVector emojies = collection.all();
+                final long size = emojies.size();
+
+                indexManager.clear();
+                for(int i = 0 ;  i < size;  ++i)
+                {
+                    indexManager.addLast(emojies.get(i).getCode());
+                    Log.d("hoge", emojies.get(i).getCode());
+                }
+
+                indexManager.save();
+            }
+
+            @Override
+            public void onPostAllJsonDownload(EmojiDownloader downloader)
+            {
+                // nop
+            }
+        });
+        downloader.downloadIndex(config);
     }
 
     @Override
@@ -126,6 +163,7 @@ public class EmojidexIME extends InputMethodService {
         {
             historyManager.load();
             searchManager.load();
+            indexManager.load();
         }
 
         // Set current instance.
@@ -399,6 +437,11 @@ public class EmojidexIME extends InputMethodService {
         else if(category.equals(getString(R.string.ime_category_id_search)))
         {
             final List<String> emojiNames = searchManager.getEmojiNames();
+            keyboardViewManager.initializeFromName(emojiNames, defaultPage);
+        }
+        else if(category.equals(getString(R.string.ime_category_id_index)))
+        {
+            final List<String> emojiNames = indexManager.getEmojiNames();
             keyboardViewManager.initializeFromName(emojiNames, defaultPage);
         }
         else if(category.equals(getString(R.string.ime_category_id_all)))
