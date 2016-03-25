@@ -116,6 +116,10 @@
     <string name="settings_delete_search_confirm">Clear all search result?</string>
     <string name="settings_delete_search_succeeded">Search results cleared.</string>
     <string name="settings_delete_search_failed">Failed to clear search results.</string>
+    <string name="settings_delete_cache_button">Clear cache</string>
+    <string name="settings_delete_cache_confirm">Clear all cache?</string>
+    <string name="settings_delete_cache_succeeded">Cache cleared.</string>
+    <string name="settings_delete_cache_failed">Failed to clear cache.</string>
     <string name="settings_tutorial_button">Tutorial</string>
 
     <string name="search_dialog_title">Searching...</string>
@@ -159,6 +163,7 @@
     <string name="preference_key_clear_favorite" translatable="false">clearFavorite</string>
     <string name="preference_key_clear_history" translatable="false">clearHistory</string>
     <string name="preference_key_clear_search_result" translatable="false">clearSearchResult</string>
+    <string name="preference_key_clear_cache" translatable="false">clearCache</string>
     <string name="preference_key_tutorial" translatable="false">tutorial</string>
     <string name="preference_key_last_language" translatable="false">language</string>
     <string name="preference_entryvalue_default_keyboard_nothing" translatable="false">nothing</string>

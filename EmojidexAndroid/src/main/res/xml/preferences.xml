@@ -30,6 +30,9 @@
         <Preference
             android:key="@string/preference_key_clear_search_result"
             android:title="@string/settings_delete_search_button"/>
+        <Preference
+            android:key="@string/preference_key_clear_cache"
+            android:title="@string/settings_delete_cache_button"/>
     </PreferenceCategory>
     <PreferenceCategory
         android:title="@string/settings_category_other">
