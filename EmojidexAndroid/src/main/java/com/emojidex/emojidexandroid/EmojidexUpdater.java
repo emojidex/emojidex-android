@@ -131,6 +131,15 @@ class EmojidexUpdater {
         }
 
         @Override
+        public void onPostAllJsonDownload(EmojiDownloader downloader)
+        {
+            super.onPostAllJsonDownload(downloader);
+
+            if(EmojidexIME.currentInstance != null)
+                EmojidexIME.currentInstance.updateIndex();
+        }
+
+        @Override
         public void onPostOneEmojiDownload(String emojiName) {
             final Emoji emoji = emojidex.getEmoji(emojiName);
             if(emoji != null)

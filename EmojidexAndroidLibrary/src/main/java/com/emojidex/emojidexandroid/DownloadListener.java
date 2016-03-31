@@ -4,6 +4,8 @@ import android.util.Log;
 
 import com.emojidex.libemojidex.Emojidex.Data.Collection;
 
+import java.util.List;
+
 /**
  * Created by kou on 14/12/01.
  */
@@ -20,8 +22,9 @@ public class DownloadListener {
 
     /**
      * Called when after one json download.
+     * @param emojiNames
      */
-    public void onPostOneJsonDownload(Collection collection)
+    public void onPostOneJsonDownload(List<String> emojiNames)
     {
         Log.d(TAG, "onPostOneJsonDownload:");
     }

@@ -12,6 +12,7 @@ import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -232,16 +233,14 @@ public class EmojidexKeyboardView extends KeyboardView {
         if(variants == null || variants.size() <= 1)
             return;
 
-        // Create variants emoji list.
-        final ArrayList<Emoji> variantsEmojies = new ArrayList<Emoji>();
-//        variantsEmojies.add(emoji);
-        for (String name : variants)
-            variantsEmojies.add(emojidex.getEmoji(name));
-
         // Create variants buttons.
         variantsLayout.removeAllViews();
-        for (final Emoji variant : variantsEmojies)
+        for (String name : variants)
         {
+            final Emoji variant = emojidex.getEmoji(name);
+            if(variant == null)
+                continue;
+
             final ImageButton button = new ImageButton(context);
             final BitmapDrawable drawable = variant.getDrawable(format);
             drawable.setTargetDensity((int) (drawable.getBitmap().getDensity() * iconSize / drawable.getIntrinsicWidth()));
@@ -271,7 +270,8 @@ public class EmojidexKeyboardView extends KeyboardView {
         }
 
         // Visible variants are.
-        variantsLayoutArea.setVisibility(VISIBLE);
+        if(variantsLayout.getChildCount() > 1)
+            variantsLayoutArea.setVisibility(VISIBLE);
     }
 
     protected void changeEmoji(Emoji emoji)

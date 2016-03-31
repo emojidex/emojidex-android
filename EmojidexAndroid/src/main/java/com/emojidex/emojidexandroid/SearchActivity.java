@@ -23,12 +23,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.emojidex.libemojidex.EmojiVector;
-import com.emojidex.libemojidex.Emojidex.Data.Collection;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 
 
 public class SearchActivity extends Activity {
@@ -273,12 +273,11 @@ public class SearchActivity extends Activity {
     private class CustomDownloadListener extends DownloadListener
     {
         @Override
-        public void onPostOneJsonDownload(Collection collection) {
-            super.onPostOneJsonDownload(collection);
+        public void onPostOneJsonDownload(List<String> emojiNames) {
+            super.onPostOneJsonDownload(emojiNames);
 
-            final EmojiVector emojies = collection.all();
-            for(int i = 0;  i < emojies.size();  ++i)
-                searchManager.addLast(emojies.get(i).getCode());
+            for(String emoji : emojiNames)
+                searchManager.addLast(emoji);
         }
 
         @Override

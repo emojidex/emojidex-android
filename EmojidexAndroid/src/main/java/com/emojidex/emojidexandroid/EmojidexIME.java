@@ -28,7 +28,6 @@ import android.widget.RadioButton;
 import android.widget.ViewFlipper;
 
 import com.emojidex.libemojidex.EmojiVector;
-import com.emojidex.libemojidex.Emojidex.Data.Collection;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -104,9 +103,12 @@ public class EmojidexIME extends InputMethodService {
         indexManager = new SaveDataManager(this, SaveDataManager.Type.Index);
 
         // Emoji download.
-        new EmojidexUpdater(this).startUpdateThread();
+        if( !new EmojidexUpdater(this).startUpdateThread() )
+            updateIndex();
+    }
 
-        // test
+    void updateIndex()
+    {
         final EmojiDownloader downloader = new EmojiDownloader();
         final DownloadConfig config = new DownloadConfig(
                 EmojiFormat.toFormat(getString(R.string.emoji_format_default)),
@@ -115,25 +117,43 @@ public class EmojidexIME extends InputMethodService {
         downloader.setListener(new DownloadListener()
         {
             @Override
-            public void onPostOneJsonDownload(Collection collection)
+            public void onPostOneJsonDownload(List<String> emojiNames)
             {
-                final EmojiVector emojies = collection.all();
-                final long size = emojies.size();
-
                 indexManager.clear();
-                for(int i = 0 ;  i < size;  ++i)
+
+                for(String emoji : emojiNames)
                 {
-                    indexManager.addLast(emojies.get(i).getCode());
-                    Log.d("hoge", emojies.get(i).getCode());
+                    indexManager.addLast(emoji);
                 }
 
                 indexManager.save();
             }
 
             @Override
-            public void onPostAllJsonDownload(EmojiDownloader downloader)
+            public void onPreAllEmojiDownload()
             {
-                // nop
+                emojidex.reload();
+
+                if(EmojidexIME.currentInstance != null)
+                    EmojidexIME.currentInstance.reloadCategory();
+
+                if(CatalogActivity.currentInstance != null)
+                    CatalogActivity.currentInstance.reloadCategory();
+            }
+
+            @Override
+            public void onPostOneEmojiDownload(String emojiName) {
+                final Emoji emoji = emojidex.getEmoji(emojiName);
+                if(emoji != null)
+                {
+                    emoji.reloadImage();
+
+                    if(EmojidexIME.currentInstance != null)
+                        EmojidexIME.currentInstance.invalidate(emojiName);
+
+                    if(CatalogActivity.currentInstance != null)
+                        CatalogActivity.currentInstance.invalidate();
+                }
             }
         });
         downloader.downloadIndex(config);
