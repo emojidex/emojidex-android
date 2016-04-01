@@ -2,8 +2,6 @@ package com.emojidex.emojidexandroid;
 
 import android.util.Log;
 
-import com.emojidex.libemojidex.Emojidex.Data.Collection;
-
 import java.util.List;
 
 /**
