@@ -104,59 +104,7 @@ public class EmojidexIME extends InputMethodService {
 
         // Emoji download.
         if( !new EmojidexUpdater(this).startUpdateThread() )
-            updateIndex();
-    }
-
-    void updateIndex()
-    {
-        final EmojiDownloader downloader = new EmojiDownloader();
-        final DownloadConfig config = new DownloadConfig(
-                EmojiFormat.toFormat(getString(R.string.emoji_format_default)),
-                EmojiFormat.toFormat(getString(R.string.emoji_format_key))
-        );
-        downloader.setListener(new DownloadListener()
-        {
-            @Override
-            public void onPostOneJsonDownload(List<String> emojiNames)
-            {
-                indexManager.clear();
-
-                for(String emoji : emojiNames)
-                {
-                    indexManager.addLast(emoji);
-                }
-
-                indexManager.save();
-            }
-
-            @Override
-            public void onPreAllEmojiDownload()
-            {
-                emojidex.reload();
-
-                if(EmojidexIME.currentInstance != null)
-                    EmojidexIME.currentInstance.reloadCategory();
-
-                if(CatalogActivity.currentInstance != null)
-                    CatalogActivity.currentInstance.reloadCategory();
-            }
-
-            @Override
-            public void onPostOneEmojiDownload(String emojiName) {
-                final Emoji emoji = emojidex.getEmoji(emojiName);
-                if(emoji != null)
-                {
-                    emoji.reloadImage();
-
-                    if(EmojidexIME.currentInstance != null)
-                        EmojidexIME.currentInstance.invalidate(emojiName);
-
-                    if(CatalogActivity.currentInstance != null)
-                        CatalogActivity.currentInstance.invalidate();
-                }
-            }
-        });
-        downloader.downloadIndex(config);
+            new EmojidexIndexUpdater(this).startUpdateThread();
     }
 
     @Override

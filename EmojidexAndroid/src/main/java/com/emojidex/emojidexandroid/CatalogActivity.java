@@ -32,6 +32,7 @@ public class CatalogActivity extends Activity
 
     private SaveDataManager historyManager;
     private SaveDataManager searchManager;
+    private SaveDataManager indexManager;
 
     private HorizontalScrollView categoryScrollView;
     private ViewGroup categoriesView;
@@ -71,7 +72,8 @@ public class CatalogActivity extends Activity
 
         // Emoji download.
         currentInstance = this;
-        new EmojidexUpdater(this).startUpdateThread();
+        if( !new EmojidexUpdater(this).startUpdateThread() )
+            new EmojidexIndexUpdater(this).startUpdateThread();
     }
 
     private void initData()
@@ -83,13 +85,17 @@ public class CatalogActivity extends Activity
         historyManager.load();
         searchManager = new SaveDataManager(this, SaveDataManager.Type.CatalogSearch);
         searchManager.load();
+        indexManager = new SaveDataManager(this, SaveDataManager.Type.Index);
+        indexManager.load();
     }
 
     private void initGridView()
     {
         gridView = (GridView)findViewById(R.id.grid_view);
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
                 final Emoji emoji = (Emoji)parent.getAdapter().getItem(position);
                 sendEmoji(emoji);
             }
@@ -111,9 +117,11 @@ public class CatalogActivity extends Activity
 
             newButton.setText(categoryManager.getCategoryText(i));
             newButton.setContentDescription(categoryManager.getCategoryId(i));
-            newButton.setOnClickListener(new View.OnClickListener() {
+            newButton.setOnClickListener(new View.OnClickListener()
+            {
                 @Override
-                public void onClick(View v) {
+                public void onClick(View v)
+                {
                     onClickCategoryButton(v);
                 }
             });
@@ -129,21 +137,26 @@ public class CatalogActivity extends Activity
 
     private void changeCategory(String categoryName)
     {
-        if (categoryName.equals(currentCategory)) return;
+        if(categoryName.equals(currentCategory)) return;
 
         currentCategory = categoryName;
 
-        if (categoryName.equals(getString(R.string.ime_category_id_history)))
+        if(categoryName.equals(getString(R.string.ime_category_id_history)))
         {
             List<String> emojiNames = historyManager.getEmojiNames();
             currentCatalog = createEmojiList(emojiNames);
         }
-        else if (categoryName.equals(getString(R.string.ime_category_id_search)))
+        else if(categoryName.equals(getString(R.string.ime_category_id_search)))
         {
             List<String> emojiNames = searchManager.getEmojiNames();
             currentCatalog = createEmojiList(emojiNames);
         }
-        else if (categoryName.equals(getString(R.string.ime_category_id_all)))
+        else if(categoryName.equals(getString(R.string.ime_category_id_index)))
+        {
+            List<String> emojiNames = indexManager.getEmojiNames();
+            currentCatalog = createEmojiList(emojiNames);
+        }
+        else if(categoryName.equals(getString(R.string.ime_category_id_all)))
         {
             currentCatalog = emojidex.getAllEmojiList();
         }
