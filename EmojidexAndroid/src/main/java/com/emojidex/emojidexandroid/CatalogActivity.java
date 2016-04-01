@@ -274,7 +274,7 @@ public class CatalogActivity extends Activity
         // Load start category from preference.
         final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         final String key = getString(R.string.preference_key_start_category);
-        final String defaultCategory = getString(R.string.ime_category_id_all);
+        final String defaultCategory = getString(R.string.ime_category_id_index);
         final String searchCategory = getString(R.string.ime_category_id_search);
         final String startCategory = pref.getString(key, defaultCategory);
 
