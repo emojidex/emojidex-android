@@ -55,7 +55,7 @@ class EmojidexUpdater {
         final LinkedHashSet<EmojiFormat> formats = new LinkedHashSet<EmojiFormat>();
         formats.add(EmojiFormat.toFormat(context.getString(R.string.emoji_format_default)));
         formats.add(EmojiFormat.toFormat(context.getString(R.string.emoji_format_key)));
-        return emojidex.download(formats.toArray(new EmojiFormat[formats.size()]), new CustomDownloadListener());
+        return emojidex.download(formats.toArray(new EmojiFormat[formats.size()]), new CustomDownloadListener(forceFlag));
     }
 
     /**
@@ -119,6 +119,13 @@ class EmojidexUpdater {
      * Custom download listener.
      */
     class CustomDownloadListener extends DownloadListener {
+        private final boolean force;
+
+        public CustomDownloadListener(boolean forceFlag)
+        {
+            force = forceFlag;
+        }
+
         @Override
         public void onPreAllEmojiDownload() {
             emojidex.reload();
@@ -135,7 +142,7 @@ class EmojidexUpdater {
         {
             super.onPostAllJsonDownload(downloader);
 
-            new EmojidexIndexUpdater(context).startUpdateThread();
+            new EmojidexIndexUpdater(context).startUpdateThread(force);
         }
 
         @Override
@@ -166,6 +173,8 @@ class EmojidexUpdater {
 
             // Show message.
             Toast.makeText(context, R.string.ime_message_update_complete, Toast.LENGTH_SHORT).show();
+
+            Log.d(TAG, "End update.");
         }
     }
 }
