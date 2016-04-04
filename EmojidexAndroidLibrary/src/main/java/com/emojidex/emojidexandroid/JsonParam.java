@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 /**
@@ -72,7 +73,7 @@ class JsonParam extends SimpleJsonParam {
      * @param file          Output file path.
      * @param jsonParams    Output json parameters.
      */
-    public static void writeToFile(File file, ArrayList<JsonParam> jsonParams)
+    public static void writeToFile(File file, Collection<JsonParam> jsonParams)
     {
         if( !file.getParentFile().exists() )
             file.getParentFile().mkdirs();

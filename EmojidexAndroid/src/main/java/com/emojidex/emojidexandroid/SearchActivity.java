@@ -22,10 +22,11 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import java.io.File;
+import com.emojidex.libemojidex.EmojiVector;
+import com.emojidex.libemojidex.Emojidex.Data.Collection;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 
@@ -208,14 +209,15 @@ public class SearchActivity extends Activity {
                 formats.add(EmojiFormat.toFormat(getString(R.string.emoji_format_key)));
                 formats.add(EmojiFormat.toFormat(getString(R.string.emoji_format_seal)));
 
-                downloader = new EmojiDownloader(SearchActivity.this);
+                downloader = new EmojiDownloader();
                 downloader.setListener(new CustomDownloadListener());
 
-                downloader.add(
-                        url,
-                        formats.toArray(new EmojiFormat[formats.size()]),
-                        PathUtils.getRemoteRootPathDefault() + "/emoji"
+                final DownloadConfig config = new DownloadConfig(
+                        EmojiFormat.toFormat(getString(R.string.emoji_format_default)),
+                        EmojiFormat.toFormat(getString(R.string.emoji_format_key)),
+                        EmojiFormat.toFormat(getString(R.string.emoji_format_seal))
                 );
+                downloader.downloadSearchEmoji(escapeText, category, config);
             }
         }, 1000);
 
@@ -248,7 +250,7 @@ public class SearchActivity extends Activity {
         loadingDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
-                downloader.cancel();
+                downloader.cancelDownload();
                 downloader = null;
                 loadingDialog = null;
             }
@@ -271,20 +273,12 @@ public class SearchActivity extends Activity {
     private class CustomDownloadListener extends DownloadListener
     {
         @Override
-        public void onPostOneJsonDownload(String source, String destination) {
-            super.onPostOneJsonDownload(source, destination);
+        public void onPostOneJsonDownload(Collection collection) {
+            super.onPostOneJsonDownload(collection);
 
-            final File file = new File(destination);
-            final ArrayList<JsonParam> emojies = JsonParam.readFromFile(file);
-            for(JsonParam emoji : emojies)
-            {
-                // Convert emoji name.
-                emoji.name = emoji.name.replaceAll(" ", "_");
-
-                // Add emoji name.
-                searchManager.addLast(emoji.name);
-            }
-            JsonParam.writeToFile(file, emojies);
+            final EmojiVector emojies = collection.all();
+            for(int i = 0;  i < emojies.size();  ++i)
+                searchManager.addLast(emojies.get(i).getCode());
         }
 
         @Override

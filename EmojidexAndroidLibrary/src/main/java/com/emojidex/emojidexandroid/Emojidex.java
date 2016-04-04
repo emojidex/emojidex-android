@@ -72,24 +72,19 @@ public class Emojidex {
         if( !isInitialized() )
             throw new EmojidexIsNotInitializedException();
 
-        if(downloader != null && downloader.getState() == EmojiDownloader.State.DOWNLOAD)
+        // Skip if downloader is already run.
+        if(downloader != null && !downloader.isIdle())
             return false;
 
-        downloader = new EmojiDownloader(context);
-        final String rootPath = PathUtils.getAPIRootPath();
-        final String resourcePath = PathUtils.getRemoteRootPathDefault() + "/emoji";
+        // Create downloader.
+        downloader = new EmojiDownloader();
         if(listener != null)
             downloader.setListener(listener);
-        downloader.add(
-                PathUtils.getRemoteJsonPath("utf", rootPath),
-                formats,
-                resourcePath
-        );
-        downloader.add(
-                PathUtils.getRemoteJsonPath("extended", rootPath),
-                formats,
-                resourcePath
-        );
+
+        // Download emojies.
+        final DownloadConfig config = new DownloadConfig(formats);
+        downloader.downloadUTFEmoji(config);
+        downloader.downloadExtendedEmoji(config);
 
         return true;
     }

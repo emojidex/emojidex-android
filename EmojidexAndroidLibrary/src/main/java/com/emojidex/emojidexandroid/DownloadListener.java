@@ -2,6 +2,8 @@ package com.emojidex.emojidexandroid;
 
 import android.util.Log;
 
+import com.emojidex.libemojidex.Emojidex.Data.Collection;
+
 /**
  * Created by kou on 14/12/01.
  */
@@ -10,22 +12,18 @@ public class DownloadListener {
 
     /**
      * Called when before one json download.
-     * @param source        Download from.
-     * @param destination   Save to.
      */
-    public void onPreOneJsonDownload(String source, String destination)
+    public void onPreOneJsonDownload()
     {
         // nop
     }
 
     /**
      * Called when after one json download.
-     * @param source        Download from.
-     * @param destination   Save to.
      */
-    public void onPostOneJsonDownload(String source, String destination)
+    public void onPostOneJsonDownload(Collection collection)
     {
-        Log.d(TAG, "onPostOneJsonDownload: source = " + source + ", destination = " + destination);
+        Log.d(TAG, "onPostOneJsonDownload:");
     }
 
     /**
@@ -37,7 +35,7 @@ public class DownloadListener {
         Log.d(TAG, "onPostAllJsonDownload");
 
         // Start download.
-        downloader.download();
+        downloader.startDownload();
     }
 
     /**

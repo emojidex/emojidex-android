@@ -4,10 +4,8 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 
-import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 
 /**
  * Created by kou on 15/04/20.
@@ -47,11 +45,10 @@ public class SealDownloader {
         }
 
         // Download seal.
-        final EmojiDownloader downloader = new EmojiDownloader(parentActivity);
-        final String url = PathUtils.getAPIRootPath() + "/emoji/" + name + "?detailed=true";
-        final EmojiFormat[] formats = {EmojiFormat.toFormat(parentActivity.getString(R.string.emoji_format_seal))};
+        final EmojiDownloader downloader = new EmojiDownloader();
+        final DownloadConfig config = new DownloadConfig(EmojiFormat.toFormat(parentActivity.getString(R.string.emoji_format_seal)));
         downloader.setListener(new CustomDownloadListener());
-        downloader.add(url, formats, PathUtils.getRemoteRootPathDefault() + "/emoji");
+        downloader.downloadEmoji(name, config);
 
         // Show progress dialog.
         dialog = new ProgressDialog(parentActivity);
@@ -73,7 +70,7 @@ public class SealDownloader {
         dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
-                downloader.cancel();
+                downloader.cancelDownload();
                 canceled = true;
             }
         });
@@ -107,20 +104,6 @@ public class SealDownloader {
      */
     private class CustomDownloadListener extends DownloadListener
     {
-        @Override
-        public void onPostOneJsonDownload(String source, String destination) {
-            super.onPostOneJsonDownload(source, destination);
-
-            // Replace whitespace to underbar.
-            final File file = new File(destination);
-            final ArrayList<JsonParam> emojies = JsonParam.readFromFile(file);
-            for(JsonParam emoji : emojies)
-            {
-                emoji.name = emoji.name.replaceAll(" ", "_");
-            }
-            JsonParam.writeToFile(file, emojies);
-        }
-
         @Override
         public void onFinish() {
             super.onFinish();
