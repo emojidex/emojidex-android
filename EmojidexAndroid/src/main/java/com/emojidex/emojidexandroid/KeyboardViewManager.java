@@ -65,16 +65,19 @@ public class KeyboardViewManager {
         // Create pages.
         final int keyCountMax = keyboards[0].getKeyCountMax();
         final int emojiCount = emojies == null ? 0 : emojies.size();
-        for(int i = 0;  i < emojiCount;  i += keyCountMax)
+        ArrayList<Emoji> page = new ArrayList<Emoji>();
+        for(int i = 0;  i < emojiCount;  ++i)
         {
-            pages.add(new ArrayList<Emoji>(
-                    emojies.subList(i, Math.min(i + keyCountMax, emojiCount))
-            ));
+            if(page.size() >= keyCountMax)
+            {
+                pages.add(page);
+                page = new ArrayList<Emoji>();
+            }
+            final Emoji emoji = emojies.get(i);
+            if(emoji != null)
+                page.add(emoji);
         }
-
-        // Add dummy if pages is empty.
-        if(pages.isEmpty())
-            pages.add(new ArrayList<Emoji>());
+        pages.add(page);
 
         // Set default page.
         currentPage = defaultPage % pages.size();

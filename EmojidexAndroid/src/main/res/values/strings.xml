@@ -76,6 +76,7 @@
 
     <string name="ime_category_text_history">History</string>
     <string name="ime_category_text_search">Search</string>
+    <string name="ime_category_text_index">Index</string>
     <string name="ime_category_text_all">All</string>
     <string name="ime_category_text_gestures">Gestures</string>
     <string name="ime_category_text_abstract">Abstract</string>
@@ -115,6 +116,10 @@
     <string name="settings_delete_search_confirm">Clear all search result?</string>
     <string name="settings_delete_search_succeeded">Search results cleared.</string>
     <string name="settings_delete_search_failed">Failed to clear search results.</string>
+    <string name="settings_delete_cache_button">Clear cache</string>
+    <string name="settings_delete_cache_confirm">Clear all cache?</string>
+    <string name="settings_delete_cache_succeeded">Cache cleared.</string>
+    <string name="settings_delete_cache_failed">Failed to clear cache.</string>
     <string name="settings_tutorial_button">Tutorial</string>
 
     <string name="search_dialog_title">Searching...</string>
@@ -130,6 +135,7 @@
     <!-- Japanese not needed -->
     <string name="ime_category_id_history" translatable="false">history</string>
     <string name="ime_category_id_search" translatable="false">search</string>
+    <string name="ime_category_id_index" translatable="false">index</string>
     <string name="ime_category_id_all" translatable="false">all</string>
     <string name="ime_category_id_gestures" translatable="false">gestures</string>
     <string name="ime_category_id_abstract" translatable="false">abstract</string>
@@ -157,11 +163,13 @@
     <string name="preference_key_clear_favorite" translatable="false">clearFavorite</string>
     <string name="preference_key_clear_history" translatable="false">clearHistory</string>
     <string name="preference_key_clear_search_result" translatable="false">clearSearchResult</string>
+    <string name="preference_key_clear_cache" translatable="false">clearCache</string>
     <string name="preference_key_tutorial" translatable="false">tutorial</string>
     <string name="preference_key_last_language" translatable="false">language</string>
     <string name="preference_entryvalue_default_keyboard_nothing" translatable="false">nothing</string>
     <string name="preference_entryvalue_default_keyboard_default" translatable="false">@string/preference_entryvalue_default_keyboard_nothing</string>
     <string name="preference_entryvalue_update_interval_default" translatable="false">604800000</string>
+    <string name="preference_key_last_update_time_index" translatable="false">lastUpdateTimeIndex</string>
 
     <!-- tutorial -->
     <string name="tutorial_title">Using emojidex</string>

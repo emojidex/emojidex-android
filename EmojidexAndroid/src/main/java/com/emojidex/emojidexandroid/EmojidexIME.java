@@ -62,6 +62,7 @@ public class EmojidexIME extends InputMethodService {
 
     private SaveDataManager historyManager;
     private SaveDataManager searchManager;
+    private SaveDataManager indexManager;
     private KeyboardViewManager keyboardViewManager;
 
     private String currentCategory = null;
@@ -97,9 +98,11 @@ public class EmojidexIME extends InputMethodService {
         // Create PreferenceManager.
         historyManager = new SaveDataManager(this, SaveDataManager.Type.History);
         searchManager = new SaveDataManager(this, SaveDataManager.Type.Search);
+        indexManager = new SaveDataManager(this, SaveDataManager.Type.Index);
 
         // Emoji download.
-        new EmojidexUpdater(this).startUpdateThread();
+        if( !new EmojidexUpdater(this).startUpdateThread() )
+            new EmojidexIndexUpdater(this).startUpdateThread();
     }
 
     @Override
@@ -126,6 +129,7 @@ public class EmojidexIME extends InputMethodService {
         {
             historyManager.load();
             searchManager.load();
+            indexManager.load();
         }
 
         // Set current instance.
@@ -284,7 +288,7 @@ public class EmojidexIME extends InputMethodService {
         // Load start category from preference.
         final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         final String key = getString(R.string.preference_key_start_category);
-        final String defaultCategory = getString(R.string.ime_category_id_all);
+        final String defaultCategory = getString(R.string.ime_category_id_index);
         final String searchCategory = getString(R.string.ime_category_id_search);
         final String startCategory = pref.getString(key, defaultCategory);
 
@@ -399,6 +403,11 @@ public class EmojidexIME extends InputMethodService {
         else if(category.equals(getString(R.string.ime_category_id_search)))
         {
             final List<String> emojiNames = searchManager.getEmojiNames();
+            keyboardViewManager.initializeFromName(emojiNames, defaultPage);
+        }
+        else if(category.equals(getString(R.string.ime_category_id_index)))
+        {
+            final List<String> emojiNames = indexManager.getEmojiNames();
             keyboardViewManager.initializeFromName(emojiNames, defaultPage);
         }
         else if(category.equals(getString(R.string.ime_category_id_all)))

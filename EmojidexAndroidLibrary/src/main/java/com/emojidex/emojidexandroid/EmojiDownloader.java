@@ -493,7 +493,7 @@ public class EmojiDownloader
     private class JsonDownloadTask extends AbstractDownloadTask<JsonDownloadTask.AbstractJsonDownloadExecutor>
     {
         private final DownloadConfig config;
-        private Collection collection;
+        private ArrayList<String> emojiNames = new ArrayList<String>();
 
         /**
          * Construct json download task.
@@ -529,7 +529,7 @@ public class EmojiDownloader
         @Override
         protected void onPostDownload(AbstractJsonDownloadExecutor executor)
         {
-            listener.onPostOneJsonDownload(collection);
+            listener.onPostOneJsonDownload(emojiNames);
         }
 
         /**
@@ -540,13 +540,14 @@ public class EmojiDownloader
             @Override
             public int download()
             {
-                collection = downloadJson();
+                final Collection collection = downloadJson();
                 final EmojiVector emojies = collection.all();
                 for(int i = 0;  i < emojies.size();  ++i)
                 {
                     final Emoji emoji = emojies.get(i);
                     emoji.setCode( emoji.getCode().replaceAll(" ", "_") );
                     addDownloadEmoji(emoji, config);
+                    emojiNames.add(emoji.getCode());
                 }
                 return 1;
             }

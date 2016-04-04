@@ -16,6 +16,7 @@ import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -151,6 +152,16 @@ public class SettingsActivity extends PreferenceActivity {
                     return true;
                 }
             });
+
+            final Preference clearCache = findPreference(getString(R.string.preference_key_clear_cache));
+            updateClearCacheSummary();
+            clearCache.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    createDeleteCacheDialog();
+                    return true;
+                }
+            });
         }
 
         /**
@@ -224,6 +235,86 @@ public class SettingsActivity extends PreferenceActivity {
                         }
                     });
             dialog.show();
+        }
+
+        private void createDeleteCacheDialog()
+        {
+
+            // create dialog
+            final int successId = R.string.settings_delete_cache_succeeded;
+            final int failedId = R.string.settings_delete_cache_failed;
+            AlertDialog.Builder dialog = new AlertDialog.Builder(parentActivity);
+            dialog.setMessage(R.string.settings_delete_cache_confirm);
+            dialog.setPositiveButton(R.string.yes,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            boolean result = deleteFile(new File(PathUtils.LOCAL_ROOT_PATH));
+                            if (result)
+                                Toast.makeText(parentActivity, successId, Toast.LENGTH_SHORT).show();
+                            else
+                                Toast.makeText(parentActivity, failedId, Toast.LENGTH_SHORT).show();
+                            updateClearCacheSummary();
+                            Emojidex.getInstance().reload();
+                            if(EmojidexIME.currentInstance != null)
+                                EmojidexIME.currentInstance.reloadCategory();
+                        }
+                    });
+            dialog.setNegativeButton(R.string.no,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+            dialog.show();
+        }
+
+        private void updateClearCacheSummary()
+        {
+            final Preference clearCache = findPreference(getString(R.string.preference_key_clear_cache));
+            clearCache.setSummary(sizeToString(getFileSize(new File(PathUtils.LOCAL_ROOT_PATH))));
+        }
+
+        private long getFileSize(File file)
+        {
+            if( !file.isDirectory() )
+                return file.length();
+
+            long size = 0;
+            for(File child : file.listFiles())
+                size += getFileSize(child);
+
+            return size;
+        }
+
+        private String sizeToString(long size)
+        {
+            final String[] suffix = { "B", "kB", "MB", "GB" };
+            final float base = 1000.0f;
+            float result = (float)size;
+            int index = 0;
+
+            while(index < suffix.length - 1)
+            {
+                if(result < base)
+                {
+                    break;
+                }
+                result /= base;
+                ++index;
+            }
+
+            return String.format("%.1f%s", result, suffix[index]);
+        }
+
+        private boolean deleteFile(File file)
+        {
+            boolean result = true;
+            if(file.isDirectory())
+                for(File child : file.listFiles())
+                    result = deleteFile(child) && result;
+            return file.delete() && result;
         }
 
 

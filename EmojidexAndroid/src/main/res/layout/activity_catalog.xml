@@ -36,6 +36,15 @@
                 style="@style/IMERadioButtonStyle"/>
 
             <RadioButton
+                android:id="@+id/catalog_index"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ime_category_text_index"
+                android:onClick="onClickCategoryButton"
+                android:contentDescription="@string/ime_category_id_index"
+                style="@style/IMERadioButtonStyle"/>
+
+            <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/ime_category_text_all"

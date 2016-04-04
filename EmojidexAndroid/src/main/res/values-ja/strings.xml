@@ -74,6 +74,7 @@
 
     <string name="ime_category_text_history">履歴</string>
     <string name="ime_category_text_search">検索</string>
+    <string name="ime_category_text_index">インデックス</string>
     <string name="ime_category_text_all">全て</string>
     <string name="ime_category_text_gestures">ジェスチャー</string>
     <string name="ime_category_text_abstract">抽象物</string>
@@ -113,6 +114,10 @@
     <string name="settings_delete_search_confirm">検索結果を全て削除しますか？</string>
     <string name="settings_delete_search_succeeded">検索結果を削除しました。</string>
     <string name="settings_delete_search_failed">検索結果の削除に失敗しました。</string>
+    <string name="settings_delete_cache_button">キャッシュを全て削除</string>
+    <string name="settings_delete_cache_confirm">キャッシュを全て削除しますか？</string>
+    <string name="settings_delete_cache_succeeded">キャッシュを削除しました。</string>
+    <string name="settings_delete_cache_failed">キャッシュの削除に失敗しました。</string>
     <string name="settings_tutorial_button">チュートリアル</string>
 
     <string name="search_dialog_title">検索中……</string>
