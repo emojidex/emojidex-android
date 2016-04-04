@@ -15,6 +15,14 @@
     <string name="menu_settings">Settings</string>
     <string name="emojidex_url" translatable="false">http://www.emojidex.com</string>
 
+    <string name="menu_login">Emojidex Sign In</string>
+    <string name="menu_logout">Sign Out</string>
+    <string name="menu_login_success">Sign in : </string>
+    <string name="menu_login_cancel">Sign in canceled.</string>
+    <string name="menu_new_emoji">+ New Emoji</string>
+    <string name="menu_new_success"> was successfully created.</string>
+    <string name="webview_loading">Loading…</string>
+
     <string name="search">Search</string>
     <string name="favorite">Favorites</string>
     <string name="history">History</string>

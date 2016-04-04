@@ -26,6 +26,7 @@ import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -37,6 +38,13 @@ import java.util.List;
 
 public class MainActivity extends Activity {
     static final String TAG = "EmojidexAndroid";
+    private static final int LOGIN_RESULT = 1000;
+    private static final int LOGOUT_RESULT = 1001;
+    private static final int REGISTER_RESULT = 1002;
+//    private static final String EMOJIDEX_URL = "https://www.emojidex.com";
+    // TODO: address
+    private static final String EMOJIDEX_URL = "http://7bd96a9.ngrok.com";
+    private static final String QUERY = "?crosswalk=true";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +120,12 @@ public class MainActivity extends Activity {
     private ToggleButton toggleButton;
     private boolean toggleState = true;
 
+    private Button loginButton;
+    private Button logoutButton;
+    private Button newEmojiButton;
+    private Button myEmojiButton;
+    private UserData userData;
+
     private void initEmojidexEditor()
     {
         // Initialize emojdiex.
@@ -127,6 +141,18 @@ public class MainActivity extends Activity {
         // toggle button state
         toggleButton = (ToggleButton)findViewById(R.id.toggle_button);
         toggleState = toggleButton.isChecked();
+
+        // for emojidex web.
+        loginButton = (Button)findViewById(R.id.login_button);
+        logoutButton = (Button)findViewById(R.id.logout_button);
+        newEmojiButton = (Button)findViewById(R.id.new_emoji_button);
+        myEmojiButton = (Button)findViewById(R.id.my_emoji_button);
+        userData = UserData.getInstance();
+        userData.init(this);
+
+        if (!userData.getAuthToken().equals("")) {
+            setLoginButtonVisibility(false);
+        }
     }
 
     private CharSequence emojify(final CharSequence cs)
@@ -586,5 +612,99 @@ public class MainActivity extends Activity {
     protected void onDestroy()
     {
         super.onDestroy();
+    }
+
+    /**
+     * Login to emojidex web site.
+     * @param v view
+     */
+    public void loginEmojidex(View v) {
+        Intent intent = new Intent(MainActivity.this, WebViewActivity.class);
+        intent.putExtra("URL", EMOJIDEX_URL + "/mobile_app/login" + QUERY);
+        startActivityForResult(intent, LOGIN_RESULT);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Get result.
+        switch (requestCode) {
+            case LOGIN_RESULT:
+                if (resultCode == Activity.RESULT_OK) {
+                    setLoginButtonVisibility(false);
+                    Toast.makeText(getApplicationContext(),
+                            getString(R.string.menu_login_success) + userData.getUsername(),
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(),
+                            getString(R.string.menu_login_cancel), Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case LOGOUT_RESULT:
+                if (resultCode == Activity.RESULT_OK) {
+                    setLoginButtonVisibility(true);
+                    userData.reset();
+                    Toast.makeText(getApplicationContext(),
+                            getString(R.string.menu_logout), Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case REGISTER_RESULT:
+                if (resultCode == Activity.RESULT_OK) {
+                    Toast.makeText(getApplicationContext(),
+                            data.getStringExtra("message") + getString(R.string.menu_new_success),
+                            Toast.LENGTH_SHORT).show();
+                } else if (resultCode == Activity.RESULT_FIRST_USER){
+                    Toast.makeText(getApplicationContext(),
+                            data.getStringExtra("message"), Toast.LENGTH_SHORT).show();
+                }
+                break;
+
+        }
+    }
+
+    /**
+     * Register a emoji in the emojidex web site.
+     * @param v view
+     */
+    public void registerNewEmoji(View v) {
+        Intent intent = new Intent(MainActivity.this, WebViewActivity.class);
+        intent.putExtra("URL", EMOJIDEX_URL + "/emoji/new" + QUERY);
+        startActivityForResult(intent, REGISTER_RESULT);
+    }
+
+    /**
+     * Logout of emojidex web site.
+     * @param v view
+     */
+    public void logoutEmojidex(View v) {
+        Intent intent = new Intent(MainActivity.this, WebViewActivity.class);
+        intent.putExtra("URL", EMOJIDEX_URL + "/mobile_app/logout" + QUERY);
+        startActivityForResult(intent, LOGOUT_RESULT);
+    }
+
+    /**
+     * show the user's emojis in the emojidex web site.
+     * @param v view
+     */
+    public void showMyEmoji(View v) {
+        Intent intent = new Intent(MainActivity.this, WebViewActivity.class);
+        intent.putExtra("URL", EMOJIDEX_URL + "/users/" + UserData.getInstance().getUsername() + QUERY);
+        startActivity(intent);
+    }
+
+    public void setLoginButtonVisibility(boolean isVisible) {
+        // before login.
+        if (isVisible) {
+            loginButton.setVisibility(View.VISIBLE);
+            logoutButton.setVisibility(View.GONE);
+            newEmojiButton.setVisibility(View.GONE);
+            myEmojiButton.setVisibility(View.GONE);
+        } else {
+            loginButton.setVisibility(View.GONE);
+            logoutButton.setVisibility(View.VISIBLE);
+            newEmojiButton.setVisibility(View.VISIBLE);
+            myEmojiButton.setVisibility(View.VISIBLE);
+        }
     }
 }
