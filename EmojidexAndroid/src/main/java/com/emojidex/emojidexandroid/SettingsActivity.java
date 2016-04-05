@@ -249,7 +249,7 @@ public class SettingsActivity extends PreferenceActivity {
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            boolean result = deleteFile(new File(PathUtils.LOCAL_ROOT_PATH));
+                            boolean result = Emojidex.getInstance().deleteLocalCache();
                             if (result)
                                 Toast.makeText(parentActivity, successId, Toast.LENGTH_SHORT).show();
                             else
@@ -306,15 +306,6 @@ public class SettingsActivity extends PreferenceActivity {
             }
 
             return String.format("%.1f%s", result, suffix[index]);
-        }
-
-        private boolean deleteFile(File file)
-        {
-            boolean result = true;
-            if(file.isDirectory())
-                for(File child : file.listFiles())
-                    result = deleteFile(child) && result;
-            return file.delete() && result;
         }
 
 

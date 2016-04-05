@@ -103,11 +103,13 @@ public class Emojidex {
 
     /**
      * Delete all cache files in local storage.
+     * @return      true if delete cache succeeded.
      */
-    public void deleteLocalCache()
+    public boolean deleteLocalCache()
     {
-        deleteFile(new File(PathUtils.LOCAL_ROOT_PATH));
+        boolean result = deleteFile(new File(PathUtils.LOCAL_ROOT_PATH));
         Log.d(TAG, "Delete all cache files in local storage.");
+        return result;
     }
 
     /**
@@ -246,19 +248,21 @@ public class Emojidex {
     /**
      * Delete file.
      * @param file  File.
+     * @return      true if file delete succeeded.
      */
-    private void deleteFile(File file)
+    private boolean deleteFile(File file)
     {
         // File is not found.
         if(file == null || !file.exists())
-            return;
+            return false;
 
         // If file is directory, delete child files.
+        boolean result = true;
         if(file.isDirectory())
             for(File child : file.listFiles())
-                deleteFile(child);
+                result = deleteFile(child) && result;
 
         // Delete file.
-        file.delete();
+        return file.delete() && result;
     }
 }
