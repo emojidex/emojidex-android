@@ -43,7 +43,7 @@ public class MainActivity extends Activity {
     private static final int REGISTER_RESULT = 1002;
 //    private static final String EMOJIDEX_URL = "https://www.emojidex.com";
     // TODO: address
-    private static final String EMOJIDEX_URL = "http://7bd96a9.ngrok.com";
+    private static final String EMOJIDEX_URL = "https://www.emojidex.com";
     private static final String QUERY = "?crosswalk=true";
 
     @Override
