@@ -100,6 +100,8 @@ public class UserData {
     }
 
     public void reset() {
+        username = "";
+        authToken = "";
         SharedPreferences.Editor editor = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE).edit();
         editor.clear().apply();
     }
