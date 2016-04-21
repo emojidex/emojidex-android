@@ -60,10 +60,12 @@ public class EmojidexIME extends InputMethodService {
 
     private PopupWindow popup;
 
-    private SaveDataManager historyManager;
+    private HistoryManager historyManager;
     private SaveDataManager searchManager;
     private SaveDataManager indexManager;
     private KeyboardViewManager keyboardViewManager;
+
+    private UserData userdata;
 
     private String currentCategory = null;
 
@@ -96,9 +98,13 @@ public class EmojidexIME extends InputMethodService {
         emojidex.initialize(this);
 
         // Create PreferenceManager.
-        historyManager = new SaveDataManager(this, SaveDataManager.Type.History);
-        searchManager = new SaveDataManager(this, SaveDataManager.Type.Search);
-        indexManager = new SaveDataManager(this, SaveDataManager.Type.Index);
+        historyManager = HistoryManager.getInstance(this);
+        searchManager = SaveDataManager.getInstance(this, SaveDataManager.Type.Search);
+        indexManager = SaveDataManager.getInstance(this, SaveDataManager.Type.Index);
+
+        // Initialize user data.
+        userdata = UserData.getInstance();
+        userdata.init(this);
 
         // Emoji download.
         if( !new EmojidexUpdater(this).startUpdateThread() )
@@ -116,6 +122,9 @@ public class EmojidexIME extends InputMethodService {
         createCategorySelector();
         createKeyboardView();
         createSubKeyboardView();
+
+        // Sync user data.
+        historyManager.loadFromUser();
 
         return layout;
     }

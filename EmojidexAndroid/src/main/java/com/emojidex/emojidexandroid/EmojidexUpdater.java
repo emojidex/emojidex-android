@@ -89,7 +89,7 @@ class EmojidexUpdater {
         {
             // Clear log.
             for(SaveDataManager.Type type : SaveDataManager.Type.values())
-                new SaveDataManager(context, type).deleteFile();
+                SaveDataManager.getInstance(context, type).deleteFile();
 
             // Clear cache.
             emojidex.deleteLocalCache();

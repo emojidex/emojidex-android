@@ -21,7 +21,7 @@ public class EmojidexIndexUpdater
     public EmojidexIndexUpdater(Context context)
     {
         this.context = context;
-        indexManager = new SaveDataManager(this.context, SaveDataManager.Type.Index);
+        indexManager = SaveDataManager.getInstance(this.context, SaveDataManager.Type.Index);
     }
 
     public boolean startUpdateThread()

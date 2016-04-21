@@ -81,11 +81,11 @@ public class CatalogActivity extends Activity
         emojidex = Emojidex.getInstance();
         emojidex.initialize(this);
 
-        historyManager = new SaveDataManager(this, SaveDataManager.Type.CatalogHistory);
+        historyManager = SaveDataManager.getInstance(this, SaveDataManager.Type.CatalogHistory);
         historyManager.load();
-        searchManager = new SaveDataManager(this, SaveDataManager.Type.CatalogSearch);
+        searchManager = SaveDataManager.getInstance(this, SaveDataManager.Type.CatalogSearch);
         searchManager.load();
-        indexManager = new SaveDataManager(this, SaveDataManager.Type.Index);
+        indexManager = SaveDataManager.getInstance(this, SaveDataManager.Type.Index);
         indexManager.load();
     }
 

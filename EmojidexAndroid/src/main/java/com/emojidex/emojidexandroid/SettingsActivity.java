@@ -220,7 +220,7 @@ public class SettingsActivity extends PreferenceActivity {
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            boolean result = new SaveDataManager(parentActivity, type).deleteFile();
+                            boolean result = SaveDataManager.getInstance(parentActivity, type).deleteFile();
                             if (result)
                                 Toast.makeText(parentActivity, successId, Toast.LENGTH_SHORT).show();
                             else

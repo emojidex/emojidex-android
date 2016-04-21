@@ -22,7 +22,9 @@ public class SaveDataManager {
 
     public static final int CAPACITY_INFINITY = 0;
 
-    private final Context context;
+    private static final SaveDataManager[] managers = new SaveDataManager[Type.values().length];
+
+    protected final Context context;
     private final Type type;
     private final LinkedList<String> emojiNames;
     private int capacity;
@@ -50,12 +52,24 @@ public class SaveDataManager {
         }
     };
 
+    public static SaveDataManager getInstance(Context context, Type type)
+    {
+        if(managers[type.ordinal()] == null)
+        {
+            if(type == Type.History)
+                managers[type.ordinal()] = HistoryManager.getInstance(context);
+            else
+                managers[type.ordinal()] = new SaveDataManager(context, type);
+        }
+        return managers[type.ordinal()];
+    }
+
     /**
      * Construct HistoryManager object.
      * @param context   Context.
      * @param type      Type.
      */
-    public SaveDataManager(Context context, Type type)
+    protected SaveDataManager(Context context, Type type)
     {
         this.context = context.getApplicationContext();
         this.type = type;

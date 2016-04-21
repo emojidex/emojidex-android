@@ -40,7 +40,9 @@ public class UserData {
 
     public void init(Context context) {
         this.context = context;
-        load();
+
+        if( !isLogined() )
+            load();
     }
 
     public String getAuthToken() {
@@ -49,6 +51,11 @@ public class UserData {
 
     public String getUsername() {
         return  username;
+    }
+
+    public boolean isLogined()
+    {
+        return authToken != null && !authToken.isEmpty();
     }
 
     private void save() {

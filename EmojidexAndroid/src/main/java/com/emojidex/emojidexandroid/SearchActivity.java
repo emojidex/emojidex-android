@@ -52,9 +52,9 @@ public class SearchActivity extends Activity {
 
         // Initialize fields.
         if (fromCatalog)
-            searchManager = new SaveDataManager(this, SaveDataManager.Type.CatalogSearch);
+            searchManager = SaveDataManager.getInstance(this, SaveDataManager.Type.CatalogSearch);
         else
-            searchManager = new SaveDataManager(this, SaveDataManager.Type.Search);
+            searchManager = SaveDataManager.getInstance(this, SaveDataManager.Type.Search);
     }
 
     @Override
