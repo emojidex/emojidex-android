@@ -62,14 +62,12 @@ public class HistoryManager extends SaveDataManager
                 if( !user.authorize(username, authtoken) )
                     return;
 
-                final HistoryItemVector history = user.syncHistory(1);
+                final HistoryItemVector history = user.syncHistory(1, getCapacity());
 
                 clear();
                 final long size = history.size();
                 for(int i = 0;  i < size;  ++i)
-                {
-                    addFirst(history.get(i).getEmoji_code(), false);
-                }
+                    addLast(history.get(i).getEmoji_code());
                 Log.d(TAG, "Load user history.");
             }
         });
@@ -129,14 +127,9 @@ public class HistoryManager extends SaveDataManager
     @Override
     public void addFirst(String emojiName)
     {
-        addFirst(emojiName, true);
-    }
-
-    public void addFirst(String emojiName, boolean addUserData)
-    {
         super.addFirst(emojiName);
 
-        if(addUserData && UserData.getInstance().isLogined())
+        if(UserData.getInstance().isLogined())
             emojiNames.add(emojiName);
     }
 
