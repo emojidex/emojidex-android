@@ -83,6 +83,7 @@
     <string name="editor_message_conversion_off">Conversion OFF</string>
 
     <string name="ime_category_text_history">History</string>
+    <string name="ime_category_text_favorite">Favorite</string>
     <string name="ime_category_text_search">Search</string>
     <string name="ime_category_text_index">Index</string>
     <string name="ime_category_text_all">All</string>
@@ -142,6 +143,7 @@
 
     <!-- Japanese not needed -->
     <string name="ime_category_id_history" translatable="false">history</string>
+    <string name="ime_category_id_favorite" translatable="false">favorite</string>
     <string name="ime_category_id_search" translatable="false">search</string>
     <string name="ime_category_id_index" translatable="false">index</string>
     <string name="ime_category_id_all" translatable="false">all</string>

@@ -167,6 +167,16 @@ public class SaveDataManager {
     }
 
     /**
+     *
+     * @param emojiName     Emoji name.
+     * @return      true if contains emojiName.
+     */
+    public boolean contains(String emojiName)
+    {
+        return emojiNames.contains(emojiName);
+    }
+
+    /**
      * Clear emoji names.
      */
     public void clear()

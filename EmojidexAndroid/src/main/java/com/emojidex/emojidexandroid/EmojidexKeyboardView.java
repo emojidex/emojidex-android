@@ -13,6 +13,7 @@ import android.inputmethodservice.KeyboardView;
 import android.os.Build;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -55,6 +56,8 @@ public class EmojidexKeyboardView extends KeyboardView {
     protected boolean first;
     protected boolean registered;
 
+    private final SaveDataManager favoriteManager;
+
     /**
      * Construct EmojidexKeyboardView object.
      * @param context
@@ -68,6 +71,8 @@ public class EmojidexKeyboardView extends KeyboardView {
 
         format = EmojiFormat.toFormat(context.getResources().getString(R.string.emoji_format_key));
         iconSize = context.getResources().getDimension(R.dimen.ime_key_icon_size);
+
+        favoriteManager = SaveDataManager.getInstance(context, SaveDataManager.Type.Favorite);
     }
 
     /**
@@ -323,7 +328,7 @@ public class EmojidexKeyboardView extends KeyboardView {
      */
     protected void setCurrentState()
     {
-        if (FileOperation.searchEmoji(context, FileOperation.FAVORITES, emojiName))
+        if (favoriteManager.contains(emojiName))
         {
             imageButton.setImageResource(android.R.drawable.star_big_on);
             first = true;
@@ -347,9 +352,9 @@ public class EmojidexKeyboardView extends KeyboardView {
         if (registered != first)
         {
             if (registered)
-                FileOperation.save(context, emojiName, FileOperation.FAVORITES);
+                favoriteManager.addFirst(emojiName);
             else
-                FileOperation.delete(context, emojiName, FileOperation.FAVORITES);
+                favoriteManager.remove(emojiName);
         }
 
         if (popup != null)

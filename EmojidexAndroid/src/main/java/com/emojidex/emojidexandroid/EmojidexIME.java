@@ -61,6 +61,7 @@ public class EmojidexIME extends InputMethodService {
     private PopupWindow popup;
 
     private HistoryManager historyManager;
+    private SaveDataManager favoriteManager;
     private SaveDataManager searchManager;
     private SaveDataManager indexManager;
     private KeyboardViewManager keyboardViewManager;
@@ -99,6 +100,7 @@ public class EmojidexIME extends InputMethodService {
 
         // Create PreferenceManager.
         historyManager = HistoryManager.getInstance(this);
+        favoriteManager = SaveDataManager.getInstance(this, SaveDataManager.Type.Favorite);
         searchManager = SaveDataManager.getInstance(this, SaveDataManager.Type.Search);
         indexManager = SaveDataManager.getInstance(this, SaveDataManager.Type.Index);
 
@@ -139,6 +141,7 @@ public class EmojidexIME extends InputMethodService {
             historyManager.load();
             searchManager.load();
             indexManager.load();
+            favoriteManager.load();
         }
 
         // Set current instance.
@@ -183,6 +186,7 @@ public class EmojidexIME extends InputMethodService {
     public void onFinishInput() {
         currentInstance = null;
         historyManager.save();
+        favoriteManager.save();
         super.onFinishInput();
     }
 
@@ -407,6 +411,11 @@ public class EmojidexIME extends InputMethodService {
         if(category.equals(getString(R.string.ime_category_id_history)))
         {
             final List<String> emojiNames = historyManager.getEmojiNames();
+            keyboardViewManager.initializeFromName(emojiNames, defaultPage);
+        }
+        else if(category.equals(getString(R.string.ime_category_id_favorite)))
+        {
+            final List<String> emojiNames = favoriteManager.getEmojiNames();
             keyboardViewManager.initializeFromName(emojiNames, defaultPage);
         }
         else if(category.equals(getString(R.string.ime_category_id_search)))

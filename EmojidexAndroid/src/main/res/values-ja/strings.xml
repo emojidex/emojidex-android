@@ -81,6 +81,7 @@
     <string name="editor_message_conversion_off">自動変換を無効にしました。</string>
 
     <string name="ime_category_text_history">履歴</string>
+    <string name="ime_category_text_favorite">お気に入り</string>
     <string name="ime_category_text_search">検索</string>
     <string name="ime_category_text_index">インデックス</string>
     <string name="ime_category_text_all">全て</string>
