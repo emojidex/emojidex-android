@@ -185,9 +185,15 @@ public class EmojidexIME extends InputMethodService {
     @Override
     public void onFinishInput() {
         currentInstance = null;
+        super.onFinishInput();
+    }
+
+    @Override
+    public void onFinishInputView(boolean finishingInput)
+    {
         historyManager.save();
         favoriteManager.save();
-        super.onFinishInput();
+        super.onFinishInputView(finishingInput);
     }
 
     @Override
