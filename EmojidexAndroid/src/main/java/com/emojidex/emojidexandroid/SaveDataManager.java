@@ -58,6 +58,8 @@ public class SaveDataManager {
         {
             if(type == Type.History)
                 managers[type.ordinal()] = HistoryManager.getInstance(context);
+            else if(type == Type.Favorite)
+                managers[type.ordinal()] = FavoriteManager.getInstance(context);
             else
                 managers[type.ordinal()] = new SaveDataManager(context, type);
         }

@@ -56,7 +56,7 @@ public class EmojidexKeyboardView extends KeyboardView {
     protected boolean first;
     protected boolean registered;
 
-    private final SaveDataManager favoriteManager;
+    private final FavoriteManager favoriteManager;
 
     /**
      * Construct EmojidexKeyboardView object.
@@ -72,7 +72,7 @@ public class EmojidexKeyboardView extends KeyboardView {
         format = EmojiFormat.toFormat(context.getResources().getString(R.string.emoji_format_key));
         iconSize = context.getResources().getDimension(R.dimen.ime_key_icon_size);
 
-        favoriteManager = SaveDataManager.getInstance(context, SaveDataManager.Type.Favorite);
+        favoriteManager = FavoriteManager.getInstance(context);
     }
 
     /**
@@ -106,6 +106,21 @@ public class EmojidexKeyboardView extends KeyboardView {
         popup.setContentView(view);
         popup.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
         popup.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
+        popup.setOnDismissListener(new PopupWindow.OnDismissListener()
+        {
+            @Override
+            public void onDismiss()
+            {
+                // If changed favorite state, save current state.
+                if (registered != first)
+                {
+                    if (registered)
+                        favoriteManager.addFirst(emojiName);
+                    else
+                        favoriteManager.remove(emojiName);
+                }
+            }
+        });
         popup.showAtLocation(this, Gravity.CENTER, 0, -this.getHeight());
 
         // Set emoji data.
@@ -348,15 +363,6 @@ public class EmojidexKeyboardView extends KeyboardView {
      */
     public boolean closePopup()
     {
-        // If changed favorite state, save current state.
-        if (registered != first)
-        {
-            if (registered)
-                favoriteManager.addFirst(emojiName);
-            else
-                favoriteManager.remove(emojiName);
-        }
-
         if (popup != null)
         {
             popup.dismiss();

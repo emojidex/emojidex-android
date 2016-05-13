@@ -61,7 +61,7 @@ public class EmojidexIME extends InputMethodService {
     private PopupWindow popup;
 
     private HistoryManager historyManager;
-    private SaveDataManager favoriteManager;
+    private FavoriteManager favoriteManager;
     private SaveDataManager searchManager;
     private SaveDataManager indexManager;
     private KeyboardViewManager keyboardViewManager;
@@ -100,7 +100,7 @@ public class EmojidexIME extends InputMethodService {
 
         // Create PreferenceManager.
         historyManager = HistoryManager.getInstance(this);
-        favoriteManager = SaveDataManager.getInstance(this, SaveDataManager.Type.Favorite);
+        favoriteManager = FavoriteManager.getInstance(this);
         searchManager = SaveDataManager.getInstance(this, SaveDataManager.Type.Search);
         indexManager = SaveDataManager.getInstance(this, SaveDataManager.Type.Index);
 
@@ -127,6 +127,7 @@ public class EmojidexIME extends InputMethodService {
 
         // Sync user data.
         historyManager.loadFromUser();
+        favoriteManager.loadFromUser();
 
         return layout;
     }
