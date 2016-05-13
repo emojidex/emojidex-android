@@ -9,13 +9,10 @@ import android.util.Log;
 import com.emojidex.libemojidex.EmojiVector;
 import com.emojidex.libemojidex.Emojidex.Client;
 import com.emojidex.libemojidex.Emojidex.Service.User;
-import com.emojidex.libemojidex.HistoryItemVector;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.List;
 
 /**
  * Created by kou on 16/04/12.

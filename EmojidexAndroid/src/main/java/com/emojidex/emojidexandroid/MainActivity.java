@@ -17,7 +17,6 @@ import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.style.ImageSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,10 +33,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-
-import com.emojidex.libemojidex.Emojidex.Client;
-import com.emojidex.libemojidex.Emojidex.Service.User;
-import com.emojidex.libemojidex.HistoryItemVector;
 
 import java.util.List;
 
