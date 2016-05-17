@@ -36,7 +36,7 @@ public class FavoriteManager extends SaveDataManager
 
     private FavoriteManager(Context context)
     {
-        super(context, Type.History);
+        super(context, Type.Favorite);
     }
 
     public void loadFromUser()
