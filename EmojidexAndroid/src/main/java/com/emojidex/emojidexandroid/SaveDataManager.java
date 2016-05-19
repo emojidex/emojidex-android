@@ -80,45 +80,36 @@ public class SaveDataManager {
     }
 
     /**
+     * Save emoji names to file.
+     */
+    public void save()
+    {
+        saveToFile(type.fileName);
+    }
+
+    /**
      * Load emoji names from file.
      */
     public void load()
     {
-        emojiNames.clear();
-
-        try
-        {
-            final ObjectMapper objectMapper = new ObjectMapper();
-            final InputStream is = context.openFileInput(type.fileName);
-            final TypeReference<LinkedHashSet<String>> typeReference = new TypeReference<LinkedHashSet<String>>(){};
-            final LinkedHashSet<String> loadEmojiNames = objectMapper.readValue(is, typeReference);
-            emojiNames.addAll(loadEmojiNames);
-        }
-        catch(IOException e)
-        {
-            e.printStackTrace();
-        }
-
-        Log.d(TAG, "Load \"" + type.fileName + "\". (size = " + emojiNames.size() + ")");
+        loadFromFile(type.fileName);
     }
 
     /**
      * Save emoji names to file.
      */
-    public void save()
+    public void saveBackup()
     {
-        try
-        {
-            final ObjectMapper objectMapper = new ObjectMapper();
-            final OutputStream os = context.openFileOutput(type.fileName, Context.MODE_PRIVATE);
-            objectMapper.writeValue(os, emojiNames);
-            os.close();
-        }
-        catch(IOException e)
-        {
-            e.printStackTrace();
-        }
-        Log.d(TAG, "Save \"" + type.fileName + "\". (size = " + emojiNames.size() + ")");
+        saveToFile(type.fileName + ".bak");
+    }
+
+    /**
+     * Load emoji names from file.
+     */
+    public void loadBackup()
+    {
+        loadFromFile(type.fileName + ".bak");
+        saveToFile(type.fileName);
     }
 
     /**
@@ -226,5 +217,49 @@ public class SaveDataManager {
     public List<String> getEmojiNames()
     {
         return emojiNames;
+    }
+
+    /**
+     * Save emoji names to file.
+     * @param filename      File name.
+     */
+    private void saveToFile(String filename)
+    {
+        try
+        {
+            final ObjectMapper objectMapper = new ObjectMapper();
+            final OutputStream os = context.openFileOutput(filename, Context.MODE_PRIVATE);
+            objectMapper.writeValue(os, emojiNames);
+            os.close();
+        }
+        catch(IOException e)
+        {
+            e.printStackTrace();
+        }
+        Log.d(TAG, "Save \"" + filename + "\". (size = " + emojiNames.size() + ")");
+    }
+
+    /**
+     * Load emoji names from file.
+     * @param filename      File name.
+     */
+    private void loadFromFile(String filename)
+    {
+        emojiNames.clear();
+
+        try
+        {
+            final ObjectMapper objectMapper = new ObjectMapper();
+            final InputStream is = context.openFileInput(filename);
+            final TypeReference<LinkedHashSet<String>> typeReference = new TypeReference<LinkedHashSet<String>>(){};
+            final LinkedHashSet<String> loadEmojiNames = objectMapper.readValue(is, typeReference);
+            emojiNames.addAll(loadEmojiNames);
+        }
+        catch(IOException e)
+        {
+            e.printStackTrace();
+        }
+
+        Log.d(TAG, "Load \"" + filename + "\". (size = " + emojiNames.size() + ")");
     }
 }

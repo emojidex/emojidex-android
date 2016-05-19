@@ -628,11 +628,18 @@ public class MainActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        final HistoryManager hm = HistoryManager.getInstance(this);
+        final FavoriteManager fm = FavoriteManager.getInstance(this);
+
         // Get result.
         switch (requestCode) {
             case LOGIN_RESULT:
                 if (resultCode == Activity.RESULT_OK) {
                     setLoginButtonVisibility(false);
+                    hm.saveBackup();
+                    fm.saveBackup();
+                    hm.loadFromUser();
+                    fm.loadFromUser();
                     Toast.makeText(getApplicationContext(),
                             getString(R.string.menu_login_success) + userData.getUsername(),
                             Toast.LENGTH_SHORT).show();
@@ -645,6 +652,8 @@ public class MainActivity extends Activity {
                 if (resultCode == Activity.RESULT_OK) {
                     setLoginButtonVisibility(true);
                     userData.reset();
+                    hm.loadBackup();
+                    fm.loadBackup();
                     Toast.makeText(getApplicationContext(),
                             getString(R.string.menu_logout), Toast.LENGTH_SHORT).show();
                 }
