@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.KeyEvent;
-import android.view.View;
 import android.webkit.ValueCallback;
 
 import org.xwalk.core.XWalkNavigationHistory;
@@ -81,11 +80,6 @@ public class WebViewActivity extends Activity {
         }
 
         @org.xwalk.core.JavascriptInterface
-        public void cancel() {
-            closeWebView(null);
-        }
-
-        @org.xwalk.core.JavascriptInterface
         public void close() {
             setResult(Activity.RESULT_OK);
             dialog.dismiss();
@@ -105,12 +99,6 @@ public class WebViewActivity extends Activity {
             dialog.dismiss();
             finish();
         }
-    }
-
-    public void closeWebView(View v) {
-        setResult(Activity.RESULT_CANCELED);
-        dialog.dismiss();
-        finish();
     }
 
     @Override
