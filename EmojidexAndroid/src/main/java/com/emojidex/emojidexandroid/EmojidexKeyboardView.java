@@ -162,10 +162,21 @@ public class EmojidexKeyboardView extends KeyboardView {
         final Button sealSendButton = (Button)view.findViewById(R.id.popup_seal_send_button);
 
         String packageName;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+        {
             List<ActivityManager.RunningAppProcessInfo> tasks = am.getRunningAppProcesses();
             packageName = tasks.get(1).processName;
-        } else {
+            for (ActivityManager.RunningAppProcessInfo task : tasks)
+            {
+                if (task.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND)
+                {
+                    packageName = task.processName;
+                    break;
+                }
+            }
+        }
+        else
+        {
             packageName = am.getRunningTasks(1).get(0).baseActivity.getPackageName();
         }
         final String targetPackageName = packageName;
