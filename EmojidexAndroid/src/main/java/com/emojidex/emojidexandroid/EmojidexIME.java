@@ -565,6 +565,8 @@ public class EmojidexIME extends InputMethodService {
     void reloadSearchResult()
     {
         searchManager.load();
+        if (currentCategory == null) return;
+
         if(currentCategory.equals(getString(R.string.ime_category_id_search)))
         {
             final String category = currentCategory;
