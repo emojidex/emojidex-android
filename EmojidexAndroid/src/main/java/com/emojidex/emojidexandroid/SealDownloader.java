@@ -34,16 +34,6 @@ public class SealDownloader {
     {
         canceled = false;
 
-        // URL encode.
-        try
-        {
-            name = URLEncoder.encode(name, "UTF-8");
-        }
-        catch(UnsupportedEncodingException e)
-        {
-            e.printStackTrace();
-        }
-
         // Download seal.
         final EmojiDownloader downloader = new EmojiDownloader();
         final DownloadConfig config = new DownloadConfig(EmojiFormat.toFormat(parentActivity.getString(R.string.emoji_format_seal)));
