@@ -28,16 +28,6 @@
             android:onClick="loginEmojidex"/>
 
         <Button
-            android:id="@+id/logout_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/button_white"
-            android:text="@string/menu_logout"
-            android:textColor="#327AB7"
-            android:visibility="gone"
-            android:onClick="logoutEmojidex"/>
-
-        <Button
             android:id="@+id/new_emoji_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

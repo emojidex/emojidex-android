@@ -2,6 +2,7 @@ package com.emojidex.emojidexandroid;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,6 +25,11 @@ import java.util.List;
  * Created by nazuki on 2014/01/31.
  */
 public class SettingsActivity extends PreferenceActivity {
+    private static final int LOGOUT_RESULT = 1000;
+    private static final String EMOJIDEX_URL = "https://www.emojidex.com";
+    private static final String QUERY = "?crosswalk=true";
+    private int fragmentId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +37,11 @@ public class SettingsActivity extends PreferenceActivity {
         getFragmentManager().beginTransaction().replace(android.R.id.content, new CustomPreferenceFragment()).commit();
     }
 
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        super.onAttachFragment(fragment);
+        fragmentId = fragment.getId();
+    }
 
     /**
      * Custom PreferenceFragment.
@@ -126,6 +137,15 @@ public class SettingsActivity extends PreferenceActivity {
          */
         private void createClearDataPreference()
         {
+            final Preference logoutEmojidex = findPreference(getString(R.string.preference_key_logout_emojidex));
+            logoutEmojidex.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    createLogoutDialog();
+                    return true;
+                }
+            });
+
             final Preference clearFavorite = findPreference(getString(R.string.preference_key_clear_favorite));
             clearFavorite.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
@@ -162,6 +182,16 @@ public class SettingsActivity extends PreferenceActivity {
                     return true;
                 }
             });
+
+            if (UserData.getInstance().isLogined())
+            {
+                clearFavorite.setEnabled(false);
+                clearHistory.setEnabled(false);
+            }
+            else
+            {
+                logoutEmojidex.setEnabled(false);
+            }
         }
 
         /**
@@ -237,9 +267,32 @@ public class SettingsActivity extends PreferenceActivity {
             dialog.show();
         }
 
+        /**
+         * create dialog
+         */
+        private void createLogoutDialog()
+        {
+            AlertDialog.Builder dialog = new AlertDialog.Builder(parentActivity);
+            dialog.setMessage(R.string.settings_logout_emojidex_confirm);
+            dialog.setPositiveButton(R.string.yes,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ((SettingsActivity)parentActivity).logoutEmojidex();
+                        }
+                    });
+            dialog.setNegativeButton(R.string.no,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+            dialog.show();
+        }
+
         private void createDeleteCacheDialog()
         {
-
             // create dialog
             final int successId = R.string.settings_delete_cache_succeeded;
             final int failedId = R.string.settings_delete_cache_failed;
@@ -322,6 +375,42 @@ public class SettingsActivity extends PreferenceActivity {
                 lp.setSummary(newEntry);
                 return true;
             }
+        }
+    }
+
+    /**
+     * Logout from emojidex web site.
+     */
+    private void logoutEmojidex() {
+        Intent intent = new Intent(SettingsActivity.this, WebViewActivity.class);
+        intent.putExtra("URL", EMOJIDEX_URL + "/mobile_app/logout" + QUERY);
+        startActivityForResult(intent, LOGOUT_RESULT);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode != LOGOUT_RESULT) return;
+
+        final PreferenceFragment fragment = (PreferenceFragment)getFragmentManager().findFragmentById(fragmentId);
+
+        if (resultCode == Activity.RESULT_OK)
+        {
+            UserData.getInstance().reset();
+            HistoryManager.getInstance(this).loadBackup();
+            FavoriteManager.getInstance(this).loadBackup();
+            fragment.findPreference(getString(R.string.preference_key_logout_emojidex)).setEnabled(false);
+            fragment.findPreference(getString(R.string.preference_key_clear_favorite)).setEnabled(true);
+            fragment.findPreference(getString(R.string.preference_key_clear_history)).setEnabled(true);
+
+            Toast.makeText(getApplicationContext(),
+                    getString(R.string.settings_logout_emojidex_succeeded), Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
+            Toast.makeText(getApplicationContext(),
+                    getString(R.string.settings_logout_emojidex_failed), Toast.LENGTH_SHORT).show();
         }
     }
 }

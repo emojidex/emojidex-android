@@ -16,7 +16,6 @@
     <string name="emojidex_url" translatable="false">http://www.emojidex.com</string>
 
     <string name="menu_login">Sign in to emojidex</string>
-    <string name="menu_logout">Sign Out</string>
     <string name="menu_login_success">Sign in : </string>
     <string name="menu_login_cancel">Sign in canceled.</string>
     <string name="menu_new_emoji">+ New Emoji</string>
@@ -113,6 +112,10 @@
     <string name="settings_entry_default_keyboard_nothing">Nothing</string>
     <string name="settings_update_interval">Update interval</string>
     <string name="settings_update_now">Update now</string>
+    <string name="settings_logout_emojidex_button">Sign out from emojidex</string>
+    <string name="settings_logout_emojidex_confirm">Sign out from emojidex?</string>
+    <string name="settings_logout_emojidex_succeeded">Sign out</string>
+    <string name="settings_logout_emojidex_failed">Failed to sign out</string>
     <string name="settings_delete_favorite_button">Clear Favorites</string>
     <string name="settings_delete_favorite_confirm">Clear all favorites?</string>
     <string name="settings_delete_favorite_succeeded">Favorites cleared</string>
@@ -170,6 +173,7 @@
     <string name="preference_key_last_update_time" translatable="false">lastUpdateTime</string>
     <string name="preference_key_update_interval" translatable="false">updateInterval</string>
     <string name="preference_key_update_now" translatable="false">updateNow</string>
+    <string name="preference_key_logout_emojidex" translatable="false">singoutEmojidex</string>
     <string name="preference_key_clear_favorite" translatable="false">clearFavorite</string>
     <string name="preference_key_clear_history" translatable="false">clearHistory</string>
     <string name="preference_key_clear_search_result" translatable="false">clearSearchResult</string>

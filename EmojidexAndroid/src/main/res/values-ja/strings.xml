@@ -14,7 +14,6 @@
     <string name="menu_settings">設定</string>
 
     <string name="menu_login">emojidexにログイン</string>
-    <string name="menu_logout">ログアウト</string>
     <string name="menu_login_success">ログイン : </string>
     <string name="menu_login_cancel">ログインをキャンセルしました。</string>
     <string name="menu_new_emoji">+ 絵文字登録</string>
@@ -111,6 +110,10 @@
     <string name="settings_entry_default_keyboard_nothing">なし</string>
     <string name="settings_update_interval">絵文字を更新する間隔</string>
     <string name="settings_update_now">今すぐ更新</string>
+    <string name="settings_logout_emojidex_button">emojidexからログアウト</string>
+    <string name="settings_logout_emojidex_confirm">emojidexからログアウトしますか?</string>
+    <string name="settings_logout_emojidex_succeeded">ログアウトしました。</string>
+    <string name="settings_logout_emojidex_failed">ログアウトに失敗しました。</string>
     <string name="settings_delete_favorite_button">お気に入りを全て削除</string>
     <string name="settings_delete_favorite_confirm">お気に入りを全て削除しますか？</string>
     <string name="settings_delete_favorite_succeeded">お気に入りを削除しました。</string>

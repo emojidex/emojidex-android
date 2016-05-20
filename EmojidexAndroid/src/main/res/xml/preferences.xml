@@ -22,6 +22,9 @@
     <PreferenceCategory
         android:title="@string/settings_category_data">
         <Preference
+            android:key="@string/preference_key_logout_emojidex"
+            android:title="@string/settings_logout_emojidex_button"/>
+        <Preference
             android:key="@string/preference_key_clear_favorite"
             android:title="@string/settings_delete_favorite_button"/>
         <Preference
