@@ -318,4 +318,16 @@ public class SearchActivity extends Activity {
                 EmojidexIME.currentInstance.invalidate(emojiName);
         }
     }
+
+    @Override
+    protected void onPause() {
+        if (loadingDialog != null) loadingDialog.dismiss();
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        if (loadingDialog != null) loadingDialog.show();
+        super.onResume();
+    }
 }
