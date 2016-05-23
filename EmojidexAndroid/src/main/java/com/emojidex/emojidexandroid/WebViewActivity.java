@@ -10,6 +10,7 @@ import android.view.KeyEvent;
 import android.webkit.ValueCallback;
 
 import org.xwalk.core.XWalkNavigationHistory;
+import org.xwalk.core.XWalkResourceClient;
 import org.xwalk.core.XWalkUIClient;
 import org.xwalk.core.XWalkView;
 
@@ -35,6 +36,19 @@ public class WebViewActivity extends Activity {
 
         xWalkView = (XWalkView) findViewById(R.id.xwalkView);
         xWalkView.addJavascriptInterface(new EmojidexJavaScriptInterface(), "Android");
+
+        xWalkView.setResourceClient(new XWalkResourceClient(xWalkView){
+            @Override
+            public void onReceivedLoadError(XWalkView view, int errorCode, String description, String failingUrl) {
+                if (errorCode == -1)
+                {
+                    // network change was detected.
+                    view.load(failingUrl, null);
+                    return;
+                }
+                super.onReceivedLoadError(view, errorCode, description, failingUrl);
+            }
+        });
 
         xWalkView.setUIClient(new XWalkUIClient(xWalkView){
             @Override
