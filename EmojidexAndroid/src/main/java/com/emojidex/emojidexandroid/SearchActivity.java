@@ -193,7 +193,10 @@ public class SearchActivity extends Activity {
             public void run() {
                 searchManager.clear();
 
-                downloader = new EmojiDownloader();
+                final UserData userdata = UserData.getInstance();
+                downloader = userdata.isLogined() ?
+                        new EmojiDownloader(userdata.getUsername(), userdata.getAuthToken()) :
+                        new EmojiDownloader();
                 downloader.setListener(new CustomDownloadListener());
 
                 final DownloadConfig config = new DownloadConfig(

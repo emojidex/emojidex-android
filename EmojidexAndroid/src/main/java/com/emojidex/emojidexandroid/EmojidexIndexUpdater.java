@@ -39,7 +39,10 @@ public class EmojidexIndexUpdater
 
         Log.d(TAG, "Start index update.");
 
-        final EmojiDownloader downloader = new EmojiDownloader();
+        final UserData userdata = UserData.getInstance();
+        final EmojiDownloader downloader = userdata.isLogined() ?
+                new EmojiDownloader(userdata.getUsername(), userdata.getAuthToken()) :
+                new EmojiDownloader();
         final DownloadConfig config = new DownloadConfig(
                 EmojiFormat.toFormat(context.getString(R.string.emoji_format_default)),
                 EmojiFormat.toFormat(context.getString(R.string.emoji_format_key))

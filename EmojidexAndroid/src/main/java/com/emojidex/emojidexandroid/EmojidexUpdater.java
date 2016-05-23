@@ -52,10 +52,13 @@ class EmojidexUpdater {
 
         Log.d(TAG, "Start update.");
 
+        final UserData userdata = UserData.getInstance();
         final LinkedHashSet<EmojiFormat> formats = new LinkedHashSet<EmojiFormat>();
         formats.add(EmojiFormat.toFormat(context.getString(R.string.emoji_format_default)));
         formats.add(EmojiFormat.toFormat(context.getString(R.string.emoji_format_key)));
-        return emojidex.download(formats.toArray(new EmojiFormat[formats.size()]), new CustomDownloadListener(forceFlag));
+        return userdata.isLogined() ?
+                emojidex.download(formats.toArray(new EmojiFormat[formats.size()]), new CustomDownloadListener(forceFlag), userdata.getUsername(), userdata.getAuthToken()) :
+                emojidex.download(formats.toArray(new EmojiFormat[formats.size()]), new CustomDownloadListener(forceFlag));
     }
 
     /**
