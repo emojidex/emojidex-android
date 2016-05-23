@@ -41,7 +41,6 @@ public class MainActivity extends Activity {
     private static final int LOGIN_RESULT = 1000;
     private static final int REGISTER_RESULT = 1001;
     private static final String EMOJIDEX_URL = "https://www.emojidex.com";
-    private static final String QUERY = "?crosswalk=true";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -621,7 +620,7 @@ public class MainActivity extends Activity {
      */
     public void loginEmojidex(View v) {
         Intent intent = new Intent(MainActivity.this, WebViewActivity.class);
-        intent.putExtra("URL", EMOJIDEX_URL + "/mobile_app/login" + QUERY);
+        intent.putExtra("URL", EMOJIDEX_URL + "/mobile_app/login");
         startActivityForResult(intent, LOGIN_RESULT);
     }
 
@@ -669,7 +668,7 @@ public class MainActivity extends Activity {
      */
     public void registerNewEmoji(View v) {
         Intent intent = new Intent(MainActivity.this, WebViewActivity.class);
-        intent.putExtra("URL", EMOJIDEX_URL + "/emoji/new" + QUERY);
+        intent.putExtra("URL", EMOJIDEX_URL + "/emoji/new");
         startActivityForResult(intent, REGISTER_RESULT);
     }
 
@@ -679,7 +678,7 @@ public class MainActivity extends Activity {
      */
     public void showMyEmoji(View v) {
         Intent intent = new Intent(MainActivity.this, WebViewActivity.class);
-        intent.putExtra("URL", EMOJIDEX_URL + "/users/" + UserData.getInstance().getUsername() + QUERY);
+        intent.putExtra("URL", EMOJIDEX_URL + "/users/" + UserData.getInstance().getUsername());
         startActivity(intent);
     }
 

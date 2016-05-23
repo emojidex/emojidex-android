@@ -27,7 +27,6 @@ import java.util.List;
 public class SettingsActivity extends PreferenceActivity {
     private static final int LOGOUT_RESULT = 1000;
     private static final String EMOJIDEX_URL = "https://www.emojidex.com";
-    private static final String QUERY = "?crosswalk=true";
     private int fragmentId;
 
     @Override
@@ -383,7 +382,7 @@ public class SettingsActivity extends PreferenceActivity {
      */
     private void logoutEmojidex() {
         Intent intent = new Intent(SettingsActivity.this, WebViewActivity.class);
-        intent.putExtra("URL", EMOJIDEX_URL + "/mobile_app/logout" + QUERY);
+        intent.putExtra("URL", EMOJIDEX_URL + "/mobile_app/logout");
         startActivityForResult(intent, LOGOUT_RESULT);
     }
 
