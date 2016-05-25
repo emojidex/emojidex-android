@@ -191,23 +191,12 @@ public class SearchActivity extends Activity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                String escapeText = searchText;
-                try
-                {
-                    escapeText = URLEncoder.encode(escapeText, "UTF-8");
-                }
-                catch(UnsupportedEncodingException e)
-                {
-                    e.printStackTrace();
-                }
-                final String url = PathUtils.getAPIRootPath() + "/search/emoji?detailed=true&code_cont=" + escapeText + (category == null ? "" : "&categories[]=" + category);
+                searchManager.clear();
 
-                final LinkedHashSet<EmojiFormat> formats = new LinkedHashSet<EmojiFormat>();
-                formats.add(EmojiFormat.toFormat(getString(R.string.emoji_format_default)));
-                formats.add(EmojiFormat.toFormat(getString(R.string.emoji_format_key)));
-                formats.add(EmojiFormat.toFormat(getString(R.string.emoji_format_seal)));
-
-                downloader = new EmojiDownloader();
+                final UserData userdata = UserData.getInstance();
+                downloader = userdata.isLogined() ?
+                        new EmojiDownloader(userdata.getUsername(), userdata.getAuthToken()) :
+                        new EmojiDownloader();
                 downloader.setListener(new CustomDownloadListener());
 
                 final DownloadConfig config = new DownloadConfig(
@@ -215,7 +204,7 @@ public class SearchActivity extends Activity {
                         EmojiFormat.toFormat(getString(R.string.emoji_format_key)),
                         EmojiFormat.toFormat(getString(R.string.emoji_format_seal))
                 );
-                downloader.downloadSearchEmoji(escapeText, category, config);
+                downloader.downloadSearchEmoji(searchText, category, config);
             }
         }, 1000);
 

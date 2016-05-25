@@ -8,6 +8,7 @@ import com.emojidex.libemojidex.Emojidex.Client;
 import com.emojidex.libemojidex.Emojidex.Data.Collection;
 import com.emojidex.libemojidex.Emojidex.Data.Emoji;
 import com.emojidex.libemojidex.Emojidex.Service.QueryOpts;
+import com.emojidex.libemojidex.Emojidex.Service.User;
 import com.emojidex.libemojidex.StringVector;
 
 import java.io.BufferedOutputStream;
@@ -51,7 +52,17 @@ public class EmojiDownloader
      */
     public EmojiDownloader()
     {
-        this(0);
+        this(null, null, 0);
+    }
+
+    /**
+     * Construct EmojiDownloader object.
+     * @param username      User name.
+     * @param authtoken     Auth token.
+     */
+    public EmojiDownloader(String username, String authtoken)
+    {
+        this(username, authtoken, 0);
     }
 
     /**
@@ -59,6 +70,17 @@ public class EmojiDownloader
      * @param threadCount   Download thread count.
      */
     public EmojiDownloader(int threadCount)
+    {
+        this(null, null, threadCount);
+    }
+
+    /**
+     * Construct EmojiDownloader object.
+     * @param username      User name.
+     * @param authtoken     Auth token.
+     * @param threadCount   Download thread count.
+     */
+    public EmojiDownloader(String username, String authtoken, int threadCount)
     {
         // Initialize download thread count.
         if(threadCount <= 0)
@@ -76,6 +98,12 @@ public class EmojiDownloader
 
         // Create libemojidex object.
         client = new Client();
+        if(     username != null && !username.isEmpty()
+            &&  authtoken != null && !authtoken.isEmpty() )
+        {
+            final User user = client.getUser();
+            user.authorize(username, authtoken);
+        }
         locale = Locale.getDefault().equals(Locale.JAPAN) ? "ja" : "en";
     }
 

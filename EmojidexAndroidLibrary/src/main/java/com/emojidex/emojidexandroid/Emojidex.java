@@ -69,6 +69,19 @@ public class Emojidex {
      */
     public boolean download(EmojiFormat[] formats, DownloadListener listener)
     {
+        return download(formats, listener, null, null);
+    }
+
+    /**
+     * Download emoji image to local storage.
+     * @param formats       Emoji format array.
+     * @param listener      Download event listener.
+     * @param username      User name.
+     * @param authtoken     Auth token.
+     * @return  false when already downloading now.
+     */
+    public boolean download(EmojiFormat[] formats, DownloadListener listener, String username, String authtoken)
+    {
         if( !isInitialized() )
             throw new EmojidexIsNotInitializedException();
 
@@ -77,7 +90,7 @@ public class Emojidex {
             return false;
 
         // Create downloader.
-        downloader = new EmojiDownloader();
+        downloader = new EmojiDownloader(username, authtoken);
         if(listener != null)
             downloader.setListener(listener);
 
