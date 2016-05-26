@@ -580,6 +580,9 @@ public class EmojidexIME extends InputMethodService {
      */
     void reloadCategory()
     {
+        if(keyboardViewManager == null)
+            return;
+
         final String category = currentCategory;
         currentCategory = null;
         changeCategory(category, keyboardViewManager.getCurrentPage());
