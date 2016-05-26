@@ -18,7 +18,7 @@
     <string name="menu_login">Sign in to emojidex</string>
     <string name="menu_login_success">Sign in : </string>
     <string name="menu_login_cancel">Sign in canceled.</string>
-    <string name="menu_new_emoji">+ New Emoji</string>
+    <string name="menu_new_emoji">+ New emoji</string>
     <string name="menu_new_success"> was successfully created.</string>
     <string name="webview_loading">Loading…</string>
 
