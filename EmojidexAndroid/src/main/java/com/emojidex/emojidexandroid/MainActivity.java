@@ -34,6 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.emojidex.libemojidex.Emojidex.Service.User;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -62,6 +63,7 @@ public class MainActivity extends Activity {
         imeEnableCheck();
 
         initAds();
+        setAdsVisibility();
     }
 
     @Override
@@ -621,6 +623,7 @@ public class MainActivity extends Activity {
     protected void onResume() {
         super.onResume();
         setLoginButtonVisibility(!UserData.getInstance().isLogined());
+        setAdsVisibility();
     }
 
     /**
@@ -713,5 +716,26 @@ public class MainActivity extends Activity {
         adView.loadAd(adRequest);
 
         analytics = FirebaseAnalytics.getInstance(this);
+    }
+
+    /**
+     * show/hide AdMob.
+     */
+    private void setAdsVisibility()
+    {
+        userData = UserData.getInstance();
+
+        if (!userData.isLogined())
+        {
+            adView.setVisibility(View.VISIBLE);
+            return;
+        }
+
+        User user = new User();
+        if (user.authorize(userData.getUsername(), userData.getAuthToken()))
+        {
+            if (user.getPremium())
+                adView.setVisibility(View.GONE);
+        }
     }
 }

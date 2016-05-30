@@ -17,6 +17,7 @@ import android.widget.GridView;
 import android.widget.HorizontalScrollView;
 import android.widget.RadioButton;
 
+import com.emojidex.libemojidex.Emojidex.Service.User;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -83,6 +84,7 @@ public class CatalogActivity extends Activity
             new EmojidexIndexUpdater(this).startUpdateThread();
 
         initAds();
+        setAdsVisibility();
     }
 
     private void initData()
@@ -345,5 +347,26 @@ public class CatalogActivity extends Activity
         adView.loadAd(adRequest);
 
         analytics = FirebaseAnalytics.getInstance(this);
+    }
+
+    /**
+     * show/hide AdMob.
+     */
+    private void setAdsVisibility()
+    {
+        UserData userData = UserData.getInstance();
+
+        if (!userData.isLogined())
+        {
+            adView.setVisibility(View.VISIBLE);
+            return;
+        }
+
+        User user = new User();
+        if (user.authorize(userData.getUsername(), userData.getAuthToken()))
+        {
+            if (user.getPremium())
+                adView.setVisibility(View.GONE);
+        }
     }
 }
