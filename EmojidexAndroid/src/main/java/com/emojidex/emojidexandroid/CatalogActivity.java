@@ -17,6 +17,10 @@ import android.widget.GridView;
 import android.widget.HorizontalScrollView;
 import android.widget.RadioButton;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +45,9 @@ public class CatalogActivity extends Activity
     private boolean isPick = false;
 
     private Handler handler;
+
+    private AdView adView;
+    private FirebaseAnalytics analytics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -74,6 +81,8 @@ public class CatalogActivity extends Activity
         currentInstance = this;
         if( !new EmojidexUpdater(this).startUpdateThread() )
             new EmojidexIndexUpdater(this).startUpdateThread();
+
+        initAds();
     }
 
     private void initData()
@@ -325,5 +334,16 @@ public class CatalogActivity extends Activity
                 ((CatalogAdapter)gridView.getAdapter()).notifyDataSetChanged();
             }
         });
+    }
+
+    /**
+     * init AdMob, Firebase.
+     */
+    private void initAds() {
+        adView = (AdView) findViewById(R.id.catalog_adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
+
+        analytics = FirebaseAnalytics.getInstance(this);
     }
 }

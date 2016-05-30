@@ -34,6 +34,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import java.util.List;
 
 public class MainActivity extends Activity {
@@ -41,6 +45,9 @@ public class MainActivity extends Activity {
     private static final int LOGIN_RESULT = 1000;
     private static final int REGISTER_RESULT = 1001;
     private static final String EMOJIDEX_URL = "https://www.emojidex.com";
+
+    private AdView adView;
+    private FirebaseAnalytics analytics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +60,8 @@ public class MainActivity extends Activity {
 
         showTutorial();
         imeEnableCheck();
+
+        initAds();
     }
 
     @Override
@@ -693,5 +702,16 @@ public class MainActivity extends Activity {
             newEmojiButton.setVisibility(View.VISIBLE);
             myEmojiButton.setVisibility(View.VISIBLE);
         }
+    }
+
+    /**
+     * init AdMob, Firebase.
+     */
+    private void initAds() {
+        adView = (AdView) findViewById(R.id.editor_adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
+
+        analytics = FirebaseAnalytics.getInstance(this);
     }
 }
