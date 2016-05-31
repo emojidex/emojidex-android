@@ -96,7 +96,7 @@ public class SettingsActivity extends PreferenceActivity {
             defaultKeyboard.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    ((SettingsActivity) parentActivity).sendLogEvent("set_keyboard");
+                    ((SettingsActivity) parentActivity).sendLogEvent("settings_set_keyboard");
                     return true;
                 }
             });
@@ -136,7 +136,7 @@ public class SettingsActivity extends PreferenceActivity {
             updateInterval.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    ((SettingsActivity) parentActivity).sendLogEvent("update_interval");
+                    ((SettingsActivity) parentActivity).sendLogEvent("settings_update_interval");
                     return true;
                 }
             });
@@ -150,7 +150,7 @@ public class SettingsActivity extends PreferenceActivity {
                         Toast.makeText(parentActivity, R.string.ime_message_update_start, Toast.LENGTH_SHORT).show();
                     else
                         Toast.makeText(parentActivity, R.string.ime_message_already_update, Toast.LENGTH_SHORT).show();
-                    ((SettingsActivity) parentActivity).sendLogEvent("update_now");
+                    ((SettingsActivity) parentActivity).sendLogEvent("settings_update_now");
                     return true;
                 }
             });
@@ -253,7 +253,7 @@ public class SettingsActivity extends PreferenceActivity {
                     confirmMessageResId = R.string.settings_delete_history_confirm;
                     succeededMessageResId = R.string.settings_delete_history_succeeded;
                     failedMessageResId = R.string.settings_delete_history_failed;
-                    eventType = "delete_history";
+                    eventType = "settings_delete_history";
                     break;
                 case Search:
                     confirmMessageResId = R.string.settings_delete_search_confirm;
@@ -265,7 +265,7 @@ public class SettingsActivity extends PreferenceActivity {
                     confirmMessageResId = R.string.settings_delete_favorite_confirm;
                     succeededMessageResId = R.string.settings_delete_favorite_succeeded;
                     failedMessageResId = R.string.settings_delete_favorite_failed;
-                    eventType = "delete_favorite";
+                    eventType = "settings_delete_favorite";
                     break;
                 default:
                     return;
@@ -310,7 +310,7 @@ public class SettingsActivity extends PreferenceActivity {
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            ((SettingsActivity) parentActivity).sendLogEvent("logout");
+                            ((SettingsActivity) parentActivity).sendLogEvent("settings_logout");
                             ((SettingsActivity) parentActivity).logoutEmojidex();
                         }
                     });
@@ -335,7 +335,7 @@ public class SettingsActivity extends PreferenceActivity {
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            ((SettingsActivity) parentActivity).sendLogEvent("delete_cache");
+                            ((SettingsActivity) parentActivity).sendLogEvent("settings_delete_cache");
                             boolean result = Emojidex.getInstance().deleteLocalCache();
                             if (result)
                                 Toast.makeText(parentActivity, successId, Toast.LENGTH_SHORT).show();

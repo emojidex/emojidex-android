@@ -56,7 +56,6 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         initEmojidexEditor();
-        setShareButtonIcon();
         getIntentData();
 
         showTutorial();
@@ -76,13 +75,13 @@ public class MainActivity extends Activity {
         switch (item.getItemId())
         {
             case R.id.action_text_copy:
-                copyText(null);
+                copyText(null, "menu_copy_text");
                 return true;
             case R.id.action_clear_and_paste:
                 clearAndPaste(null);
                 return true;
             case R.id.action_clear:
-                clearText(null);
+                clearText(null, "menu_clear_text");
                 return true;
             case R.id.action_clear_search:
                 clearSearchResult();
@@ -189,32 +188,6 @@ public class MainActivity extends Activity {
     }
 
     /**
-     * share to last selected application
-     * @param v
-     */
-    public void shareDataLastSelected(View v)
-    {
-        // TODO: 不要になる？
-        if (editText.getText().toString().equals(""))
-            return;
-
-        String packageName = FileOperation.loadPreferences(getApplicationContext(), FileOperation.SHARE);
-        if (packageName.equals(""))
-            shareData(v);
-        else
-        {
-            // set share data
-            String data = setShareData();
-
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.setType("text/plain");
-            intent.setPackage(packageName);
-            intent.putExtra(Intent.EXTRA_TEXT, data);
-            startActivity(intent);
-        }
-    }
-
-    /**
      * set share data
      * @return data
      */
@@ -314,7 +287,7 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
         startActivity(intent);
 
-        analytics.logEvent("show_settings", new Bundle());
+        analytics.logEvent("menu_show_settings", new Bundle());
     }
 
     /**
@@ -353,10 +326,6 @@ public class MainActivity extends Activity {
                 intent.setPackage(info.activityInfo.packageName);
                 intent.putExtra(Intent.EXTRA_TEXT, data);
                 startActivity(intent);
-
-                // save settings and set icon
-                FileOperation.savePreferences(getApplicationContext(), info.activityInfo.packageName, FileOperation.SHARE);
-                setShareButtonIcon();
             }
         });
     }
@@ -462,44 +431,6 @@ public class MainActivity extends Activity {
     }
 
     /**
-     * set the last selected application's icon to share button
-     */
-    private void setShareButtonIcon()
-    {
-        // TODO: 不要になる？
-//        ImageButton button = (ImageButton)findViewById(R.id.last_share_button);
-//
-//        // set image
-//        String packageName = FileOperation.loadPreferences(getApplicationContext(), FileOperation.SHARE);
-//        if (packageName.equals(""))
-//        {
-//            // default
-//            button.setImageResource(android.R.drawable.ic_menu_send);
-//        }
-//        else
-//        {
-//            boolean set = false;
-//            PackageManager packageManager = getPackageManager();
-//            Intent intent = new Intent(Intent.ACTION_SEND);
-//            intent.setType("text/plain");
-//            List<ResolveInfo> appInfo = packageManager.queryIntentActivities(intent, 0);
-//            for (ResolveInfo info : appInfo)
-//            {
-//                // get application's icon
-//                if (info.activityInfo.packageName.equals(packageName))
-//                {
-//                    button.setImageDrawable(info.loadIcon(packageManager));
-//                    set = true;
-//                    break;
-//                }
-//            }
-//            // set default icon when could not get icon
-//            if (!set)
-//                button.setImageResource(android.R.drawable.ic_menu_send);
-//        }
-    }
-
-    /**
      * When sent other application's text(intent).
      */
     private void getIntentData()
@@ -527,9 +458,16 @@ public class MainActivity extends Activity {
      */
     public void clearText(View v)
     {
+        clearText(v, "clear_text");
+    }
+
+    public void clearText(View v, String event)
+    {
         editText.setText("");
 
         Toast.makeText(this, R.string.editor_message_text_clear, Toast.LENGTH_SHORT).show();
+
+        analytics.logEvent(event, new Bundle());
     }
 
     /**
@@ -544,6 +482,8 @@ public class MainActivity extends Activity {
         editText.setText(newText);
 
         Toast.makeText(this, R.string.editor_message_text_clear_and_paste, Toast.LENGTH_SHORT).show();
+
+        analytics.logEvent("menu_clear_and_paste", new Bundle());
     }
 
     /**
@@ -551,6 +491,11 @@ public class MainActivity extends Activity {
      * @param v
      */
     public void clickToggleButton(View v)
+    {
+        clickToggleButton(v, "switch_auto_conversion");
+    }
+
+    public void clickToggleButton(View v, String event)
     {
         toggleState = toggleButton.isChecked();
 
@@ -568,13 +513,16 @@ public class MainActivity extends Activity {
 
         // Move cursor to last.
         editText.setSelection(editText.length());
+
+        analytics.logEvent(event, new Bundle());
     }
 
     /**
      * Auto conversion switching.
      */
     public void switchToggle() {
-        toggleButton.performClick();
+        toggleButton.setChecked(!toggleButton.isChecked());
+        clickToggleButton(null, "menu_switch_auto_conversion");
     }
 
     /**
@@ -582,11 +530,17 @@ public class MainActivity extends Activity {
      * @param v view
      */
     public void copyText(View v) {
+        copyText(v, "copy_text");
+    }
+
+    public void copyText(View v, String event) {
         String text = setShareData();
         ClipboardManager clipboardManager = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
         clipboardManager.setPrimaryClip(ClipData.newPlainText("emojidex", text));
 
         Toast.makeText(this, R.string.editor_message_text_copy, Toast.LENGTH_SHORT).show();
+
+        analytics.logEvent(event, new Bundle());
     }
 
     /**
@@ -598,6 +552,8 @@ public class MainActivity extends Activity {
             EmojidexIME.currentInstance.reloadSearchResult();
 
         Toast.makeText(this, R.string.editor_message_search_clear, Toast.LENGTH_SHORT).show();
+
+        analytics.logEvent("menu_delete_search_result", new Bundle());
     }
 
     /**
@@ -608,7 +564,7 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(intent);
 
-        analytics.logEvent("show_emojidex_web", new Bundle());
+        analytics.logEvent("menu_show_emojidex_web", new Bundle());
     }
 
     /**
@@ -616,6 +572,7 @@ public class MainActivity extends Activity {
      * @param v view
      */
     public void openOptions(View v) {
+        analytics.logEvent("open_menu", new Bundle());
         openOptionsMenu();
     }
 
