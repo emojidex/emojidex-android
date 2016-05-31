@@ -15,6 +15,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 public class TutorialActivity extends Activity {
     private static final int PAGE_NUM = 17;
 
@@ -33,12 +35,18 @@ public class TutorialActivity extends Activity {
     private ImageButton prevButton;
     private TextView nowPageTextView;
 
+    private FirebaseAnalytics analytics;
+    private boolean isFinish = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tutorial);
 
         createTutorial();
+
+        analytics = FirebaseAnalytics.getInstance(this);
+        analytics.logEvent(FirebaseAnalytics.Event.TUTORIAL_BEGIN, new Bundle());
     }
 
     private void createTutorial() {
@@ -178,6 +186,11 @@ public class TutorialActivity extends Activity {
         viewFlipper.setInAnimation(rightInAnimation);
         viewFlipper.setOutAnimation(leftOutAnimation);
         viewFlipper.showNext();
+
+        if (page == PAGE_NUM - 1 && !isFinish) {
+            analytics.logEvent(FirebaseAnalytics.Event.TUTORIAL_COMPLETE, new Bundle());
+            isFinish = true;
+        }
     }
 
     public void tutorialShowPrevious(View v) {

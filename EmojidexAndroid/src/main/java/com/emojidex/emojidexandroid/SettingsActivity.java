@@ -17,6 +17,8 @@ import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,17 +31,25 @@ public class SettingsActivity extends PreferenceActivity {
     private static final String EMOJIDEX_URL = "https://www.emojidex.com";
     private int fragmentId;
 
+    private FirebaseAnalytics analytics;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         getFragmentManager().beginTransaction().replace(android.R.id.content, new CustomPreferenceFragment()).commit();
+
+        analytics = FirebaseAnalytics.getInstance(this);
     }
 
     @Override
     public void onAttachFragment(Fragment fragment) {
         super.onAttachFragment(fragment);
         fragmentId = fragment.getId();
+    }
+
+    private void sendLogEvent(String event) {
+        analytics.logEvent(event, new Bundle());
     }
 
     /**
@@ -83,6 +93,13 @@ public class SettingsActivity extends PreferenceActivity {
             final ListPreference defaultKeyboard = (ListPreference)findPreference(getString(R.string.preference_key_default_keyboard));
             final ArrayList<CharSequence> entries = new ArrayList<CharSequence>();
             final ArrayList<CharSequence> entryValues = new ArrayList<CharSequence>();
+            defaultKeyboard.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    ((SettingsActivity) parentActivity).sendLogEvent("set_keyboard");
+                    return true;
+                }
+            });
 
             // Create entries and entryValues.
             final InputMethodManager inputMethodManager = (InputMethodManager)parentActivity.getSystemService(INPUT_METHOD_SERVICE);
@@ -116,6 +133,13 @@ public class SettingsActivity extends PreferenceActivity {
             final ListPreference updateInterval = (ListPreference)findPreference(getString(R.string.preference_key_update_interval));
             updateInterval.setSummary(updateInterval.getEntry());
             updateInterval.setOnPreferenceChangeListener(onPreferenceChangeListener);
+            updateInterval.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    ((SettingsActivity) parentActivity).sendLogEvent("update_interval");
+                    return true;
+                }
+            });
 
             // Manual update.
             final Preference updateNow = findPreference(getString(R.string.preference_key_update_now));
@@ -126,6 +150,7 @@ public class SettingsActivity extends PreferenceActivity {
                         Toast.makeText(parentActivity, R.string.ime_message_update_start, Toast.LENGTH_SHORT).show();
                     else
                         Toast.makeText(parentActivity, R.string.ime_message_already_update, Toast.LENGTH_SHORT).show();
+                    ((SettingsActivity) parentActivity).sendLogEvent("update_now");
                     return true;
                 }
             });
@@ -202,6 +227,7 @@ public class SettingsActivity extends PreferenceActivity {
             tutorial.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
+                    ((SettingsActivity) parentActivity).sendLogEvent("settings_show_tutorial");
                     final Intent intent = new Intent(getActivity(), TutorialActivity.class);
                     startActivity(intent);
                     return true;
@@ -211,6 +237,7 @@ public class SettingsActivity extends PreferenceActivity {
 
         /**
          * create dialog
+         *
          * @param type  Save data type.
          */
         private void createDeleteDialog(final SaveDataManager.Type type)
@@ -218,6 +245,7 @@ public class SettingsActivity extends PreferenceActivity {
             int confirmMessageResId;
             int succeededMessageResId;
             int failedMessageResId;
+            String eventType;
 
             switch(type)
             {
@@ -225,16 +253,19 @@ public class SettingsActivity extends PreferenceActivity {
                     confirmMessageResId = R.string.settings_delete_history_confirm;
                     succeededMessageResId = R.string.settings_delete_history_succeeded;
                     failedMessageResId = R.string.settings_delete_history_failed;
+                    eventType = "delete_history";
                     break;
                 case Search:
                     confirmMessageResId = R.string.settings_delete_search_confirm;
                     succeededMessageResId = R.string.settings_delete_search_succeeded;
                     failedMessageResId = R.string.settings_delete_search_failed;
+                    eventType = "settings_delete_search_result";
                     break;
                 case Favorite:
                     confirmMessageResId = R.string.settings_delete_favorite_confirm;
                     succeededMessageResId = R.string.settings_delete_favorite_succeeded;
                     failedMessageResId = R.string.settings_delete_favorite_failed;
+                    eventType = "delete_favorite";
                     break;
                 default:
                     return;
@@ -243,12 +274,14 @@ public class SettingsActivity extends PreferenceActivity {
             // create dialog
             final int successId = succeededMessageResId;
             final int failedId = failedMessageResId;
+            final String event = eventType;
             AlertDialog.Builder dialog = new AlertDialog.Builder(parentActivity);
             dialog.setMessage(confirmMessageResId);
             dialog.setPositiveButton(R.string.yes,
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+                            ((SettingsActivity) parentActivity).sendLogEvent(event);
                             boolean result = SaveDataManager.getInstance(parentActivity, type).deleteFile();
                             if (result)
                                 Toast.makeText(parentActivity, successId, Toast.LENGTH_SHORT).show();
@@ -277,7 +310,8 @@ public class SettingsActivity extends PreferenceActivity {
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            ((SettingsActivity)parentActivity).logoutEmojidex();
+                            ((SettingsActivity) parentActivity).sendLogEvent("logout");
+                            ((SettingsActivity) parentActivity).logoutEmojidex();
                         }
                     });
             dialog.setNegativeButton(R.string.no,
@@ -301,6 +335,7 @@ public class SettingsActivity extends PreferenceActivity {
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+                            ((SettingsActivity) parentActivity).sendLogEvent("delete_cache");
                             boolean result = Emojidex.getInstance().deleteLocalCache();
                             if (result)
                                 Toast.makeText(parentActivity, successId, Toast.LENGTH_SHORT).show();

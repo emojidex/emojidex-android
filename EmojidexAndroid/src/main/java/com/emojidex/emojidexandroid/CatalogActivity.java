@@ -233,6 +233,8 @@ public class CatalogActivity extends Activity
 
     private void sendIntent(Uri uri)
     {
+        analytics.logEvent("sealkit_send_seal", new Bundle());
+
         if(isPick)
         {
             final Intent intent = new Intent();
@@ -347,6 +349,7 @@ public class CatalogActivity extends Activity
         adView.loadAd(adRequest);
 
         analytics = FirebaseAnalytics.getInstance(this);
+        analytics.logEvent("sealkit_app_open", new Bundle());
     }
 
     /**

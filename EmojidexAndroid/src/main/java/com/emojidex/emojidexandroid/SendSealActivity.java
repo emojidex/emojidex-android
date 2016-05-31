@@ -10,6 +10,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import java.util.List;
 
 /**
@@ -126,6 +128,8 @@ public class SendSealActivity extends Activity {
      * Send intent.
      */
     private void sendIntent(Uri uri) {
+        FirebaseAnalytics.getInstance(this).logEvent("send_seal", new Bundle());
+
         sendIntent.putExtra(Intent.EXTRA_STREAM, uri);
         startActivity(sendIntent);
         Log.d(TAG, "Intent send succeeded.(Target package name = " + sendIntent.getPackage() + ")");

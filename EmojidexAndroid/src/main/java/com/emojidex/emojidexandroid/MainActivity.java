@@ -313,6 +313,8 @@ public class MainActivity extends Activity {
     {
         Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
         startActivity(intent);
+
+        analytics.logEvent("show_settings", new Bundle());
     }
 
     /**
@@ -343,6 +345,7 @@ public class MainActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 dialog.dismiss();
+                analytics.logEvent(FirebaseAnalytics.Event.SHARE, new Bundle());
 
                 ResolveInfo info = appInfo.get(position);
                 Intent intent = new Intent(Intent.ACTION_SEND);
@@ -414,6 +417,7 @@ public class MainActivity extends Activity {
             public void onClick(DialogInterface dialog, int which) {
                 final Intent intent = new Intent(MainActivity.this, TutorialActivity.class);
                 startActivity(intent);
+                analytics.logEvent("show_tutorial", new Bundle());
             }
         });
         dialog.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
@@ -603,6 +607,8 @@ public class MainActivity extends Activity {
         Uri uri = Uri.parse(getString(R.string.emojidex_url));
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(intent);
+
+        analytics.logEvent("show_emojidex_web", new Bundle());
     }
 
     /**
@@ -655,6 +661,7 @@ public class MainActivity extends Activity {
                     Toast.makeText(getApplicationContext(),
                             getString(R.string.menu_login_success) + userData.getUsername(),
                             Toast.LENGTH_SHORT).show();
+                    analytics.logEvent(FirebaseAnalytics.Event.LOGIN, new Bundle());
                 } else {
                     Toast.makeText(getApplicationContext(),
                             getString(R.string.menu_login_cancel), Toast.LENGTH_SHORT).show();
@@ -665,6 +672,7 @@ public class MainActivity extends Activity {
                     Toast.makeText(getApplicationContext(),
                             data.getStringExtra("message") + getString(R.string.menu_new_success),
                             Toast.LENGTH_SHORT).show();
+                    analytics.logEvent("registered_emoji", new Bundle());
                 } else if (resultCode == Activity.RESULT_FIRST_USER){
                     Toast.makeText(getApplicationContext(),
                             data.getStringExtra("message"), Toast.LENGTH_SHORT).show();
@@ -692,6 +700,7 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(MainActivity.this, WebViewActivity.class);
         intent.putExtra("URL", EMOJIDEX_URL + "/users/" + UserData.getInstance().getUsername());
         startActivity(intent);
+        analytics.logEvent("show_my_emoji", new Bundle());
     }
 
     public void setLoginButtonVisibility(boolean isVisible) {
@@ -716,6 +725,7 @@ public class MainActivity extends Activity {
         adView.loadAd(adRequest);
 
         analytics = FirebaseAnalytics.getInstance(this);
+        analytics.logEvent(FirebaseAnalytics.Event.APP_OPEN, new Bundle());
     }
 
     /**
