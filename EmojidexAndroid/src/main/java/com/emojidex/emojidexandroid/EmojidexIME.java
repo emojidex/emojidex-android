@@ -542,6 +542,9 @@ public class EmojidexIME extends InputMethodService {
      */
     void invalidate(String emojiName)
     {
+        if(keyboardViewManager == null)
+            return;
+
         final EmojidexKeyboardView view = keyboardViewManager.getCurrentView();
         final Keyboard keyboard = view.getKeyboard();
         final List<Keyboard.Key> keys = keyboard.getKeys();
