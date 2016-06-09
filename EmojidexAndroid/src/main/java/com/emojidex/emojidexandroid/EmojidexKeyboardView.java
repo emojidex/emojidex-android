@@ -165,7 +165,7 @@ public class EmojidexKeyboardView extends KeyboardView {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
         {
             List<ActivityManager.RunningAppProcessInfo> tasks = am.getRunningAppProcesses();
-            packageName = tasks.get(1).processName;
+            packageName = tasks.get(0).processName;
             for (ActivityManager.RunningAppProcessInfo task : tasks)
             {
                 if (task.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND)
