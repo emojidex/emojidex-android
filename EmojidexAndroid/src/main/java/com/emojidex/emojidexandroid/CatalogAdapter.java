@@ -54,7 +54,9 @@ public class CatalogAdapter extends BaseAdapter
             imageView.setScaleType(ImageView.ScaleType.FIT_XY);
         }
 
-        imageView.setImageDrawable(emojies.get(position).getDrawable(format));
+        final Emoji emoji = emojies.get(position);
+        if(emoji != null)
+            imageView.setImageDrawable(emoji.getDrawable(format));
 
         return imageView;
     }
