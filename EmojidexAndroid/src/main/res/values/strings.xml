@@ -20,6 +20,7 @@
     <string name="menu_login_cancel">Sign in canceled.</string>
     <string name="menu_new_emoji">+ New emoji</string>
     <string name="menu_new_success"> was successfully created.</string>
+    <string name="menu_new_failure">Failed created.</string>
     <string name="webview_loading">Loading…</string>
 
     <string name="search">Search</string>

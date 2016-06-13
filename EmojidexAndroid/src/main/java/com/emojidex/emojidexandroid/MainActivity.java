@@ -649,6 +649,13 @@ public class MainActivity extends Activity {
                 }
                 break;
             case REGISTER_RESULT:
+                if(data == null)
+                {
+                    Toast.makeText(getApplicationContext(),
+                            getString(R.string.menu_new_failure),
+                            Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 if (resultCode == Activity.RESULT_OK) {
                     Toast.makeText(getApplicationContext(),
                             data.getStringExtra("message") + getString(R.string.menu_new_success),
