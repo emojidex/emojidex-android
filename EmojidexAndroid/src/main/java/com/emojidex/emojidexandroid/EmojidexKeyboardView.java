@@ -1,6 +1,8 @@
 package com.emojidex.emojidexandroid;
 
 import android.app.ActivityManager;
+import android.app.usage.UsageEvents;
+import android.app.usage.UsageStatsManager;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.ClipboardManager;
@@ -13,6 +15,7 @@ import android.inputmethodservice.KeyboardView;
 import android.os.Build;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -164,16 +167,8 @@ public class EmojidexKeyboardView extends KeyboardView {
         String packageName;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
         {
-            List<ActivityManager.RunningAppProcessInfo> tasks = am.getRunningAppProcesses();
-            packageName = tasks.get(0).processName;
-            for (ActivityManager.RunningAppProcessInfo task : tasks)
-            {
-                if (task.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND)
-                {
-                    packageName = task.processName;
-                    break;
-                }
-            }
+            final LollipopTaskManager ltm = LollipopTaskManager.getInstance(context);
+            packageName = ltm.getCurrentActivity();
         }
         else
         {
@@ -495,6 +490,45 @@ public class EmojidexKeyboardView extends KeyboardView {
                     break;
             }
             return true;
+        }
+    }
+
+    private static class LollipopTaskManager
+    {
+        private static LollipopTaskManager instance = null;
+
+        private final UsageStatsManager usm;
+        private long begin;
+        private String currentActivity;
+
+        public static LollipopTaskManager getInstance(Context context)
+        {
+            if(instance == null)
+                instance = new LollipopTaskManager(context);
+            return instance;
+        }
+
+        private LollipopTaskManager(Context context)
+        {
+            usm = (UsageStatsManager)context.getSystemService("usagestats");
+            begin = 0;
+            currentActivity = "";
+        }
+
+        public String getCurrentActivity()
+        {
+            final long end = System.currentTimeMillis();
+
+            final UsageEvents events = usm.queryEvents(begin, end);
+            final UsageEvents.Event event = new UsageEvents.Event();
+            while(events.getNextEvent(event))
+            {
+                currentActivity = event.getPackageName();
+            }
+
+            begin = end;
+
+            return currentActivity;
         }
     }
 }
