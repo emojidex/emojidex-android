@@ -145,6 +145,11 @@
     <string name="send_seal_not_found">A seal for this emoji could not be found.</string>
     <string name="send_seal_not_found_ok">OK</string>
 
+    <string name="usagestats_dialog_message">シール送信機能を使うにはemojidexに使用状況へのアクセスを許可する必要があります。</string>
+    <string name="usagestats_dialog_checkbox_text">今後表示しない</string>
+    <string name="usagestats_dialog_ignore_button">無視</string>
+    <string name="usagestats_dialog_settings_button">設定</string>
+
     <!-- Japanese not needed -->
     <string name="ime_category_id_history" translatable="false">history</string>
     <string name="ime_category_id_favorite" translatable="false">favorite</string>
@@ -185,6 +190,8 @@
     <string name="preference_entryvalue_default_keyboard_default" translatable="false">@string/preference_entryvalue_default_keyboard_nothing</string>
     <string name="preference_entryvalue_update_interval_default" translatable="false">604800000</string>
     <string name="preference_key_last_update_time_index" translatable="false">lastUpdateTimeIndex</string>
+    <string name="preference_key_usagestats_check_ignore" translatable="false">usagestatsCheckIgnore</string>
+
 
     <!-- tutorial -->
     <string name="tutorial_title">Using emojidex</string>
