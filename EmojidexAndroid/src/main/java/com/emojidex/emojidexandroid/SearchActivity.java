@@ -22,7 +22,12 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 
@@ -207,6 +212,13 @@ public class SearchActivity extends Activity {
 
         // Create loading dialog.
         createLoadingDialog();
+
+        String type;
+        if (fromCatalog)
+            type = "sealkit_search";
+        else
+            type = FirebaseAnalytics.Event.SEARCH;
+        FirebaseAnalytics.getInstance(this).logEvent(type, new Bundle());
     }
 
     /**

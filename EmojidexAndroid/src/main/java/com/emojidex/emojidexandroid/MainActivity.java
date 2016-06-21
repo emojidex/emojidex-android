@@ -34,6 +34,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.emojidex.libemojidex.Emojidex.Service.User;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import java.util.List;
 
 public class MainActivity extends Activity {
@@ -42,17 +47,22 @@ public class MainActivity extends Activity {
     private static final int REGISTER_RESULT = 1001;
     private static final String EMOJIDEX_URL = "https://www.emojidex.com";
 
+    private AdView adView;
+    private FirebaseAnalytics analytics;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         initEmojidexEditor();
-        setShareButtonIcon();
         getIntentData();
 
         showTutorial();
         imeEnableCheck();
+
+        initAds();
+        setAdsVisibility();
     }
 
     @Override
@@ -65,13 +75,13 @@ public class MainActivity extends Activity {
         switch (item.getItemId())
         {
             case R.id.action_text_copy:
-                copyText(null);
+                copyText(null, "menu_copy_text");
                 return true;
             case R.id.action_clear_and_paste:
                 clearAndPaste(null);
                 return true;
             case R.id.action_clear:
-                clearText(null);
+                clearText(null, "menu_clear_text");
                 return true;
             case R.id.action_clear_search:
                 clearSearchResult();
@@ -178,32 +188,6 @@ public class MainActivity extends Activity {
     }
 
     /**
-     * share to last selected application
-     * @param v
-     */
-    public void shareDataLastSelected(View v)
-    {
-        // TODO: 不要になる？
-        if (editText.getText().toString().equals(""))
-            return;
-
-        String packageName = FileOperation.loadPreferences(getApplicationContext(), FileOperation.SHARE);
-        if (packageName.equals(""))
-            shareData(v);
-        else
-        {
-            // set share data
-            String data = setShareData();
-
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.setType("text/plain");
-            intent.setPackage(packageName);
-            intent.putExtra(Intent.EXTRA_TEXT, data);
-            startActivity(intent);
-        }
-    }
-
-    /**
      * set share data
      * @return data
      */
@@ -302,6 +286,8 @@ public class MainActivity extends Activity {
     {
         Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
         startActivity(intent);
+
+        analytics.logEvent("menu_show_settings", new Bundle());
     }
 
     /**
@@ -332,6 +318,7 @@ public class MainActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 dialog.dismiss();
+                analytics.logEvent(FirebaseAnalytics.Event.SHARE, new Bundle());
 
                 ResolveInfo info = appInfo.get(position);
                 Intent intent = new Intent(Intent.ACTION_SEND);
@@ -339,10 +326,6 @@ public class MainActivity extends Activity {
                 intent.setPackage(info.activityInfo.packageName);
                 intent.putExtra(Intent.EXTRA_TEXT, data);
                 startActivity(intent);
-
-                // save settings and set icon
-                FileOperation.savePreferences(getApplicationContext(), info.activityInfo.packageName, FileOperation.SHARE);
-                setShareButtonIcon();
             }
         });
     }
@@ -403,6 +386,7 @@ public class MainActivity extends Activity {
             public void onClick(DialogInterface dialog, int which) {
                 final Intent intent = new Intent(MainActivity.this, TutorialActivity.class);
                 startActivity(intent);
+                analytics.logEvent("show_tutorial", new Bundle());
             }
         });
         dialog.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
@@ -447,44 +431,6 @@ public class MainActivity extends Activity {
     }
 
     /**
-     * set the last selected application's icon to share button
-     */
-    private void setShareButtonIcon()
-    {
-        // TODO: 不要になる？
-//        ImageButton button = (ImageButton)findViewById(R.id.last_share_button);
-//
-//        // set image
-//        String packageName = FileOperation.loadPreferences(getApplicationContext(), FileOperation.SHARE);
-//        if (packageName.equals(""))
-//        {
-//            // default
-//            button.setImageResource(android.R.drawable.ic_menu_send);
-//        }
-//        else
-//        {
-//            boolean set = false;
-//            PackageManager packageManager = getPackageManager();
-//            Intent intent = new Intent(Intent.ACTION_SEND);
-//            intent.setType("text/plain");
-//            List<ResolveInfo> appInfo = packageManager.queryIntentActivities(intent, 0);
-//            for (ResolveInfo info : appInfo)
-//            {
-//                // get application's icon
-//                if (info.activityInfo.packageName.equals(packageName))
-//                {
-//                    button.setImageDrawable(info.loadIcon(packageManager));
-//                    set = true;
-//                    break;
-//                }
-//            }
-//            // set default icon when could not get icon
-//            if (!set)
-//                button.setImageResource(android.R.drawable.ic_menu_send);
-//        }
-    }
-
-    /**
      * When sent other application's text(intent).
      */
     private void getIntentData()
@@ -512,9 +458,16 @@ public class MainActivity extends Activity {
      */
     public void clearText(View v)
     {
+        clearText(v, "clear_text");
+    }
+
+    public void clearText(View v, String event)
+    {
         editText.setText("");
 
         Toast.makeText(this, R.string.editor_message_text_clear, Toast.LENGTH_SHORT).show();
+
+        analytics.logEvent(event, new Bundle());
     }
 
     /**
@@ -529,6 +482,8 @@ public class MainActivity extends Activity {
         editText.setText(newText);
 
         Toast.makeText(this, R.string.editor_message_text_clear_and_paste, Toast.LENGTH_SHORT).show();
+
+        analytics.logEvent("menu_clear_and_paste", new Bundle());
     }
 
     /**
@@ -536,6 +491,11 @@ public class MainActivity extends Activity {
      * @param v
      */
     public void clickToggleButton(View v)
+    {
+        clickToggleButton(v, "switch_auto_conversion");
+    }
+
+    public void clickToggleButton(View v, String event)
     {
         toggleState = toggleButton.isChecked();
 
@@ -553,13 +513,16 @@ public class MainActivity extends Activity {
 
         // Move cursor to last.
         editText.setSelection(editText.length());
+
+        analytics.logEvent(event, new Bundle());
     }
 
     /**
      * Auto conversion switching.
      */
     public void switchToggle() {
-        toggleButton.performClick();
+        toggleButton.setChecked(!toggleButton.isChecked());
+        clickToggleButton(null, "menu_switch_auto_conversion");
     }
 
     /**
@@ -567,11 +530,17 @@ public class MainActivity extends Activity {
      * @param v view
      */
     public void copyText(View v) {
+        copyText(v, "copy_text");
+    }
+
+    public void copyText(View v, String event) {
         String text = setShareData();
         ClipboardManager clipboardManager = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
         clipboardManager.setPrimaryClip(ClipData.newPlainText("emojidex", text));
 
         Toast.makeText(this, R.string.editor_message_text_copy, Toast.LENGTH_SHORT).show();
+
+        analytics.logEvent(event, new Bundle());
     }
 
     /**
@@ -583,6 +552,8 @@ public class MainActivity extends Activity {
             EmojidexIME.currentInstance.reloadSearchResult();
 
         Toast.makeText(this, R.string.editor_message_search_clear, Toast.LENGTH_SHORT).show();
+
+        analytics.logEvent("menu_delete_search_result", new Bundle());
     }
 
     /**
@@ -592,6 +563,8 @@ public class MainActivity extends Activity {
         Uri uri = Uri.parse(getString(R.string.emojidex_url));
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(intent);
+
+        analytics.logEvent("menu_show_emojidex_web", new Bundle());
     }
 
     /**
@@ -599,6 +572,7 @@ public class MainActivity extends Activity {
      * @param v view
      */
     public void openOptions(View v) {
+        analytics.logEvent("open_menu", new Bundle());
         openOptionsMenu();
     }
 
@@ -612,6 +586,7 @@ public class MainActivity extends Activity {
     protected void onResume() {
         super.onResume();
         setLoginButtonVisibility(!UserData.getInstance().isLogined());
+        setAdsVisibility();
     }
 
     /**
@@ -643,6 +618,7 @@ public class MainActivity extends Activity {
                     Toast.makeText(getApplicationContext(),
                             getString(R.string.menu_login_success) + userData.getUsername(),
                             Toast.LENGTH_SHORT).show();
+                    analytics.logEvent(FirebaseAnalytics.Event.LOGIN, new Bundle());
                 } else {
                     Toast.makeText(getApplicationContext(),
                             getString(R.string.menu_login_cancel), Toast.LENGTH_SHORT).show();
@@ -660,6 +636,7 @@ public class MainActivity extends Activity {
                     Toast.makeText(getApplicationContext(),
                             data.getStringExtra("message") + getString(R.string.menu_new_success),
                             Toast.LENGTH_SHORT).show();
+                    analytics.logEvent("registered_emoji", new Bundle());
                 } else if (resultCode == Activity.RESULT_FIRST_USER){
                     Toast.makeText(getApplicationContext(),
                             data.getStringExtra("message"), Toast.LENGTH_SHORT).show();
@@ -687,6 +664,7 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(MainActivity.this, WebViewActivity.class);
         intent.putExtra("URL", EMOJIDEX_URL + "/users/" + UserData.getInstance().getUsername());
         startActivity(intent);
+        analytics.logEvent("show_my_emoji", new Bundle());
     }
 
     public void setLoginButtonVisibility(boolean isVisible) {
@@ -699,6 +677,39 @@ public class MainActivity extends Activity {
             loginButton.setVisibility(View.GONE);
             newEmojiButton.setVisibility(View.VISIBLE);
             myEmojiButton.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /**
+     * init AdMob, Firebase.
+     */
+    private void initAds() {
+        adView = (AdView) findViewById(R.id.editor_adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
+
+        analytics = FirebaseAnalytics.getInstance(this);
+        analytics.logEvent(FirebaseAnalytics.Event.APP_OPEN, new Bundle());
+    }
+
+    /**
+     * show/hide AdMob.
+     */
+    private void setAdsVisibility()
+    {
+        userData = UserData.getInstance();
+
+        if (!userData.isLogined())
+        {
+            adView.setVisibility(View.VISIBLE);
+            return;
+        }
+
+        User user = new User();
+        if (user.authorize(userData.getUsername(), userData.getAuthToken()))
+        {
+            if (user.getPremium())
+                adView.setVisibility(View.GONE);
         }
     }
 }

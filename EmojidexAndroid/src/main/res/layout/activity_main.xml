@@ -1,11 +1,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:orientation="vertical"
-    android:background="@color/white"
-    tools:context=".MainActivity">
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              xmlns:ads="http://schemas.android.com/apk/res-auto"
+              android:orientation="vertical"
+              android:background="@color/white"
+              tools:context=".MainActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -98,7 +98,7 @@
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/abc_ic_menu_share_holo_light"
+            android:src="@android:drawable/ic_menu_share"
             android:background="@null"
             android:onClick="shareData"/>
 
@@ -106,7 +106,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
-            android:src="@drawable/abc_ic_menu_moreoverflow_normal_holo_light"
+            android:src="@android:drawable/ic_menu_more"
             android:background="@null"
             android:onClick="openOptions"/>
 
@@ -119,9 +119,17 @@
         android:layout_weight="1"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
+        android:layout_marginBottom="10dp"
         android:padding="10dp"
         android:gravity="top"
         android:textSize="20sp"
         android:hint="@string/text_hint_emoji" />
+
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/editor_adView"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-3930017589801367/9512647933" />
 
 </LinearLayout>

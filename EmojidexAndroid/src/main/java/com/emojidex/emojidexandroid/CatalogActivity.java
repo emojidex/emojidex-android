@@ -17,6 +17,11 @@ import android.widget.GridView;
 import android.widget.HorizontalScrollView;
 import android.widget.RadioButton;
 
+import com.emojidex.libemojidex.Emojidex.Service.User;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +46,9 @@ public class CatalogActivity extends Activity
     private boolean isPick = false;
 
     private Handler handler;
+
+    private AdView adView;
+    private FirebaseAnalytics analytics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -74,6 +82,9 @@ public class CatalogActivity extends Activity
         currentInstance = this;
         if( !new EmojidexUpdater(this).startUpdateThread() )
             new EmojidexIndexUpdater(this).startUpdateThread();
+
+        initAds();
+        setAdsVisibility();
     }
 
     private void initData()
@@ -222,6 +233,8 @@ public class CatalogActivity extends Activity
 
     private void sendIntent(Uri uri)
     {
+        analytics.logEvent("sealkit_send_seal", new Bundle());
+
         if(isPick)
         {
             final Intent intent = new Intent();
@@ -325,5 +338,38 @@ public class CatalogActivity extends Activity
                 ((CatalogAdapter)gridView.getAdapter()).notifyDataSetChanged();
             }
         });
+    }
+
+    /**
+     * init AdMob, Firebase.
+     */
+    private void initAds() {
+        adView = (AdView) findViewById(R.id.catalog_adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
+
+        analytics = FirebaseAnalytics.getInstance(this);
+        analytics.logEvent("sealkit_app_open", new Bundle());
+    }
+
+    /**
+     * show/hide AdMob.
+     */
+    private void setAdsVisibility()
+    {
+        UserData userData = UserData.getInstance();
+
+        if (!userData.isLogined())
+        {
+            adView.setVisibility(View.VISIBLE);
+            return;
+        }
+
+        User user = new User();
+        if (user.authorize(userData.getUsername(), userData.getAuthToken()))
+        {
+            if (user.getPremium())
+                adView.setVisibility(View.GONE);
+        }
     }
 }
