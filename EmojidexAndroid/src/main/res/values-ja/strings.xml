@@ -143,7 +143,7 @@
     <string name="send_seal_not_found">シールが見つかりません。</string>
     <string name="send_seal_not_found_ok">OK</string>
 
-    <string name="usagestats_dialog_message">シール送信機能を使うにはemojidexに使用状況へのアクセスを許可する必要があります。</string>
+    <string name="usagestats_dialog_message">シール送信機能が送信先のアプリを探知するのに、アプリ使用状況へのアクセスを許可する必要があります。</string>
     <string name="usagestats_dialog_checkbox_text">今後表示しない</string>
     <string name="usagestats_dialog_ignore_button">無視</string>
     <string name="usagestats_dialog_settings_button">設定</string>

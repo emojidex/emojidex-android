@@ -20,7 +20,7 @@
     <string name="menu_login_cancel">Sign in canceled.</string>
     <string name="menu_new_emoji">+ New emoji</string>
     <string name="menu_new_success"> was successfully created.</string>
-    <string name="menu_new_failure">絵文字の作成に失敗しました。</string>
+    <string name="menu_new_failure">emoji registration failed.</string>
     <string name="webview_loading">Loading…</string>
 
     <string name="search">Search</string>
@@ -145,10 +145,9 @@
     <string name="send_seal_not_found">A seal for this emoji could not be found.</string>
     <string name="send_seal_not_found_ok">OK</string>
 
-    <string name="usagestats_dialog_message">シール送信機能を使うにはemojidexに使用状況へのアクセスを許可する必要があります。</string>
-    <string name="usagestats_dialog_checkbox_text">今後表示しない</string>
-    <string name="usagestats_dialog_ignore_button">無視</string>
-    <string name="usagestats_dialog_settings_button">設定</string>
+    <string name="usagestats_dialog_checkbox_text">Don\'t display from now on</string>
+    <string name="usagestats_dialog_ignore_button">Ignore</string>
+    <string name="usagestats_dialog_settings_button">Settings</string>
 
     <!-- Japanese not needed -->
     <string name="ime_category_id_history" translatable="false">history</string>
@@ -212,5 +211,6 @@
     <string name="tutorial_header_15">Using the Seal Kit (2)</string>
     <string name="tutorial_header_16">Using the Seal Kit (3)</string>
     <string name="tutorial_header_17">Using the Seal Kit (4)</string>
+    <string name="usagestats_dialog_message">In order to detect what app to send a seal to, emojidex must have permission to view app usage.</string>
 
 </resources>
