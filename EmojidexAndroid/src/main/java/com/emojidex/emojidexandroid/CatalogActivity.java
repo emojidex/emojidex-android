@@ -36,6 +36,7 @@ public class CatalogActivity extends Activity
     private List<Emoji> currentCatalog = null;
 
     private SaveDataManager historyManager;
+    private FavoriteManager favoriteManager;
     private SaveDataManager searchManager;
     private SaveDataManager indexManager;
 
@@ -94,6 +95,8 @@ public class CatalogActivity extends Activity
 
         historyManager = SaveDataManager.getInstance(this, SaveDataManager.Type.CatalogHistory);
         historyManager.load();
+        favoriteManager = FavoriteManager.getInstance(this);
+        favoriteManager.load();
         searchManager = SaveDataManager.getInstance(this, SaveDataManager.Type.CatalogSearch);
         searchManager.load();
         indexManager = SaveDataManager.getInstance(this, SaveDataManager.Type.Index);
@@ -155,6 +158,11 @@ public class CatalogActivity extends Activity
         if(categoryName.equals(getString(R.string.ime_category_id_history)))
         {
             List<String> emojiNames = historyManager.getEmojiNames();
+            currentCatalog = createEmojiList(emojiNames);
+        }
+        else if(categoryName.equals(getString(R.string.ime_category_id_favorite)))
+        {
+            final List<String> emojiNames = favoriteManager.getEmojiNames();
             currentCatalog = createEmojiList(emojiNames);
         }
         else if(categoryName.equals(getString(R.string.ime_category_id_search)))
@@ -258,7 +266,9 @@ public class CatalogActivity extends Activity
         ArrayList<Emoji> emojies = new ArrayList<>(emojiNames.size());
         for (String emojiName : emojiNames)
         {
-            emojies.add(emojidex.getEmoji(emojiName));
+            final Emoji emoji = emojidex.getEmoji(emojiName);
+            if(emoji != null)
+                emojies.add(emoji);
         }
 
         return emojies;
