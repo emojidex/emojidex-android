@@ -353,10 +353,7 @@ public class EmojiDownloader
      */
     private boolean isAlreadyDownloaded(JsonParam local, Emoji remote, EmojiFormat format)
     {
-        // Check file exists.
         final File file = new File(PathUtils.getLocalEmojiPath(local.name, format));
-        if( !file.exists() )
-            return false;
 
         // Check checksums.
         // If emoji format is svg.
@@ -366,8 +363,9 @@ public class EmojiDownloader
             final String remoteChecksum = remote.getChecksums().sum("svg", null);
 
             // Check.
-            if(     remoteChecksum == null
-                ||  remoteChecksum.equals(localChecksum)    )
+            if(     file.exists()
+                &&  (   remoteChecksum == null
+                ||  remoteChecksum.equals(localChecksum)   ))
                 return true;
 
             // Update checksums.
@@ -381,8 +379,9 @@ public class EmojiDownloader
             final String remoteChecksum = remote.getChecksums().sum("png", resolution);
 
             // Check.
-            if(     remoteChecksum == null
-                ||  remoteChecksum.equals(localChecksum)    )
+            if(     file.exists()
+                &&  (   remoteChecksum == null
+                ||  remoteChecksum.equals(localChecksum)   ))
                 return true;
 
             // Update checksum.
