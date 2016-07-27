@@ -78,8 +78,10 @@ public class EmojidexIndexUpdater
         }
 
         @Override
-        public void onPreAllEmojiDownload()
+        public void onPostAllJsonDownload(EmojiDownloader downloader)
         {
+            super.onPostAllJsonDownload(downloader);
+
             Emojidex.getInstance().reload();
 
             if(EmojidexIME.currentInstance != null)
@@ -87,6 +89,12 @@ public class EmojidexIndexUpdater
 
             if(CatalogActivity.currentInstance != null)
                 CatalogActivity.currentInstance.reloadCategory();
+        }
+
+        @Override
+        public void onPreAllEmojiDownload()
+        {
+            // nop
         }
 
         @Override
