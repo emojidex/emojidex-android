@@ -213,6 +213,15 @@ public class KeyboardViewManager {
     }
 
     /**
+     * Get page count.
+     * @return  Page count.
+     */
+    public int getPageCount()
+    {
+        return pages.size();
+    }
+
+    /**
      * Initialize page.
      * @param destIndex
      * @param pageIndex

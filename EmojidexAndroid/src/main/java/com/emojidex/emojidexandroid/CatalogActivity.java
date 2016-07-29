@@ -82,7 +82,7 @@ public class CatalogActivity extends Activity
         // Emoji download.
         currentInstance = this;
         if( !new EmojidexUpdater(this).startUpdateThread() )
-            new EmojidexIndexUpdater(this).startUpdateThread();
+            new EmojidexIndexUpdater(this).startUpdateThread(2);
 
         initAds();
         setAdsVisibility();

@@ -145,7 +145,7 @@ class EmojidexUpdater {
         {
             super.onPostAllJsonDownload(downloader);
 
-            new EmojidexIndexUpdater(context).startUpdateThread(force);
+            new EmojidexIndexUpdater(context).startUpdateThread(2, force);
         }
 
         @Override

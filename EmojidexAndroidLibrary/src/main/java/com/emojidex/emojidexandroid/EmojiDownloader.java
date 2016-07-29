@@ -109,16 +109,52 @@ public class EmojiDownloader
 
     /**
      * Download index emojies.
-     * @param config    Download config.
+     * @param config        Download config.
      */
     public void downloadIndex(DownloadConfig config)
+    {
+        downloadIndex(config, 50);
+    }
+
+    /**
+     * Download index emojies.
+     * @param config        Download config.
+     * @param limit         Emoji count of one page.
+     */
+    public void downloadIndex(DownloadConfig config, final int limit)
+    {
+        downloadIndex(config, limit, 1);
+    }
+
+    /**
+     * Download index emojies.
+     * @param config        Download config.
+     * @param limit         Emoji count of one page.
+     * @param startpage     Start page.(value >= 1)
+     */
+    public void downloadIndex(DownloadConfig config, final int limit, final int startpage)
+    {
+        downloadIndex(config, limit, startpage, startpage);
+    }
+
+    /**
+     * Download index emojies.
+     * @param config        Download config.
+     * @param limit         Emoji count of one page.
+     * @param startpage     Start page.(value >= 1)
+     * @param endpage       End page.
+     */
+    public void downloadIndex(DownloadConfig config, final int limit, final int startpage, final int endpage)
     {
         final JsonDownloadTask task = new JsonDownloadTask(config);
         task.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, task.new AbstractJsonDownloadExecutor() {
             @Override
             protected Collection downloadJson()
             {
-                return client.getIndexes().emoji(0, 50, true);
+                final Collection collection = client.getIndexes().emoji(startpage, limit, true);
+                for(int i = startpage + 1;  i < (endpage + 1);  ++i)
+                    collection.more();
+                return collection;
             }
         });
     }

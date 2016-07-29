@@ -18,20 +18,23 @@ public class EmojidexIndexUpdater
     private final Context context;
     private final SaveDataManager indexManager;
 
+    private EmojiDownloader downloader = null;
+
     public EmojidexIndexUpdater(Context context)
     {
         this.context = context;
         indexManager = SaveDataManager.getInstance(this.context, SaveDataManager.Type.Index);
     }
 
-    public boolean startUpdateThread()
+    public boolean startUpdateThread(int pageCount)
     {
-        return startUpdateThread(false);
+        return startUpdateThread(pageCount, false);
     }
 
-    public boolean startUpdateThread(boolean forceFlag)
+    public boolean startUpdateThread(int pageCount, boolean forceFlag)
     {
-        if( !forceFlag && !checkExecUpdate() )
+        if(     (!forceFlag && !checkExecUpdate())
+            ||  (downloader != null && !downloader.isIdle()) )
         {
             Log.d(TAG, "Skip index update.");
             return false;
@@ -40,15 +43,16 @@ public class EmojidexIndexUpdater
         Log.d(TAG, "Start index update.");
 
         final UserData userdata = UserData.getInstance();
-        final EmojiDownloader downloader = userdata.isLogined() ?
+        downloader = userdata.isLogined() ?
                 new EmojiDownloader(userdata.getUsername(), userdata.getAuthToken()) :
                 new EmojiDownloader();
         final DownloadConfig config = new DownloadConfig(
                 EmojiFormat.toFormat(context.getString(R.string.emoji_format_default)),
                 EmojiFormat.toFormat(context.getString(R.string.emoji_format_key))
         );
+        final int limit = EmojidexKeyboard.create(context).getKeyCountMax();
         downloader.setListener(new CustomDownloadListener());
-        downloader.downloadIndex(config);
+        downloader.downloadIndex(config, limit, 1, pageCount);
 
         return true;
     }

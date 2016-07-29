@@ -70,6 +70,8 @@ public class EmojidexIME extends InputMethodService {
 
     private String currentCategory = null;
 
+    private EmojidexIndexUpdater indexUpdater = null;
+
     /**
      * Construct EmojidexIME object.
      */
@@ -109,8 +111,9 @@ public class EmojidexIME extends InputMethodService {
         userdata.init(this);
 
         // Emoji download.
+        indexUpdater = new EmojidexIndexUpdater(this);
         if( !new EmojidexUpdater(this).startUpdateThread() )
-            new EmojidexIndexUpdater(this).startUpdateThread();
+            indexUpdater.startUpdateThread(2);
     }
 
     @Override
@@ -360,6 +363,10 @@ public class EmojidexIME extends InputMethodService {
         }
         keyboardViewManager.next();
         keyboardViewFlipper.showNext();
+
+        getIndexMore();
+
+        Log.d(TAG, "keyboard page : " + (keyboardViewManager.getCurrentPage()+1) + " / " + keyboardViewManager.getPageCount());
     }
 
     /**
@@ -380,6 +387,19 @@ public class EmojidexIME extends InputMethodService {
         }
         keyboardViewManager.prev();
         keyboardViewFlipper.showPrevious();
+
+        getIndexMore();
+
+        Log.d(TAG, "keyboard page : " + (keyboardViewManager.getCurrentPage()+1) + " / " + keyboardViewManager.getPageCount());
+    }
+
+    public void getIndexMore()
+    {
+        if(     !currentCategory.equals("index")
+            ||  ((keyboardViewManager.getCurrentPage()+1) != keyboardViewManager.getPageCount())    )
+            return;
+
+        indexUpdater.startUpdateThread(keyboardViewManager.getCurrentPage() + 2, true);
     }
 
     /**
