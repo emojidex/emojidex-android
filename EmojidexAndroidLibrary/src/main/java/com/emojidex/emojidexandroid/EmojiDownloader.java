@@ -205,6 +205,7 @@ public class EmojiDownloader
             {
                 final QueryOpts options = new QueryOpts();
                 options.detailed(true);
+                options.limit(0x7FFFFFFF);
                 if(category != null)
                     options.category(category);
                 return client.getSearch().term(word, options);
