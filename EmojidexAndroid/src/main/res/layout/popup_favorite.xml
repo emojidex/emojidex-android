@@ -94,6 +94,34 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp" >
+
+            <TextView
+                android:id="@+id/emoji_url_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/black"
+                android:ellipsize="middle"
+                android:singleLine="true"
+                android:text="" />
+
+            <Button
+                android:id="@+id/emoji_url_copy_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:singleLine="true"
+                android:text="@string/copy" />
+
+
+        </LinearLayout>
+
     </LinearLayout>
 
     <View

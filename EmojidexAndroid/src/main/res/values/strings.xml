@@ -36,6 +36,7 @@
     <string name="clear">Clear</string>
     <string name="clear_and_paste">Clear &amp; Paste</string>
     <string name="convert">Convert</string>
+    <string name="copy">Copy</string>
 
     <string name="register_favorite">Add this emoji to your favorites?</string>
     <string name="register_success">Registered</string>

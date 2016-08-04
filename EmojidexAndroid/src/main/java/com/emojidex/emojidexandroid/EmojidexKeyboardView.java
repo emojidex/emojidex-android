@@ -193,6 +193,24 @@ public class EmojidexKeyboardView extends KeyboardView {
                 // Set star(favorite) icon from current state.
                 setCurrentState();
 
+                // Set emoji url.
+                final TextView urlText = (TextView)view.findViewById(R.id.emoji_url_text);
+                urlText.setText(PathUtils.getRemoteEmojiPath(key.popupCharacters.toString(), EmojiFormat.PNG_SEAL, "http://assets.emojidex.com/emoji"));
+                view.findViewById(R.id.emoji_url_copy_button).setOnClickListener(new OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        ClipboardManager manager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+                        ClipData.Item item = new ClipData.Item(urlText.getText());
+                        String[] mimeType = new String[1];
+                        mimeType[0] = ClipDescription.MIMETYPE_TEXT_PLAIN;
+                        ClipData data = new ClipData(new ClipDescription("text_data", mimeType), item);
+                        manager.setPrimaryClip(data);
+                        Toast.makeText(context, R.string.clipboard, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
                 // Set close button.
                 Button closeButton = (Button)view.findViewById(R.id.popup_close_button);
                 closeButton.setOnClickListener(new OnClickListener() {
