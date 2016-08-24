@@ -1,6 +1,10 @@
 package com.emojidex.emojidexandroid;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.PermissionChecker;
 import android.util.Log;
 
 import com.emojidex.emojidexandroidlibrary.R;
@@ -16,6 +20,7 @@ public class Emojidex {
     static final String TAG = "EmojidexLibrary";
 
     public static final String SEPARATOR = ":";
+    public static final int REQUEST_CODE = 1;
 
     private static final Emojidex INSTANCE = new Emojidex();
 
@@ -123,6 +128,27 @@ public class Emojidex {
         boolean result = deleteFile(new File(PathUtils.LOCAL_ROOT_PATH));
         Log.d(TAG, "Delete all cache files in local storage.");
         return result;
+    }
+
+    /**
+     * Request permissions.
+     * @param activity  Parent activity.
+     * @return      true when request.
+     */
+    public boolean requestPermission(Activity activity)
+    {
+        if(     PermissionChecker.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PermissionChecker.PERMISSION_GRANTED
+           ||   PermissionChecker.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE) != PermissionChecker.PERMISSION_GRANTED  )
+        {
+            ActivityCompat.requestPermissions(
+                    activity,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE},
+                    REQUEST_CODE
+            );
+            return true;
+        }
+
+        return false;
     }
 
     /**
