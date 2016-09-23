@@ -3,7 +3,6 @@ package com.emojidex.emojidexandroid;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
-import android.graphics.drawable.BitmapDrawable;
 import android.inputmethodservice.Keyboard;
 import android.util.DisplayMetrics;
 
@@ -118,9 +117,7 @@ public class EmojidexKeyboard extends Keyboard {
         for(int i = 0;  i < codesSize;  ++i)
             newKey.codes[i] = codes.get(i);
 
-        final BitmapDrawable icon = emoji.getDrawable(EMOJI_FORMAT);
-        icon.setTargetDensity((int)(icon.getBitmap().getDensity() * iconSize / icon.getIntrinsicWidth()));
-        newKey.icon = icon;
+        newKey.icon = emoji.getDrawable(EMOJI_FORMAT, iconSize);
 
         newKey.popupCharacters = emoji.name;
 

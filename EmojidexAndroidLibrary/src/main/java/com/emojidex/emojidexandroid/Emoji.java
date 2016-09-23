@@ -4,6 +4,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -125,7 +126,18 @@ public class Emoji extends SimpleJsonParam {
      * @param format    Image format.
      * @return          Image.
      */
-    public BitmapDrawable getDrawable(EmojiFormat format)
+    public Drawable getDrawable(EmojiFormat format)
+    {
+        return getDrawable(format, -1);
+    }
+
+    /**
+     * Get image of format.
+     * @param format    Image format.
+     * @param size      Drawable size.
+     * @return          Image.
+     */
+    public Drawable getDrawable(EmojiFormat format, float size)
     {
         final int index = format.ordinal();
 
@@ -140,6 +152,10 @@ public class Emoji extends SimpleJsonParam {
         // Create drawable.
         final BitmapDrawable result = new BitmapDrawable(res, bitmaps[index].get());
         result.setBounds(0, 0, result.getIntrinsicWidth(), result.getIntrinsicHeight());
+
+        // Resize.
+        if(size > 0)
+            result.setTargetDensity((int)(result.getBitmap().getDensity() * size / result.getIntrinsicWidth()));
 
         return result;
     }

@@ -11,7 +11,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.BitmapDrawable;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.os.Build;
@@ -360,9 +359,7 @@ public class EmojidexKeyboardView extends KeyboardView {
                 continue;
 
             final ImageButton button = new ImageButton(context);
-            final BitmapDrawable drawable = variant.getDrawable(format);
-            drawable.setTargetDensity((int) (drawable.getBitmap().getDensity() * iconSize / drawable.getIntrinsicWidth()));
-            button.setImageDrawable(drawable);
+            button.setImageDrawable(variant.getDrawable(format, iconSize));
             button.setBackground(null);
             button.setOnClickListener(new OnClickListener() {
                 @Override
@@ -397,9 +394,7 @@ public class EmojidexKeyboardView extends KeyboardView {
         emojiName = emoji.getName();
         popupTextView.setText(":" + emojiName + ":");
 
-        final BitmapDrawable icon = emoji.getDrawable(format);
-        icon.setTargetDensity((int) (icon.getBitmap().getDensity() * iconSize / icon.getIntrinsicWidth()));
-        popupIcon.setImageDrawable(icon);
+        popupIcon.setImageDrawable(emoji.getDrawable(format, iconSize));
 
         setCurrentState();
         setVariants();
