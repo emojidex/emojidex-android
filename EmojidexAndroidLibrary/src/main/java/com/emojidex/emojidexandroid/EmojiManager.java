@@ -67,14 +67,13 @@ class EmojiManager {
         emojies.ensureCapacity(emojies.size() + newEmojies.size());
         emojies.addAll(newEmojies);
 
-        final Resources res = context.getResources();
         for(Emoji emoji : newEmojies)
         {
             // Initialize.
             if(emoji.hasCodes())
-                emoji.initialize(res);
+                emoji.initialize(context);
             else
-                emoji.initialize(res, nextOriginalCode++);
+                emoji.initialize(context, nextOriginalCode++);
 
             // Add.
             emojiTableFromName.put(emoji.getName(), emoji);

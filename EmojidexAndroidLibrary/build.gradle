@@ -25,6 +25,13 @@ android {
             assets.srcDirs = ['assets']
         }
     }
+
+    packagingOptions {
+        pickFirst 'libs/armeabi/libgnustl_shared.so_'
+        pickFirst 'libs/armeabi/libcrystax.so_'
+        pickFirst 'libs/x86/libgnustl_shared.so_'
+        pickFirst 'libs/x86/libcrystax.so_'
+    }
 }
 
 dependencies {
