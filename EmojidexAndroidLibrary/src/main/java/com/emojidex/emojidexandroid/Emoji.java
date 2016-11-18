@@ -183,6 +183,8 @@ public class Emoji extends SimpleJsonParam {
                 );
             }
 
+            drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+
             // Play animation.
             drawable.start();
 
