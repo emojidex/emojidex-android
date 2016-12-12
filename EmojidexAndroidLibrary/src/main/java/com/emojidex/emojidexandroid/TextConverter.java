@@ -1,7 +1,9 @@
 package com.emojidex.emojidexandroid;
 
+import android.graphics.drawable.Drawable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
+import android.text.style.DynamicDrawableSpan;
 import android.text.style.ImageSpan;
 import android.util.Log;
 
@@ -162,9 +164,13 @@ class TextConverter {
      */
     static CharSequence createEmojidexText(Emoji emoji, EmojiFormat format)
     {
-        final ImageSpan imageSpan = new ImageSpan(emoji.getDrawable(format));
+        final Drawable drawable = emoji.getDrawable(format);
+        final DynamicDrawableSpan span =
+                (drawable instanceof EmojidexAnimationDrawable)
+                        ? new EmojidexAnimationImageSpan((EmojidexAnimationDrawable)drawable)
+                        : new ImageSpan(drawable);
         final SpannableString result = new SpannableString(emoji.hasOriginalCodes() ? emoji.toTagString() : emoji.getText());
-        result.setSpan(imageSpan, 0, result.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
+        result.setSpan(span, 0, result.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
         return result;
     }
 }

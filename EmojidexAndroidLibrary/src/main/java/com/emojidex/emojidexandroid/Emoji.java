@@ -172,7 +172,7 @@ public class Emoji extends SimpleJsonParam {
         if(drawableParam.frames.length > 1)
         {
             // Create drawable.
-            final AnimationDrawable drawable = new AnimationDrawable();
+            final EmojidexAnimationDrawable drawable = new EmojidexAnimationDrawable();
             drawable.setOneShot(drawableParam.loops == 1);
 
             for(DrawableParam.FrameParam frame : drawableParam.frames)

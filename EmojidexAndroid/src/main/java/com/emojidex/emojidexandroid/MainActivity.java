@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.text.Editable;
@@ -50,6 +51,8 @@ public class MainActivity extends Activity {
     private AdView adView;
     private FirebaseAnalytics analytics;
 
+    private boolean isAnimating;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,6 +66,8 @@ public class MainActivity extends Activity {
 
         initAds();
         setAdsVisibility();
+
+        startAnimation();
     }
 
     @Override
@@ -711,5 +716,34 @@ public class MainActivity extends Activity {
             if (user.getPremium())
                 adView.setVisibility(View.GONE);
         }
+    }
+
+    private void startAnimation()
+    {
+        if(isAnimating)
+            return;
+
+        isAnimating = true;
+
+        final Handler handler = new Handler();
+        handler.post(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                final int start = editText.getSelectionStart();
+                final int end = editText.getSelectionEnd();
+                editText.setText(editText.getText());
+                editText.setSelection(start, end);
+
+                if(isAnimating)
+                    handler.postDelayed(this, 100);
+            }
+        });
+    }
+
+    private void stopAnimation()
+    {
+        isAnimating = false;
     }
 }
