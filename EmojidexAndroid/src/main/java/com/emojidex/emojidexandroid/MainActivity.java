@@ -21,6 +21,7 @@ import android.text.style.ImageSpan;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodInfo;
@@ -48,15 +49,18 @@ public class MainActivity extends Activity {
     private static final int REGISTER_RESULT = 1001;
     private static final String EMOJIDEX_URL = "https://www.emojidex.com";
 
+    private InputMethodManager inputMethodManager;
+    private boolean isAnimating;
+
     private AdView adView;
     private FirebaseAnalytics analytics;
-
-    private boolean isAnimating;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        inputMethodManager = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
 
         initEmojidexEditor();
         getIntentData();
@@ -66,8 +70,6 @@ public class MainActivity extends Activity {
 
         initAds();
         setAdsVisibility();
-
-        startAnimation();
     }
 
     @Override
@@ -126,6 +128,8 @@ public class MainActivity extends Activity {
      */
     private Emojidex emojidex = null;
 
+    private View rootView;
+
     private EditText editText;
 
     private ToggleButton toggleButton;
@@ -142,11 +146,32 @@ public class MainActivity extends Activity {
         emojidex = Emojidex.getInstance();
         emojidex.initialize(this);
 
+        // Get root view.
+        rootView = findViewById(R.id.activity_main_root);
+
         // Get edit text.
         editText = (EditText)findViewById(R.id.edit_text);
 
         // detects input
         editText.addTextChangedListener(new CustomTextWatcher());
+
+        // detects focus
+        editText.setOnFocusChangeListener(new View.OnFocusChangeListener()
+        {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus)
+            {
+                if(hasFocus)
+                {
+                    stopAnimation();
+                }
+                else
+                {
+                    startAnimation();
+                }
+            }
+        });
+        editText.requestFocus();
 
         // toggle button state
         toggleButton = (ToggleButton)findViewById(R.id.toggle_button);
@@ -341,8 +366,7 @@ public class MainActivity extends Activity {
     private void imeEnableCheck()
     {
         // Skip if ime enable.
-        final InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
-        for(InputMethodInfo info : imm.getEnabledInputMethodList())
+        for(InputMethodInfo info : inputMethodManager.getEnabledInputMethodList())
         {
             if(info.getServiceName().equals(EmojidexIME.class.getName()))
                 return;
@@ -594,6 +618,17 @@ public class MainActivity extends Activity {
         setAdsVisibility();
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event)
+    {
+        inputMethodManager.hideSoftInputFromWindow(
+                rootView.getWindowToken(),
+                InputMethodManager.HIDE_NOT_ALWAYS
+        );
+        rootView.requestFocus();
+        return true;
+    }
+
     /**
      * Login to emojidex web site.
      * @param v view
@@ -731,13 +766,15 @@ public class MainActivity extends Activity {
             @Override
             public void run()
             {
+                if(!isAnimating)
+                    return;
+
                 final int start = editText.getSelectionStart();
                 final int end = editText.getSelectionEnd();
                 editText.setText(editText.getText());
                 editText.setSelection(start, end);
 
-                if(isAnimating)
-                    handler.postDelayed(this, 100);
+                handler.postDelayed(this, 100);
             }
         });
     }
