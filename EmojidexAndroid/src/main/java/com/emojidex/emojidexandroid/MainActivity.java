@@ -16,7 +16,9 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.text.Editable;
+import android.text.Spanned;
 import android.text.TextWatcher;
+import android.text.style.DynamicDrawableSpan;
 import android.text.style.ImageSpan;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -257,34 +259,22 @@ public class MainActivity extends Activity {
         public void afterTextChanged(Editable s)
         {
             // exclude while converting the Japanese
-            final Object[] spans = s.getSpans(0, s.length(), Object.class);
+            final Object[] spans = s.getSpans(start, end, Object.class);
             for(Object span : spans)
-                if(span.getClass().getName().equals("android.view.inputmethod.ComposingText"))
+                if((s.getSpanFlags(span) & Spanned.SPAN_COMPOSING) == Spanned.SPAN_COMPOSING)
                     return;
 
             int oldPos = editText.getSelectionStart();
-            int oldTextLength = editText.getText().length();
+            int oldTextLength = s.length();
 
-            final ImageSpan[] imageSpans = s.getSpans(start, end, ImageSpan.class);
+            final DynamicDrawableSpan[] imageSpans = s.getSpans(start, end, DynamicDrawableSpan.class);
             if (toggleState)
             {
                 if(imageSpans.length == 0)
                 {
-                    final String subSequence = s.subSequence(start, end).toString();
-                    // Text has separator.
-                    if(subSequence.indexOf(Emojidex.SEPARATOR) != -1)
-                    {
-                        editText.removeTextChangedListener(this);
-                        editText.setText(emojify(deEmojify(s)));
-                        editText.addTextChangedListener(this);
-                    }
-                    else
-                    {
-                        editText.removeTextChangedListener(this);
-                        s.replace(start, end, emojify(deEmojify(subSequence)));
-                        editText.setText(s);
-                        editText.addTextChangedListener(this);
-                    }
+                    editText.removeTextChangedListener(this);
+                    s.replace(0, s.length(), emojify(deEmojify(s)));
+                    editText.addTextChangedListener(this);
                 }
             }
             else
@@ -292,13 +282,16 @@ public class MainActivity extends Activity {
                 if(imageSpans.length > 0)
                 {
                     editText.removeTextChangedListener(this);
-                    editText.setText(toUnicodeString(deEmojify(s)));
+                    for(DynamicDrawableSpan span : imageSpans)
+                        s.removeSpan(span);
+                    final CharSequence subSequence = s.subSequence(start, end).toString();
+                    s.replace(start, end, toUnicodeString(deEmojify(subSequence)));
                     editText.addTextChangedListener(this);
                 }
             }
 
             // adjustment cursor position
-            int addTextLength = editText.getText().length() - oldTextLength;
+            int addTextLength = s.length() - oldTextLength;
             int newPos = oldPos + addTextLength;
             if (newPos > editText.getText().length())
                 newPos = editText.getText().length();
