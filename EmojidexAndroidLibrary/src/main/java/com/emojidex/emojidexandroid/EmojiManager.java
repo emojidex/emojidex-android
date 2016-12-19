@@ -1,7 +1,6 @@
 package com.emojidex.emojidexandroid;
 
 import android.content.Context;
-import android.content.res.Resources;
 
 import com.emojidex.emojidexandroidlibrary.R;
 import com.fasterxml.jackson.core.type.TypeReference;

@@ -3,7 +3,6 @@ package com.emojidex.emojidexandroid;
 import android.graphics.Canvas;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Handler;
 
 /**
  * Created by kou on 16/12/09.
