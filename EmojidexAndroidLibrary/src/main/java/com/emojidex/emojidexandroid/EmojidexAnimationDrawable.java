@@ -1,5 +1,6 @@
 package com.emojidex.emojidexandroid;
 
+import android.graphics.Canvas;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
@@ -67,5 +68,13 @@ public class EmojidexAnimationDrawable extends AnimationDrawable
     private void next()
     {
         currentIndex = (currentIndex + 1) % getNumberOfFrames();
+    }
+
+    @Override
+    public void draw(Canvas canvas)
+    {
+        calcTime();
+        selectDrawable(currentIndex);
+        super.draw(canvas);
     }
 }

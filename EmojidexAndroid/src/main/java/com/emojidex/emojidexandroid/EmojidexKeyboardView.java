@@ -94,6 +94,24 @@ public class EmojidexKeyboardView extends KeyboardView {
         return true;
     }
 
+    public void invalidateAnimation()
+    {
+        final Keyboard keyboard = getKeyboard();
+        if(keyboard instanceof EmojidexKeyboard)
+        {
+            for(Integer index : ((EmojidexKeyboard)keyboard).getHasAnimationIndices())
+                invalidateKey(index);
+        }
+    }
+
+    public boolean hasAnimationEmoji()
+    {
+        final Keyboard keyboard = getKeyboard();
+        return (keyboard instanceof EmojidexKeyboard)
+                ? !((EmojidexKeyboard)keyboard).getHasAnimationIndices().isEmpty()
+                : false;
+    }
+
     /**
      * Create PopupWindow.
      */

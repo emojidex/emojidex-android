@@ -72,6 +72,8 @@ public class EmojidexIME extends InputMethodService {
 
     private EmojidexIndexUpdater indexUpdater = null;
 
+    private boolean isAnimating = false;
+
     /**
      * Construct EmojidexIME object.
      */
@@ -214,6 +216,8 @@ public class EmojidexIME extends InputMethodService {
             currentCategory = null;
             super.hideWindow();
         }
+
+        stopAnimation();
     }
 
     /**
@@ -363,6 +367,7 @@ public class EmojidexIME extends InputMethodService {
         }
         keyboardViewManager.next();
         keyboardViewFlipper.showNext();
+        initAnimation();
 
         getIndexMore();
 
@@ -387,6 +392,7 @@ public class EmojidexIME extends InputMethodService {
         }
         keyboardViewManager.prev();
         keyboardViewFlipper.showPrevious();
+        initAnimation();
 
         getIndexMore();
 
@@ -465,6 +471,8 @@ public class EmojidexIME extends InputMethodService {
             final List<Emoji> emojies = emojidex.getEmojiList(category);
             keyboardViewManager.initialize(emojies, defaultPage);
         }
+
+        initAnimation();
     }
 
     /**
@@ -657,6 +665,42 @@ public class EmojidexIME extends InputMethodService {
         keyboardViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_out));
         keyboardViewManager.setPage(emoji.getName());
         keyboardViewFlipper.showNext();
+        initAnimation();
+    }
+
+    private void initAnimation()
+    {
+        if(keyboardViewManager.getCurrentView().hasAnimationEmoji())
+            startAnimation();
+        else
+            stopAnimation();
+    }
+
+    private void startAnimation()
+    {
+        if(isAnimating)
+            return;
+
+        isAnimating = true;
+
+        final Handler handler = new Handler();
+        handler.post(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                if(!isAnimating)
+                    return;
+
+                keyboardViewManager.getCurrentView().invalidateAnimation();
+                handler.postDelayed(this, 100);
+            }
+        });
+    }
+
+    private void stopAnimation()
+    {
+        isAnimating = false;
     }
 
     /**

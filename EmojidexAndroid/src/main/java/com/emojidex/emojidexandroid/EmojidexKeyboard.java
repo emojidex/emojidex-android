@@ -6,6 +6,7 @@ import android.content.res.XmlResourceParser;
 import android.inputmethodservice.Keyboard;
 import android.util.DisplayMetrics;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -20,6 +21,8 @@ public class EmojidexKeyboard extends Keyboard {
     private int displayWidth;
     private int columnCount;
     private int rowCount;
+
+    private final List<Integer> hasAnimationIndices;
 
     /**
      * Construct object.
@@ -46,6 +49,8 @@ public class EmojidexKeyboard extends Keyboard {
 
         columnCount = Math.max(columnCount, 1);
         rowCount = Math.max(rowCount, 1);
+
+        hasAnimationIndices = new LinkedList<Integer>();
     }
 
     /**
@@ -64,6 +69,9 @@ public class EmojidexKeyboard extends Keyboard {
             final Key newKey = createKey(emojies.get(i));
             newKey.x = i % columnCount * (getKeyWidth() + getHorizontalGap()) + leftMargin;
             newKey.y = i / columnCount * (getKeyHeight() + getVerticalGap());
+
+            if(newKey.icon instanceof EmojidexAnimationDrawable)
+                hasAnimationIndices.add(i);
 
             keys.add(newKey);
         }
@@ -84,6 +92,15 @@ public class EmojidexKeyboard extends Keyboard {
     public int getKeyCountMax()
     {
         return columnCount * rowCount;
+    }
+
+    /**
+     * Get has animation emoji index array.
+     * @return  Has animation emoji index array.
+     */
+    public List<Integer> getHasAnimationIndices()
+    {
+        return hasAnimationIndices;
     }
 
     @Override
