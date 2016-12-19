@@ -215,9 +215,8 @@ public class EmojidexIME extends InputMethodService {
         {
             currentCategory = null;
             super.hideWindow();
+            stopAnimation();
         }
-
-        stopAnimation();
     }
 
     /**
