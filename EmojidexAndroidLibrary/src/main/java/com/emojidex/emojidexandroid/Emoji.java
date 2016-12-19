@@ -174,6 +174,7 @@ public class Emoji extends SimpleJsonParam {
             // Create drawable.
             final EmojidexAnimationDrawable drawable = new EmojidexAnimationDrawable();
             drawable.setOneShot(drawableParam.loops == 1);
+            drawable.setSkipFirst(drawableParam.skipFirst);
 
             for(DrawableParam.FrameParam frame : drawableParam.frames)
             {
@@ -291,8 +292,7 @@ public class Emoji extends SimpleJsonParam {
         final APNGAsm apngasm = new APNGAsm();
         apngasm.disassemble(path);
 
-        final int skipCount = apngasm.isSkipFirst() ? 1 : 0;
-        final int frameCount = Math.max((int)apngasm.getFrames().size() - skipCount, 1);
+        final int frameCount = Math.max((int)apngasm.getFrames().size(), 1);
         result.setFrameCount(frameCount);
 
         if(frameCount > 1)
@@ -304,18 +304,19 @@ public class Emoji extends SimpleJsonParam {
 
             for(int i = 0;  i < frameCount;  ++i)
             {
-                final String temporaryPath = temporaryDir + (i + skipCount) + ".png";
+                final String temporaryPath = temporaryDir + i + ".png";
                 Bitmap newBitmap = loadBitmap(temporaryPath);
                 if(newBitmap == null)
                     newBitmap = loadDummyBitmap(format);
                 result.frames[i].bitmap = new WeakReference<Bitmap>(newBitmap.copy(newBitmap.getConfig(), true));
                 newBitmap.recycle();
 
-                final APNGFrame frame = apngasm.getFrames().get((i + skipCount));
+                final APNGFrame frame = apngasm.getFrames().get(i);
                 result.frames[i].duration = (int)(1000 * frame.delayNum() / frame.delayDen());
             }
 
             result.loops = apngasm.getLoops();
+            result.skipFirst = apngasm.isSkipFirst();
 
             deleteFiles(file);
         }
@@ -419,6 +420,7 @@ public class Emoji extends SimpleJsonParam {
     {
         private FrameParam[] frames = null;
         private long loops = 0;
+        private boolean skipFirst = false;
 
         public void setFrameCount(int count)
         {

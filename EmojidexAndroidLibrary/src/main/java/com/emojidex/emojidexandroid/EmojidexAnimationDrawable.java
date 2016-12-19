@@ -14,7 +14,16 @@ public class EmojidexAnimationDrawable extends AnimationDrawable
     private int currentIndex = 0;
     private long timer = 0;
     private long lastTime = 0;
-    private boolean isRunning = false;
+    private Status status = Status.STOP;
+
+    private boolean skipFirst = false;
+
+    private enum Status
+    {
+        STOP,
+        PLAYING,
+        PAUSE
+    }
 
     public EmojidexAnimationDrawable()
     {
@@ -24,15 +33,24 @@ public class EmojidexAnimationDrawable extends AnimationDrawable
     @Override
     public void start()
     {
-        isRunning = true;
+        status = Status.PLAYING;
         lastTime = System.currentTimeMillis();
+        if(skipFirst && currentIndex == 0)
+            currentIndex = 1;
     }
 
     @Override
     public void stop()
     {
+        status = Status.STOP;
+        currentIndex = 0;
+        timer = 0;
+    }
+
+    public void pause()
+    {
         calcTime();
-        isRunning = false;
+        status = Status.PAUSE;
     }
 
     public Drawable getCurrentFrame()
@@ -50,7 +68,17 @@ public class EmojidexAnimationDrawable extends AnimationDrawable
     @Override
     public boolean isRunning()
     {
-        return isRunning;
+        return status == Status.PLAYING;
+    }
+
+    public void setSkipFirst(boolean skipFirst)
+    {
+        this.skipFirst = skipFirst;
+    }
+
+    public boolean isSkipFirst()
+    {
+        return skipFirst;
     }
 
     private void calcTime()
@@ -78,9 +106,10 @@ public class EmojidexAnimationDrawable extends AnimationDrawable
 
         if(currentIndex == getNumberOfFrames())
         {
-            currentIndex = 0;
             if(isOneShot())
                 stop();
+            else
+                currentIndex = skipFirst ? 1 : 0;
         }
     }
 
