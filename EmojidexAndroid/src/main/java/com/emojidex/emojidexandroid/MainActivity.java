@@ -751,6 +751,10 @@ public class MainActivity extends Activity {
         if(isAnimating)
             return;
 
+        final Editable text = editText.getText();
+        if(text.getSpans(0, text.length(), EmojidexAnimationImageSpan.class).length == 0)
+            return;
+
         isAnimating = true;
 
         final Handler handler = new Handler();
