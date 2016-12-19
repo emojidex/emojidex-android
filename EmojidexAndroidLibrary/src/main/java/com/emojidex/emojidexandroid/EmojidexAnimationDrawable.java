@@ -14,6 +14,7 @@ public class EmojidexAnimationDrawable extends AnimationDrawable
     private int currentIndex = 0;
     private long timer = 0;
     private long lastTime = 0;
+    private boolean isRunning = false;
 
     public EmojidexAnimationDrawable()
     {
@@ -23,7 +24,7 @@ public class EmojidexAnimationDrawable extends AnimationDrawable
     @Override
     public void start()
     {
-        super.start();
+        isRunning = true;
         lastTime = System.currentTimeMillis();
     }
 
@@ -31,7 +32,7 @@ public class EmojidexAnimationDrawable extends AnimationDrawable
     public void stop()
     {
         calcTime();
-        super.stop();
+        isRunning = false;
     }
 
     public Drawable getCurrentFrame()
@@ -44,6 +45,12 @@ public class EmojidexAnimationDrawable extends AnimationDrawable
     public Drawable getCurrent()
     {
         return super.getCurrent();
+    }
+
+    @Override
+    public boolean isRunning()
+    {
+        return isRunning;
     }
 
     private void calcTime()
@@ -67,7 +74,14 @@ public class EmojidexAnimationDrawable extends AnimationDrawable
 
     private void next()
     {
-        currentIndex = (currentIndex + 1) % getNumberOfFrames();
+        ++currentIndex;
+
+        if(currentIndex == getNumberOfFrames())
+        {
+            currentIndex = 0;
+            if(isOneShot())
+                stop();
+        }
     }
 
     @Override
