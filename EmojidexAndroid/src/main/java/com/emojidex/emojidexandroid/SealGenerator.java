@@ -84,10 +84,10 @@ public class SealGenerator {
         useLow = false;
 
         // If file not found, use default format.
-        File file = new File(emoji.getImageFilePath(EmojiFormat.toFormat(context.getString(R.string.emoji_format_seal))));
+        File file = new File(PathUtils.getLocalEmojiPath(emoji.getName(), EmojiFormat.toFormat(context.getString(R.string.emoji_format_seal))));
         if( !file.exists() )
         {
-            file = new File(emoji.getImageFilePath(EmojiFormat.toFormat(context.getString(R.string.emoji_format_default))));
+            file = new File(PathUtils.getLocalEmojiPath(emoji.getName(), EmojiFormat.toFormat(context.getString(R.string.emoji_format_default))));
             useLow = true;
         }
 
