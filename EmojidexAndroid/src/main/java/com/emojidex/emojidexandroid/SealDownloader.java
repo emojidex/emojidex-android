@@ -95,8 +95,8 @@ public class SealDownloader {
     private class CustomDownloadListener extends DownloadListener
     {
         @Override
-        public void onFinish() {
-            super.onFinish();
+        public void onFinish(EmojiDownloader.Result result) {
+            super.onFinish(result);
 
             if(dialog != null)
             {

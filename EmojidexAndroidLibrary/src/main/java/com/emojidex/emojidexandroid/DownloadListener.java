@@ -75,8 +75,9 @@ public class DownloadListener {
 
     /**
      * Called when finish download task.
+     * @param result
      */
-    public void onFinish()
+    public void onFinish(EmojiDownloader.Result result)
     {
         // nop
     }

@@ -117,8 +117,8 @@ public class EmojidexIndexUpdater
         }
 
         @Override
-        public void onFinish() {
-            super.onFinish();
+        public void onFinish(EmojiDownloader.Result result) {
+            super.onFinish(result);
 
             // Save update time.
             final long updateTime = new Date().getTime();

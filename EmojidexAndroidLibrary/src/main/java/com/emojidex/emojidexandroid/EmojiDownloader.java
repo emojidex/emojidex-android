@@ -243,7 +243,7 @@ public class EmojiDownloader
         if(downloadEmojiCount <= 0 || !runningTasks.isEmpty())
         {
             // Notify to listener.
-            listener.onFinish();
+            listener.onFinish(resultTotal);
             return;
         }
 
@@ -431,10 +431,25 @@ public class EmojiDownloader
     /**
      * Download result.
      */
-    private static class Result
+    public static class Result
     {
         private int succeeded = 0;
         private int total = 0;
+
+        public int getSucceededCount()
+        {
+            return succeeded;
+        }
+
+        public int getFailedCount()
+        {
+            return total - succeeded;
+        }
+
+        public int getTotalCount()
+        {
+            return total;
+        }
     }
 
     /**
@@ -525,9 +540,9 @@ public class EmojiDownloader
         protected void putResultLog(Result result, String preMessage)
         {
             Log.d(TAG, preMessage + " : "
-                            + "(S" + result.succeeded + " + "
-                            + "F" + (result.total-result.succeeded) + ") / "
-                            + result.total + " : "
+                            + "(S" + result.getSucceededCount() + " + "
+                            + "F" + result.getFailedCount() + ") / "
+                            + result.getTotalCount() + " : "
                             + ((endTime-startTime) / 1000.0) + "sec"
             );
         }
@@ -613,7 +628,7 @@ public class EmojiDownloader
                     addDownloadEmoji(emoji, config);
                     emojiNames.add(emoji.getCode());
                 }
-                return 1;
+                return emojies.size() > 0 ? 1 : 0;
             }
 
             @Override
@@ -657,7 +672,7 @@ public class EmojiDownloader
                 putResultLog(resultTotal, "All download task end.");
 
                 // Notify to listener.
-                listener.onFinish();
+                listener.onFinish(resultTotal);
             }
         }
 
