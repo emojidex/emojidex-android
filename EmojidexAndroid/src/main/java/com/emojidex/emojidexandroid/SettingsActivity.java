@@ -5,11 +5,13 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -345,6 +347,12 @@ public class SettingsActivity extends PreferenceActivity {
                             Emojidex.getInstance().reload();
                             if(EmojidexIME.currentInstance != null)
                                 EmojidexIME.currentInstance.reloadCategory();
+
+                            // Download emoji next time.
+                            final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getContext());
+                            final SharedPreferences.Editor prefEditor = pref.edit();
+                            prefEditor.putLong(getString(R.string.preference_key_last_update_time), 0);
+                            prefEditor.commit();
                         }
                     });
             dialog.setNegativeButton(R.string.no,
