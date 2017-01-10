@@ -111,11 +111,6 @@ public class EmojidexIME extends InputMethodService {
         // Initialize user data.
         userdata = UserData.getInstance();
         userdata.init(this);
-
-        // Emoji download.
-        indexUpdater = new EmojidexIndexUpdater(this);
-        if( !new EmojidexUpdater(this).startUpdateThread() )
-            indexUpdater.startUpdateThread(2);
     }
 
     @Override
@@ -186,6 +181,11 @@ public class EmojidexIME extends InputMethodService {
 
         // Initialize.
         initStartCategory();
+
+        // Emoji download.
+        indexUpdater = new EmojidexIndexUpdater(this);
+        if( !new EmojidexUpdater(this).startUpdateThread() )
+            indexUpdater.startUpdateThread(2);
     }
 
     @Override
