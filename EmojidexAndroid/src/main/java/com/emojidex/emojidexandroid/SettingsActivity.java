@@ -352,6 +352,7 @@ public class SettingsActivity extends PreferenceActivity {
                             final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getContext());
                             final SharedPreferences.Editor prefEditor = pref.edit();
                             prefEditor.putLong(getString(R.string.preference_key_last_update_time), 0);
+                            prefEditor.putLong(getString(R.string.preference_key_last_update_time_index), 0);
                             prefEditor.commit();
                         }
                     });

@@ -121,7 +121,8 @@ public class EmojidexIndexUpdater
             super.onFinish(result);
 
             // Save update time.
-            final long updateTime = new Date().getTime();
+            // If emoji download failed, execute force update next time.
+            final long updateTime = result.getFailedCount() > 0 ? 0 : new Date().getTime();
             final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
             final SharedPreferences.Editor prefEditor = pref.edit();
             prefEditor.putLong(context.getString(R.string.preference_key_last_update_time_index), updateTime);
