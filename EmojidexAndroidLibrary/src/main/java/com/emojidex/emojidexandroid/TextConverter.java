@@ -135,7 +135,7 @@ class TextConverter {
                         codes.clear();
                         codes.addAll(tmp);
                         tmp.clear();
-                    } while(codes.size() > 1);
+                    } while(codes.size() > 0 && codes.size() + tmp.size() > 1);
 
                     codes.addAll(tmp);
                     tmp.clear();
