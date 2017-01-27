@@ -6,6 +6,12 @@
             android:key="@string/preference_key_default_keyboard"
             android:title="@string/settings_keyboard_button"
             android:defaultValue="@string/preference_entryvalue_default_keyboard_default"/>
+        <ListPreference
+            android:key="@string/preference_key_text_size"
+            android:title="@string/settings_text_size"
+            android:defaultValue="@string/preference_entryvalue_text_size_default"
+            android:entries="@array/settings_text_size_entries"
+            android:entryValues="@array/settings_text_size_entryvalues"/>
     </PreferenceCategory>
     <PreferenceCategory
         android:title="@string/settings_category_update">

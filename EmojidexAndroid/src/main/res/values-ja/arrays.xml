@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- Text size. -->
+    <string-array name="settings_text_size_entries">
+        <item>小</item>
+        <item>中</item>
+        <item>大</item>
+    </string-array>
+
+    <!-- Update interval. -->
     <string-array name="settings_update_interval_entries">
         <item>1日</item>
         <item>3日</item>

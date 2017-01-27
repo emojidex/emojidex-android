@@ -606,8 +606,19 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        // Initialize login button.
         setLoginButtonVisibility(!UserData.getInstance().isLogined());
+
+        // Initialize ads.
         setAdsVisibility();
+
+        // Initialize text size.
+        final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        editText.setTextSize(Float.valueOf(pref.getString(
+                getString(R.string.preference_key_text_size),
+                getString(R.string.editor_text_size_default)
+        )));
     }
 
     @Override

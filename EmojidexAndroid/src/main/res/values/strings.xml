@@ -110,6 +110,7 @@
     <string name="settings_category_other">Other</string>
     <string name="settings_keyboard_button">Default keyboard</string>
     <string name="settings_keyboard_button_summary">Set your default keyboard here</string>
+    <string name="settings_text_size">Text size</string>
     <string name="settings_entry_default_keyboard_nothing">Nothing</string>
     <string name="settings_update_interval">Update interval</string>
     <string name="settings_update_now">Update now</string>
@@ -150,6 +151,11 @@
     <string name="usagestats_dialog_settings_button">Settings</string>
 
     <!-- Japanese not needed -->
+    <string name="editor_text_size_small" translatable="false">20</string>
+    <string name="editor_text_size_medium" translatable="false">25</string>
+    <string name="editor_text_size_large" translatable="false">30</string>
+    <string name="editor_text_size_default" translatable="false">@string/editor_text_size_small</string>
+
     <string name="ime_category_id_history" translatable="false">history</string>
     <string name="ime_category_id_favorite" translatable="false">favorite</string>
     <string name="ime_category_id_search" translatable="false">search</string>
@@ -175,6 +181,7 @@
     <string name="preference_key_show_tutorial" translatable="false">showTutorial</string>
     <string name="preference_key_start_category" translatable="false">startCategory</string>
     <string name="preference_key_default_keyboard" translatable="false">defaultKeyboard</string>
+    <string name="preference_key_text_size" translatable="false">textSize</string>
     <string name="preference_key_last_update_time" translatable="false">lastUpdateTime</string>
     <string name="preference_key_update_interval" translatable="false">updateInterval</string>
     <string name="preference_key_update_now" translatable="false">updateNow</string>
@@ -187,6 +194,7 @@
     <string name="preference_key_last_language" translatable="false">language</string>
     <string name="preference_entryvalue_default_keyboard_nothing" translatable="false">nothing</string>
     <string name="preference_entryvalue_default_keyboard_default" translatable="false">@string/preference_entryvalue_default_keyboard_nothing</string>
+    <string name="preference_entryvalue_text_size_default" translatable="false">@string/editor_text_size_default</string>
     <string name="preference_entryvalue_update_interval_default" translatable="false">604800000</string>
     <string name="preference_key_last_update_time_index" translatable="false">lastUpdateTimeIndex</string>
     <string name="preference_key_usagestats_check_ignore" translatable="false">usagestatsCheckIgnore</string>
