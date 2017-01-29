@@ -77,6 +77,7 @@ public class SettingsActivity extends PreferenceActivity {
 
             // Initialize.
             createDefaultKeyboardPreference();
+            createTextSizePreference();
             createUpdateIntervalPreference();
             createClearDataPreference();
             createTutorialPreference();
@@ -124,6 +125,23 @@ public class SettingsActivity extends PreferenceActivity {
 
             // Set changed event.
             defaultKeyboard.setOnPreferenceChangeListener(onPreferenceChangeListener);
+        }
+
+        /**
+         * Create text size preference.
+         */
+        private void createTextSizePreference()
+        {
+            final ListPreference textSize = (ListPreference)findPreference(getString(R.string.preference_key_text_size));
+            textSize.setSummary(textSize.getEntry());
+            textSize.setOnPreferenceChangeListener(onPreferenceChangeListener);
+            textSize.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    ((SettingsActivity) parentActivity).sendLogEvent("settings_text_size");
+                    return true;
+                }
+            });
         }
 
         /**
