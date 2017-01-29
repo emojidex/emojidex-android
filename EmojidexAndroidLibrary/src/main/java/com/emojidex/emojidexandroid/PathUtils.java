@@ -10,7 +10,7 @@ import java.util.Locale;
  * Created by kou on 14/10/03.
  */
 class PathUtils {
-    static final String REMOTE_ROOT_PATH_DEFAULT = "http://cdn.emojidex.com";
+    static final String REMOTE_ROOT_PATH_DEFAULT = "https://cdn.emojidex.com";
     static final String LOCAL_ROOT_PATH = Environment.getExternalStorageDirectory().getPath() + "/.emojidex";
     static final String API_ROOT_PATH = "https://www.emojidex.com/api/v1";
     static final String JSON_FILENAME = "emoji.json";
