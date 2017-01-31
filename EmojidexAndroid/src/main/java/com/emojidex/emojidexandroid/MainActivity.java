@@ -275,6 +275,13 @@ public class MainActivity extends Activity {
                     s.replace(0, s.length(), emojify(deEmojify(s)));
                     editText.addTextChangedListener(this);
                 }
+                else
+                {
+                    // Resize emoji image.
+                    final int size = (int)editText.getTextSize();
+                    for(DynamicDrawableSpan span : imageSpans)
+                        span.getDrawable().setBounds(0, 0, size, size);
+                }
             }
             else
             {
@@ -619,6 +626,15 @@ public class MainActivity extends Activity {
                 getString(R.string.preference_key_text_size),
                 getString(R.string.editor_text_size_default)
         )));
+
+        final Editable text = editText.getText();
+        final int length = text.length();
+        if(length != 0)
+        {
+            final int size = (int)editText.getTextSize();
+            for(DynamicDrawableSpan span : text.getSpans(0, length, DynamicDrawableSpan.class))
+                span.getDrawable().setBounds(0, 0, size, size);
+        }
     }
 
     @Override
