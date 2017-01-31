@@ -99,55 +99,84 @@ class TextConverter {
         final SpannableStringBuilder result = new SpannableStringBuilder();
 
         final LinkedList<Integer> codes = new LinkedList<Integer>();
-        int start = 0;
-        int next = 0;
+        final LinkedList<Integer> tmp = new LinkedList<Integer>();
+        int lastMojiCount = 0;
 
-        final int count = Character.codePointCount(text, 0, text.length());
-        for(int i = 0;  i < count;  ++i)
+        final int length = text.length();
+        int i = 0;
+        while(i < length)
         {
-            final int codePoint = Character.codePointAt(text, next);
-            final int cur = next;
-            next += Character.charCount(codePoint);
-            codes.addLast(codePoint);
+            final int codePoint = Character.codePointAt(text, i);
+            final int charCount = Character.charCount(codePoint);
 
-            if(codes.size() < 2)
-                continue;
-
-            // Find combining character emoji.
-            Emoji emoji = emojidex.getEmoji(codes);
-            if( emoji != null )
+            // 0x200D = ZWJ
+            if(codePoint == 0x200D)
+                lastMojiCount = 0;
+            else if(++lastMojiCount >= 3)
             {
-                start = next;
-                codes.clear();
+                lastMojiCount = 0;
+
+                while(codes.size() > 1)
+                {
+                    // To emoji string when has emoji.
+                    do
+                    {
+                        Emoji emoji = emojidex.getEmoji(codes);
+                        if(emoji == null)
+                        {
+                            tmp.addFirst(codes.removeLast());
+                            continue;
+                        }
+
+                        // Emoji to tag.
+                        result.append(emoji.toTagString());
+
+                        // Next.
+                        codes.clear();
+                        codes.addAll(tmp);
+                        tmp.clear();
+                    } while(codes.size() > 0 && codes.size() + tmp.size() > 1);
+
+                    codes.addAll(tmp);
+                    tmp.clear();
+
+                    // First character is not emoji.
+                    if(codes.size() > 1)
+                        result.append(new String(Character.toChars(codes.removeFirst())));
+                }
             }
 
-            // Find single character emoji.
-            else
-            {
-                emoji = emojidex.getEmoji(codes.subList(0, 1));
-                codes.removeFirst();
+            codes.addLast(codePoint);
+            i += charCount;
+        }
 
-                // Not emoji.
+        while( !codes.isEmpty() )
+        {
+            // To emoji string when has emoji.
+            do
+            {
+                Emoji emoji = emojidex.getEmoji(codes);
                 if(emoji == null)
                 {
-                    result.append( text.subSequence(start, cur).toString() );
-                    start = cur;
+                    tmp.addFirst(codes.removeLast());
                     continue;
                 }
-                start = cur;
-            }
 
-            // Emoji to tag.
-            result.append(emoji.toTagString());
-        }
-        if( !codes.isEmpty() )
-        {
-            final Emoji emoji = emojidex.getEmoji(codes);
-
-            if(emoji == null)
-                result.append( text.subSequence(start, next).toString() );
-            else
+                // Emoji to tag.
                 result.append(emoji.toTagString());
+
+                // Next.
+                codes.clear();
+                codes.addAll(tmp);
+                tmp.clear();
+            } while(codes.size() > 0);
+
+            codes.addAll(tmp);
+            tmp.clear();
+
+            // First character is not emoji.
+            if( !codes.isEmpty() )
+                result.append(new String(Character.toChars(codes.removeFirst())));
         }
 
         // Put log.
