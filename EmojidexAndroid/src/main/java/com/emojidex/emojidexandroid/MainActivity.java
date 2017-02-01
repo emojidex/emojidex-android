@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.text.Editable;
+import android.text.Spannable;
 import android.text.Spanned;
 import android.text.TextWatcher;
 import android.text.style.DynamicDrawableSpan;
@@ -272,7 +273,18 @@ public class MainActivity extends Activity {
                 if(imageSpans.length == 0)
                 {
                     editText.removeTextChangedListener(this);
-                    s.replace(0, s.length(), emojify(deEmojify(s)));
+
+                    final Spannable text = (Spannable)emojify(deEmojify(s));
+                    final int length = text.length();
+                    if(length != 0)
+                    {
+                        final int size = (int)editText.getTextSize();
+                        for(DynamicDrawableSpan span : text.getSpans(0, length, DynamicDrawableSpan.class))
+                            span.getDrawable().setBounds(0, 0, size, size);
+                    }
+
+                    s.replace(0, s.length(), text);
+
                     editText.addTextChangedListener(this);
                 }
                 else
