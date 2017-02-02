@@ -15,4 +15,5 @@ class SimpleJsonParam {
     @JsonProperty("category")   protected String category = null;
     @JsonProperty("variants")   protected List<String> variants = null;
     @JsonProperty("base")       protected String base = null;
+    @JsonProperty("score")      protected int score = 0;
 }

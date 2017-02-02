@@ -371,6 +371,7 @@ public class EmojiDownloader
         dest.text = src.getMoji();
         dest.category = src.getCategory();
         dest.base = src.getBase();
+        dest.score = src.getScore();
 
         final StringVector variants = src.getVariants();
         final long variantsCount = variants.size();

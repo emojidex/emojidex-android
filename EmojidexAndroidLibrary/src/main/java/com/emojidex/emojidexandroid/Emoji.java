@@ -171,6 +171,11 @@ public class Emoji extends SimpleJsonParam {
         return base;
     }
 
+    public int getScore()
+    {
+        return score;
+    }
+
     /**
      * Initialize emoji object.
      * @param kind  Emoji kind.
