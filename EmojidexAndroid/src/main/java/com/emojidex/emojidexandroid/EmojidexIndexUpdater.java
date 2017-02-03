@@ -89,7 +89,7 @@ public class EmojidexIndexUpdater
             Emojidex.getInstance().reload();
 
             if(EmojidexIME.currentInstance != null)
-                EmojidexIME.currentInstance.reloadCategory();
+                EmojidexIME.currentInstance.reload();
 
             if(CatalogActivity.currentInstance != null)
                 CatalogActivity.currentInstance.reloadCategory();

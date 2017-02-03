@@ -364,7 +364,7 @@ public class SettingsActivity extends PreferenceActivity {
                             updateClearCacheSummary();
                             Emojidex.getInstance().reload();
                             if(EmojidexIME.currentInstance != null)
-                                EmojidexIME.currentInstance.reloadCategory();
+                                EmojidexIME.currentInstance.reload();
 
                             // Download emoji next time.
                             final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getContext());

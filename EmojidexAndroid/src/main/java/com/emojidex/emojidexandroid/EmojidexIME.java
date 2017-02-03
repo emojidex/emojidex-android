@@ -30,6 +30,9 @@ import android.widget.ViewFlipper;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -73,6 +76,8 @@ public class EmojidexIME extends InputMethodService {
     private EmojidexIndexUpdater indexUpdater = null;
 
     private boolean isAnimating = false;
+
+    private final HashMap<String, List<Emoji>> categorizedEmojies = new HashMap<String, List<Emoji>>();
 
     /**
      * Construct EmojidexIME object.
@@ -460,18 +465,41 @@ public class EmojidexIME extends InputMethodService {
             final List<String> emojiNames = indexManager.getEmojiNames();
             keyboardViewManager.initializeFromName(emojiNames, defaultPage);
         }
-        else if(category.equals(getString(R.string.ime_category_id_all)))
-        {
-            final List<Emoji> emojies = emojidex.getAllEmojiList();
-            keyboardViewManager.initialize(emojies, defaultPage);
-        }
         else
         {
-            final List<Emoji> emojies = emojidex.getEmojiList(category);
+            final List<Emoji> emojies = getCategorizedEmojies(category);
             keyboardViewManager.initialize(emojies, defaultPage);
         }
 
         initAnimation();
+    }
+
+    private List<Emoji> getCategorizedEmojies(String category)
+    {
+        List<Emoji> emojies = categorizedEmojies.get(category);
+        if(emojies == null)
+        {
+            // Copy emoji list.
+            emojies = new ArrayList<Emoji>(
+                    category.equals(getString(R.string.ime_category_id_all))
+                            ? emojidex.getAllEmojiList()
+                            : emojidex.getEmojiList(category)
+            );
+
+            // Sort emoji list.
+            Collections.sort(emojies, new Comparator<Emoji>()
+            {
+                @Override
+                public int compare(Emoji lhs, Emoji rhs)
+                {
+                    return rhs.getScore() - lhs.getScore();
+                }
+            });
+
+            // Add emoji list.
+            categorizedEmojies.put(category, emojies);
+        }
+        return emojies;
     }
 
     /**
@@ -606,10 +634,14 @@ public class EmojidexIME extends InputMethodService {
     }
 
     /**
-     * Reload current category.
+     * Reload ime.
      */
-    void reloadCategory()
+    void reload()
     {
+        // Clear cache.
+        categorizedEmojies.clear();
+
+        // Reload category.
         if(keyboardViewManager == null)
             return;
 
