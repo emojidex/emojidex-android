@@ -480,11 +480,13 @@ public class EmojidexIME extends InputMethodService {
         if(emojies == null)
         {
             // Copy emoji list.
-            emojies = new ArrayList<Emoji>(
-                    category.equals(getString(R.string.ime_category_id_all))
-                            ? emojidex.getAllEmojiList()
-                            : emojidex.getEmojiList(category)
-            );
+            final List<Emoji> src = category.equals(getString(R.string.ime_category_id_all))
+                    ? emojidex.getAllEmojiList()
+                    : emojidex.getEmojiList(category);
+
+            emojies = src != null
+                    ? new ArrayList<Emoji>(src)
+                    : new ArrayList<Emoji>();
 
             // Sort emoji list.
             Collections.sort(emojies, new Comparator<Emoji>()
