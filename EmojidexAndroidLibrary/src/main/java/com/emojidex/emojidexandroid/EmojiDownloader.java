@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import javax.net.ssl.HttpsURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -724,13 +725,13 @@ public class EmojiDownloader
                     {
                         final URL url = new URL(info.src);
 
-                        final HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+                        final HttpsURLConnection connection = (HttpsURLConnection)url.openConnection();
                         connection.setAllowUserInteraction(false);
                         connection.setInstanceFollowRedirects(true);
                         connection.setRequestMethod("GET");
                         connection.connect();
 
-                        if(connection.getResponseCode() == HttpURLConnection.HTTP_OK)
+                        if(connection.getResponseCode() == HttpsURLConnection.HTTP_OK)
                         {
                             final File destFile = new File(info.dest);
                             final File destParentDir = destFile.getParentFile();
