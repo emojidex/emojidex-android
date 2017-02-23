@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
@@ -51,6 +52,10 @@ public class CatalogActivity extends Activity
     private AdView adView;
     private FirebaseAnalytics analytics;
 
+    private EmojidexIndexUpdater indexUpdater = null;
+    private int indexPageCount = 0;
+    private final int indexLoadPageCount = 2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -81,8 +86,10 @@ public class CatalogActivity extends Activity
 
         // Emoji download.
         currentInstance = this;
+        indexUpdater = new EmojidexIndexUpdater(this);
+        indexPageCount = indexLoadPageCount;
         if( !new EmojidexUpdater(this).startUpdateThread() )
-            new EmojidexIndexUpdater(this).startUpdateThread(2);
+            indexUpdater.startUpdateThread(indexPageCount);
 
         initAds();
         setAdsVisibility();
@@ -112,6 +119,24 @@ public class CatalogActivity extends Activity
             {
                 final Emoji emoji = (Emoji)parent.getAdapter().getItem(position);
                 sendEmoji(emoji);
+            }
+        });
+
+        gridView.setOnScrollListener(new AbsListView.OnScrollListener()
+        {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState)
+            {
+                // nop
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
+            {
+                if(firstVisibleItem + visibleItemCount == totalItemCount)
+                {
+                    getIndexMore();
+                }
             }
         });
     }
@@ -337,7 +362,9 @@ public class CatalogActivity extends Activity
     {
         final String category = currentCategory;
         currentCategory = null;
+        int position = gridView.getFirstVisiblePosition();
         changeCategory(category);
+        gridView.setSelection(position);
     }
 
     void invalidate()
@@ -381,5 +408,14 @@ public class CatalogActivity extends Activity
             if (user.getPremium())
                 adView.setVisibility(View.GONE);
         }
+    }
+
+    private void getIndexMore()
+    {
+        if(     currentCategory == null
+            ||  !currentCategory.equals("index")    )
+            return;
+        indexPageCount += indexLoadPageCount;
+        indexUpdater.startUpdateThread(indexPageCount, true);
     }
 }
