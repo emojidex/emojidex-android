@@ -50,6 +50,8 @@ public class Emojidex {
         }
 
         this.context = context.getApplicationContext();
+        PathUtils.initialize(this.context);
+        new CacheAnalyzer().analyze();
         manager = new EmojiManager(this.context);
         manager.add(PathUtils.getLocalJsonPath());
         defaultFormat = EmojiFormat.toFormat(this.context.getResources().getString(R.string.emoji_format_default));

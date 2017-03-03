@@ -1,5 +1,6 @@
 package com.emojidex.emojidexandroid;
 
+import android.content.Context;
 import android.os.Environment;
 
 import java.io.UnsupportedEncodingException;
@@ -11,9 +12,28 @@ import java.util.Locale;
  */
 class PathUtils {
     static final String REMOTE_ROOT_PATH_DEFAULT = "https://cdn.emojidex.com";
-    static final String LOCAL_ROOT_PATH = Environment.getExternalStorageDirectory().getPath() + "/.emojidex";
     static final String API_ROOT_PATH = "https://www.emojidex.com/api/v1";
     static final String JSON_FILENAME = "emoji.json";
+
+    static String LOCAL_ROOT_PATH = "";
+
+    /**
+     * Initialize path utilities.
+     * @param context   Context.
+     */
+    public static void initialize(Context context)
+    {
+        setLocalRootPath(context.getFilesDir().getAbsolutePath() + "/emojidex_caches");
+    }
+
+    /**
+     * Set local root path.
+     * @param path  Local root path.
+     */
+    public static void setLocalRootPath(String path)
+    {
+        LOCAL_ROOT_PATH = path;
+    }
 
     /**
      * Create emoji path from local storage.
