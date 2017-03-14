@@ -96,6 +96,12 @@
         <activity android:name="com.google.android.gms.ads.AdActivity"
                   android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"/>
 
+        <provider
+            android:name="com.emojidex.emojidexandroid.EmojidexProvider"
+            android:authorities="com.emojidex.emojidexandroid.provider"
+            android:enabled="true"
+            android:exported="true"/>
+
     </application>
 
 </manifest>
