@@ -18,8 +18,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
-import javax.net.ssl.HttpsURLConnection;
-
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -30,6 +28,8 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
+
+import javax.net.ssl.HttpsURLConnection;
 
 
 /**
