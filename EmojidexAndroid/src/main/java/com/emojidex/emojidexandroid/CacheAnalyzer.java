@@ -34,7 +34,7 @@ class CacheAnalyzer
             {
                 if(newFile.exists())
                 {
-                    PathUtils.deleteFiles(oldFile);
+                    EmojidexFileUtils.deleteFiles(oldFile);
                 }
                 else
                 {

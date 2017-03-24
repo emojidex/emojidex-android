@@ -19,7 +19,7 @@ public class DownloadConfig
     {
         this.formats = new LinkedHashSet<EmojiFormat>();
         setFormats(formats);
-        sourceRootPath = PathUtils.getRemoteRootPathDefault() + "/emoji";
+        sourceRootPath = EmojidexFileUtils.getRemoteRootPathDefault() + "/emoji";
         forceFlag = false;
     }
 
@@ -65,7 +65,7 @@ public class DownloadConfig
 
     /**
      * Set source root path.
-     * Default value is PathUtils.getRemoteRootPathDefault() + "/emoji".
+     * Default value is EmojidexFileUtils.getRemoteRootPathDefault() + "/emoji".
      * @param sourceRootPath    Source root path.
      */
     public void setSourceRootPath(String sourceRootPath)

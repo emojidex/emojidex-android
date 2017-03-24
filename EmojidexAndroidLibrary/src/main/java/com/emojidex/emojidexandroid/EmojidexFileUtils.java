@@ -20,7 +20,8 @@ import java.util.Locale;
 /**
  * Created by kou on 14/10/03.
  */
-class PathUtils {
+class EmojidexFileUtils
+{
     private static final String CACHE_DIR = "emojidex_caches";
     private static final String REMOTE_ROOT_PATH_DEFAULT = "https://cdn.emojidex.com";
     private static final String API_ROOT_PATH = "https://www.emojidex.com/api/v1";
@@ -37,9 +38,9 @@ class PathUtils {
      */
     public static void initialize(Context context)
     {
-        PathUtils.context = context;
-        localRoot = PathUtils.context.getFilesDir().toString();
-        hasContentProvider = EmojidexProvider.existsProvider(PathUtils.context);
+        EmojidexFileUtils.context = context;
+        localRoot = EmojidexFileUtils.context.getFilesDir().toString();
+        hasContentProvider = EmojidexProvider.existsProvider(EmojidexFileUtils.context);
     }
 
     /**

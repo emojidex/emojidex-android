@@ -198,11 +198,11 @@ class ImageLoader
     private ImageParam loadImageParam(String name, EmojiFormat format, boolean registToCache)
     {
         // Copy temporary file.
-        final Uri uri = PathUtils.getLocalEmojiUri(name, format);
-        final File tmpFile = new File(PathUtils.getTemporaryPath() + format.getExtension());
+        final Uri uri = EmojidexFileUtils.getLocalEmojiUri(name, format);
+        final File tmpFile = new File(EmojidexFileUtils.getTemporaryPath() + format.getExtension());
         final Uri tmpUri = Uri.fromFile(tmpFile);
 
-        PathUtils.copyFile(uri, tmpUri);
+        EmojidexFileUtils.copyFile(uri, tmpUri);
 
         // Load image parameter from temporary file.
         final String key = createCacheKey(name, format);
@@ -223,7 +223,7 @@ class ImageLoader
             param.isSkipFirst = apngasm.isSkipFirst();
 
             // Create temporar image files.
-            final String tmpDir = PathUtils.getTemporaryPath() + "/";
+            final String tmpDir = EmojidexFileUtils.getTemporaryPath() + "/";
             final File file = new File(tmpDir);
             file.mkdirs();
             apngasm.savePNGs(tmpDir);
@@ -242,7 +242,7 @@ class ImageLoader
                 param.frames[i] = frame;
             }
 
-            PathUtils.deleteFiles(file);
+            EmojidexFileUtils.deleteFiles(file);
         }
         else
         {
@@ -257,7 +257,7 @@ class ImageLoader
             imageParams.put(key, param);
 
         // Delete temporary file.
-        PathUtils.deleteFiles(tmpFile);
+        EmojidexFileUtils.deleteFiles(tmpFile);
 
         return param;
     }
@@ -295,7 +295,7 @@ class ImageLoader
         {
             try
             {
-                final InputStream is = res.getAssets().open(PathUtils.getAssetsEmojiPath("not_found", format));
+                final InputStream is = res.getAssets().open(EmojidexFileUtils.getAssetsEmojiPath("not_found", format));
                 result = BitmapFactory.decodeStream(is);
                 is.close();
             }

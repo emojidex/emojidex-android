@@ -135,7 +135,7 @@ public class EmojidexProvider extends ContentProvider
     public int delete(Uri uri, String selection, String[] selectionArgs)
     {
         final File file = uriToFile(uri);
-        return PathUtils.deleteFiles(file) ? 1 : 0;
+        return EmojidexFileUtils.deleteFiles(file) ? 1 : 0;
     }
 
     @Override
@@ -182,7 +182,7 @@ public class EmojidexProvider extends ContentProvider
                     break;
                 case OpenableColumns.SIZE:
                     cols[i] = col;
-                    values[i] = PathUtils.getFileSize(file);
+                    values[i] = EmojidexFileUtils.getFileSize(file);
                     break;
                 default:
             }

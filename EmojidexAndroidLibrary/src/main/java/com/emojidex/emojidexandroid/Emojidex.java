@@ -1,15 +1,10 @@
 package com.emojidex.emojidexandroid;
 
-import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.PermissionChecker;
 import android.util.Log;
 
 import com.emojidex.emojidexandroidlibrary.R;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.List;
 
@@ -50,9 +45,9 @@ public class Emojidex {
         }
 
         this.context = context.getApplicationContext();
-        PathUtils.initialize(this.context);
+        EmojidexFileUtils.initialize(this.context);
         manager = new EmojiManager(this.context);
-        manager.add(PathUtils.getLocalJsonUri());
+        manager.add(EmojidexFileUtils.getLocalJsonUri());
         defaultFormat = EmojiFormat.toFormat(this.context.getResources().getString(R.string.emoji_format_default));
 
         Log.d(TAG, "Initialize complete.");
@@ -117,7 +112,7 @@ public class Emojidex {
             throw new EmojidexIsNotInitializedException();
 
         manager.reset();
-        manager.add(PathUtils.getLocalJsonUri());
+        manager.add(EmojidexFileUtils.getLocalJsonUri());
     }
 
     /**
@@ -126,7 +121,7 @@ public class Emojidex {
      */
     public boolean deleteLocalCache()
     {
-        boolean result = PathUtils.deleteFiles(PathUtils.getLocalRootUri());
+        boolean result = EmojidexFileUtils.deleteFiles(EmojidexFileUtils.getLocalRootUri());
         Log.d(TAG, "Delete all cache files in local storage.");
         return result;
     }

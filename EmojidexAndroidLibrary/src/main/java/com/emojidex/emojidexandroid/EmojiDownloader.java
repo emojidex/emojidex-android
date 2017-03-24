@@ -1,10 +1,8 @@
 package com.emojidex.emojidexandroid;
 
 import android.content.Context;
-import android.graphics.Path;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
 import com.emojidex.libemojidex.EmojiVector;
@@ -19,11 +17,9 @@ import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import javax.net.ssl.HttpsURLConnection;
 
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -109,7 +105,7 @@ public class EmojiDownloader
         // Read local json.
         final ArrayList<JsonParam> jsonParams = JsonParam.readFromFile(
                 context,
-                PathUtils.getLocalJsonUri()
+                EmojidexFileUtils.getLocalJsonUri()
         );
 
         for(JsonParam param : jsonParams)
@@ -255,7 +251,7 @@ public class EmojiDownloader
         // Update local json file.
         JsonParam.writeToFile(
                 context,
-                PathUtils.getLocalJsonUri(),
+                EmojidexFileUtils.getLocalJsonUri(),
                 localJsonParams.values()
         );
 
@@ -339,8 +335,8 @@ public class EmojiDownloader
                 continue;
 
             // Delete old file.
-            final Uri uri = PathUtils.getLocalEmojiUri(emojiName, format);
-            PathUtils.deleteFiles(uri);
+            final Uri uri = EmojidexFileUtils.getLocalEmojiUri(emojiName, format);
+            EmojidexFileUtils.deleteFiles(uri);
 
             // Add download task.
             if(executor == null)
@@ -352,7 +348,7 @@ public class EmojiDownloader
             }
             executor.add(
                     uri,
-                    PathUtils.getRemoteEmojiPath(emojiName, format, config.getSourceRootPath())
+                    EmojidexFileUtils.getRemoteEmojiPath(emojiName, format, config.getSourceRootPath())
             );
         }
 
@@ -411,7 +407,7 @@ public class EmojiDownloader
      */
     private boolean isAlreadyDownloaded(JsonParam local, Emoji remote, EmojiFormat format)
     {
-        boolean existsFile = PathUtils.existsLocalEmojiFile(local.name, format);
+        boolean existsFile = EmojidexFileUtils.existsLocalEmojiFile(local.name, format);
 
         // Check checksums.
         // If emoji format is svg.

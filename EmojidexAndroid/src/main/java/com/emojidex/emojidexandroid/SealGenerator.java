@@ -2,13 +2,11 @@ package com.emojidex.emojidexandroid;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.net.Uri;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -80,12 +78,12 @@ public class SealGenerator {
      */
     private void createTemporaryFile(Emoji emoji)
     {
-        final File temporaryFile = new File(PathUtils.getTemporaryPath() + ".png");
+        final File temporaryFile = new File(EmojidexFileUtils.getTemporaryPath() + ".png");
         useLow = false;
 
         // If file not found, use default format.
         EmojiFormat format = EmojiFormat.toFormat(context.getString(R.string.emoji_format_seal));
-        if( !PathUtils.existsLocalEmojiFile(emoji.getName(), format) )
+        if( !EmojidexFileUtils.existsLocalEmojiFile(emoji.getName(), format) )
         {
             format = EmojiFormat.toFormat(context.getString(R.string.emoji_format_default));
             useLow = true;

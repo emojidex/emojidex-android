@@ -79,7 +79,7 @@ class EmojidexUpdater {
         // Check change device language.
         final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
         final String lastLanguage = pref.getString(context.getString(R.string.preference_key_last_language), "en");
-        final String currentLanguage = PathUtils.getLocaleString();
+        final String currentLanguage = EmojidexFileUtils.getLocaleString();
         final boolean result = !lastLanguage.equals(currentLanguage);
 
         // Overwrite language pref.

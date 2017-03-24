@@ -61,7 +61,7 @@ public class TutorialActivity extends Activity {
         prevButton.setVisibility(View.INVISIBLE);
 
         // Get locale.
-        localeString = "tutorial_" + PathUtils.getLocaleString() + "_";
+        localeString = "tutorial_" + EmojidexFileUtils.getLocaleString() + "_";
 
         // Create view flipper.
         viewFlipper = (ViewFlipper)findViewById(R.id.tutorial_view_flipper);
