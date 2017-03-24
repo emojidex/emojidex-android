@@ -1,6 +1,10 @@
 package com.emojidex.emojidexandroid;
 
+import android.content.Context;
+import android.graphics.Path;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
 import com.emojidex.libemojidex.EmojiVector;
@@ -19,6 +23,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import javax.net.ssl.HttpsURLConnection;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -50,41 +56,49 @@ public class EmojiDownloader
     private int nextThreadIndex = 0;
     private int downloadEmojiCount = 0;
 
+    private Context context = null;
+
     /**
      * Construct EmojiDownloader object.
+     * @param context   Context.
      */
-    public EmojiDownloader()
+    public EmojiDownloader(Context context)
     {
-        this(null, null, 0);
+        this(context, null, null, 0);
     }
 
     /**
      * Construct EmojiDownloader object.
+     * @param context       Context
      * @param username      User name.
      * @param authtoken     Auth token.
      */
-    public EmojiDownloader(String username, String authtoken)
+    public EmojiDownloader(Context context, String username, String authtoken)
     {
-        this(username, authtoken, 0);
+        this(context, username, authtoken, 0);
     }
 
     /**
      * Construct EmojiDownloader object.
+     * @param context       Context
      * @param threadCount   Download thread count.
      */
-    public EmojiDownloader(int threadCount)
+    public EmojiDownloader(Context context, int threadCount)
     {
-        this(null, null, threadCount);
+        this(context, null, null, threadCount);
     }
 
     /**
      * Construct EmojiDownloader object.
+     * @param context       Context
      * @param username      User name.
      * @param authtoken     Auth token.
      * @param threadCount   Download thread count.
      */
-    public EmojiDownloader(String username, String authtoken, int threadCount)
+    public EmojiDownloader(Context context, String username, String authtoken, int threadCount)
     {
+        this.context = context;
+
         // Initialize download thread count.
         if(threadCount <= 0)
             threadCount = ((ThreadPoolExecutor)AsyncTask.THREAD_POOL_EXECUTOR).getCorePoolSize();
@@ -93,8 +107,10 @@ public class EmojiDownloader
             emojiDownloadTasks[i] = new EmojiDownloadTask();
 
         // Read local json.
-        final File file = new File(PathUtils.getLocalJsonPath());
-        final ArrayList<JsonParam> jsonParams = JsonParam.readFromFile(file);
+        final ArrayList<JsonParam> jsonParams = JsonParam.readFromFile(
+                context,
+                PathUtils.getLocalJsonUri()
+        );
 
         for(JsonParam param : jsonParams)
             localJsonParams.put(param.name, param);
@@ -238,7 +254,8 @@ public class EmojiDownloader
     {
         // Update local json file.
         JsonParam.writeToFile(
-                new File(PathUtils.getLocalJsonPath()),
+                context,
+                PathUtils.getLocalJsonUri(),
                 localJsonParams.values()
         );
 
@@ -322,8 +339,8 @@ public class EmojiDownloader
                 continue;
 
             // Delete old file.
-            final File file = new File(PathUtils.getLocalEmojiPath(emojiName, format));
-            file.delete();
+            final Uri uri = PathUtils.getLocalEmojiUri(emojiName, format);
+            PathUtils.deleteFiles(uri);
 
             // Add download task.
             if(executor == null)
@@ -334,7 +351,7 @@ public class EmojiDownloader
                 nextThreadIndex = (nextThreadIndex + 1) % emojiDownloadTasks.length;
             }
             executor.add(
-                    PathUtils.getLocalEmojiPath(emojiName, format),
+                    uri,
                     PathUtils.getRemoteEmojiPath(emojiName, format, config.getSourceRootPath())
             );
         }
@@ -394,7 +411,7 @@ public class EmojiDownloader
      */
     private boolean isAlreadyDownloaded(JsonParam local, Emoji remote, EmojiFormat format)
     {
-        final File file = new File(PathUtils.getLocalEmojiPath(local.name, format));
+        boolean existsFile = PathUtils.existsLocalEmojiFile(local.name, format);
 
         // Check checksums.
         // If emoji format is svg.
@@ -404,7 +421,7 @@ public class EmojiDownloader
             final String remoteChecksum = remote.getChecksums().sum("svg", null);
 
             // Check.
-            if(     file.exists()
+            if(     existsFile
                 &&  (   remoteChecksum == null
                 ||  remoteChecksum.equals(localChecksum)   ))
                 return true;
@@ -420,7 +437,7 @@ public class EmojiDownloader
             final String remoteChecksum = remote.getChecksums().sum("png", resolution);
 
             // Check.
-            if(     file.exists()
+            if(     existsFile
                 &&  (   remoteChecksum == null
                 ||  remoteChecksum.equals(localChecksum)   ))
                 return true;
@@ -709,7 +726,7 @@ public class EmojiDownloader
                 this.emojiName = emojiName;
             }
 
-            public void add(String dest, String src)
+            public void add(Uri dest, String src)
             {
                 final DownloadInfo info = new DownloadInfo();
                 info.dest = dest;
@@ -736,13 +753,19 @@ public class EmojiDownloader
 
                         if(connection.getResponseCode() == HttpURLConnection.HTTP_OK)
                         {
-                            final File destFile = new File(info.dest);
-                            final File destParentDir = destFile.getParentFile();
-                            if( !destParentDir.exists() )
-                                destParentDir.mkdirs();
+                            // Create directory if destination uri is file and not found directory.
+                            if(info.dest.getScheme().equals("file"))
+                            {
+                                final File parentDir = new File(info.dest.getPath()).getParentFile();
+                                if( !parentDir.exists() )
+                                    parentDir.mkdirs();
+                            }
+
+                            // Download file.
+                            final OutputStream os = context.getContentResolver().openOutputStream(info.dest);
 
                             final DataInputStream dis = new DataInputStream(connection.getInputStream());
-                            final DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(destFile)));
+                            final DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(os));
 
                             int readByte;
                             while( (readByte = dis.read(buffer)) != -1 )
@@ -778,7 +801,7 @@ public class EmojiDownloader
             private class DownloadInfo
             {
                 public String src;
-                public String dest;
+                public Uri dest;
             }
         }
     }

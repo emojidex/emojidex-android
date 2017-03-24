@@ -80,24 +80,23 @@ public class SealGenerator {
      */
     private void createTemporaryFile(Emoji emoji)
     {
-        final File temporaryFile = new File(context.getExternalCacheDir(), "tmp" + System.currentTimeMillis() + ".png");
+        final File temporaryFile = new File(PathUtils.getTemporaryPath() + ".png");
         useLow = false;
 
         // If file not found, use default format.
-        File file = new File(PathUtils.getLocalEmojiPath(emoji.getName(), EmojiFormat.toFormat(context.getString(R.string.emoji_format_seal))));
-        if( !file.exists() )
+        EmojiFormat format = EmojiFormat.toFormat(context.getString(R.string.emoji_format_seal));
+        if( !PathUtils.existsLocalEmojiFile(emoji.getName(), format) )
         {
-            file = new File(PathUtils.getLocalEmojiPath(emoji.getName(), EmojiFormat.toFormat(context.getString(R.string.emoji_format_default))));
+            format = EmojiFormat.toFormat(context.getString(R.string.emoji_format_default));
             useLow = true;
         }
+
+        final Bitmap[] bitmaps = emoji.getBitmaps(format);
 
         // Create temporary file.
         try
         {
-            // Load bitmap.
-            final FileInputStream is = new FileInputStream(file);
-            final Bitmap bitmap = BitmapFactory.decodeStream(is);
-            is.close();
+            final Bitmap bitmap = bitmaps[0];
 
             // Change background color to white.
             final Bitmap newBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());

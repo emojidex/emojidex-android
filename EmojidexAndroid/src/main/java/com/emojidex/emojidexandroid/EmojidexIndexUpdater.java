@@ -44,8 +44,8 @@ public class EmojidexIndexUpdater
 
         final UserData userdata = UserData.getInstance();
         downloader = userdata.isLogined() ?
-                new EmojiDownloader(userdata.getUsername(), userdata.getAuthToken()) :
-                new EmojiDownloader();
+                new EmojiDownloader(context, userdata.getUsername(), userdata.getAuthToken()) :
+                new EmojiDownloader(context);
         final DownloadConfig config = new DownloadConfig(
                 EmojiFormat.toFormat(context.getString(R.string.emoji_format_default)),
                 EmojiFormat.toFormat(context.getString(R.string.emoji_format_key))

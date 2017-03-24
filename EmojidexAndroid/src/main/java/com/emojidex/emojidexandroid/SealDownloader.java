@@ -34,8 +34,8 @@ public class SealDownloader {
         // Download seal.
         final UserData userdata = UserData.getInstance();
         final EmojiDownloader downloader = userdata.isLogined() ?
-                new EmojiDownloader(userdata.getUsername(), userdata.getAuthToken()) :
-                new EmojiDownloader();
+                new EmojiDownloader(parentActivity, userdata.getUsername(), userdata.getAuthToken()) :
+                new EmojiDownloader(parentActivity);
         final DownloadConfig config = new DownloadConfig(EmojiFormat.toFormat(parentActivity.getString(R.string.emoji_format_seal)));
         downloader.setListener(new CustomDownloadListener());
         downloader.downloadEmoji(name, config);

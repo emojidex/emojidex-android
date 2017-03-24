@@ -153,6 +153,25 @@ public class Emoji extends SimpleJsonParam {
     }
 
     /**
+     * Get bitmaps of format.
+     * @param format    Emoji format.
+     * @return          Bitmap array.
+     */
+    public Bitmap[] getBitmaps(EmojiFormat format)
+    {
+        // Load image.
+        final ImageLoader.ImageParam imageParam = ImageLoader.getInstance().load(name, format);
+
+        // Create bitmap array and copy bitmaps.
+        final Bitmap[] result = new Bitmap[imageParam.frames.length];
+
+        for(int i = 0;  i < imageParam.frames.length;  ++i)
+            result[i] = imageParam.frames[i].bitmap;
+
+        return result;
+    }
+
+    /**
      * Check emoji has original codes.
      * @return
      */

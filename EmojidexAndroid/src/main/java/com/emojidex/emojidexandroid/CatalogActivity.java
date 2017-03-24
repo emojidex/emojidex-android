@@ -97,6 +97,8 @@ public class CatalogActivity extends Activity
 
     private void initData()
     {
+        new CacheAnalyzer().analyze(this);
+
         emojidex = Emojidex.getInstance();
         emojidex.initialize(this);
 

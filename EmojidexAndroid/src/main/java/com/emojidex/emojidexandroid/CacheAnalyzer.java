@@ -1,5 +1,6 @@
 package com.emojidex.emojidexandroid;
 
+import android.content.Context;
 import android.os.Environment;
 
 import java.io.File;
@@ -19,12 +20,13 @@ class CacheAnalyzer
 
     /**
      * Analyze caches.
+     * @param context   Context.
      */
-    public void analyze()
+    public void analyze(Context context)
     {
         // If have old directory,
         // move cache directory and remove old directories.
-        final File newFile = new File(PathUtils.LOCAL_ROOT_PATH);
+        final File newFile = new File(context.getFilesDir(), "emojidex_caches");
         for(final String oldPath : OLD_CACHE_PATHS)
         {
             final File oldFile = new File(oldPath);
@@ -32,7 +34,7 @@ class CacheAnalyzer
             {
                 if(newFile.exists())
                 {
-                    deleteFile(oldFile);
+                    PathUtils.deleteFiles(oldFile);
                 }
                 else
                 {
@@ -40,27 +42,6 @@ class CacheAnalyzer
                 }
             }
         }
-    }
-
-    /**
-     * Delete file.
-     * @param file  File.
-     * @return      true if file delete succeeded.
-     */
-    private boolean deleteFile(File file)
-    {
-        // File is not found.
-        if(file == null || !file.exists())
-            return false;
-
-        // If file is directory, delete child files.
-        boolean result = true;
-        if(file.isDirectory())
-            for(File child : file.listFiles())
-                result = deleteFile(child) && result;
-
-        // Delete file.
-        return file.delete() && result;
     }
 
     /**

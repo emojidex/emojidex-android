@@ -1,21 +1,35 @@
 package com.emojidex.emojidexandroid;
 
+import android.content.ContentResolver;
 import android.content.Context;
-import android.os.Environment;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.ParcelFileDescriptor;
+import android.provider.OpenableColumns;
 
+import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.channels.FileChannel;
 import java.util.Locale;
 
 /**
  * Created by kou on 14/10/03.
  */
 class PathUtils {
-    static final String REMOTE_ROOT_PATH_DEFAULT = "https://cdn.emojidex.com";
-    static final String API_ROOT_PATH = "https://www.emojidex.com/api/v1";
-    static final String JSON_FILENAME = "emoji.json";
+    private static final String CACHE_DIR = "emojidex_caches";
+    private static final String REMOTE_ROOT_PATH_DEFAULT = "https://cdn.emojidex.com";
+    private static final String API_ROOT_PATH = "https://www.emojidex.com/api/v1";
+    private static final String JSON_FILENAME = "emoji.json";
 
-    static String LOCAL_ROOT_PATH = "";
+    private static Context context = null;
+    private static boolean hasContentProvider = false;
+    private static String localRoot = "";
+
 
     /**
      * Initialize path utilities.
@@ -23,39 +37,50 @@ class PathUtils {
      */
     public static void initialize(Context context)
     {
-        setLocalRootPath(context.getFilesDir().getAbsolutePath() + "/emojidex_caches");
+        PathUtils.context = context;
+        localRoot = PathUtils.context.getFilesDir().toString();
+        hasContentProvider = EmojidexProvider.existsProvider(PathUtils.context);
     }
 
     /**
-     * Set local root path.
-     * @param path  Local root path.
+     * Create root uri from local storage.
+     * @return  Root uri.
      */
-    public static void setLocalRootPath(String path)
+    public static Uri getLocalRootUri()
     {
-        LOCAL_ROOT_PATH = path;
+        return getLocalUri(CACHE_DIR);
     }
 
     /**
-     * Create emoji path from local storage.
+     * Create emoji uri from local storage.
      * @param name      Emoji name.
      * @param format    Emoji format.
-     * @return          Emoji path.
+     * @return          Emoji uri.
      */
-    public static String getLocalEmojiPath(String name, EmojiFormat format)
+    public static Uri getLocalEmojiUri(String name, EmojiFormat format)
     {
-        return LOCAL_ROOT_PATH + "/"
-                + format.getRelativeDir() + "/"
-                + name + format.getExtension()
-                ;
+        return getLocalUri(CACHE_DIR + "/" + format.getRelativeDir() + "/" + name + format.getExtension());
     }
 
     /**
-     * Create json path from local storage.
-     * @return  Json path.
+     * Create json uri from local storage.
+     * @return  Json uri.
      */
-    public static String getLocalJsonPath()
+    public static Uri getLocalJsonUri()
     {
-        return LOCAL_ROOT_PATH + "/" + JSON_FILENAME;
+        return getLocalUri(CACHE_DIR + "/" + JSON_FILENAME);
+    }
+
+    /**
+     * Create uri from local storage.
+     * @param encodedPath   Encoded path.
+     * @return              Uri.
+     */
+    private static Uri getLocalUri(String encodedPath)
+    {
+        return hasContentProvider ?
+                EmojidexProvider.getUri(encodedPath) :
+                Uri.parse("file:" + localRoot + "/" + encodedPath);
     }
 
     /**
@@ -127,6 +152,15 @@ class PathUtils {
     }
 
     /**
+     * Generate temporary path.
+     * @return      Temporary path.
+     */
+    public static String getTemporaryPath()
+    {
+        return context.getExternalCacheDir().getPath() + "/tmp" + System.currentTimeMillis();
+    }
+
+    /**
      * Get locale string.
      * @return      en or ja.
      */
@@ -141,5 +175,137 @@ class PathUtils {
         {
             return "en";
         }
+    }
+
+    /**
+     * Find emoji image file from local storage.
+     * @param name      Emoji name.
+     * @param format    Emoji format.
+     * @return          true if exists file.
+     */
+    public static boolean existsLocalEmojiFile(String name, EmojiFormat format)
+    {
+        boolean result = false;
+
+        try
+        {
+            final Uri uri = getLocalEmojiUri(name, format);
+            ParcelFileDescriptor pfd = context.getContentResolver().openFileDescriptor(uri, "r");
+            pfd.close();
+            result = true;
+        }
+        catch(IOException e)
+        {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+    /**
+     * Delete files.
+     * @param uri       File uri.
+     * @return      true if delete succeeded.
+     */
+    public static boolean deleteFiles(Uri uri)
+    {
+        if(uri.getScheme().equals("file"))
+            return deleteFiles(new File(uri.getPath()));
+
+        // Use content provider if uri is not file.
+        return context.getContentResolver().delete(uri, null, null) != 0;
+    }
+
+    /**
+     * Delete files.
+     * @param file  File.
+     * @return      true if delete succeeded.
+     */
+    public static boolean deleteFiles(File file)
+    {
+        // File is not found.
+        if(file == null || !file.exists())
+            return false;
+
+        // If file is directory, delete child files.
+        boolean result = true;
+        if(file.isDirectory())
+            for(File child : file.listFiles())
+                result = deleteFiles(child) && result;
+
+        // Delete file.
+        return file.delete() && result;
+    }
+
+    /**
+     * Get file size.
+     * @param uri   File uri.
+     * @return      File size.
+     */
+    public static long getFileSize(Uri uri)
+    {
+        if(uri.getScheme().equals("file"))
+            return getFileSize(new File(uri.getPath()));
+
+        // Use content provider if uri is not file.
+        final Cursor cursor = context.getContentResolver().query(
+                uri,
+                new String[]{ OpenableColumns.SIZE },
+                null, null, null
+        );
+        if(cursor.moveToNext())
+            return cursor.getLong(0);
+
+        return 0;
+    }
+
+    /**
+     * Get file size.
+     * @param file      File.
+     * @return          File size.
+     */
+    public static long getFileSize(File file)
+    {
+        if( !file.isDirectory() )
+            return file.length();
+
+        long size = 0;
+        for(File child : file.listFiles())
+            size += getFileSize(child);
+
+        return size;
+    }
+
+    /**
+     * Copy file.
+     * @param src       Source file uri.
+     * @param dest      Destination file uri.
+     * @return          true if copy succeeded.
+     */
+    public static boolean copyFile(Uri src, Uri dest)
+    {
+        boolean result = false;
+
+        try
+        {
+            final ContentResolver cr = context.getContentResolver();
+            final FileDescriptor inFD = cr.openFileDescriptor(src, "r").getFileDescriptor();
+            final FileDescriptor outFD = cr.openFileDescriptor(dest, "w").getFileDescriptor();
+            final FileChannel inChannel = new FileInputStream(inFD).getChannel();
+            final FileChannel outChannel = new FileOutputStream(outFD).getChannel();
+
+            inChannel.transferTo(0, inChannel.size(), outChannel);
+
+            inChannel.close();
+            outChannel.close();
+
+            result = true;
+        }
+        catch(IOException e)
+        {
+            e.printStackTrace();
+        }
+
+        return result;
     }
 }

@@ -10,9 +10,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.ParcelFileDescriptor;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.text.Editable;
@@ -144,6 +147,8 @@ public class MainActivity extends Activity {
 
     private void initEmojidexEditor()
     {
+        new CacheAnalyzer().analyze(this);
+
         // Initialize emojdiex.
         emojidex = Emojidex.getInstance();
         emojidex.initialize(this);

@@ -6,12 +6,14 @@ import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.provider.OpenableColumns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -387,19 +389,7 @@ public class SettingsActivity extends PreferenceActivity {
         private void updateClearCacheSummary()
         {
             final Preference clearCache = findPreference(getString(R.string.preference_key_clear_cache));
-            clearCache.setSummary(sizeToString(getFileSize(new File(PathUtils.LOCAL_ROOT_PATH))));
-        }
-
-        private long getFileSize(File file)
-        {
-            if( !file.isDirectory() )
-                return file.length();
-
-            long size = 0;
-            for(File child : file.listFiles())
-                size += getFileSize(child);
-
-            return size;
+            clearCache.setSummary(sizeToString(PathUtils.getFileSize(PathUtils.getLocalRootUri())));
         }
 
         private String sizeToString(long size)

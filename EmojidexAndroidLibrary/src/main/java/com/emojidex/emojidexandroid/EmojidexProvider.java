@@ -1,10 +1,14 @@
 package com.emojidex.emojidexandroid;
 
 import android.content.ContentProvider;
+import android.content.ContentProviderClient;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
+import android.provider.OpenableColumns;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -14,31 +18,16 @@ import java.io.IOException;
 
 public class EmojidexProvider extends ContentProvider
 {
-    private static String AUTHORITIES = "com.emojidex.emojidexandroid.provider";
-    private static String CACHE_DIR = "emojidex_caches";
+    private static final String[] COLUMNS =
+    {
+            OpenableColumns.DISPLAY_NAME,
+            OpenableColumns.SIZE
+    };
+
+    private static final String AUTHORITIES = "com.emojidex.emojidexandroid.provider";
 
     public EmojidexProvider()
     {
-    }
-
-    /**
-     * Get json file uri.
-     * @return  Json file uri.
-     */
-    public static Uri getJsonUri()
-    {
-        return getUri(CACHE_DIR + "/emoji.json");
-    }
-
-    /**
-     * Get emoji uri.
-     * @param emojiName     Emoji name.
-     * @param format        Emoji format.
-     * @return              Emoji uri.
-     */
-    public static Uri getEmojiUri(String emojiName, EmojiFormat format)
-    {
-        return getUri(CACHE_DIR + "/" + format.getRelativeDir() + "/" + emojiName + format.getExtension());
     }
 
     /**
@@ -46,7 +35,7 @@ public class EmojidexProvider extends ContentProvider
      * @param encodedPath   Encoded path.
      * @return              Uri.
      */
-    private static Uri getUri(String encodedPath)
+    public static Uri getUri(String encodedPath)
     {
         return new Uri.Builder()
                 .scheme("content")
@@ -109,6 +98,22 @@ public class EmojidexProvider extends ContentProvider
         }
     }
 
+    /**
+     * Find emojidex provider.
+     * @param context   Context.
+     * @return          true if find provider.
+     */
+    public static boolean existsProvider(Context context)
+    {
+        ContentProviderClient cpc = context.getContentResolver().acquireUnstableContentProviderClient(AUTHORITIES);
+        if(cpc != null)
+        {
+            cpc.release();
+            return true;
+        }
+        return false;
+    }
+
     @Nullable
     @Override
     public ParcelFileDescriptor openFile(@NonNull Uri uri, @NonNull String mode) throws FileNotFoundException
@@ -116,9 +121,12 @@ public class EmojidexProvider extends ContentProvider
         final File file = uriToFile(uri);
         final int modeBits = toModeBits(mode);
 
-        final File parentDir = file.getParentFile();
-        if(parentDir != null && !parentDir.exists())
-            parentDir.mkdirs();
+        if((modeBits & ParcelFileDescriptor.MODE_CREATE) != 0)
+        {
+            final File parentDir = file.getParentFile();
+            if(parentDir != null && !parentDir.exists())
+                parentDir.mkdirs();
+        }
 
         return ParcelFileDescriptor.open(file, modeBits);
     }
@@ -126,8 +134,8 @@ public class EmojidexProvider extends ContentProvider
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs)
     {
-        // Implement this to handle requests to delete one or more rows.
-        throw new UnsupportedOperationException("Not yet implemented");
+        final File file = uriToFile(uri);
+        return PathUtils.deleteFiles(file) ? 1 : 0;
     }
 
     @Override
@@ -156,8 +164,33 @@ public class EmojidexProvider extends ContentProvider
     public Cursor query(Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder)
     {
-        // TODO: Implement this to handle query requests from clients.
-        throw new UnsupportedOperationException("Not yet implemented");
+        final File file = uriToFile(uri);
+
+        if(projection == null)
+            projection = COLUMNS;
+
+        final String[] cols = new String[projection.length];
+        final Object[] values = new Object[projection.length];
+        for(int i = 0;  i < projection.length;  ++i)
+        {
+            final String col = projection[i];
+            switch(col)
+            {
+                case OpenableColumns.DISPLAY_NAME:
+                    cols[i] = col;
+                    values[i] = file.getName();
+                    break;
+                case OpenableColumns.SIZE:
+                    cols[i] = col;
+                    values[i] = PathUtils.getFileSize(file);
+                    break;
+                default:
+            }
+        }
+
+        final MatrixCursor cursor = new MatrixCursor(cols, 1);
+        cursor.addRow(values);
+        return cursor;
     }
 
     @Override

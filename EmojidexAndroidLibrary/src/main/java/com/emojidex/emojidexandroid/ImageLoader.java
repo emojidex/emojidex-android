@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.util.LruCache;
 
 import java.io.File;
@@ -196,8 +197,16 @@ class ImageLoader
      */
     private ImageParam loadImageParam(String name, EmojiFormat format, boolean registToCache)
     {
+        // Copy temporary file.
+        final Uri uri = PathUtils.getLocalEmojiUri(name, format);
+        final File tmpFile = new File(PathUtils.getTemporaryPath() + format.getExtension());
+        final Uri tmpUri = Uri.fromFile(tmpFile);
+
+        PathUtils.copyFile(uri, tmpUri);
+
+        // Load image parameter from temporary file.
         final String key = createCacheKey(name, format);
-        final String path = PathUtils.getLocalEmojiPath(name, format);
+        final String path = tmpUri.getPath();
 
         final APNGAsm apngasm = new APNGAsm();
         apngasm.disassemble(path);
@@ -214,7 +223,7 @@ class ImageLoader
             param.isSkipFirst = apngasm.isSkipFirst();
 
             // Create temporar image files.
-            final String tmpDir = context.getExternalCacheDir() + "/tmp" + System.currentTimeMillis() + "/";
+            final String tmpDir = PathUtils.getTemporaryPath() + "/";
             final File file = new File(tmpDir);
             file.mkdirs();
             apngasm.savePNGs(tmpDir);
@@ -233,7 +242,7 @@ class ImageLoader
                 param.frames[i] = frame;
             }
 
-            deleteFiles(file);
+            PathUtils.deleteFiles(file);
         }
         else
         {
@@ -246,6 +255,9 @@ class ImageLoader
 
         if(registToCache)
             imageParams.put(key, param);
+
+        // Delete temporary file.
+        PathUtils.deleteFiles(tmpFile);
 
         return param;
     }
@@ -302,22 +314,6 @@ class ImageLoader
         }
 
         return result;
-    }
-
-    /**
-     * Recursive delete.
-     * @param file
-     */
-    private void deleteFiles(File file)
-    {
-        if(!file.exists())
-            return;
-
-        if(file.isDirectory())
-            for(File child : file.listFiles())
-                deleteFiles(child);
-
-        file.delete();
     }
 
     /**

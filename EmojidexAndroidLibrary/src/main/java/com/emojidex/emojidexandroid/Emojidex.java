@@ -51,9 +51,8 @@ public class Emojidex {
 
         this.context = context.getApplicationContext();
         PathUtils.initialize(this.context);
-        new CacheAnalyzer().analyze();
         manager = new EmojiManager(this.context);
-        manager.add(PathUtils.getLocalJsonPath());
+        manager.add(PathUtils.getLocalJsonUri());
         defaultFormat = EmojiFormat.toFormat(this.context.getResources().getString(R.string.emoji_format_default));
 
         Log.d(TAG, "Initialize complete.");
@@ -97,7 +96,7 @@ public class Emojidex {
             return false;
 
         // Create downloader.
-        downloader = new EmojiDownloader(username, authtoken);
+        downloader = new EmojiDownloader(context, username, authtoken);
         if(listener != null)
             downloader.setListener(listener);
 
@@ -118,7 +117,7 @@ public class Emojidex {
             throw new EmojidexIsNotInitializedException();
 
         manager.reset();
-        manager.add(PathUtils.getLocalJsonPath());
+        manager.add(PathUtils.getLocalJsonUri());
     }
 
     /**
@@ -127,30 +126,9 @@ public class Emojidex {
      */
     public boolean deleteLocalCache()
     {
-        boolean result = deleteFile(new File(PathUtils.LOCAL_ROOT_PATH));
+        boolean result = PathUtils.deleteFiles(PathUtils.getLocalRootUri());
         Log.d(TAG, "Delete all cache files in local storage.");
         return result;
-    }
-
-    /**
-     * Request permissions.
-     * @param activity  Parent activity.
-     * @return      true when request.
-     */
-    public boolean requestPermission(Activity activity)
-    {
-        if(     PermissionChecker.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PermissionChecker.PERMISSION_GRANTED
-           ||   PermissionChecker.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE) != PermissionChecker.PERMISSION_GRANTED  )
-        {
-            ActivityCompat.requestPermissions(
-                    activity,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE},
-                    REQUEST_CODE
-            );
-            return true;
-        }
-
-        return false;
     }
 
     /**
@@ -284,26 +262,5 @@ public class Emojidex {
             throw new EmojidexIsNotInitializedException();
         
         return defaultFormat;
-    }
-
-    /**
-     * Delete file.
-     * @param file  File.
-     * @return      true if file delete succeeded.
-     */
-    private boolean deleteFile(File file)
-    {
-        // File is not found.
-        if(file == null || !file.exists())
-            return false;
-
-        // If file is directory, delete child files.
-        boolean result = true;
-        if(file.isDirectory())
-            for(File child : file.listFiles())
-                result = deleteFile(child) && result;
-
-        // Delete file.
-        return file.delete() && result;
     }
 }

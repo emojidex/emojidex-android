@@ -104,6 +104,8 @@ public class EmojidexIME extends InputMethodService {
         showSearchWindowCode = getResources().getInteger(R.integer.ime_keycode_show_search_window);
 
         // Initialize Emojidex object.
+        new CacheAnalyzer().analyze(this);
+
         emojidex = Emojidex.getInstance();
         emojidex.initialize(this);
 
