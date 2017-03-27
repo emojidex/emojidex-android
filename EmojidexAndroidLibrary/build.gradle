@@ -49,7 +49,7 @@ uploadArchives {
             repository url: "file://${projectDir}/repository"
             pom.groupId = 'org.genshin'
             pom.artifactId = 'emojidexandroid-lib'
-            pom.version = '0.0.6'
+            pom.version = '0.0.7'
         }
     }
 }
