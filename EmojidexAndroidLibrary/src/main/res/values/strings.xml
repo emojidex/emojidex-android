@@ -1,6 +1,5 @@
-<resources>
-    <string name="app_name">EmojidexAndroidLibrary</string>
-
-    <string name="emoji_format_default">xxxhdpi</string>
-    <string name="all_category">all</string>
+<resources
+    xmlns:tools="http://schemas.android.com/tools">
+    <string name="emoji_format_default" tools:ignore="MissingTranslation">xxxhdpi</string>
+    <string name="all_category" translatable="false">all</string>
 </resources>
