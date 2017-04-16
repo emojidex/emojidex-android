@@ -150,6 +150,8 @@ public class EmojidexKeyboardView extends KeyboardView {
                         }
                     }
                 });
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1)
+                    popup.setAttachedInDecor(false);
                 popup.showAtLocation(parent, Gravity.CENTER, 0, -parent.getHeight());
 
                 // Set emoji data.
@@ -306,6 +308,8 @@ public class EmojidexKeyboardView extends KeyboardView {
                             prefs.edit().putBoolean(keyIgnore, ignoreCheckbox.isChecked()).commit();
                         }
                     });
+                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1)
+                        dialog.setAttachedInDecor(false);
 
                     dialogView.findViewById(R.id.negativeButton).setOnClickListener(new OnClickListener()
                     {
