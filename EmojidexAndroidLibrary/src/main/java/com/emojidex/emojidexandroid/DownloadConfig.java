@@ -5,9 +5,9 @@ import java.util.LinkedHashSet;
 /**
  * Download config.
  */
-public class DownloadConfig
+public class DownloadConfig implements Cloneable
 {
-    private final LinkedHashSet<EmojiFormat> formats;
+    private LinkedHashSet<EmojiFormat> formats;
     private String sourceRootPath;
     private boolean forceFlag;
 
@@ -19,8 +19,26 @@ public class DownloadConfig
     {
         this.formats = new LinkedHashSet<EmojiFormat>();
         setFormats(formats);
-        sourceRootPath = EmojidexFileUtils.getRemoteRootPathDefault() + "/emoji";
+        sourceRootPath = EmojidexFileUtils.getRemoteRootPathDefault();
         forceFlag = false;
+    }
+
+    @Override
+    public DownloadConfig clone()
+    {
+        DownloadConfig result = null;
+
+        try
+        {
+            result = (DownloadConfig)super.clone();
+            result.formats = (LinkedHashSet<EmojiFormat>)formats.clone();
+        }
+        catch(CloneNotSupportedException e)
+        {
+            e.printStackTrace();
+        }
+
+        return result;
     }
 
     /**
@@ -65,7 +83,7 @@ public class DownloadConfig
 
     /**
      * Set source root path.
-     * Default value is EmojidexFileUtils.getRemoteRootPathDefault() + "/emoji".
+     * Default value is EmojidexFileUtils.getRemoteRootPathDefault()
      * @param sourceRootPath    Source root path.
      */
     public void setSourceRootPath(String sourceRootPath)

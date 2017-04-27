@@ -110,9 +110,24 @@ class EmojidexFileUtils
         {
             e.printStackTrace();
         }
-        return rootPath + "/"
+        return rootPath + "/emoji/"
                 + format.getRelativeDir() + "/"
                 + name + format.getExtension()
+                ;
+    }
+
+    /**
+     * Create emoji archive path from remote server.
+     * @param format        Emoji format.
+     * @param rootPath      Server path.
+     * @return      Emoji archive path.
+     */
+    public static String getRemoteEmojiArchivePath(EmojiFormat format, String rootPath)
+    {
+        return rootPath + "/packs/utf-"
+                + format.getRelativeDir()
+                + (Locale.getDefault().equals(Locale.JAPAN) ? "-ja" : "")
+                + ".tar.xz"
                 ;
     }
 
@@ -191,6 +206,30 @@ class EmojidexFileUtils
         try
         {
             final Uri uri = getLocalEmojiUri(name, format);
+            ParcelFileDescriptor pfd = context.getContentResolver().openFileDescriptor(uri, "r");
+            pfd.close();
+            result = true;
+        }
+        catch(IOException e)
+        {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+    /**
+     * Find emoji format directory from local storage.
+     * @param format    Emoji format.
+     * @return          true if exists directory.
+     */
+    public static boolean existsLocalEmojiFormatDirectory(EmojiFormat format)
+    {
+        boolean result = false;
+
+        try
+        {
+            final Uri uri = getLocalUri(CACHE_DIR + "/" + format.getRelativeDir() + "/");
             ParcelFileDescriptor pfd = context.getContentResolver().openFileDescriptor(uri, "r");
             pfd.close();
             result = true;
