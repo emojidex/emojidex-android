@@ -13,10 +13,18 @@ import com.emojidex.libemojidex.Emojidex.Service.QueryOpts;
 import com.emojidex.libemojidex.Emojidex.Service.User;
 import com.emojidex.libemojidex.StringVector;
 
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.compress.compressors.xz.XZCompressorInputStream;
+import org.apache.commons.compress.utils.IOUtils;
+
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -24,6 +32,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.concurrent.Executor;
@@ -48,6 +57,7 @@ public class EmojiDownloader
     private final Client client;
     private final String locale;
 
+    private final EmojiArchiveDownloadTask emojiArchiveDownloadTask;
     private final EmojiDownloadTask[] emojiDownloadTasks;
     private int nextThreadIndex = 0;
     private int downloadEmojiCount = 0;
@@ -96,8 +106,9 @@ public class EmojiDownloader
         this.context = context;
 
         // Initialize download thread count.
+        emojiArchiveDownloadTask = new EmojiArchiveDownloadTask();
         if(threadCount <= 0)
-            threadCount = ((ThreadPoolExecutor)AsyncTask.THREAD_POOL_EXECUTOR).getCorePoolSize();
+            threadCount = Math.max(((ThreadPoolExecutor)AsyncTask.THREAD_POOL_EXECUTOR).getCorePoolSize() - 1, 1);
         emojiDownloadTasks = new EmojiDownloadTask[threadCount];
         for(int i = 0;  i < threadCount;  ++i)
             emojiDownloadTasks[i] = new EmojiDownloadTask();
@@ -183,6 +194,29 @@ public class EmojiDownloader
         final JsonDownloadTask task = new JsonDownloadTask(config);
         task.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, task.new AbstractJsonDownloadExecutor() {
             @Override
+            protected void downloadEmojies(EmojiVector emojies)
+            {
+                ArrayList<EmojiFormat> firstFormats = new ArrayList<EmojiFormat>();
+                Iterator<EmojiFormat> it = task.config.getFormats().iterator();
+                while(it.hasNext())
+                {
+                    final EmojiFormat format = it.next();
+                    if( !EmojidexFileUtils.existsLocalEmojiFormatDirectory(format) )
+                    {
+                        it.remove();
+                        firstFormats.add(format);
+                    }
+                }
+
+                super.downloadEmojies(emojies);
+
+                if(firstFormats.size() > 0)
+                {
+                    addDownloadEmojiArchive(emojies, firstFormats, task.config);
+                }
+            }
+
+            @Override
             protected Collection downloadJson()
             {
                 return client.getIndexes().utfEmoji(locale, true);
@@ -266,7 +300,8 @@ public class EmojiDownloader
         // Notify to listener.
         listener.onPreAllEmojiDownload();
 
-        // Start download task.
+        // Start download task
+        emojiArchiveDownloadTask.start(AsyncTask.THREAD_POOL_EXECUTOR);
         for(EmojiDownloadTask task : emojiDownloadTasks)
             task.start(AsyncTask.THREAD_POOL_EXECUTOR);
     }
@@ -326,7 +361,7 @@ public class EmojiDownloader
         copyParam(localParam, emoji);
 
         // Add download task.
-        EmojiDownloadTask.EmojiDownloadExecutor executor = null;
+        EmojiDownloadTask.FileDownloadExecutor executor = null;
         for(EmojiFormat format : config.getFormats())
         {
             // Skip if emoji is already downloaded.
@@ -342,7 +377,7 @@ public class EmojiDownloader
             if(executor == null)
             {
                 final EmojiDownloadTask task = emojiDownloadTasks[nextThreadIndex];
-                executor = task.new EmojiDownloadExecutor(emojiName);
+                executor = task.new FileDownloadExecutor(emojiName);
                 task.add(executor);
                 nextThreadIndex = (nextThreadIndex + 1) % emojiDownloadTasks.length;
             }
@@ -355,6 +390,56 @@ public class EmojiDownloader
         // Add download emoji count.
         if(executor != null)
             downloadEmojiCount += executor.getDownloadCount();
+    }
+
+    /**
+     * Add emoji archive download task.
+     * @param emojies   Emoji parameters.
+     * @param formats   Emoji formats.
+     * @param config    Download config.
+     */
+    private void addDownloadEmojiArchive(EmojiVector emojies, ArrayList<EmojiFormat> formats, DownloadConfig config)
+    {
+        // Copy emoji parameters.
+        for(int i = 0;  i < emojies.size();  ++i)
+        {
+            final Emoji emoji = emojies.get(i);
+            final JsonParam localParam = findLocalParam(emoji.getCode());
+
+            copyParam(localParam, emoji);
+
+            for(EmojiFormat format : formats)
+            {
+                if(format == EmojiFormat.SVG)
+                {
+                    localParam.checksums.svg = emoji.getChecksums().getSvg();
+                }
+                else
+                {
+                    final String resolution = format.getRelativeDir();
+                    localParam.checksums.png.put(
+                            resolution,
+                            emoji.getChecksums().sum("png", resolution)
+                    );
+                }
+            }
+        }
+
+        // Download emoji archive.
+        for(EmojiFormat format : formats)
+        {
+            final String resolution = format.getRelativeDir();
+
+            final EmojiArchiveDownloadTask.FileDownloadExecutor executor = emojiArchiveDownloadTask.new FileDownloadExecutor(resolution);
+
+            executor.add(
+                    Uri.parse("file:" + EmojidexFileUtils.getTemporaryPath()),
+                    EmojidexFileUtils.getRemoteEmojiArchivePath(format, config.getSourceRootPath())
+            );
+            emojiArchiveDownloadTask.add(executor);
+
+            ++downloadEmojiCount;
+        }
     }
 
     /**
@@ -597,7 +682,7 @@ public class EmojiDownloader
          */
         public JsonDownloadTask(DownloadConfig config)
         {
-            this.config = config;
+            this.config = config.clone();
         }
 
         @Override
@@ -638,13 +723,7 @@ public class EmojiDownloader
             {
                 final Collection collection = downloadJson();
                 final EmojiVector emojies = collection.all();
-                for(int i = 0;  i < emojies.size();  ++i)
-                {
-                    final Emoji emoji = emojies.get(i);
-                    emoji.setCode( emoji.getCode().replaceAll(" ", "_") );
-                    addDownloadEmoji(emoji, config);
-                    emojiNames.add(emoji.getCode());
-                }
+                downloadEmojies(emojies);
                 return emojies.size() > 0 ? 1 : 0;
             }
 
@@ -654,16 +733,27 @@ public class EmojiDownloader
                 return 1;
             }
 
+            protected void downloadEmojies(EmojiVector emojies)
+            {
+                for(int i = 0;  i < emojies.size();  ++i)
+                {
+                    final Emoji emoji = emojies.get(i);
+                    emoji.setCode( emoji.getCode().replaceAll(" ", "_") );
+                    addDownloadEmoji(emoji, config);
+                    emojiNames.add(emoji.getCode());
+                }
+            }
+
             protected abstract Collection downloadJson();
         }
     }
 
-    private class EmojiDownloadTask extends AbstractDownloadTask<EmojiDownloadTask.EmojiDownloadExecutor>
+    private abstract class AbstractFileDownloadTask extends AbstractDownloadTask<AbstractFileDownloadTask.FileDownloadExecutor>
     {
         private final byte[] buffer = new byte[4096];
-        private final ArrayList<EmojiDownloadExecutor> executors = new ArrayList<EmojiDownloadExecutor>();
+        private final ArrayList<FileDownloadExecutor> executors = new ArrayList<FileDownloadExecutor>();
 
-        public void add(EmojiDownloadExecutor executor)
+        public void add(FileDownloadExecutor executor)
         {
             executors.add(executor);
         }
@@ -672,7 +762,7 @@ public class EmojiDownloader
         {
             if(executors.isEmpty())
                 return null;
-            return executeOnExecutor(executor, executors.toArray(new EmojiDownloadExecutor[executors.size()]));
+            return executeOnExecutor(executor, executors.toArray(new FileDownloadExecutor[executors.size()]));
         }
 
         @Override
@@ -693,33 +783,21 @@ public class EmojiDownloader
             }
         }
 
-        @Override
-        protected void onPreDownload(EmojiDownloadExecutor executor)
-        {
-            listener.onPreOneEmojiDownload(executor.emojiName);
-        }
-
-        @Override
-        protected void onPostDownload(EmojiDownloadExecutor executor)
-        {
-            listener.onPostOneEmojiDownload(executor.emojiName);
-        }
-
         /**
-         * Emoji download executor.
+         * File download executor.
          */
-        public class EmojiDownloadExecutor extends AbstractDownloadTask.AbstractDownloadExecutor
+        public class FileDownloadExecutor extends AbstractDownloadTask.AbstractDownloadExecutor
         {
-            private final String emojiName;
+            private final String fileName;
             private final ArrayList<DownloadInfo> downloadInfos = new ArrayList<DownloadInfo>();
 
             /**
-             * Construct download executor.
-             * @param emojiName     Download emoji name.
+             * Construct file download executor.
+             * @param fileName      Download file name.
              */
-            public EmojiDownloadExecutor(String emojiName)
+            public FileDownloadExecutor(String fileName)
             {
-                this.emojiName = emojiName;
+                this.fileName = fileName;
             }
 
             public void add(Uri dest, String src)
@@ -794,10 +872,91 @@ public class EmojiDownloader
             /**
              * Download information.
              */
-            private class DownloadInfo
+            protected class DownloadInfo
             {
                 public String src;
                 public Uri dest;
+            }
+        }
+    }
+
+    private class EmojiDownloadTask extends AbstractFileDownloadTask
+    {
+        @Override
+        protected void onPreDownload(FileDownloadExecutor executor)
+        {
+            listener.onPreOneEmojiDownload(executor.fileName);
+        }
+
+        @Override
+        protected void onPostDownload(FileDownloadExecutor executor)
+        {
+            listener.onPostOneEmojiDownload(executor.fileName);
+        }
+    }
+
+    private class EmojiArchiveDownloadTask extends EmojiDownloadTask
+    {
+        @Override
+        protected void onPreDownload(FileDownloadExecutor executor)
+        {
+        }
+
+        @Override
+        protected void onPostDownload(FileDownloadExecutor executor)
+        {
+            for(FileDownloadExecutor.DownloadInfo info : executor.downloadInfos)
+            {
+                final File xzFile = new File(info.dest.getPath());
+
+                try
+                {
+                    // xz -> tar
+                    XZCompressorInputStream xzIn = new XZCompressorInputStream(
+                            new BufferedInputStream(
+                                    new FileInputStream(xzFile)
+                            )
+                    );
+                    final File tarFile = new File(EmojidexFileUtils.getTemporaryPath());
+                    final FileOutputStream tarOut = new FileOutputStream(tarFile);
+
+                    final byte[] buffer = new byte[4096];
+                    int n = 0;
+                    while( (n = xzIn.read(buffer)) != -1)
+                        tarOut.write(buffer, 0, n);
+
+                    tarOut.close();
+                    xzIn.close();
+
+                    // tar -> files
+                    final EmojiFormat format = EmojiFormat.toFormat(executor.fileName);
+                    final TarArchiveInputStream tarIn = new TarArchiveInputStream(
+                            new BufferedInputStream(
+                                    new FileInputStream(tarFile)
+                            )
+                    );
+
+                    for(TarArchiveEntry entry = tarIn.getNextTarEntry();  entry != null;  entry = tarIn.getNextTarEntry())
+                    {
+                        String basename = entry.getName();
+                        final int extPos = basename.lastIndexOf('.');
+                        if(extPos != -1)
+                            basename = basename.substring(0, extPos);
+                        final Uri destUri = EmojidexFileUtils.getLocalEmojiUri(basename, format);
+
+                        OutputStream os = context.getContentResolver().openOutputStream(destUri);
+                        IOUtils.copy(tarIn, os);
+                        os.close();
+                    }
+
+                    tarFile.delete();
+                }
+                catch(Exception e)
+                {
+                    e.printStackTrace();
+                }
+
+                xzFile.delete();
             }
         }
     }
