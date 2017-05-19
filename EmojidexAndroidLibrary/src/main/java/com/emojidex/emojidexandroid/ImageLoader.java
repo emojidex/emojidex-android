@@ -116,13 +116,14 @@ class ImageLoader
 
         // Reload image.
         final ImageParam newParam = loadImageParam(name, format, false);
+        final String key = createCacheKey(name, format);
 
         for(int i = 0;  i < newParam.frames.length;  ++i)
         {
             if(i >= oldParam.frames.length)
             {
                 final Bitmap old = bitmapCache.put(
-                        createCacheKey(name, format) + i,
+                        key + i,
                         newParam.frames[i].bitmap
                 );
                 if(old != null)
@@ -147,8 +148,20 @@ class ImageLoader
             newParam.frames[i].bitmap = oldParam.frames[i].bitmap;
         }
 
-        final String key = createCacheKey(name, format);
         imageParams.put(key, newParam);
+    }
+
+    public void reload(EmojiFormat format)
+    {
+        for(String key : imageParams.keySet())
+        {
+            // keyParts[0]: Emoji solution
+            // keyParts[1]: Emoji name
+            final String[] keyParts = key.split("/");
+
+            if(keyParts[0].equals(format.getRelativeDir()))
+                reload(keyParts[1], format);
+        }
     }
 
     /**

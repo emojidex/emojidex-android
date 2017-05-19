@@ -66,6 +66,15 @@ public class DownloadListener {
     }
 
     /**
+     * Called when after one emoji archive download.
+     * @param resolution   Downloaded emoji archive resolution.
+     */
+    public void onPostOneEmojiArchiveDownload(String resolution)
+    {
+        Log.d(TAG, "onPostOneEmojiArchiveDownload: resolution = \"" + resolution + "\"");
+    }
+
+    /**
      * Called when before all emoji download.
      */
     public void onPostAllEmojiDownload()

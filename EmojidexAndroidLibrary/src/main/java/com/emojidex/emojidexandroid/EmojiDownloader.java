@@ -958,6 +958,7 @@ public class EmojiDownloader
 
                 xzFile.delete();
             }
+            listener.onPostOneEmojiArchiveDownload(executor.fileName);
         }
     }
 }

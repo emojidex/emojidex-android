@@ -164,6 +164,19 @@ class EmojidexUpdater {
         }
 
         @Override
+        public void onPostOneEmojiArchiveDownload(String resolution)
+        {
+            final EmojiFormat format = EmojiFormat.toFormat(resolution);
+            ImageLoader.getInstance().reload(format);
+
+            if(EmojidexIME.currentInstance != null)
+                EmojidexIME.currentInstance.invalidate();
+
+            if(CatalogActivity.currentInstance != null)
+                CatalogActivity.currentInstance.invalidate();
+        }
+
+        @Override
         public void onFinish(EmojiDownloader.Result result) {
             super.onFinish(result);
 

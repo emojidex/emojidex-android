@@ -42,7 +42,8 @@ public class EmojidexIME extends InputMethodService {
     static final String TAG = MainActivity.TAG + "::EmojidexIME";
     static EmojidexIME currentInstance = null;
 
-    private final Handler invalidateHandler;
+    private final Handler invalidateOneHandler;
+    private final Handler invalidateAllHandler;
 
     private Emojidex emojidex;
 
@@ -86,10 +87,17 @@ public class EmojidexIME extends InputMethodService {
     {
         setTheme(R.style.IMETheme);
 
-        invalidateHandler = new Handler(){
+        invalidateOneHandler = new Handler(){
             @Override
             public void handleMessage(Message msg) {
                 keyboardViewManager.getCurrentView().invalidateKey(msg.arg1);
+            }
+        };
+        invalidateAllHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg)
+            {
+                keyboardViewManager.getCurrentView().invalidateAllKeys();
             }
         };
     }
@@ -612,13 +620,24 @@ public class EmojidexIME extends InputMethodService {
         {
             if(keys.get(i).popupCharacters.equals(emojiName))
             {
-                final Message msg = invalidateHandler.obtainMessage();
+                final Message msg = invalidateOneHandler.obtainMessage();
                 msg.arg1 = i;
-                invalidateHandler.sendMessage(msg);
+                invalidateOneHandler.sendMessage(msg);
 
                 break;
             }
         }
+    }
+
+    /**
+     * Re-draw all keys.
+     */
+    void invalidate()
+    {
+        if(keyboardViewManager == null)
+            return;
+
+        invalidateAllHandler.sendMessage(invalidateAllHandler.obtainMessage());
     }
 
     /**
