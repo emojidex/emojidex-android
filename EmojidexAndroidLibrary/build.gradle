@@ -49,7 +49,7 @@ uploadArchives {
     repositories {
         mavenDeployer {
             repository url: "file://${projectDir}/repository"
-            pom.groupId = 'org.genshin'
+            pom.groupId = 'com.emojidex'
             pom.artifactId = 'emojidexandroid-lib'
             pom.version = '0.0.7'
         }
