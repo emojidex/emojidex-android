@@ -492,7 +492,7 @@ public class EmojiDownloader
      */
     private boolean isAlreadyDownloaded(JsonParam local, Emoji remote, EmojiFormat format)
     {
-        boolean existsFile = EmojidexFileUtils.existsLocalEmojiFile(local.name, format);
+        boolean existsFile = EmojidexFileUtils.existsLocalFile(EmojidexFileUtils.getLocalEmojiUri(local.name, format));
 
         // Check checksums.
         // If emoji format is svg.

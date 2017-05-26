@@ -49,7 +49,7 @@ class EmojidexFileUtils
      */
     public static Uri getLocalRootUri()
     {
-        return getLocalUri(CACHE_DIR);
+        return getLocalFileUri("");
     }
 
     /**
@@ -60,7 +60,7 @@ class EmojidexFileUtils
      */
     public static Uri getLocalEmojiUri(String name, EmojiFormat format)
     {
-        return getLocalUri(CACHE_DIR + "/" + format.getRelativeDir() + "/" + name + format.getExtension());
+        return getLocalFileUri(format.getRelativeDir() + "/" + name + format.getExtension());
     }
 
     /**
@@ -69,19 +69,19 @@ class EmojidexFileUtils
      */
     public static Uri getLocalJsonUri()
     {
-        return getLocalUri(CACHE_DIR + "/" + JSON_FILENAME);
+        return getLocalFileUri(JSON_FILENAME);
     }
 
     /**
      * Create uri from local storage.
-     * @param encodedPath   Encoded path.
+     * @param relativePath  Relative file path.
      * @return              Uri.
      */
-    private static Uri getLocalUri(String encodedPath)
+    public static Uri getLocalFileUri(String relativePath)
     {
         return hasContentProvider ?
-                EmojidexProvider.getUri(encodedPath) :
-                Uri.parse("file:" + localRoot + "/" + encodedPath);
+                EmojidexProvider.getUri(CACHE_DIR + "/" + relativePath) :
+                Uri.parse("file:" + localRoot + "/" + CACHE_DIR + "/" + relativePath);
     }
 
     /**
@@ -194,42 +194,22 @@ class EmojidexFileUtils
     }
 
     /**
-     * Find emoji image file from local storage.
-     * @param name      Emoji name.
-     * @param format    Emoji format.
-     * @return          true if exists file.
-     */
-    public static boolean existsLocalEmojiFile(String name, EmojiFormat format)
-    {
-        boolean result = false;
-
-        try
-        {
-            final Uri uri = getLocalEmojiUri(name, format);
-            ParcelFileDescriptor pfd = context.getContentResolver().openFileDescriptor(uri, "r");
-            pfd.close();
-            result = true;
-        }
-        catch(IOException e)
-        {
-            e.printStackTrace();
-        }
-
-        return result;
-    }
-
-    /**
      * Find emoji format directory from local storage.
      * @param format    Emoji format.
      * @return          true if exists directory.
      */
     public static boolean existsLocalEmojiFormatDirectory(EmojiFormat format)
     {
-        boolean result = false;
+        return existsLocalFile(
+                getLocalFileUri(format.getRelativeDir() + "/")
+        );
+    }
 
+    public static boolean existsLocalFile(Uri uri)
+    {
+        boolean result = false;
         try
         {
-            final Uri uri = getLocalUri(CACHE_DIR + "/" + format.getRelativeDir() + "/");
             ParcelFileDescriptor pfd = context.getContentResolver().openFileDescriptor(uri, "r");
             pfd.close();
             result = true;
@@ -238,7 +218,6 @@ class EmojidexFileUtils
         {
             e.printStackTrace();
         }
-
         return result;
     }
 

@@ -46,6 +46,7 @@ public class Emojidex {
 
         this.context = context.getApplicationContext();
         EmojidexFileUtils.initialize(this.context);
+        VersionManager.getInstance().optimize(this.context);
         manager = new EmojiManager(this.context);
         manager.add(EmojidexFileUtils.getLocalJsonUri());
         defaultFormat = EmojiFormat.toFormat(this.context.getResources().getString(R.string.emoji_format_default));
