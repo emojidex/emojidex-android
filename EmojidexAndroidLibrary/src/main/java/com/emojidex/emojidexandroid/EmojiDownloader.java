@@ -288,6 +288,7 @@ public class EmojiDownloader
                 EmojidexFileUtils.getLocalJsonUri(),
                 localJsonParams.values()
         );
+        VersionManager.getInstance().save(context);
 
         // Error check.
         if(downloadEmojiCount <= 0 || !runningTasks.isEmpty())
