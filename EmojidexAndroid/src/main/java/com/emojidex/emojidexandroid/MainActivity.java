@@ -205,7 +205,7 @@ public class MainActivity extends Activity {
 
     private CharSequence toUnicodeString(final CharSequence cs)
     {
-        return emojidex.emojify(cs, false);
+        return emojidex.emojify(cs, true, false);
     }
 
     /**
@@ -276,7 +276,7 @@ public class MainActivity extends Activity {
                 {
                     editText.removeTextChangedListener(this);
 
-                    final Spannable text = (Spannable)emojify(deEmojify(s));
+                    final Spannable text = (Spannable)emojify(s);
                     final int length = text.length();
                     if(length != 0)
                     {
@@ -305,7 +305,7 @@ public class MainActivity extends Activity {
                     for(DynamicDrawableSpan span : imageSpans)
                         s.removeSpan(span);
                     final CharSequence subSequence = s.subSequence(start, end).toString();
-                    s.replace(start, end, toUnicodeString(deEmojify(subSequence)));
+                    s.replace(start, end, toUnicodeString(subSequence));
                     editText.addTextChangedListener(this);
                 }
             }
@@ -487,9 +487,9 @@ public class MainActivity extends Activity {
             {
                 final String text = intent.getStringExtra(Intent.EXTRA_TEXT);
                 if(toggleState)
-                    editText.setText(emojify(deEmojify(text)));
+                    editText.setText(emojify(text));
                 else
-                    editText.setText(toUnicodeString(deEmojify(text)));
+                    editText.setText(toUnicodeString(text));
             }
         }
     }
@@ -544,12 +544,12 @@ public class MainActivity extends Activity {
         // convert text
         if (toggleState)
         {
-            editText.setText(emojify(deEmojify(editText.getText())));
+            editText.setText(emojify(editText.getText()));
             Toast.makeText(this, R.string.editor_message_conversion_on, Toast.LENGTH_SHORT).show();
         }
         else
         {
-            editText.setText(toUnicodeString(deEmojify(editText.getText())));
+            editText.setText(toUnicodeString(editText.getText()));
             Toast.makeText(this, R.string.editor_message_conversion_off, Toast.LENGTH_SHORT).show();
         }
 
