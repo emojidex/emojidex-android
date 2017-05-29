@@ -739,7 +739,6 @@ public class EmojiDownloader
                 for(int i = 0;  i < emojies.size();  ++i)
                 {
                     final Emoji emoji = emojies.get(i);
-                    emoji.setCode( emoji.getCode().replaceAll(" ", "_") );
                     addDownloadEmoji(emoji, config);
                     emojiNames.add(emoji.getCode());
                 }

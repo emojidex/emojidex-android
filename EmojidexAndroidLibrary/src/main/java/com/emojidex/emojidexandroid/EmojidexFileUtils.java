@@ -60,7 +60,7 @@ class EmojidexFileUtils
      */
     public static Uri getLocalEmojiUri(String name, EmojiFormat format)
     {
-        return getLocalFileUri(format.getRelativeDir() + "/" + name + format.getExtension());
+        return getLocalFileUri(format.getRelativeDir() + "/" + name.replace(' ', '_') + format.getExtension());
     }
 
     /**
@@ -102,6 +102,7 @@ class EmojidexFileUtils
      */
     public static String getRemoteEmojiPath(String name, EmojiFormat format, String rootPath)
     {
+        name = name.replace(' ', '_');
         try
         {
             name = URLEncoder.encode(name, "UTF-8");

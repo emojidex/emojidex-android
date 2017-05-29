@@ -358,15 +358,6 @@ public class EmojidexKeyboardView extends KeyboardView {
         if(emoji == null)
             return;
 
-        // Reference base emoji if has base emoji.
-        final String base = emoji.getBase();
-        if(base != null)
-        {
-            emoji = emojidex.getEmoji(base);
-            if(emoji == null)
-                return;
-        }
-
         // Skip if emoji not has variants.
         final List<String> variants = emoji.getVariants();
         if(variants == null || variants.size() <= 1)
@@ -376,6 +367,7 @@ public class EmojidexKeyboardView extends KeyboardView {
         variantsLayout.removeAllViews();
         for (String name : variants)
         {
+            name = name.replace('_', ' ');
             final Emoji variant = emojidex.getEmoji(name);
             if(variant == null)
                 continue;
