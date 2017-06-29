@@ -13,8 +13,6 @@ import java.util.List;
  * Created by kou on 14/10/03.
  */
 public class Emoji extends SimpleJsonParam {
-    static final String TAG = Emojidex.TAG + "::Emoji";
-
     private final List<Integer> codes = new ArrayList<Integer>();
 
     private Context context;
@@ -28,7 +26,7 @@ public class Emoji extends SimpleJsonParam {
     {
         final ImageLoader imageLoader = ImageLoader.getInstance();
         for(EmojiFormat format : EmojiFormat.values())
-            imageLoader.reload(name, format);
+            imageLoader.reload(getCode(), format);
     }
 
     /**
@@ -55,34 +53,7 @@ public class Emoji extends SimpleJsonParam {
      */
     public CharSequence toTagString()
     {
-        return Emojidex.SEPARATOR + name + Emojidex.SEPARATOR;
-    }
-
-    /**
-     * Get emoji name.
-     * @return  Emoji name.
-     */
-    public String getName()
-    {
-        return name;
-    }
-
-    /**
-     * Get emoji text.
-     * @return  Emoji text.
-     */
-    public String getText()
-    {
-        return text;
-    }
-
-    /**
-     * Get category name.
-     * @return  Category name.
-     */
-    public String getCategory()
-    {
-        return category;
+        return Emojidex.SEPARATOR + getCode() + Emojidex.SEPARATOR;
     }
 
     /**
@@ -115,7 +86,7 @@ public class Emoji extends SimpleJsonParam {
         final int index = format.ordinal();
 
         // Load image.
-        final ImageLoader.ImageParam imageParam = ImageLoader.getInstance().load(name, format);
+        final ImageLoader.ImageParam imageParam = ImageLoader.getInstance().load(getCode(), format);
 
         Drawable result = null;
 
@@ -124,14 +95,14 @@ public class Emoji extends SimpleJsonParam {
         {
             // Create drawable.
             final EmojidexAnimationDrawable drawable = new EmojidexAnimationDrawable();
-            drawable.setOneShot(imageParam.isOneShot);
-            drawable.setSkipFirst(imageParam.isSkipFirst);
+            drawable.setOneShot(imageParam.isOneShot());
+            drawable.setSkipFirst(imageParam.isSkipFirst());
 
-            for(ImageLoader.ImageParam.Frame frame : imageParam.frames)
+            for(ImageLoader.ImageParam.Frame frame : imageParam.getFrames())
             {
                 drawable.addFrame(
-                        bitmapToDrawable(frame.bitmap, size),
-                        frame.duration
+                        bitmapToDrawable(frame.getBitmap(), size),
+                        frame.getDuration()
                 );
             }
 
@@ -146,7 +117,7 @@ public class Emoji extends SimpleJsonParam {
         // Non-animation emoji.
         else
         {
-            result = bitmapToDrawable(imageParam.frames[0].bitmap, size);;
+            result = bitmapToDrawable(imageParam.getFrames()[0].getBitmap(), size);;
         }
 
         return result;
@@ -160,13 +131,14 @@ public class Emoji extends SimpleJsonParam {
     public Bitmap[] getBitmaps(EmojiFormat format)
     {
         // Load image.
-        final ImageLoader.ImageParam imageParam = ImageLoader.getInstance().load(name, format);
+        final ImageLoader.ImageParam imageParam = ImageLoader.getInstance().load(getCode(), format);
+        final ImageLoader.ImageParam.Frame[] frames = imageParam.getFrames();
 
         // Create bitmap array and copy bitmaps.
-        final Bitmap[] result = new Bitmap[imageParam.frames.length];
+        final Bitmap[] result = new Bitmap[frames.length];
 
-        for(int i = 0;  i < imageParam.frames.length;  ++i)
-            result[i] = imageParam.frames[i].bitmap;
+        for(int i = 0;  i < frames.length;  ++i)
+            result[i] = frames[i].getBitmap();
 
         return result;
     }
@@ -178,21 +150,6 @@ public class Emoji extends SimpleJsonParam {
     public boolean hasOriginalCodes()
     {
         return hasOriginalCodes;
-    }
-
-    public List<String> getVariants()
-    {
-        return variants;
-    }
-
-    public String getBase()
-    {
-        return base;
-    }
-
-    public int getScore()
-    {
-        return score;
     }
 
     /**
@@ -210,11 +167,12 @@ public class Emoji extends SimpleJsonParam {
             imageLoader.initialize(this.context);
 
         // Set codes.
-        final int count = text.codePointCount(0, text.length());
+        final String moji = getMoji();
+        final int count = moji.codePointCount(0, moji.length());
         int next = 0;
         for(int i = 0;  i < count;  ++i)
         {
-            final int codePoint = text.codePointAt(next);
+            final int codePoint = moji.codePointAt(next);
             next += Character.charCount(codePoint);
 
             // Ignore Variation selectors.
@@ -227,9 +185,10 @@ public class Emoji extends SimpleJsonParam {
         // Adjustment text.
         if(codes.size() < count)
         {
-            text = "";
+            String newMoji = "";
             for(Integer codePoint : codes)
-                text += String.valueOf(Character.toChars(codePoint));
+                newMoji += String.valueOf(Character.toChars(codePoint));
+            setMoji(newMoji);
         }
     }
 
@@ -240,7 +199,7 @@ public class Emoji extends SimpleJsonParam {
      */
     void initialize(Context context, int codes)
     {
-        text = new String(Character.toChars(codes));
+        setMoji(new String(Character.toChars(codes)));
         hasOriginalCodes = true;
 
         initialize(context);
@@ -252,7 +211,8 @@ public class Emoji extends SimpleJsonParam {
      */
     boolean hasCodes()
     {
-        return !codes.isEmpty() || (text != null && text.length() > 0);
+        final String moji = getMoji();
+        return !codes.isEmpty() || (moji != null && moji.length() > 0);
     }
 
     private Drawable bitmapToDrawable(Bitmap bitmap, float size)

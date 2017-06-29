@@ -13,7 +13,7 @@ import java.util.LinkedList;
  * Created by kou on 14/10/09.
  */
 class TextConverter {
-    static final String TAG = Emojidex.TAG + "::TextConverter";
+    private static final String TAG = "EmojidexLibrary::TextConverter";
 
     private static final Emojidex emojidex = Emojidex.getInstance();
 
@@ -71,7 +71,7 @@ class TextConverter {
                 else if(emoji.hasOriginalCodes())
                     result.append( text.subSequence(startIndex, endIndex + charCount) );
                 else
-                    result.append(emoji.getText());
+                    result.append(emoji.getMoji());
                 startIndex = endIndex + charCount;
                 startIsSeparator = false;
             }
@@ -198,7 +198,7 @@ class TextConverter {
                 (drawable instanceof EmojidexAnimationDrawable)
                         ? new EmojidexAnimationImageSpan((EmojidexAnimationDrawable)drawable)
                         : new ImageSpan(drawable);
-        final SpannableString result = new SpannableString(emoji.hasOriginalCodes() ? emoji.toTagString() : emoji.getText());
+        final SpannableString result = new SpannableString(emoji.hasOriginalCodes() ? emoji.toTagString() : emoji.getMoji());
         result.setSpan(span, 0, result.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
         return result;
     }

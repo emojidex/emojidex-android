@@ -3,6 +3,8 @@ package com.emojidex.emojidexandroid;
 import android.content.Context;
 import android.util.Log;
 
+import com.emojidex.emojidexandroid.downloader.DownloadListener;
+import com.emojidex.emojidexandroid.downloader.EmojiDownloader;
 import com.emojidex.emojidexandroidlibrary.R;
 
 import java.util.Collection;
@@ -12,10 +14,9 @@ import java.util.List;
  * Created by kou on 14/10/03.
  */
 public class Emojidex {
-    static final String TAG = "EmojidexLibrary";
+    private static final String TAG = "EmojidexLibrary";
 
     public static final String SEPARATOR = ":";
-    public static final int REQUEST_CODE = 1;
 
     private static final Emojidex INSTANCE = new Emojidex();
 
@@ -23,13 +24,19 @@ public class Emojidex {
     private EmojiManager manager;
     private EmojiFormat defaultFormat;
 
-    private EmojiDownloader downloader = null;
-
     /**
      * Get singleton instance.
      * @return  Singleton instance.
      */
     public static Emojidex getInstance() { return INSTANCE; }
+
+    /**
+     * Private constructor.
+     */
+    private Emojidex()
+    {
+        // nop
+    }
 
     /**
      * Initialize emojidex.
@@ -47,6 +54,7 @@ public class Emojidex {
         this.context = context.getApplicationContext();
         EmojidexFileUtils.initialize(this.context);
         VersionManager.getInstance().optimize(this.context);
+        getEmojiDownloader().initialize(this.context);
         manager = new EmojiManager(this.context);
         manager.add(EmojidexFileUtils.getLocalJsonUri());
         defaultFormat = EmojiFormat.toFormat(this.context.getResources().getString(R.string.emoji_format_default));
@@ -55,53 +63,27 @@ public class Emojidex {
     }
 
     /**
-     * Download emoji image to local storage.
-     * @param formats       Emoji format array.
+     * Add download event listener.
+     * @param listener  Download event listener.
      */
-    public void download(EmojiFormat[] formats)
-    {
-        download(formats, null);
-    }
-
-    /**
-     * Download emoji image to local storage.
-     * @param formats       Emoji format array.
-     * @param listener      Download event listener.
-     * @return  false when already downloading now.
-     */
-    public boolean download(EmojiFormat[] formats, DownloadListener listener)
-    {
-        return download(formats, listener, null, null);
-    }
-
-    /**
-     * Download emoji image to local storage.
-     * @param formats       Emoji format array.
-     * @param listener      Download event listener.
-     * @param username      User name.
-     * @param authtoken     Auth token.
-     * @return  false when already downloading now.
-     */
-    public boolean download(EmojiFormat[] formats, DownloadListener listener, String username, String authtoken)
+    public void addDownloadListener(DownloadListener listener)
     {
         if( !isInitialized() )
             throw new EmojidexIsNotInitializedException();
 
-        // Skip if downloader is already run.
-        if(downloader != null && !downloader.isIdle())
-            return false;
+        getEmojiDownloader().addListener(listener);
+    }
 
-        // Create downloader.
-        downloader = new EmojiDownloader(context, username, authtoken);
-        if(listener != null)
-            downloader.setListener(listener);
+    /**
+     * Remove download event listener.
+     * @param listener  Download event listener.
+     */
+    public void removeDownloadListener(DownloadListener listener)
+    {
+        if( !isInitialized() )
+            throw new EmojidexIsNotInitializedException();
 
-        // Download emojies.
-        final DownloadConfig config = new DownloadConfig(formats);
-        downloader.downloadUTFEmoji(config);
-        downloader.downloadExtendedEmoji(config);
-
-        return true;
+        getEmojiDownloader().removeListener(listener);
     }
 
     /**
@@ -122,6 +104,9 @@ public class Emojidex {
      */
     public boolean deleteLocalCache()
     {
+        if( !isInitialized() )
+            throw new EmojidexIsNotInitializedException();
+
         boolean result = EmojidexFileUtils.deleteFiles(EmojidexFileUtils.getLocalRootUri());
         Log.d(TAG, "Delete all cache files in local storage.");
         return result;
@@ -275,5 +260,14 @@ public class Emojidex {
             throw new EmojidexIsNotInitializedException();
         
         return defaultFormat;
+    }
+
+    /**
+     * Get emoji downloader.
+     * @return      Emoji downloader.
+     */
+    public EmojiDownloader getEmojiDownloader()
+    {
+        return EmojiDownloader.getInstance();
     }
 }

@@ -226,7 +226,7 @@ public class CatalogActivity extends Activity
     private void sendEmoji(Emoji emoji)
     {
         final SealDownloader downloader = new SealDownloader(this);
-        final String emojiName = emoji.getName();
+        final String emojiName = emoji.getCode();
 
         downloader.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override

@@ -21,8 +21,7 @@ import japngasm.APNGFrame;
 /**
  * Created by kou on 16/12/21.
  */
-
-class ImageLoader
+public class ImageLoader
 {
     private static final ImageLoader INSTANCE = new ImageLoader();
 
@@ -37,14 +36,39 @@ class ImageLoader
      */
     public static class ImageParam
     {
-        public boolean isOneShot;
-        public boolean isSkipFirst;
-        public Frame[] frames;
+        private boolean oneShot;
+        private boolean skipFirst;
+        private Frame[] frames;
 
         public static class Frame
         {
-            Bitmap bitmap;
-            int duration;
+            private Bitmap bitmap;
+            private int duration;
+
+            public Bitmap getBitmap()
+            {
+                return bitmap;
+            }
+
+            public int getDuration()
+            {
+                return duration;
+            }
+        }
+
+        public boolean isOneShot()
+        {
+            return oneShot;
+        }
+
+        public boolean isSkipFirst()
+        {
+            return skipFirst;
+        }
+
+        public Frame[] getFrames()
+        {
+            return frames;
         }
 
         public boolean hasAnimation()
@@ -151,15 +175,21 @@ class ImageLoader
         imageParams.put(key, newParam);
     }
 
+    public void reload(String emojiName)
+    {
+        for(EmojiFormat format : EmojiFormat.values())
+            reload(emojiName, format);
+    }
+
     public void reload(EmojiFormat format)
     {
         for(String key : imageParams.keySet())
         {
-            // keyParts[0]: Emoji solution
+            // keyParts[0]: Emoji resolution
             // keyParts[1]: Emoji name
             final String[] keyParts = key.split("/");
 
-            if(keyParts[0].equals(format.getRelativeDir()))
+            if(keyParts[0].equals(format.getResolution()))
                 reload(keyParts[1], format);
         }
     }
@@ -180,7 +210,7 @@ class ImageLoader
      */
     private String createCacheKey(String name, EmojiFormat format)
     {
-        return format.getRelativeDir() + "/" + name;
+        return format.getResolution() + "/" + name;
     }
 
     /**
@@ -232,8 +262,8 @@ class ImageLoader
         if(param.hasAnimation())
         {
             // Set param.
-            param.isOneShot = apngasm.getLoops() == 1;
-            param.isSkipFirst = apngasm.isSkipFirst();
+            param.oneShot = apngasm.getLoops() == 1;
+            param.skipFirst = apngasm.isSkipFirst();
 
             // Create temporar image files.
             final String tmpDir = EmojidexFileUtils.getTemporaryPath() + "/";

@@ -22,10 +22,12 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.emojidex.emojidexandroid.downloader.DownloadConfig;
+import com.emojidex.emojidexandroid.downloader.DownloadListener;
+import com.emojidex.emojidexandroid.downloader.EmojiDownloader;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.HashMap;
-import java.util.List;
 
 
 public class SearchActivity extends Activity {
@@ -35,7 +37,7 @@ public class SearchActivity extends Activity {
 
     private String category;
     private ProgressDialog loadingDialog = null;
-    private EmojiDownloader downloader = null;
+    private int downloadHandle = EmojiDownloader.HANDLE_NULL;
 
     private boolean fromCatalog;
 
@@ -193,17 +195,20 @@ public class SearchActivity extends Activity {
                 searchManager.clear();
 
                 final UserData userdata = UserData.getInstance();
-                downloader = userdata.isLogined() ?
-                        new EmojiDownloader(SearchActivity.this, userdata.getUsername(), userdata.getAuthToken()) :
-                        new EmojiDownloader(SearchActivity.this);
-                downloader.setListener(new CustomDownloadListener());
+                final DownloadConfig config =
+                        new DownloadConfig()
+                                .addFormat(EmojiFormat.toFormat(getString(R.string.emoji_format_default)))
+                                .addFormat(EmojiFormat.toFormat(getString(R.string.emoji_format_key)))
+                                .addFormat(EmojiFormat.toFormat(getString(R.string.emoji_format_seal)))
+                                .setUser(userdata.getUsername(), userdata.getAuthToken())
+                        ;
 
-                final DownloadConfig config = new DownloadConfig(
-                        EmojiFormat.toFormat(getString(R.string.emoji_format_default)),
-                        EmojiFormat.toFormat(getString(R.string.emoji_format_key)),
-                        EmojiFormat.toFormat(getString(R.string.emoji_format_seal))
-                );
-                downloader.downloadSearchEmoji(searchText, category, config);
+                final EmojiDownloader downloader = EmojiDownloader.getInstance();
+
+                downloadHandle = downloader.downloadSearchEmoji(searchText, category, config);
+
+                if(downloadHandle != EmojiDownloader.HANDLE_NULL)
+                    Emojidex.getInstance().addDownloadListener(new CustomDownloadListener());
             }
         }, 1000);
 
@@ -243,8 +248,7 @@ public class SearchActivity extends Activity {
         loadingDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
-                downloader.cancelDownload();
-                downloader = null;
+                Emojidex.getInstance().getEmojiDownloader().cancelDownload(downloadHandle);
                 loadingDialog = null;
             }
         });
@@ -258,62 +262,6 @@ public class SearchActivity extends Activity {
         loadingDialog.show();
     }
 
-
-
-    /**
-     * Custom download listener.
-     */
-    private class CustomDownloadListener extends DownloadListener
-    {
-        @Override
-        public void onPostOneJsonDownload(List<String> emojiNames) {
-            super.onPostOneJsonDownload(emojiNames);
-
-            for(String emoji : emojiNames)
-                searchManager.addLast(emoji);
-        }
-
-        @Override
-        public void onPostAllJsonDownload(EmojiDownloader downloader) {
-            super.onPostAllJsonDownload(downloader);
-
-            // If downloader has download task, update emojidex database.
-            if(downloader.hasDownloadTask())
-                Emojidex.getInstance().reload();
-
-            // Save shared preferences.
-            final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(SearchActivity.this);
-            final SharedPreferences.Editor prefEditor = pref.edit();
-            prefEditor.putString(
-                    getString(R.string.preference_key_start_category),
-                    getString(R.string.ime_category_id_search)
-            );
-            prefEditor.commit();
-            if(loadingDialog != null)
-            {
-                loadingDialog.dismiss();
-                loadingDialog = null;
-            }
-
-            // Close search activity.
-            searchManager.save();
-            SearchActivity.this.finish();
-        }
-
-        @Override
-        public void onPostOneEmojiDownload(String emojiName) {
-            final Emoji emoji = Emojidex.getInstance().getEmoji(emojiName);
-
-            if(emoji == null)
-                return;
-
-            emoji.reloadImage();
-
-            if(EmojidexIME.currentInstance != null)
-                EmojidexIME.currentInstance.invalidate(emojiName);
-        }
-    }
-
     @Override
     protected void onPause() {
         if (loadingDialog != null) loadingDialog.dismiss();
@@ -324,5 +272,62 @@ public class SearchActivity extends Activity {
     protected void onResume() {
         if (loadingDialog != null) loadingDialog.show();
         super.onResume();
+    }
+
+    /**
+      * Custom download listener.
+      */
+    private class CustomDownloadListener extends DownloadListener
+    {
+        @Override
+        public void onDownloadJson(int handle, String... emojiNames)
+        {
+            if(handle == downloadHandle)
+            {
+                // Add emoji to manager.
+                for(String emoji : emojiNames)
+                    searchManager.addLast(emoji);
+                searchManager.save();
+
+                // Save shared preferences.
+                final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(SearchActivity.this);
+                final SharedPreferences.Editor prefEditor = pref.edit();
+                prefEditor.putString(
+                        getString(R.string.preference_key_start_category),
+                        getString(R.string.ime_category_id_search)
+                );
+                prefEditor.commit();
+
+                // Close dialog.
+                if(loadingDialog != null)
+                {
+                    loadingDialog.dismiss();
+                    loadingDialog = null;
+                }
+
+                // Close search activity.
+                finish();
+            }
+        }
+
+        @Override
+        public void onFinish(int handle, EmojiDownloader.Result result)
+        {
+            if(handle == downloadHandle)
+            {
+                downloadHandle = EmojiDownloader.HANDLE_NULL;
+                Emojidex.getInstance().removeDownloadListener(this);
+            }
+        }
+
+        @Override
+        public void onCancelled(int handle, EmojiDownloader.Result result)
+        {
+            if(handle == downloadHandle)
+            {
+                downloadHandle = EmojiDownloader.HANDLE_NULL;
+                Emojidex.getInstance().removeDownloadListener(this);
+            }
+        }
     }
 }

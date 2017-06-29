@@ -4,6 +4,10 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 
+import com.emojidex.emojidexandroid.downloader.DownloadConfig;
+import com.emojidex.emojidexandroid.downloader.DownloadListener;
+import com.emojidex.emojidexandroid.downloader.EmojiDownloader;
+
 /**
  * Created by kou on 15/04/20.
  */
@@ -13,6 +17,8 @@ public class SealDownloader {
     private ProgressDialog dialog = null;
     private boolean canceled = false;
     private DialogInterface.OnDismissListener onDismissListener = null;
+
+    private int downloadHandle;
 
     /**
      * Construct object.
@@ -33,12 +39,19 @@ public class SealDownloader {
 
         // Download seal.
         final UserData userdata = UserData.getInstance();
-        final EmojiDownloader downloader = userdata.isLogined() ?
-                new EmojiDownloader(parentActivity, userdata.getUsername(), userdata.getAuthToken()) :
-                new EmojiDownloader(parentActivity);
-        final DownloadConfig config = new DownloadConfig(EmojiFormat.toFormat(parentActivity.getString(R.string.emoji_format_seal)));
-        downloader.setListener(new CustomDownloadListener());
-        downloader.downloadEmoji(name, config);
+        final DownloadConfig config =
+                new DownloadConfig()
+                        .addFormat(EmojiFormat.toFormat(parentActivity.getString(R.string.emoji_format_seal)))
+                        .setUser(userdata.getUsername(), userdata.getAuthToken())
+                ;
+
+        final EmojiDownloader downloader = EmojiDownloader.getInstance();
+        downloadHandle = downloader.downloadEmoji(name, config);
+
+        if(downloadHandle == EmojiDownloader.HANDLE_NULL)
+            return;
+
+        Emojidex.getInstance().addDownloadListener(new CustomDownloadListener());
 
         // Show progress dialog.
         dialog = new ProgressDialog(parentActivity);
@@ -60,7 +73,7 @@ public class SealDownloader {
         dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
-                downloader.cancelDownload();
+                downloader.cancelDownload(downloadHandle);
                 canceled = true;
             }
         });
@@ -95,13 +108,26 @@ public class SealDownloader {
     private class CustomDownloadListener extends DownloadListener
     {
         @Override
-        public void onFinish(EmojiDownloader.Result result) {
-            super.onFinish(result);
-
-            if(dialog != null)
+        public void onFinish(int handle, EmojiDownloader.Result result)
+        {
+            if(handle == downloadHandle)
             {
-                dialog.dismiss();
-                dialog = null;
+                if(dialog != null)
+                {
+                    dialog.dismiss();
+                    dialog = null;
+                }
+
+                Emojidex.getInstance().removeDownloadListener(this);
+            }
+        }
+
+        @Override
+        public void onCancelled(int handle, EmojiDownloader.Result result)
+        {
+            if(handle == downloadHandle)
+            {
+                Emojidex.getInstance().removeDownloadListener(this);
             }
         }
     }

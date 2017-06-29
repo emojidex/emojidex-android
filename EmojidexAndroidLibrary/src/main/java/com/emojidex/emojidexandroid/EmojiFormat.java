@@ -24,7 +24,7 @@ public enum EmojiFormat
     ;
 
     private final String extension;
-    private final String relativeDir;
+    private final String resolution;
 
     /**
      * Convert resolution name to format.
@@ -34,7 +34,7 @@ public enum EmojiFormat
     public static EmojiFormat toFormat(String resolution)
     {
         for(EmojiFormat format : EmojiFormat.values())
-            if (resolution.equals(format.relativeDir))
+            if (resolution.equals(format.resolution))
                 return format;
         return null;
     }
@@ -43,24 +43,24 @@ public enum EmojiFormat
      * Get extension of format.
      * @return  Extension of format.
      */
-    String getExtension()
+    public String getExtension()
     {
         return extension;
     }
 
     /**
-     * Get relative directory path of format.
-     * @return  Relative directory path.
+     * Get resolution of format.
+     * @return  Resolution.
      */
-    String getRelativeDir()
+    public String getResolution()
     {
-        return relativeDir;
+        return resolution;
     }
 
     /** Construct EmojiFormat object..(private) */
-    private EmojiFormat(String extension, String relativeDir)
+    private EmojiFormat(String extension, String resolution)
     {
         this.extension = extension;
-        this.relativeDir = relativeDir;
+        this.resolution = resolution;
     }
 }

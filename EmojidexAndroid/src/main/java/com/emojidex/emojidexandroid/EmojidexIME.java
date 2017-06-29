@@ -27,6 +27,8 @@ import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.ViewFlipper;
 
+import com.emojidex.emojidexandroid.downloader.DownloadListener;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,8 +44,8 @@ public class EmojidexIME extends InputMethodService {
     static final String TAG = MainActivity.TAG + "::EmojidexIME";
     static EmojidexIME currentInstance = null;
 
-    private final Handler invalidateOneHandler;
-    private final Handler invalidateAllHandler;
+    private final Handler invalidateHandler;
+    private final Handler reloadHandler;
 
     private Emojidex emojidex;
 
@@ -80,6 +82,8 @@ public class EmojidexIME extends InputMethodService {
 
     private final HashMap<String, List<Emoji>> categorizedEmojies = new HashMap<String, List<Emoji>>();
 
+    private final CustomDownloadListener downloadListener = new CustomDownloadListener();
+
     /**
      * Construct EmojidexIME object.
      */
@@ -87,17 +91,17 @@ public class EmojidexIME extends InputMethodService {
     {
         setTheme(R.style.IMETheme);
 
-        invalidateOneHandler = new Handler(){
+        invalidateHandler = new Handler(){
             @Override
             public void handleMessage(Message msg) {
                 keyboardViewManager.getCurrentView().invalidateKey(msg.arg1);
             }
         };
-        invalidateAllHandler = new Handler() {
+        reloadHandler = new Handler() {
             @Override
             public void handleMessage(Message msg)
             {
-                keyboardViewManager.getCurrentView().invalidateAllKeys();
+                reload();
             }
         };
     }
@@ -198,9 +202,10 @@ public class EmojidexIME extends InputMethodService {
         initStartCategory();
 
         // Emoji download.
+        new EmojidexUpdater(this).startUpdateThread();
+
         indexUpdater = new EmojidexIndexUpdater(this);
-        if( !new EmojidexUpdater(this).startUpdateThread() )
-            indexUpdater.startUpdateThread(2);
+        indexUpdater.startUpdateThread(2);
     }
 
     @Override
@@ -224,6 +229,15 @@ public class EmojidexIME extends InputMethodService {
     }
 
     @Override
+    public void showWindow(boolean showInput)
+    {
+        super.showWindow(showInput);
+
+        // Regist download listener.
+        emojidex.addDownloadListener(downloadListener);
+    }
+
+    @Override
     public void hideWindow()
     {
         if( keyboardViewManager == null || !keyboardViewManager.getCurrentView().closePopup() )
@@ -232,6 +246,9 @@ public class EmojidexIME extends InputMethodService {
             super.hideWindow();
             stopAnimation();
         }
+
+        // Unregist download listener.
+        emojidex.removeDownloadListener(downloadListener);
     }
 
     /**
@@ -515,99 +532,10 @@ public class EmojidexIME extends InputMethodService {
     }
 
     /**
-     * show favorites keyboard
-     * @param v view
-     */
-//    public void showFavorites(View v)
-//    {
-//        // load favorites
-//        ArrayList<String> favorites = FileOperation.load(this, FileOperation.FAVORITES);
-//        keyboardViewManager.initializeFromName(favorites);
-//    }
-
-    /**
-     * show settings
-     * @param v view
-     */
-//    public void showSettings(View v)
-//    {
-//        closePopupWindow(v);
-//        View view = getLayoutInflater().inflate(R.layout.settings, null);
-//        createPopupWindow(view);
-//    }
-
-    /**
-     * create popup window
-     * @param v view
-     */
-//    public void createDeleteFavoritesWindow(View v)
-//    {
-//        closePopupWindow(v);
-//        View view = getLayoutInflater().inflate(R.layout.popup_delete_all_favorites, null);
-//        createPopupWindow(view);
-//    }
-
-    /**
-     * delete all favorites data
-     * @param v view
-     */
-//    public void deleteAllFavorites(View v)
-//    {
-//        closePopupWindow(v);
-//
-//        // delete
-//        boolean result = FileOperation.deleteFile(getApplicationContext(), FileOperation.FAVORITES);
-//        showResultToast(result);
-//        currentCategory = null;
-//        categoryAllButton.performClick();
-//    }
-
-    /**
-     * create popup window
-     * @param view view
-     */
-//    private void createPopupWindow(View view)
-//    {
-//        int height = keyboardViewFlipper.getHeight();
-//
-//        // create popup window
-//        popup = new PopupWindow(this);
-//        popup.setContentView(view);
-//        popup.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
-//        popup.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
-//        popup.showAtLocation(layout, Gravity.CENTER_HORIZONTAL, 0, -height);
-//    }
-
-    /**
-     * close popup window
-     * @param v view
-     */
-//    public void closePopupWindow(View v)
-//    {
-//        if (popup != null)
-//        {
-//            popup.dismiss();
-//            popup = null;
-//        }
-//    }
-
-    /**
-     * show toast
-     * @param result success or failure
-     */
-//    private void showResultToast(boolean result)
-//    {
-//        if (result)
-//            Toast.makeText(this, R.string.delete_success, Toast.LENGTH_SHORT).show();
-//        else
-//            Toast.makeText(this, R.string.delete_failure, Toast.LENGTH_SHORT).show();
-//    }
-
-    /**
      * Re-draw key.
-     * @param emojiName     Emoji name.
+     * @param emojiNames    Emoji name array.
      */
-    void invalidate(String emojiName)
+    void invalidate(String... emojiNames)
     {
         if(keyboardViewManager == null)
             return;
@@ -616,28 +544,20 @@ public class EmojidexIME extends InputMethodService {
         final Keyboard keyboard = view.getKeyboard();
         final List<Keyboard.Key> keys = keyboard.getKeys();
 
-        for(int i = 0;  i < keys.size();  ++i)
+        for(String emojiName : emojiNames)
         {
-            if(keys.get(i).popupCharacters.equals(emojiName))
+            for(int i = 0; i < keys.size(); ++i)
             {
-                final Message msg = invalidateOneHandler.obtainMessage();
-                msg.arg1 = i;
-                invalidateOneHandler.sendMessage(msg);
+                if(keys.get(i).popupCharacters.equals(emojiName))
+                {
+                    final Message msg = invalidateHandler.obtainMessage();
+                    msg.arg1 = i;
+                    invalidateHandler.sendMessage(msg);
 
-                break;
+                    break;
+                }
             }
         }
-    }
-
-    /**
-     * Re-draw all keys.
-     */
-    void invalidate()
-    {
-        if(keyboardViewManager == null)
-            return;
-
-        invalidateAllHandler.sendMessage(invalidateAllHandler.obtainMessage());
     }
 
     /**
@@ -692,7 +612,7 @@ public class EmojidexIME extends InputMethodService {
     void commitEmoji(Emoji emoji)
     {
         getCurrentInputConnection().commitText(emoji.toEmojidexString(), 1);
-        historyManager.addFirst(emoji.getName());
+        historyManager.addFirst(emoji.getCode());
     }
 
     void changeKeyboard(Emoji emoji) {
@@ -717,7 +637,7 @@ public class EmojidexIME extends InputMethodService {
         // Set page.
         keyboardViewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_in));
         keyboardViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_out));
-        keyboardViewManager.setPage(emoji.getName());
+        keyboardViewManager.setPage(emoji.getCode());
         keyboardViewFlipper.showNext();
         initAnimation();
     }
@@ -948,6 +868,30 @@ public class EmojidexIME extends InputMethodService {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             return detector.onTouchEvent(event);
+        }
+    }
+
+    /**
+     * Custom DownloadListener.
+     */
+    private class CustomDownloadListener extends DownloadListener
+    {
+        @Override
+        public void onUpdateDatabase(int handle)
+        {
+            reloadHandler.sendMessage(reloadHandler.obtainMessage());
+        }
+
+        @Override
+        public void onDownloadEmoji(int handle, String emojiName)
+        {
+            invalidate(emojiName);
+        }
+
+        @Override
+        public void onDownloadEmojiArchive(int handle, String... emojiNames)
+        {
+            invalidate(emojiNames);
         }
     }
 }
