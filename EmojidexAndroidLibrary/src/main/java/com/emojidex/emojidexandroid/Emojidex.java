@@ -124,7 +124,7 @@ public class Emojidex {
 
     /**
      * Normal text encode to emojidex text.
-     * @param text      Normal text.
+     * @param text              Normal text.
      * @param autoDeEmojify     If true, execute deEmojify before emojify.
      * @return          Emojidex text.
      */
@@ -135,10 +135,10 @@ public class Emojidex {
 
     /**
      * Normal text encode to emojidex text.
-     * @param text      Normal text.
+     * @param text              Normal text.
      * @param autoDeEmojify     If true, execute deEmojify before emojify.
      * @param useImage          If true, use phantom-emoji image.
-     * @return          Emojidex text.
+     * @return                  Emojidex text.
      */
     public CharSequence emojify(CharSequence text, boolean autoDeEmojify, boolean useImage)
     {
@@ -155,13 +155,29 @@ public class Emojidex {
      */
     public CharSequence emojify(CharSequence text, boolean autoDeEmojify, boolean useImage, EmojiFormat format)
     {
+        return emojify(text, autoDeEmojify, useImage, format, format);
+    }
+
+    /**
+     * Normal text encode to emojidex text.
+     * @param text              Normal text.
+     * @param autoDeEmojify     If true, execute deEmojify before emojify.
+     * @param useImage          If true, use phantom-emoji image.
+     * @param format            Image format.
+     * @param downloadFormats   Download formats.
+     *                          If emoji is not found, auto download emoji.
+     * @return                  Emojidex text.
+     */
+    public CharSequence emojify(CharSequence text, boolean autoDeEmojify, boolean useImage, EmojiFormat format, EmojiFormat... downloadFormats)
+    {
         if( !isInitialized() )
             throw new EmojidexIsNotInitializedException();
 
         return TextConverter.emojify(
                 autoDeEmojify ? deEmojify(text) : text,
                 useImage,
-                format
+                format,
+                downloadFormats
         );
     }
 

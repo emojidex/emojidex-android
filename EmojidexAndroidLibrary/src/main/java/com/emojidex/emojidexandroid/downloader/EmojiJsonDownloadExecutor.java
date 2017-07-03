@@ -24,7 +24,8 @@ class EmojiJsonDownloadExecutor extends AbstractJsonDownloadExecutor {
         final Client client = createClient();
         final Emoji emoji = client.getSearch().find(name, true);
         final Collection collection = new Collection();
-        collection.add(emoji);
+        if( !emoji.getCode().isEmpty() )
+            collection.add(emoji);
         return collection;
     }
 }

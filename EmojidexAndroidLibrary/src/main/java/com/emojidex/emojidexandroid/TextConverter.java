@@ -7,6 +7,8 @@ import android.text.style.DynamicDrawableSpan;
 import android.text.style.ImageSpan;
 import android.util.Log;
 
+import com.emojidex.emojidexandroid.downloader.DownloadConfig;
+
 import java.util.LinkedList;
 
 /**
@@ -19,12 +21,14 @@ class TextConverter {
 
     /**
      * Normal text encode to emojidex text.
-     * @param text      Normal text.
-     * @param useImage  If true, use phantom-emoji image.
-     * @param format    Image format.
-     * @return          Emojidex text.
+     * @param text              Normal text.
+     * @param useImage          If true, use phantom-emoji image.
+     * @param format            Image format.
+     * @param downloadFormats   Download formats.
+     *                          If emoji is not found, auto download emoji.
+     * @return                  Emojidex text.
      */
-    public static CharSequence emojify(CharSequence text, boolean useImage, EmojiFormat format)
+    public static CharSequence emojify(CharSequence text, boolean useImage, EmojiFormat format, EmojiFormat[] downloadFormats)
     {
         final SpannableStringBuilder result = new SpannableStringBuilder();
 
@@ -60,6 +64,18 @@ class TextConverter {
                 {
                     result.append( text.subSequence(startIndex, endIndex) );
                     startIndex = endIndex;
+
+                    // Auto download emoji.
+                    if(     !emojiName.isEmpty()
+                        &&  downloadFormats != null
+                        &&  downloadFormats.length > 0  )
+                    {
+                        final DownloadConfig config = new DownloadConfig()
+                                .setFormats(downloadFormats)
+                                ;
+                        final int handle = emojidex.getEmojiDownloader().downloadEmoji(emojiName, config);
+                    }
+
                     continue;
                 }
 
