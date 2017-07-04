@@ -40,6 +40,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.emojidex.emojidexandroid.downloader.DownloadListener;
+import com.emojidex.emojidexandroid.downloader.EmojiDownloader;
 import com.emojidex.libemojidex.Emojidex.Service.User;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -78,10 +79,16 @@ public class MainActivity extends Activity {
             @Override
             public void handleMessage(Message msg)
             {
+                final int oldStart = editText.getSelectionStart();
+                final int oldEnd = editText.getSelectionEnd();
+
                 editText.setText(emojify(editText.getText()));
 
-                // Move cursor to last.
-                editText.setSelection(editText.length());
+                final int length = editText.length();
+                editText.setSelection(
+                        Math.min(oldStart, length),
+                        Math.min(oldEnd, length)
+                );
             }
         };
 
@@ -867,18 +874,7 @@ public class MainActivity extends Activity {
     private class CustomDownloadListener extends DownloadListener
     {
         @Override
-        public void onDownloadEmoji(int handle, String emojiName)
-        {
-            updateText();
-        }
-
-        @Override
-        public void onDownloadEmojiArchive(int handle, String... emojiNames)
-        {
-            updateText();
-        }
-
-        private void updateText()
+        public void onFinish(int handle, EmojiDownloader.Result result)
         {
             final Editable text = editText.getText();
 
