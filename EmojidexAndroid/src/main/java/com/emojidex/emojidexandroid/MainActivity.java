@@ -13,6 +13,7 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.text.Editable;
@@ -38,6 +39,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.emojidex.emojidexandroid.downloader.DownloadListener;
+import com.emojidex.emojidexandroid.downloader.EmojiDownloader;
 import com.emojidex.libemojidex.Emojidex.Service.User;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -57,12 +60,37 @@ public class MainActivity extends Activity {
     private AdView adView;
     private FirebaseAnalytics analytics;
 
+    private final DownloadListener downloadListener = new CustomDownloadListener();
+    private EmojiFormat defaultFormat;
+    private EmojiFormat keyFormat;
+    private Handler updateTextHandler;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         inputMethodManager = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+
+        defaultFormat = EmojiFormat.toFormat(getString(R.string.emoji_format_default));
+        keyFormat = EmojiFormat.toFormat(getString(R.string.emoji_format_key));
+
+        updateTextHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg)
+            {
+                final int oldStart = editText.getSelectionStart();
+                final int oldEnd = editText.getSelectionEnd();
+
+                editText.setText(emojify(editText.getText()));
+
+                final int length = editText.length();
+                editText.setSelection(
+                        Math.min(oldStart, length),
+                        Math.min(oldEnd, length)
+                );
+            }
+        };
 
         initEmojidexEditor();
         getIntentData();
@@ -123,6 +151,22 @@ public class MainActivity extends Activity {
         toggleButton.setChecked(savedInstanceState.getBoolean("toggle"));
         toggleState = savedInstanceState.getBoolean("toggle");
         editText.setText(savedInstanceState.getCharSequence("text"));
+    }
+
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
+
+        emojidex.addDownloadListener(downloadListener);
+    }
+
+    @Override
+    protected void onStop()
+    {
+        emojidex.removeDownloadListener(downloadListener);
+
+        super.onStop();
     }
 
     /**
@@ -195,7 +239,7 @@ public class MainActivity extends Activity {
 
     private CharSequence emojify(final CharSequence cs)
     {
-        return emojidex.emojify(cs);
+        return emojidex.emojify(cs, true, true, defaultFormat, defaultFormat, keyFormat);
     }
 
     private CharSequence deEmojify(final CharSequence cs)
@@ -490,6 +534,9 @@ public class MainActivity extends Activity {
                     editText.setText(emojify(text));
                 else
                     editText.setText(toUnicodeString(text));
+
+                // Move cursor to last.
+                editText.setSelection(editText.length());
             }
         }
     }
@@ -819,5 +866,31 @@ public class MainActivity extends Activity {
     private void stopAnimation()
     {
         isAnimating = false;
+    }
+
+    /**
+     * Custom download listener
+     */
+    private class CustomDownloadListener extends DownloadListener
+    {
+        @Override
+        public void onFinish(int handle, EmojiDownloader.Result result)
+        {
+            final Editable text = editText.getText();
+
+            // Skip if text is empty.
+            if(text.length() == 0)
+                return;
+
+            // Skip if text is composing.
+            final Object[] spans = text.getSpans(0, text.length(), Object.class);
+            for(Object span : spans)
+                if((text.getSpanFlags(span) & Spanned.SPAN_COMPOSING) == Spanned.SPAN_COMPOSING)
+                    return;
+
+            // Update text.
+            if(toggleState)
+                updateTextHandler.sendMessage(updateTextHandler.obtainMessage());
+        }
     }
 }

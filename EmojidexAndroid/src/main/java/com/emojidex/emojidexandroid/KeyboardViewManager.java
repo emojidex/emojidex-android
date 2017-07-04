@@ -155,7 +155,7 @@ public class KeyboardViewManager {
             final List<Emoji> page = pages.get(i);
             for(Emoji emoji : page)
             {
-                if( emoji.name.equals(emojiName) )
+                if( emoji.getCode().equals(emojiName) )
                 {
                     setPage(i);
                     return;

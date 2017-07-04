@@ -20,7 +20,7 @@ import java.util.Locale;
 /**
  * Created by kou on 14/10/03.
  */
-class EmojidexFileUtils
+public class EmojidexFileUtils
 {
     private static final String CACHE_DIR = "emojidex_caches";
     private static final String REMOTE_ROOT_PATH_DEFAULT = "https://cdn.emojidex.com";
@@ -60,7 +60,7 @@ class EmojidexFileUtils
      */
     public static Uri getLocalEmojiUri(String name, EmojiFormat format)
     {
-        return getLocalFileUri(format.getRelativeDir() + "/" + name.replace(' ', '_') + format.getExtension());
+        return getLocalFileUri(format.getResolution() + "/" + name.replace(' ', '_') + format.getExtension());
     }
 
     /**
@@ -112,7 +112,7 @@ class EmojidexFileUtils
             e.printStackTrace();
         }
         return rootPath + "/emoji/"
-                + format.getRelativeDir() + "/"
+                + format.getResolution() + "/"
                 + name + format.getExtension()
                 ;
     }
@@ -126,7 +126,7 @@ class EmojidexFileUtils
     public static String getRemoteEmojiArchivePath(EmojiFormat format, String rootPath)
     {
         return rootPath + "/packs/utf-"
-                + format.getRelativeDir()
+                + format.getResolution()
                 + (Locale.getDefault().equals(Locale.JAPAN) ? "-ja" : "")
                 + ".tar.xz"
                 ;
@@ -154,7 +154,7 @@ class EmojidexFileUtils
      */
     public static String getAssetsEmojiPath(String name, EmojiFormat format)
     {
-        return format.getRelativeDir() + "/"
+        return format.getResolution() + "/"
                 + name + format.getExtension()
                 ;
     }
@@ -202,7 +202,7 @@ class EmojidexFileUtils
     public static boolean existsLocalEmojiFormatDirectory(EmojiFormat format)
     {
         return existsLocalFile(
-                getLocalFileUri(format.getRelativeDir() + "/")
+                getLocalFileUri(format.getResolution() + "/")
         );
     }
 

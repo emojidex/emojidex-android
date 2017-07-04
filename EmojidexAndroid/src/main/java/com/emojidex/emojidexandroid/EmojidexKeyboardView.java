@@ -405,7 +405,7 @@ public class EmojidexKeyboardView extends KeyboardView {
 
     protected void changeEmoji(Emoji emoji)
     {
-        emojiName = emoji.getName();
+        emojiName = emoji.getCode();
         popupTextView.setText(":" + emojiName + ":");
 
         popupIcon.setImageDrawable(emoji.getDrawable(format, iconSize));

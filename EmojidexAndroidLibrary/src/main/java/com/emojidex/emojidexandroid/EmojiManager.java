@@ -111,7 +111,7 @@ class EmojiManager {
                 emoji.initialize(context, nextOriginalCode++);
 
             // Add.
-            emojiTableFromName.put(emoji.getName(), emoji);
+            emojiTableFromName.put(emoji.getCode(), emoji);
             emojiTableFromCodes.put(emoji.getCodes(), emoji);
 
             ArrayList<Emoji> categoryList = categorizedEmojies.get(emoji.getCategory());

@@ -22,14 +22,47 @@ import java.util.HashMap;
 /**
  * Created by kou on 14/10/10.
  */
-class JsonParam extends SimpleJsonParam {
-//    @JsonProperty("code_ja")    protected String name_ja = null;
-    @JsonProperty("checksums")  protected Checksums checksums = null;
+public class JsonParam extends SimpleJsonParam {
+    @JsonProperty("checksums")  private Checksums checksums = null;
 
     public static class Checksums
     {
-        @JsonProperty("svg")   public String svg = null;
-        @JsonProperty("png")   public HashMap<String, String> png = null;
+        @JsonProperty("svg")   private String svg = null;
+        @JsonProperty("png")   private HashMap<String, String> png = null;
+
+        public String getSvg()
+        {
+            return svg;
+        }
+
+        public void setSvg(String svg)
+        {
+            this.svg = svg;
+        }
+
+        public String getPng(EmojiFormat format)
+        {
+            return png == null ? null : png.get(format.getResolution());
+        }
+
+        public void setPng(EmojiFormat format, String checksum)
+        {
+            if(png == null)
+                png = new HashMap<String, String>();
+            png.put(format.getResolution(), checksum);
+        }
+    }
+
+    public Checksums getChecksums()
+    {
+        if(checksums == null)
+            checksums = new Checksums();
+        return checksums;
+    }
+
+    public void setChecksums(Checksums checksums)
+    {
+        this.checksums = checksums;
     }
 
     /**

@@ -136,7 +136,7 @@ public class EmojidexKeyboard extends Keyboard {
 
         newKey.icon = emoji.getDrawable(EMOJI_FORMAT, iconSize);
 
-        newKey.popupCharacters = emoji.name;
+        newKey.popupCharacters = emoji.getCode();
 
         return newKey;
     }

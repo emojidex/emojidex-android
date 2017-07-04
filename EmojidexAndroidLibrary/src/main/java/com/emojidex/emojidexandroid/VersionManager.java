@@ -14,7 +14,7 @@ import java.util.ArrayList;
  * Created by kou on 17/05/26.
  */
 
-class VersionManager {
+public class VersionManager {
     private static final VersionManager instance = new VersionManager();
     private static final String filename = "emojidex_lib_version";
 
@@ -79,7 +79,7 @@ class VersionManager {
             final Uri uri = EmojidexFileUtils.getLocalJsonUri();
             final ArrayList<JsonParam> params = JsonParam.readFromFile(context, uri);
             for(JsonParam param : params)
-                param.name = param.name.replace('_', ' ');
+                param.setCode(param.getCode().replace('_', ' '));
             JsonParam.writeToFile(context, uri, params);
             return true;
         }

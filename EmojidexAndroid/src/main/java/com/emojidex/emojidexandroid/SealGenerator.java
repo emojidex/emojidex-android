@@ -83,7 +83,7 @@ public class SealGenerator {
 
         // If file not found, use default format.
         EmojiFormat format = EmojiFormat.toFormat(context.getString(R.string.emoji_format_seal));
-        if( !EmojidexFileUtils.existsLocalFile(EmojidexFileUtils.getLocalEmojiUri(emoji.getName(), format)) )
+        if( !EmojidexFileUtils.existsLocalFile(EmojidexFileUtils.getLocalEmojiUri(emoji.getCode(), format)) )
         {
             format = EmojiFormat.toFormat(context.getString(R.string.emoji_format_default));
             useLow = true;

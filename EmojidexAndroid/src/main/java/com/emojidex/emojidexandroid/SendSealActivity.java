@@ -45,7 +45,6 @@ public class SendSealActivity extends Activity {
             Log.d(TAG, "Intent send failed.(Target package name = " + sendIntent.getPackage() + ")");
 
             // Create error dialog.
-            // TODO Set error detail.
             final AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Error");
             builder.setMessage(R.string.message_unsupported_seal);

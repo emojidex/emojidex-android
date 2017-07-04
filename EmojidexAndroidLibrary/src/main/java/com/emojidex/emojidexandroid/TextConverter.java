@@ -7,24 +7,28 @@ import android.text.style.DynamicDrawableSpan;
 import android.text.style.ImageSpan;
 import android.util.Log;
 
+import com.emojidex.emojidexandroid.downloader.DownloadConfig;
+
 import java.util.LinkedList;
 
 /**
  * Created by kou on 14/10/09.
  */
 class TextConverter {
-    static final String TAG = Emojidex.TAG + "::TextConverter";
+    private static final String TAG = "EmojidexLibrary::TextConverter";
 
     private static final Emojidex emojidex = Emojidex.getInstance();
 
     /**
      * Normal text encode to emojidex text.
-     * @param text      Normal text.
-     * @param useImage  If true, use phantom-emoji image.
-     * @param format    Image format.
-     * @return          Emojidex text.
+     * @param text              Normal text.
+     * @param useImage          If true, use phantom-emoji image.
+     * @param format            Image format.
+     * @param downloadFormats   Download formats.
+     *                          If emoji is not found, auto download emoji.
+     * @return                  Emojidex text.
      */
-    public static CharSequence emojify(CharSequence text, boolean useImage, EmojiFormat format)
+    public static CharSequence emojify(CharSequence text, boolean useImage, EmojiFormat format, EmojiFormat[] downloadFormats)
     {
         final SpannableStringBuilder result = new SpannableStringBuilder();
 
@@ -60,6 +64,18 @@ class TextConverter {
                 {
                     result.append( text.subSequence(startIndex, endIndex) );
                     startIndex = endIndex;
+
+                    // Auto download emoji.
+                    if(     !emojiName.isEmpty()
+                        &&  downloadFormats != null
+                        &&  downloadFormats.length > 0  )
+                    {
+                        final DownloadConfig config = new DownloadConfig()
+                                .setFormats(downloadFormats)
+                                ;
+                        final int handle = emojidex.getEmojiDownloader().downloadEmoji(emojiName, config);
+                    }
+
                     continue;
                 }
 
@@ -71,7 +87,7 @@ class TextConverter {
                 else if(emoji.hasOriginalCodes())
                     result.append( text.subSequence(startIndex, endIndex + charCount) );
                 else
-                    result.append(emoji.getText());
+                    result.append(emoji.getMoji());
                 startIndex = endIndex + charCount;
                 startIsSeparator = false;
             }
@@ -198,7 +214,7 @@ class TextConverter {
                 (drawable instanceof EmojidexAnimationDrawable)
                         ? new EmojidexAnimationImageSpan((EmojidexAnimationDrawable)drawable)
                         : new ImageSpan(drawable);
-        final SpannableString result = new SpannableString(emoji.hasOriginalCodes() ? emoji.toTagString() : emoji.getText());
+        final SpannableString result = new SpannableString(emoji.hasOriginalCodes() ? emoji.toTagString() : emoji.getMoji());
         result.setSpan(span, 0, result.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
         return result;
     }
