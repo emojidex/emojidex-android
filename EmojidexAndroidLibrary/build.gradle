@@ -2,7 +2,7 @@ apply plugin: 'android-library'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion '25.0.3'
+    buildToolsVersion '26.0.0'
 
     defaultConfig {
         minSdkVersion 16
@@ -51,7 +51,7 @@ uploadArchives {
             repository url: "file://${projectDir}/repository"
             pom.groupId = 'com.emojidex'
             pom.artifactId = 'emojidexandroid-lib'
-            pom.version = '0.0.10'
+            pom.version = '0.0.11'
         }
     }
 }
