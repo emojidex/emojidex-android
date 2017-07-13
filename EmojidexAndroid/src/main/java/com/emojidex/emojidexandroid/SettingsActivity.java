@@ -361,7 +361,6 @@ public class SettingsActivity extends PreferenceActivity {
                             else
                                 Toast.makeText(parentActivity, failedId, Toast.LENGTH_SHORT).show();
                             updateClearCacheSummary();
-                            Emojidex.getInstance().reload();
                             if(EmojidexIME.currentInstance != null)
                                 EmojidexIME.currentInstance.reload();
 

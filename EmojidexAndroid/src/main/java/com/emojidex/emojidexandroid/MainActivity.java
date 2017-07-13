@@ -254,7 +254,7 @@ public class MainActivity extends Activity {
     private CharSequence emojify(final CharSequence cs, boolean autoDownload)
     {
         return autoDownload
-                ? emojidex.emojify(cs, true, true, defaultFormat, defaultFormat, keyFormat)
+                ? emojidex.emojify(cs, true, true, defaultFormat, new EmojiFormat[]{defaultFormat, keyFormat})
                 : emojidex.emojify(cs, true, true, defaultFormat, null);
     }
 
