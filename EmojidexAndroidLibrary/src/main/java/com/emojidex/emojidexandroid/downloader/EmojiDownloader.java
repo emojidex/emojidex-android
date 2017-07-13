@@ -65,7 +65,16 @@ public class EmojiDownloader
     {
         this.context = context;
 
-        // Read local json.
+        reload();
+    }
+
+    /**
+     * Read local json.
+     */
+    public void reload()
+    {
+        localJsonParams.clear();
+
         final ArrayList<JsonParam> jsonParams = JsonParam.readFromFile(
                 context,
                 EmojidexFileUtils.getLocalJsonUri()
@@ -378,17 +387,12 @@ public class EmojiDownloader
 
             for(EmojiFormat format : formats)
             {
-                if(format == EmojiFormat.SVG)
-                {
-                    localParam.getChecksums().setSvg(emoji.getChecksums().getSvg());
-                }
-                else
-                {
-                    localParam.getChecksums().setPng(
-                            format,
-                            emoji.getChecksums().sum("png", format.getResolution())
-                    );
-                }
+                localParam.getChecksums().set(
+                        format,
+                        (format == EmojiFormat.SVG)
+                            ? emoji.getChecksums().getSvg()
+                            : emoji.getChecksums().sum("png", format.getResolution())
+                );
             }
 
             emojiNames[i] = emoji.getCode();
@@ -476,20 +480,58 @@ public class EmojiDownloader
     {
         dest.setCode(src.getCode());
         dest.setMoji(src.getMoji());
+        dest.setUnicode(src.getUnicode());
         dest.setCategory(src.getCategory());
-        dest.setBase(src.getBase());
-        dest.setScore(src.getScore());
 
-        final StringVector srcVariants = src.getVariants();
-        final long variantsCount = srcVariants.size();
-        List<String> destVariants = dest.getVariants();
-        if(destVariants == null)
-            destVariants = new ArrayList<String>();
-        else
-            destVariants.clear();
-        for(int i = 0;  i < variantsCount;  ++i)
-            destVariants.add(srcVariants.get(i));
-        dest.setVariants(destVariants);
+        // tags
+        {
+            final StringVector srcTags = src.getTags();
+            final long tagsCount = srcTags.size();
+            List<String> destTags = dest.getTags();
+            if(destTags == null)
+                destTags = new ArrayList<String>();
+            else
+                destTags.clear();
+            for(int i = 0;  i < tagsCount;  ++i)
+                destTags.add(srcTags.get(i));
+            dest.setTags(destTags);
+        }
+
+
+        dest.setLink(src.getLink());
+        dest.setBase(src.getBase());
+
+        // variants
+        {
+            final StringVector srcVariants = src.getVariants();
+            final long variantsCount = srcVariants.size();
+            List<String> destVariants = dest.getVariants();
+            if(destVariants == null)
+                destVariants = new ArrayList<String>();
+            else
+                destVariants.clear();
+            for(int i = 0;  i < variantsCount;  ++i)
+                destVariants.add(srcVariants.get(i));
+            dest.setVariants(destVariants);
+        }
+
+        dest.setScore(src.getScore());
+        dest.setCurrentPrice(src.getCurrent_price());
+        dest.setPrimary(src.getPrimary());
+        dest.setRegisteredAt(src.getRegistered_at());
+        dest.setPermalock(src.getPermalock());
+        dest.setCopyrightLock(src.getCopyright_lock());
+        dest.setLinkExpiration(src.getLink_expiration());
+        dest.setLockExpiration(src.getLock_expiration());
+        dest.setTimesChanged(src.getTimes_changed());
+        dest.setWide(src.getIs_wide());
+        dest.setTimesUsed(src.getTimes_used());
+        dest.setAttribution(src.getAttribution());
+        dest.setUserID(src.getUser_id());
+
+        // Skip checksums.
+
+        dest.setFavorited(src.getFavorited());
     }
 
     /**
@@ -504,36 +546,17 @@ public class EmojiDownloader
         boolean existsFile = EmojidexFileUtils.existsLocalFile(EmojidexFileUtils.getLocalEmojiUri(remote.getCode(), format));
 
         // Check checksums.
-        // If emoji format is svg.
-        if(format == EmojiFormat.SVG)
-        {
-            final String localChecksum = local.getChecksums().getSvg();
-            final String remoteChecksum = remote.getChecksums().sum("svg", null);
+        final String localChecksum = local.getChecksums().get(format);
+        final String remoteChecksum = (format == EmojiFormat.SVG)
+                ? remote.getChecksums().sum("svg", null)
+                : remote.getChecksums().sum("png", format.getResolution());
 
-            // Check.
-            if(     existsFile
-                &&  (   remoteChecksum == null
-                ||  remoteChecksum.equals(localChecksum)   ))
-                return true;
+        if(     existsFile
+            &&  (   remoteChecksum == null
+            ||  remoteChecksum.equals(localChecksum)   ))
+            return true;
 
-            // Update checksums.
-            local.getChecksums().setSvg(remoteChecksum);
-        }
-        // If emoji format is png.
-        else
-        {
-            final String localChecksum = local.getChecksums().getPng(format);
-            final String remoteChecksum = remote.getChecksums().sum("png", format.getResolution());
-
-            // Check.
-            if(     existsFile
-                &&  (   remoteChecksum == null
-                ||  remoteChecksum.equals(localChecksum)   ))
-                return true;
-
-            // Update checksum.
-            local.getChecksums().setPng(format, remoteChecksum);
-        }
+        local.getChecksums().set(format, remoteChecksum);
 
         return false;
     }

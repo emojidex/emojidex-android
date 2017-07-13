@@ -79,16 +79,24 @@ public class MainActivity extends Activity {
             @Override
             public void handleMessage(Message msg)
             {
+                editText.removeTextChangedListener(textWatcher);
+
                 final int oldStart = editText.getSelectionStart();
                 final int oldEnd = editText.getSelectionEnd();
 
-                editText.setText(emojify(editText.getText()));
+                final Editable text = editText.getText();
+                text.replace(
+                        0, text.length(),
+                        toggleState ? emojify(text, false) : toUnicodeString(text)
+                );
 
                 final int length = editText.length();
                 editText.setSelection(
                         Math.min(oldStart, length),
                         Math.min(oldEnd, length)
                 );
+
+                editText.addTextChangedListener(textWatcher);
             }
         };
 
@@ -177,6 +185,7 @@ public class MainActivity extends Activity {
     private View rootView;
 
     private EditText editText;
+    private final TextWatcher textWatcher = new CustomTextWatcher();
 
     private ToggleButton toggleButton;
     private boolean toggleState = true;
@@ -201,7 +210,7 @@ public class MainActivity extends Activity {
         editText = (EditText)findViewById(R.id.edit_text);
 
         // detects input
-        editText.addTextChangedListener(new CustomTextWatcher());
+        editText.addTextChangedListener(textWatcher);
 
         // detects focus
         editText.setOnFocusChangeListener(new View.OnFocusChangeListener()
@@ -239,7 +248,14 @@ public class MainActivity extends Activity {
 
     private CharSequence emojify(final CharSequence cs)
     {
-        return emojidex.emojify(cs, true, true, defaultFormat, defaultFormat, keyFormat);
+        return emojify(cs, true);
+    }
+
+    private CharSequence emojify(final CharSequence cs, boolean autoDownload)
+    {
+        return autoDownload
+                ? emojidex.emojify(cs, true, true, defaultFormat, new EmojiFormat[]{defaultFormat, keyFormat})
+                : emojidex.emojify(cs, true, true, defaultFormat, null);
     }
 
     private CharSequence deEmojify(final CharSequence cs)
@@ -318,7 +334,7 @@ public class MainActivity extends Activity {
             {
                 if(imageSpans.length == 0)
                 {
-                    editText.removeTextChangedListener(this);
+                    editText.removeTextChangedListener(textWatcher);
 
                     final Spannable text = (Spannable)emojify(s);
                     final int length = text.length();
@@ -331,7 +347,7 @@ public class MainActivity extends Activity {
 
                     s.replace(0, s.length(), text);
 
-                    editText.addTextChangedListener(this);
+                    editText.addTextChangedListener(textWatcher);
                 }
                 else
                 {
@@ -345,12 +361,12 @@ public class MainActivity extends Activity {
             {
                 if(imageSpans.length > 0)
                 {
-                    editText.removeTextChangedListener(this);
+                    editText.removeTextChangedListener(textWatcher);
                     for(DynamicDrawableSpan span : imageSpans)
                         s.removeSpan(span);
                     final CharSequence subSequence = s.subSequence(start, end).toString();
                     s.replace(start, end, toUnicodeString(subSequence));
-                    editText.addTextChangedListener(this);
+                    editText.addTextChangedListener(textWatcher);
                 }
             }
 
@@ -552,7 +568,7 @@ public class MainActivity extends Activity {
 
     public void clearText(View v, String event)
     {
-        editText.setText("");
+        editText.getText().clear();
 
         Toast.makeText(this, R.string.editor_message_text_clear, Toast.LENGTH_SHORT).show();
 
@@ -568,7 +584,12 @@ public class MainActivity extends Activity {
         ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clipData = clipboard.getPrimaryClip();
         CharSequence newText = (clipData == null) ? "" : clipData.getItemAt(0).getText();
-        editText.setText(newText);
+
+        final Editable text = editText.getText();
+        text.replace(
+                0, text.length(),
+                toggleState ? emojify(newText) : toUnicodeString(newText)
+        );
 
         Toast.makeText(this, R.string.editor_message_text_clear_and_paste, Toast.LENGTH_SHORT).show();
 
@@ -589,14 +610,15 @@ public class MainActivity extends Activity {
         toggleState = toggleButton.isChecked();
 
         // convert text
+        final Editable text = editText.getText();
         if (toggleState)
         {
-            editText.setText(emojify(editText.getText()));
+            text.replace(0, text.length(), emojify(text));
             Toast.makeText(this, R.string.editor_message_conversion_on, Toast.LENGTH_SHORT).show();
         }
         else
         {
-            editText.setText(toUnicodeString(editText.getText()));
+            text.replace(0, text.length(), toUnicodeString(text));
             Toast.makeText(this, R.string.editor_message_conversion_off, Toast.LENGTH_SHORT).show();
         }
 
@@ -668,6 +690,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onDestroy()
     {
+        editText.removeTextChangedListener(textWatcher);
         super.onDestroy();
     }
 

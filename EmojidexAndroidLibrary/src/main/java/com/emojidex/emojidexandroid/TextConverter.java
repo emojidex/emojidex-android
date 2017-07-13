@@ -59,22 +59,33 @@ class TextConverter {
                 final String emojiName = text.subSequence(startIndex + 1, endIndex).toString();
                 final Emoji emoji = emojidex.getEmoji(emojiName);
 
+                // Auto download emoji.
+                if(     !emojiName.isEmpty()
+                    &&  downloadFormats != null
+                    &&  downloadFormats.length > 0     )
+                {
+                    DownloadConfig config = null;
+
+                    for(EmojiFormat f : downloadFormats)
+                    {
+                        if(     emoji == null
+                            ||  emoji.getChecksums().get(f) == null )
+                        {
+                            if(config == null)
+                                config = new DownloadConfig();
+                            config.addFormat(f);
+                        }
+
+                        if(config != null)
+                            emojidex.getEmojiDownloader().downloadEmoji(emojiName, config);
+                    }
+                }
+
                 // String is not emoji tag.
                 if(emoji == null)
                 {
                     result.append( text.subSequence(startIndex, endIndex) );
                     startIndex = endIndex;
-
-                    // Auto download emoji.
-                    if(     !emojiName.isEmpty()
-                        &&  downloadFormats != null
-                        &&  downloadFormats.length > 0  )
-                    {
-                        final DownloadConfig config = new DownloadConfig()
-                                .setFormats(downloadFormats)
-                                ;
-                        final int handle = emojidex.getEmojiDownloader().downloadEmoji(emojiName, config);
-                    }
 
                     continue;
                 }

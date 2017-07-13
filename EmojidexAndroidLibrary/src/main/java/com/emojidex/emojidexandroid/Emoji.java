@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Created by kou on 14/10/03.
  */
-public class Emoji extends SimpleJsonParam {
+public class Emoji extends JsonParam {
     private final List<Integer> codes = new ArrayList<Integer>();
 
     private Context context;
