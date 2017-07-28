@@ -4,8 +4,8 @@
               android:layout_height="match_parent"
               android:orientation="vertical">
 
-    <org.xwalk.core.XWalkView
-        android:id="@+id/xwalkView"
+    <WebView
+        android:id="@+id/webView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

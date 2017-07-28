@@ -4,15 +4,16 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.webkit.ValueCallback;
-
-import org.xwalk.core.XWalkNavigationHistory;
-import org.xwalk.core.XWalkResourceClient;
-import org.xwalk.core.XWalkUIClient;
-import org.xwalk.core.XWalkView;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 
 public class WebViewActivity extends Activity {
@@ -20,8 +21,9 @@ public class WebViewActivity extends Activity {
     private static int SELECTED_IMAGE = 1000;
 
     private ProgressDialog dialog;
-    private XWalkView xWalkView;
-    private ValueCallback<Uri> callback;
+    private WebView webView;
+    private ValueCallback<Uri> uploadMessage;
+    private ValueCallback<Uri[]> callback;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -34,42 +36,89 @@ public class WebViewActivity extends Activity {
         dialog.setMessage(getString(R.string.webview_loading));
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 
-        xWalkView = (XWalkView) findViewById(R.id.xwalkView);
-        xWalkView.addJavascriptInterface(new EmojidexJavaScriptInterface(), "Android");
+        webView = (WebView)findViewById(R.id.webView);
+        final WebSettings ws = webView.getSettings();
 
-        xWalkView.setResourceClient(new XWalkResourceClient(xWalkView){
+        ws.setJavaScriptEnabled(true);
+        webView.addJavascriptInterface(new EmojidexJavaScriptInterface(), "Android");
+
+        String versionName = "unknown";
+        try
+        {
+            versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+        }
+        catch(PackageManager.NameNotFoundException e)
+        {
+            e.printStackTrace();
+        }
+        ws.setUserAgentString(
+                ws.getUserAgentString()
+            +   " emojidexNativeClient/" + versionName
+        );
+
+        webView.setWebViewClient(new WebViewClient(){
             @Override
-            public void onReceivedLoadError(XWalkView view, int errorCode, String description, String failingUrl) {
-                if (errorCode == -1)
+            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl)
+            {
+                if(errorCode == WebViewClient.ERROR_UNKNOWN)
                 {
-                    // network change was detected.
-                    view.load(failingUrl, null);
+                    view.loadUrl(failingUrl);
                     return;
                 }
-                super.onReceivedLoadError(view, errorCode, description, failingUrl);
-            }
-        });
 
-        xWalkView.setUIClient(new XWalkUIClient(xWalkView){
+                super.onReceivedError(view, errorCode, description, failingUrl);
+            }
+
             @Override
-            public void onPageLoadStarted(XWalkView view, String url) {
-                super.onPageLoadStarted(view, url);
+            public void onPageStarted(WebView view, String url, Bitmap favicon)
+            {
+                super.onPageStarted(view, url, favicon);
                 dialog.show();
             }
 
             @Override
-            public void onPageLoadStopped(XWalkView view, String url, LoadStatus status) {
-                super.onPageLoadStopped(view, url, status);
+            public void onPageFinished(WebView view, String url)
+            {
+                super.onPageFinished(view, url);
                 dialog.dismiss();
+            }
+        });
+
+        webView.setWebChromeClient(new WebChromeClient(){
+            public void openFileChooser(ValueCallback<Uri> uploadFile)
+            {
+                openFileChooser(uploadFile, "");
+            }
+
+            public void openFileChooser(ValueCallback<Uri> uploadFile, String acceptType)
+            {
+                openFileChooser(uploadFile, acceptType, "");
+            }
+
+            public void openFileChooser(ValueCallback<Uri> uploadFile, String acceptType, String capture)
+            {
+                if(uploadMessage != null)
+                    uploadMessage.onReceiveValue(null);
+                uploadMessage = uploadFile;
+
+                createChooser();
             }
 
             @Override
-            public void openFileChooser(XWalkView view, ValueCallback<Uri> uploadFile, String acceptType, String capture) {
+            public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams)
+            {
                 if (callback != null) {
                     callback.onReceiveValue(null);
                 }
-                callback = uploadFile;
+                callback = filePathCallback;
 
+                createChooser();
+
+                return true;
+            }
+
+            private void createChooser()
+            {
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
                 intent.setType("image/*");
@@ -79,12 +128,12 @@ public class WebViewActivity extends Activity {
 
         Intent intent = getIntent();
         String url = intent.getStringExtra("URL");
-        xWalkView.load(url, null);
+        webView.loadUrl(url);
     }
 
     // for javascript.
     class EmojidexJavaScriptInterface {
-        @org.xwalk.core.JavascriptInterface
+        @android.webkit.JavascriptInterface
         public void setUserData(String authToken, String username) {
             UserData userData = UserData.getInstance();
             userData.setUserData(authToken, username);
@@ -93,14 +142,14 @@ public class WebViewActivity extends Activity {
             finish();
         }
 
-        @org.xwalk.core.JavascriptInterface
+        @android.webkit.JavascriptInterface
         public void close() {
             setResult(Activity.RESULT_OK);
             dialog.dismiss();
             finish();
         }
 
-        @org.xwalk.core.JavascriptInterface
+        @android.webkit.JavascriptInterface
         public void registerEmoji(String result, String message) {
             Intent intent = new Intent();
             intent.putExtra("message", message);
@@ -117,61 +166,37 @@ public class WebViewActivity extends Activity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (xWalkView != null) {
-            xWalkView.onActivityResult(requestCode, resultCode, data);
-        }
-
-        if (requestCode != SELECTED_IMAGE || callback == null || resultCode != RESULT_OK) {
+        // Error check.
+        if(     requestCode != SELECTED_IMAGE
+            ||  resultCode != RESULT_OK
+            ||  data == null
+            ||  data.getData() == null      )
+        {
             super.onActivityResult(requestCode, resultCode, data);
             return;
         }
 
-        if (data != null && data.getData() != null) {
-            callback.onReceiveValue(data.getData());
+        // For Android version >= 5.0
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+        {
+            if(callback != null)
+            {
+                callback.onReceiveValue(new Uri[]{data.getData()});
+                callback = null;
+                return;
+            }
         }
-        callback = null;
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode == KeyEvent.KEYCODE_BACK && xWalkView.getNavigationHistory().canGoBack()) {
-            xWalkView.getNavigationHistory().navigate(XWalkNavigationHistory.Direction.BACKWARD, 1);
-            return true;
+        // For Android version < 5.0
+        else
+        {
+            if(uploadMessage != null)
+            {
+                uploadMessage.onReceiveValue(data.getData());
+                uploadMessage = null;
+                return;
+            }
         }
 
-        return super.onKeyDown(keyCode, event);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (xWalkView != null) {
-            xWalkView.pauseTimers();
-            xWalkView.onHide();
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (xWalkView != null) {
-            xWalkView.resumeTimers();
-            xWalkView.onShow();
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (xWalkView != null) {
-            xWalkView.onDestroy();
-        }
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        if (xWalkView != null) {
-            xWalkView.onNewIntent(intent);
-        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }
