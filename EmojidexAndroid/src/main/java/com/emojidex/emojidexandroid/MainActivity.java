@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -794,9 +795,22 @@ public class MainActivity extends Activity {
      * @param v view
      */
     public void registerNewEmoji(View v) {
-        Intent intent = new Intent(MainActivity.this, WebViewActivity.class);
-        intent.putExtra("URL", EMOJIDEX_URL + "/emoji/new");
-        startActivityForResult(intent, REGISTER_RESULT);
+        final String url = EMOJIDEX_URL + "/emoji/new";
+
+        // API level is 19.
+        if(Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT)
+        {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            startActivity(intent);
+        }
+        // API level is not 19.
+        else
+        {
+            Intent intent = new Intent(MainActivity.this, WebViewActivity.class);
+            intent.putExtra("URL", url);
+            startActivityForResult(intent, REGISTER_RESULT);
+        }
+
     }
 
     /**
