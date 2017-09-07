@@ -4,9 +4,9 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 
-import com.emojidex.emojidexandroid.downloader.DownloadConfig;
 import com.emojidex.emojidexandroid.downloader.DownloadListener;
 import com.emojidex.emojidexandroid.downloader.EmojiDownloader;
+import com.emojidex.emojidexandroid.downloader.arguments.ImageDownloadArguments;
 
 /**
  * Created by kou on 15/04/20.
@@ -38,18 +38,18 @@ public class SealDownloader {
         canceled = false;
 
         // Download seal.
-        final UserData userdata = UserData.getInstance();
-        final DownloadConfig config =
-                new DownloadConfig()
-                        .addFormat(EmojiFormat.toFormat(parentActivity.getString(R.string.emoji_format_seal)))
-                        .setUser(userdata.getUsername(), userdata.getAuthToken())
-                ;
-
         final EmojiDownloader downloader = EmojiDownloader.getInstance();
-        downloadHandle = downloader.downloadEmoji(name, config);
+        downloadHandle = downloader.downloadImages(
+                new ImageDownloadArguments(name)
+                    .setFormat(EmojiFormat.toFormat(parentActivity.getString(R.string.emoji_format_seal)))
+        )[0];
 
+        // If already downloaded.
         if(downloadHandle == EmojiDownloader.HANDLE_NULL)
+        {
+            onDismissListener.onDismiss(null);
             return;
+        }
 
         Emojidex.getInstance().addDownloadListener(new CustomDownloadListener());
 
@@ -108,7 +108,7 @@ public class SealDownloader {
     private class CustomDownloadListener extends DownloadListener
     {
         @Override
-        public void onFinish(int handle, EmojiDownloader.Result result)
+        public void onFinish(int handle, boolean result)
         {
             if(handle == downloadHandle)
             {
@@ -123,7 +123,7 @@ public class SealDownloader {
         }
 
         @Override
-        public void onCancelled(int handle, EmojiDownloader.Result result)
+        public void onCancelled(int handle, boolean result)
         {
             if(handle == downloadHandle)
             {

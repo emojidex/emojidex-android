@@ -157,7 +157,7 @@ public class Emojidex {
      */
     public CharSequence emojify(CharSequence text, boolean autoDeEmojify, boolean useImage, EmojiFormat format)
     {
-        return emojify(text, autoDeEmojify, useImage, format, new EmojiFormat[]{format});
+        return emojify(text, autoDeEmojify, useImage, format, true);
     }
 
     /**
@@ -166,11 +166,11 @@ public class Emojidex {
      * @param autoDeEmojify     If true, execute deEmojify before emojify.
      * @param useImage          If true, use phantom-emoji image.
      * @param format            Image format.
-     * @param downloadFormats   Download formats.
-     *                          If emoji is not found, auto download emoji.
+     * @param autoDownload      Auto download flag.
+     *                          If true, auto download emoji when find unknown emoji.
      * @return                  Emojidex text.
      */
-    public CharSequence emojify(CharSequence text, boolean autoDeEmojify, boolean useImage, EmojiFormat format, EmojiFormat[] downloadFormats)
+    public CharSequence emojify(CharSequence text, boolean autoDeEmojify, boolean useImage, EmojiFormat format, boolean autoDownload)
     {
         if( !isInitialized() )
             throw new EmojidexIsNotInitializedException();
@@ -179,7 +179,7 @@ public class Emojidex {
                 autoDeEmojify ? deEmojify(text) : text,
                 useImage,
                 format,
-                downloadFormats
+                autoDownload
         );
     }
 

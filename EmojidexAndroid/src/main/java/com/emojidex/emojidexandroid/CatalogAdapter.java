@@ -16,11 +16,23 @@ public class CatalogAdapter extends BaseAdapter
     private final EmojiFormat format;
     private final ArrayList<Emoji> emojies;
 
-    public CatalogAdapter (Context context, List<Emoji> emojies)
+    private boolean autoDownload = true;
+
+    public CatalogAdapter (Context context, EmojiFormat format, List<Emoji> emojies)
     {
         this.context = context;
-        format = EmojiFormat.toFormat(context.getString(R.string.emoji_format_catalog));
+        this.format = format;
         this.emojies = new ArrayList<Emoji>(emojies);
+    }
+
+    public void autoDownloadImage(boolean flag)
+    {
+        autoDownload = flag;
+    }
+
+    public boolean isAutoDownloadImage()
+    {
+        return autoDownload;
     }
 
     @Override
@@ -56,7 +68,10 @@ public class CatalogAdapter extends BaseAdapter
 
         final Emoji emoji = emojies.get(position);
         if(emoji != null)
-            imageView.setImageDrawable(emoji.getDrawable(format));
+        {
+            imageView.setContentDescription(emoji.getCode());
+            imageView.setImageDrawable(emoji.getDrawable(format, -1, autoDownload));
+        }
 
         return imageView;
     }

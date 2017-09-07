@@ -7,14 +7,23 @@ import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.provider.OpenableColumns;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Locale;
 
 /**
@@ -91,6 +100,17 @@ public class EmojidexFileUtils
     public static String getRemoteRootPathDefault()
     {
         return REMOTE_ROOT_PATH_DEFAULT;
+    }
+
+    /**
+     * Create emoji path from remote server.
+     * @param name          Emoji name.
+     * @param format        Emoji format.
+     * @return      Emoji path.
+     */
+    public static String getRemoteEmojiPath(String name, EmojiFormat format)
+    {
+        return getRemoteEmojiPath(name, format, getRemoteRootPathDefault());
     }
 
     /**
@@ -327,5 +347,72 @@ public class EmojidexFileUtils
         }
 
         return result;
+    }
+
+    /**
+     * Read emoji json file.
+     * @param uri   Json file uri.
+     * @return      Emoji array.
+     */
+    public static ArrayList<Emoji> readJsonFromFile(Uri uri)
+    {
+        ArrayList<Emoji> result;
+
+        try
+        {
+            final InputStream is = context.getContentResolver().openInputStream(uri);
+            final ObjectMapper mapper = new ObjectMapper();
+            JsonNode node = mapper.readTree(is);
+            if(node.has("emoji"))
+                node = node.get("emoji");
+            final JsonParser parser = node.traverse();
+            if(node.isArray())
+            {
+                final TypeReference<ArrayList<Emoji>> tr = new TypeReference<ArrayList<Emoji>>(){};
+                result = mapper.readValue(parser, tr);
+            }
+            else
+            {
+                result = new ArrayList<Emoji>();
+                result.add(mapper.readValue(parser, Emoji.class));
+            }
+            is.close();
+        }
+        catch(IOException e)
+        {
+            result = new ArrayList<Emoji>();
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+    /**
+     * Write emoji json file.
+     * @param uri       Json file uri.
+     * @param emojies   Emoji array.
+     */
+    public static void writeJsonToFile(Uri uri, Collection<Emoji> emojies)
+    {
+        // Create directory if uri scheme is file.
+        if(uri.getScheme().equals("file"))
+        {
+            final File parentDir = new File(uri.getPath()).getParentFile();
+            if( !parentDir.exists() )
+                parentDir.mkdirs();
+        }
+
+        // Write to uri.
+        try
+        {
+            final OutputStream os = context.getContentResolver().openOutputStream(uri);
+            final ObjectMapper mapper = new ObjectMapper();
+            mapper.writeValue(os, emojies);
+            os.close();
+        }
+        catch(IOException e)
+        {
+            e.printStackTrace();
+        }
     }
 }

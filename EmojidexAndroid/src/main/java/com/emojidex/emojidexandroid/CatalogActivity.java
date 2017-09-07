@@ -16,8 +16,11 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.HorizontalScrollView;
+import android.widget.ListAdapter;
 import android.widget.RadioButton;
 
+import com.emojidex.emojidexandroid.downloader.DownloadListener;
+import com.emojidex.emojidexandroid.downloader.arguments.ImageDownloadArguments;
 import com.emojidex.libemojidex.Emojidex.Service.User;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -28,11 +31,14 @@ import java.util.List;
 
 public class CatalogActivity extends Activity
 {
+    // TODO kore iruu ?
     static CatalogActivity currentInstance = null;
 
     private GridView gridView;
+    private CatalogAdapter adapter;
 
     private Emojidex emojidex;
+    private EmojiFormat format;
     private String currentCategory = null;
     private List<Emoji> currentCatalog = null;
 
@@ -47,14 +53,14 @@ public class CatalogActivity extends Activity
 
     private boolean isPick = false;
 
-    private Handler handler;
-
     private AdView adView;
     private FirebaseAnalytics analytics;
 
     private EmojidexIndexUpdater indexUpdater = null;
     private int indexPageCount = 0;
     private final int indexLoadPageCount = 2;
+
+    private final CustomDownloadListener downloadListener = new CustomDownloadListener();
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -81,9 +87,6 @@ public class CatalogActivity extends Activity
             }
         }
 
-        // Create handler.
-        handler = new Handler();
-
         // Emoji download.
         currentInstance = this;
         indexUpdater = new EmojidexIndexUpdater(this);
@@ -95,12 +98,30 @@ public class CatalogActivity extends Activity
         setAdsVisibility();
     }
 
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
+
+        emojidex.addDownloadListener(downloadListener);
+    }
+
+    @Override
+    protected void onStop()
+    {
+        emojidex.removeDownloadListener(downloadListener);
+
+        super.onStop();
+    }
+
     private void initData()
     {
         new CacheAnalyzer().analyze(this);
 
         emojidex = Emojidex.getInstance();
         emojidex.initialize(this);
+
+        format = EmojiFormat.toFormat(getString(R.string.emoji_format_catalog));
 
         historyManager = SaveDataManager.getInstance(this, SaveDataManager.Type.CatalogHistory);
         historyManager.load();
@@ -124,23 +145,7 @@ public class CatalogActivity extends Activity
             }
         });
 
-        gridView.setOnScrollListener(new AbsListView.OnScrollListener()
-        {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState)
-            {
-                // nop
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
-            {
-                if(firstVisibleItem + visibleItemCount == totalItemCount)
-                {
-                    getIndexMore();
-                }
-            }
-        });
+        gridView.setOnScrollListener(new GridViewScrollListener());
     }
 
     private void initCategory()
@@ -212,7 +217,10 @@ public class CatalogActivity extends Activity
         }
 
         if(currentCatalog != null)
-            gridView.setAdapter(new CatalogAdapter(this, currentCatalog));
+        {
+            adapter = new CatalogAdapter(this, format, currentCatalog);
+            gridView.setAdapter(adapter);
+        }
     }
 
     public void onClickSearchButton(View view)
@@ -369,14 +377,21 @@ public class CatalogActivity extends Activity
         gridView.setSelection(position);
     }
 
-    void invalidate()
+    void invalidate(String emojiName)
     {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                ((CatalogAdapter)gridView.getAdapter()).notifyDataSetChanged();
+        final int first = gridView.getFirstVisiblePosition();
+        for(int i = 0;  i < gridView.getChildCount();  ++i)
+        {
+            final ListAdapter adapter = gridView.getAdapter();
+            final View view = gridView.getChildAt(i);
+            final Emoji emoji = (Emoji)adapter.getItem(first + i);
+
+            if( emoji.getCode().equals(emojiName) )
+            {
+                adapter.getView(first + i, view, gridView);
+                return;
             }
-        });
+        }
     }
 
     /**
@@ -419,5 +434,71 @@ public class CatalogActivity extends Activity
             return;
         indexPageCount += indexLoadPageCount;
         indexUpdater.startUpdateThread(indexPageCount, true);
+    }
+
+    private void downloadImages()
+    {
+        final int count = gridView.getChildCount();
+        final ImageDownloadArguments[] argumentsArray = new ImageDownloadArguments[count];
+        final int first = gridView.getFirstVisiblePosition();
+        for(int i = 0;  i < count;  ++i)
+        {
+            final Emoji e = (Emoji)adapter.getItem(first + i);
+            argumentsArray[i] =
+                    new ImageDownloadArguments(e.getCode())
+                            .setFormat(format)
+            ;
+        }
+        emojidex.getEmojiDownloader().downloadImages(
+                argumentsArray
+        );
+    }
+
+    private class GridViewScrollListener implements AbsListView.OnScrollListener
+    {
+        @Override
+        public void onScrollStateChanged(AbsListView view, int scrollState)
+        {
+            switch(scrollState)
+            {
+                case SCROLL_STATE_IDLE:
+                    adapter.autoDownloadImage(false);
+                    downloadImages();
+                    break;
+                case SCROLL_STATE_TOUCH_SCROLL:
+                case SCROLL_STATE_FLING:
+                    adapter.autoDownloadImage(false);
+                    break;
+                default:
+            }
+        }
+
+        @Override
+        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
+        {
+            if(firstVisibleItem + visibleItemCount == totalItemCount)
+            {
+                getIndexMore();
+            }
+        }
+    }
+
+    /**
+     * Custom emojidex download downloadListener.
+     */
+    private class CustomDownloadListener extends DownloadListener
+    {
+        @Override
+        public void onDownloadJson(int handle, String... emojiNames)
+        {
+            reloadCategory();
+        }
+
+        @Override
+        public void onDownloadImage(int handle, String emojiName, EmojiFormat format)
+        {
+            if(CatalogActivity.this.format.equals(format))
+                invalidate(emojiName);
+        }
     }
 }

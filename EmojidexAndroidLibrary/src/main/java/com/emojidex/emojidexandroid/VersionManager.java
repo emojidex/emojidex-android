@@ -77,10 +77,10 @@ public class VersionManager {
         if(version == null)
         {
             final Uri uri = EmojidexFileUtils.getLocalJsonUri();
-            final ArrayList<JsonParam> params = JsonParam.readFromFile(context, uri);
+            final ArrayList<Emoji> params = EmojidexFileUtils.readJsonFromFile(uri);
             for(JsonParam param : params)
                 param.setCode(param.getCode().replace('_', ' '));
-            JsonParam.writeToFile(context, uri, params);
+            EmojidexFileUtils.writeJsonToFile(uri, params);
             return true;
         }
         return false;

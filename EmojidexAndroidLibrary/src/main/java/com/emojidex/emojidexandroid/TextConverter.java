@@ -7,7 +7,7 @@ import android.text.style.DynamicDrawableSpan;
 import android.text.style.ImageSpan;
 import android.util.Log;
 
-import com.emojidex.emojidexandroid.downloader.DownloadConfig;
+import com.emojidex.emojidexandroid.downloader.arguments.EmojiDownloadArguments;
 
 import java.util.LinkedList;
 
@@ -24,11 +24,11 @@ class TextConverter {
      * @param text              Normal text.
      * @param useImage          If true, use phantom-emoji image.
      * @param format            Image format.
-     * @param downloadFormats   Download formats.
-     *                          If emoji is not found, auto download emoji.
+     * @param autoDownload      Auto emoji download flag.
+     *                          If true, auto download emoji when find unknown emoji.
      * @return                  Emojidex text.
      */
-    public static CharSequence emojify(CharSequence text, boolean useImage, EmojiFormat format, EmojiFormat[] downloadFormats)
+    public static CharSequence emojify(CharSequence text, boolean useImage, EmojiFormat format, boolean autoDownload)
     {
         final SpannableStringBuilder result = new SpannableStringBuilder();
 
@@ -59,31 +59,22 @@ class TextConverter {
                 final String emojiName = text.subSequence(startIndex + 1, endIndex).toString();
                 final Emoji emoji = emojidex.getEmoji(emojiName);
 
-                // Auto download emoji.
-                if(     !emojiName.isEmpty()
-                    &&  downloadFormats != null
-                    &&  downloadFormats.length > 0     )
-                {
-                    DownloadConfig config = null;
-
-                    for(EmojiFormat f : downloadFormats)
-                    {
-                        if(     emoji == null
-                            ||  emoji.getChecksums().get(f) == null )
-                        {
-                            if(config == null)
-                                config = new DownloadConfig();
-                            config.addFormat(f);
-                        }
-
-                        if(config != null)
-                            emojidex.getEmojiDownloader().downloadEmoji(emojiName, config);
-                    }
-                }
-
-                // String is not emoji tag.
+                // Unknown emoji.
                 if(emoji == null)
                 {
+                    // Auto download emoji.
+                    if(     autoDownload
+                        &&  useImage
+                        &&  !emojiName.isEmpty()    )
+                    {
+                        emojidex.getEmojiDownloader().downloadEmojies(
+                                new EmojiDownloadArguments(emojiName)
+                                        .addFormat(format)
+                                        // TODO .setUser(username, authotoken) sinakucha nano de ha
+                        );
+                    }
+
+                    // String is not emoji tag.
                     result.append( text.subSequence(startIndex, endIndex) );
                     startIndex = endIndex;
 

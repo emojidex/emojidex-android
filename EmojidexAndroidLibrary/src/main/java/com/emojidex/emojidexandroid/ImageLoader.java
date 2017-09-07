@@ -8,6 +8,8 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.util.LruCache;
 
+import com.emojidex.emojidexandroid.downloader.arguments.ImageDownloadArguments;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -112,12 +114,21 @@ public class ImageLoader
 
     /**
      * Load image.
-     * @param name
-     * @param format
+     * @param name          Emoji name.
+     * @param format        Emoji format.
+     * @param autoDownload  Auto download image when image is old or not found.
      * @return
      */
-    public ImageParam load(String name, EmojiFormat format)
+    public ImageParam load(String name, EmojiFormat format, boolean autoDownload)
     {
+        if(autoDownload)
+        {
+            Emojidex.getInstance().getEmojiDownloader().downloadImages(
+                    new ImageDownloadArguments(name)
+                        .setFormat(format)
+            );
+        }
+
         final ImageParam param = isAlreadyLoading(name, format);
         if(param != null)
             return param;

@@ -33,6 +33,8 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.emojidex.emojidexandroid.downloader.DownloadListener;
+
 import java.util.List;
 
 /**
@@ -62,6 +64,8 @@ public class EmojidexKeyboardView extends KeyboardView {
 
     private final FavoriteManager favoriteManager;
 
+    private final CustomDownloadListener listener = new CustomDownloadListener();
+
     /**
      * Construct EmojidexKeyboardView object.
      * @param context
@@ -77,6 +81,15 @@ public class EmojidexKeyboardView extends KeyboardView {
         iconSize = context.getResources().getDimension(R.dimen.ime_key_icon_size);
 
         favoriteManager = FavoriteManager.getInstance(context);
+
+        Emojidex.getInstance().addDownloadListener(listener);
+    }
+
+    @Override
+    protected void finalize() throws Throwable
+    {
+        Emojidex.getInstance().removeDownloadListener(listener);
+        super.finalize();
     }
 
     /**
@@ -365,9 +378,9 @@ public class EmojidexKeyboardView extends KeyboardView {
 
         // Create variants buttons.
         variantsLayout.removeAllViews();
-        for (String name : variants)
+        for(int i = variants.size() - 1;  i >= 0;  --i)
         {
-            name = name.replace('_', ' ');
+            final String name = variants.get(i).replace('_', ' ');
             final Emoji variant = emojidex.getEmoji(name);
             if(variant == null)
                 continue;
@@ -395,7 +408,8 @@ public class EmojidexKeyboardView extends KeyboardView {
                     return true;
                 }
             });
-            variantsLayout.addView(button);
+            button.setContentDescription(variant.getCode());
+            variantsLayout.addView(button, 0);
         }
 
         // Visible variants are.
@@ -624,6 +638,41 @@ public class EmojidexKeyboardView extends KeyboardView {
             begin = end;
 
             return currentActivity;
+        }
+    }
+
+    /**
+     * Custom emojidex download listener.
+     */
+    private class CustomDownloadListener extends DownloadListener
+    {
+        @Override
+        public void onDownloadImage(int handle, String emojiName, EmojiFormat format)
+        {
+            // Skip if format is not equals.
+            if( !EmojidexKeyboardView.this.format.equals(format) )
+                return;
+
+            // Skip if popup window is not found.
+            if(popup == null || !popup.isShowing())
+                return;
+
+            // Skip if variants layout is not found.
+            if(variantsLayout == null || variantsLayout.getVisibility() != VISIBLE)
+                return;
+
+            // Reload variant emoji.
+            for(int i = 0;  i < variantsLayout.getChildCount();  ++i)
+            {
+                final ImageButton ib = (ImageButton)variantsLayout.getChildAt(i);
+                final String variantName = ib.getContentDescription().toString();
+
+                if( !variantName.equals(emojiName) )
+                    continue;
+
+                final Emoji variant = Emojidex.getInstance().getEmoji(variantName);
+                ib.setImageDrawable(variant.getDrawable(format, iconSize, false));
+            }
         }
     }
 }

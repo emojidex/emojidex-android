@@ -41,7 +41,6 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.emojidex.emojidexandroid.downloader.DownloadListener;
-import com.emojidex.emojidexandroid.downloader.EmojiDownloader;
 import com.emojidex.libemojidex.Emojidex.Service.User;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -254,9 +253,7 @@ public class MainActivity extends Activity {
 
     private CharSequence emojify(final CharSequence cs, boolean autoDownload)
     {
-        return autoDownload
-                ? emojidex.emojify(cs, true, true, defaultFormat, new EmojiFormat[]{defaultFormat, keyFormat})
-                : emojidex.emojify(cs, true, true, defaultFormat, null);
+        return emojidex.emojify(cs, true, true, defaultFormat, autoDownload);
     }
 
     private CharSequence deEmojify(final CharSequence cs)
@@ -911,11 +908,14 @@ public class MainActivity extends Activity {
     private class CustomDownloadListener extends DownloadListener
     {
         @Override
-        public void onFinish(int handle, EmojiDownloader.Result result)
+        public void onDownloadImage(int handle, String emojiName, EmojiFormat format)
         {
-            final Editable text = editText.getText();
+            // Skip if emoji format is not default.
+            if( !format.equals(emojidex.getDefaultFormat()) )
+                return;
 
             // Skip if text is empty.
+            final Editable text = editText.getText();
             if(text.length() == 0)
                 return;
 

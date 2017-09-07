@@ -64,7 +64,7 @@ public class EmojidexKeyboard extends Keyboard {
         final int count = emojies.size();
         final List<Key> keys = getKeys();
         final int leftMargin = (displayWidth - columnCount * getKeyWidth() - (columnCount - 1) * getHorizontalGap()) / 2;
-        for(int i = 0;  i < count;  ++i)
+        for(int i = count - 1;  i >= 0;  --i)
         {
             final Key newKey = createKey(emojies.get(i));
             newKey.x = i % columnCount * (getKeyWidth() + getHorizontalGap()) + leftMargin;
@@ -73,7 +73,7 @@ public class EmojidexKeyboard extends Keyboard {
             if(newKey.icon instanceof EmojidexAnimationDrawable)
                 hasAnimationIndices.add(i);
 
-            keys.add(newKey);
+            keys.add(0, newKey);
         }
     }
 

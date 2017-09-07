@@ -6,6 +6,9 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,20 +16,57 @@ import java.util.List;
  * Created by kou on 14/10/03.
  */
 public class Emoji extends JsonParam {
-    private final List<Integer> codes = new ArrayList<Integer>();
+    @JsonProperty("current_checksums")      private Checksums current_checksums = null;
+    @JsonProperty("type")                   private String type = null;
 
-    private Context context;
-    private Resources res;
-    private boolean hasOriginalCodes = false;
+    @JsonIgnore     private final List<Integer> codes = new ArrayList<Integer>();
+
+    @JsonIgnore     private Context context;
+    @JsonIgnore     private Resources res;
+    @JsonIgnore     private boolean hasOriginalCodes = false;
+
+    public Checksums getCurrentChecksums()
+    {
+        if(current_checksums == null)
+            current_checksums = new Checksums();
+        return current_checksums;
+    }
+
+    public void setCurrentChecksums(Checksums current_checksums)
+    {
+        this.current_checksums = current_checksums;
+    }
+
+    public String getType()
+    {
+        return type;
+    }
+
+    public void setType(String type)
+    {
+        this.type = type;
+    }
+
+    /**
+     * Check image is newest.
+     * @param format    Emoji format.
+     * @return          true if image is newest.
+     */
+    public boolean hasNewestImage(EmojiFormat format)
+    {
+        final String newest = getChecksums().get(format);
+        final String current = getCurrentChecksums().get(format);
+        return newest.equals(current);
+    }
 
     /**
      * Reload image files.
+     * @param format        Emoji format.
      */
-    public void reloadImage()
+    public void reloadImage(EmojiFormat format)
     {
         final ImageLoader imageLoader = ImageLoader.getInstance();
-        for(EmojiFormat format : EmojiFormat.values())
-            imageLoader.reload(getCode(), format);
+        imageLoader.reload(getCode(), format);
     }
 
     /**
@@ -83,10 +123,21 @@ public class Emoji extends JsonParam {
      */
     public Drawable getDrawable(EmojiFormat format, float size)
     {
-        final int index = format.ordinal();
+        return getDrawable(format, size, true);
+    }
 
+    /**
+     * Get image of format.
+     * @param format        Image format.
+     * @param size          Drawable size.
+     *                      If value is -1, auto set size.
+     * @param autoDownload  Auto download image when image is old or not found.
+     * @return              Image.
+     */
+    public Drawable getDrawable(EmojiFormat format, float size, boolean autoDownload)
+    {
         // Load image.
-        final ImageLoader.ImageParam imageParam = ImageLoader.getInstance().load(getCode(), format);
+        final ImageLoader.ImageParam imageParam = ImageLoader.getInstance().load(getCode(), format, autoDownload);
 
         Drawable result = null;
 
@@ -131,7 +182,7 @@ public class Emoji extends JsonParam {
     public Bitmap[] getBitmaps(EmojiFormat format)
     {
         // Load image.
-        final ImageLoader.ImageParam imageParam = ImageLoader.getInstance().load(getCode(), format);
+        final ImageLoader.ImageParam imageParam = ImageLoader.getInstance().load(getCode(), format, false);
         final ImageLoader.ImageParam.Frame[] frames = imageParam.getFrames();
 
         // Create bitmap array and copy bitmaps.

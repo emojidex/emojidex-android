@@ -1,16 +1,20 @@
 package com.emojidex.emojidexandroid.downloader;
 
 import android.content.Context;
-import android.net.Uri;
-import android.os.AsyncTask;
+import android.os.Handler;
 
+import com.emojidex.emojidexandroid.Emoji;
 import com.emojidex.emojidexandroid.EmojiFormat;
 import com.emojidex.emojidexandroid.Emojidex;
 import com.emojidex.emojidexandroid.EmojidexFileUtils;
-import com.emojidex.emojidexandroid.JsonParam;
 import com.emojidex.emojidexandroid.VersionManager;
+import com.emojidex.emojidexandroid.downloader.arguments.EmojiDownloadArguments;
+import com.emojidex.emojidexandroid.downloader.arguments.ExtendedDownloadArguments;
+import com.emojidex.emojidexandroid.downloader.arguments.ImageDownloadArguments;
+import com.emojidex.emojidexandroid.downloader.arguments.IndexDownloadArguments;
+import com.emojidex.emojidexandroid.downloader.arguments.SearchDownloadArguments;
+import com.emojidex.emojidexandroid.downloader.arguments.UTFDownloadArguments;
 import com.emojidex.libemojidex.EmojiVector;
-import com.emojidex.libemojidex.Emojidex.Data.Emoji;
 import com.emojidex.libemojidex.StringVector;
 
 import java.util.ArrayList;
@@ -19,7 +23,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 
 /**
@@ -29,16 +32,31 @@ public class EmojiDownloader
 {
     static final String TAG = "EmojidexLibrary::EmojiDownloader";
 
-    public static int HANDLE_NULL = -1;
+    public static final int HANDLE_NULL = -1;
+    private static final int DIRTY_COUNT_MAX = 500;
+    private static final int SAVE_DELAY = 3000;
 
     private static final EmojiDownloader INSTANCE = new EmojiDownloader();
 
-    private final Map<String, JsonParam> localJsonParams = new LinkedHashMap<String, JsonParam>();
+    private final Map<String, Emoji> localJsonParams = new LinkedHashMap<String, Emoji>();
 
     private Context context = null;
 
-    private final Map<Integer, JsonDownloadTask> tasks = new TreeMap<Integer, JsonDownloadTask>();
+//    private final Map<Integer, AbstractDownloadTask> tasks = new TreeMap<Integer, AbstractDownloadTask>();
     private final Set<DownloadListener> listeners = new LinkedHashSet<DownloadListener>();
+
+    private final TaskManager taskManager = new TaskManager();
+
+    private int dirtyCount = 0;
+    private final Handler saveHandler = new Handler();
+    private final Runnable saveRunnable = new Runnable(){
+        @Override
+        public void run()
+        {
+            saveJson();
+            dirtyCount = 0;
+        }
+    };
 
     /**
      * Get singleton instance.
@@ -75,172 +93,120 @@ public class EmojiDownloader
     {
         localJsonParams.clear();
 
-        final ArrayList<JsonParam> jsonParams = JsonParam.readFromFile(
-                context,
-                EmojidexFileUtils.getLocalJsonUri()
-        );
+        final ArrayList<Emoji> jsonParams = EmojidexFileUtils.readJsonFromFile(EmojidexFileUtils.getLocalJsonUri());
 
-        for(JsonParam param : jsonParams)
+        for(Emoji param : jsonParams)
             localJsonParams.put(param.getCode(), param);
     }
 
     /**
-     * Download index emojies.
-     * @param config        Download config.
-     * @return              Download handle.
-     *                      If failed start download, return {@link EmojiDownloader#HANDLE_NULL}.
-     */
-    public int downloadIndex(DownloadConfig config)
-    {
-        return downloadIndex(config, 50);
-    }
-
-    /**
-     * Download index emojies.
-     * @param config        Download config.
-     * @param limit         Emoji count of one page.
-     * @return              Download handle.
-     *                      If failed start download, return {@link EmojiDownloader#HANDLE_NULL}.
-     */
-    public int downloadIndex(DownloadConfig config, final int limit)
-    {
-        return downloadIndex(config, limit, 1);
-    }
-
-    /**
-     * Download index emojies.
-     * @param config        Download config.
-     * @param limit         Emoji count of one page.
-     * @param startpage     Start page.(value >= 1)
-     * @return              Download handle.
-     *                      If failed start download, return {@link EmojiDownloader#HANDLE_NULL}.
-     */
-    public int downloadIndex(DownloadConfig config, final int limit, final int startpage)
-    {
-        return downloadIndex(config, limit, startpage, startpage);
-    }
-
-    /**
-     * Download index emojies.
-     * @param config        Download config.
-     * @param limit         Emoji count of one page.
-     * @param startpage     Start page.(value >= 1)
-     * @param endpage       End page.
-     * @return              Download handle.
-     *                      If failed start download, return {@link EmojiDownloader#HANDLE_NULL}.
-     */
-    public int downloadIndex(DownloadConfig config, final int limit, final int startpage, final int endpage)
-    {
-        final TaskInfo taskInfo = new TaskInfo(TaskInfo.TYPE.INDEX);
-        if(hasTask(taskInfo))
-            return HANDLE_NULL;
-
-        final JsonDownloadTask task = new JsonDownloadTask(this, taskInfo, config);
-        task.executeOnExecutor(
-                AsyncTask.SERIAL_EXECUTOR,
-                new IndexJsonDownloadExecutor(this, config, task, limit, startpage, endpage)
-        );
-
-        return task.getHandle();
-    }
-
-    /**
      * Download UTF emojies.
-     * @param config    Download config.
+     * @param arguments     Download arguments.
      * @return              Download handle.
-     *                      If failed start download, return {@link EmojiDownloader#HANDLE_NULL}.
      */
-    public int downloadUTFEmoji(DownloadConfig config)
+    public int downloadUTFEmoji(UTFDownloadArguments arguments)
     {
-        final TaskInfo taskInfo = new TaskInfo(TaskInfo.TYPE.UTF);
-        if(hasTask(taskInfo))
-            return HANDLE_NULL;
-
-        final JsonDownloadTask task = new JsonDownloadTask(this, taskInfo, config);
-        task.executeOnExecutor(
-                AsyncTask.SERIAL_EXECUTOR,
-                new UTFJsonDownloadExecutor(this, config, task)
-        );
-
-        return task.getHandle();
+        final int handle = taskManager.registUTF(arguments);
+        if(handle != HANDLE_NULL)
+            taskManager.runNextTasks();
+        return handle;
     }
 
     /**
      * Download extended emojies.
-     * @param config    Download config.
+     * @param arguments     Download arguments.
      * @return              Download handle.
-     *                      If failed start download, return {@link EmojiDownloader#HANDLE_NULL}.
      */
-    public int downloadExtendedEmoji(DownloadConfig config)
+    public int downloadExtendedEmoji(ExtendedDownloadArguments arguments)
     {
-        final TaskInfo taskInfo = new TaskInfo(TaskInfo.TYPE.EXTENDED);
-        if(hasTask(taskInfo))
-            return HANDLE_NULL;
-
-        final JsonDownloadTask task = new JsonDownloadTask(this, taskInfo, config);
-        task.executeOnExecutor(
-                AsyncTask.SERIAL_EXECUTOR,
-                new ExtendedJsonDownloadExecutor(this, config, task)
-        );
-
-        return task.getHandle();
+        final int handle = taskManager.registExtended(arguments);
+        if(handle != HANDLE_NULL)
+            taskManager.runNextTasks();
+        return handle;
     }
 
     /**
-     * Search and download emojies.
-     * @param word          Search word.
-     * @param config        DownloadConfig.
+     * Download index emojies.
+     * @param arguments     Download arguments.
      * @return              Download handle.
-     *                      If failed start download, return {@link EmojiDownloader#HANDLE_NULL}.
      */
-    public int downloadSearchEmoji(String word, DownloadConfig config)
+    public int downloadIndexEmoji(IndexDownloadArguments arguments)
     {
-        return downloadSearchEmoji(word, null, config);
+        final int handle = taskManager.registIndex(arguments);
+        if(handle != HANDLE_NULL)
+            taskManager.runNextTasks();
+        return handle;
     }
 
     /**
-     * Search and download emojies.
-     * @param word          Search word.
-     * @param category      Search category.(If value is null, search from all category.)
-     * @param config        DownloadConfig.
+     * Download search emojies.
+     * @param arguments     Download arguments.
      * @return              Download handle.
-     *                      If failed start download, return {@link EmojiDownloader#HANDLE_NULL}.
      */
-    public int downloadSearchEmoji(final String word, final String category, DownloadConfig config)
+    public int downloadSearchEmoji(SearchDownloadArguments arguments)
     {
-        final TaskInfo taskInfo = new TaskInfo(TaskInfo.TYPE.SEARCH);
-        if(hasTask(taskInfo))
-            return HANDLE_NULL;
-
-        final JsonDownloadTask task = new JsonDownloadTask(this, taskInfo, config);
-        task.executeOnExecutor(
-                AsyncTask.SERIAL_EXECUTOR,
-                new SearchJsonDownloadExecutor(this, config, task, word, category)
-        );
-
-        return task.getHandle();
+        final int handle = taskManager.registSearch(arguments);
+        if(handle != HANDLE_NULL)
+            taskManager.runNextTasks();
+        return handle;
     }
 
     /**
-     *  Download one emoji.
-     * @param name          Emoji name.
-     * @param config        Download config.
-     * @return              Download handle.
-     *                      If failed start download, return {@link EmojiDownloader#HANDLE_NULL}.
+     * Download emojies.
+     * @param argumentsArray    Download arguments array.
+     * @return                  Download handle array.
      */
-    public int downloadEmoji(final String name, DownloadConfig config)
+    public int[] downloadEmojies(EmojiDownloadArguments... argumentsArray)
     {
-        final TaskInfo taskInfo = new TaskInfo(TaskInfo.TYPE.EMOJI, name);
-        if(hasTask(taskInfo))
-            return HANDLE_NULL;
+        final int[] handles = new int[argumentsArray.length];
+        boolean doRun = false;
 
-        final JsonDownloadTask task = new JsonDownloadTask(this, taskInfo, config);
-        task.executeOnExecutor(
-                AsyncTask.SERIAL_EXECUTOR,
-                new EmojiJsonDownloadExecutor(this, config, task, name)
-        );
+        for(int i = argumentsArray.length - 1;  i >= 0;  --i)
+        {
+            final EmojiDownloadArguments arguments = argumentsArray[i];
+            handles[i] = taskManager.registEmoji(arguments);
+            if(handles[i] != HANDLE_NULL)
+                doRun = true;
+        }
 
-        return task.getHandle();
+        if(doRun)
+            taskManager.runNextTasks();
+
+        return handles;
+    }
+
+    /**
+     * Download emoji images.
+     * @param argumentsArray    Download arguments array.
+     * @return                  Download handle array.
+     */
+    public int[] downloadImages(ImageDownloadArguments... argumentsArray)
+    {
+        final int[] handles = new int[argumentsArray.length];
+        boolean doRun = false;
+
+        for(int i = argumentsArray.length - 1;  i >= 0;  --i)
+        {
+            final ImageDownloadArguments arguments = argumentsArray[i];
+            final Emoji emoji = localJsonParams.get(arguments.getEmojiName());
+
+            // SKip if illegal arguments.
+            // Skip if image is already newest.
+            if(     emoji == null
+                ||  emoji.hasNewestImage(arguments.getFormat())  )
+            {
+                handles[i] = HANDLE_NULL;
+                continue;
+            }
+
+            // Download image.
+            handles[i] = taskManager.registImage(arguments, context);
+            if(handles[i] != HANDLE_NULL)
+                doRun = true;
+        }
+        if( doRun )
+            taskManager.runNextTasks();
+        return handles;
     }
 
     /**
@@ -249,9 +215,7 @@ public class EmojiDownloader
      */
     public void cancelDownload(int handle)
     {
-        final JsonDownloadTask task = tasks.get(handle);
-        if(task != null)
-            task.cancel(true);
+        taskManager.cancelTask(handle);
     }
 
     /**
@@ -282,158 +246,66 @@ public class EmojiDownloader
     }
 
     /**
-     * Regist download task.
-     * @param handle    Download handle.
-     * @param task      Download task.
+     * Finish task.
+     * @param handle        Task handle.
      */
-    void registTask(int handle, JsonDownloadTask task)
+    void finishTask(int handle)
     {
-        tasks.put(handle, task);
-    }
-
-    /**
-     * Unregist download task.
-     * @param handle    Download handle.
-     */
-    void unregistTask(int handle)
-    {
-        tasks.remove(handle);
-    }
-
-    /**
-     * Check downloader has same task.
-     * @param taskInfo      Task information.
-     * @return              true if has same task.
-     */
-    private boolean hasTask(TaskInfo taskInfo)
-    {
-        for(JsonDownloadTask task : tasks.values())
-            if(task.getTaskInfo().equals(taskInfo))
-                return true;
-        return false;
-    }
-
-    /**
-     * Create EmojiDownloadExecutor object.
-     * @param emoji         Emoji.
-     * @param config        Download config.
-     * @param parentTask    Parent task.
-     * @return              Executor.
-     *                      If emoji is newest, return null.
-     */
-    AbstractFileDownloadExecutor createEmojiDownloadExecutor(Emoji emoji, DownloadConfig config, JsonDownloadTask parentTask)
-    {
-        // Skip if not found checksums..
-        if(emoji.getChecksums() == null)
-            return null;
-
-        // Find jsonParam from local data.
-        final String emojiName = emoji.getCode();
-        JsonParam localParam = findLocalParam(emojiName);
-
-        // Add download task.
-        EmojiDownloadExecutor executor = null;
-        for(EmojiFormat format : config.getFormats())
-        {
-            // Skip if emoji is already downloaded.
-            if(     !config.getForceFlag()
-                &&  isAlreadyDownloaded(localParam, emoji, format))
-                continue;
-
-            // Delete old file.
-            final Uri uri = EmojidexFileUtils.getLocalEmojiUri(emojiName, format);
-            EmojidexFileUtils.deleteFiles(uri);
-
-            // Add download task.
-            if(executor == null)
-            {
-                // Copy json parameter to local.
-                copyParam(localParam, emoji);
-
-                // Create executor.
-                executor = new EmojiDownloadExecutor(this, context, emojiName, parentTask);
-            }
-            executor.add(
-                    uri,
-                    EmojidexFileUtils.getRemoteEmojiPath(emojiName, format, config.getSourceRootPath())
-            );
-        }
-
-        return executor;
-    }
-
-    /**
-     * Create emoji archive download executors.
-     * @param emojies       Emoji array.
-     * @param formats       Emoji format array.
-     * @param config        Download config.
-     * @param parentTask    Parent task.
-     * @return              Emoji archive download executors.
-     */
-    EmojiArchiveDownloadExecutor[] createEmojiArchiveDownloadExecutors(EmojiVector emojies, List<EmojiFormat> formats, DownloadConfig config, JsonDownloadTask parentTask)
-    {
-        // Skip if formats is empty.
-        if(formats.isEmpty())
-            return null;
-
-        // Copy emoji parameters.
-        final String[] emojiNames = new String[(int)emojies.size()];
-        for(int i = 0;  i < emojies.size();  ++i)
-        {
-            final Emoji emoji = emojies.get(i);
-            final JsonParam localParam = findLocalParam(emoji.getCode());
-
-            copyParam(localParam, emoji);
-
-            for(EmojiFormat format : formats)
-            {
-                localParam.getChecksums().set(
-                        format,
-                        (format == EmojiFormat.SVG)
-                            ? emoji.getChecksums().getSvg()
-                            : emoji.getChecksums().sum("png", format.getResolution())
-                );
-            }
-
-            emojiNames[i] = emoji.getCode();
-        }
-
-        // Download emoji archive.
-        final EmojiArchiveDownloadExecutor[] executors = new EmojiArchiveDownloadExecutor[formats.size()];
-        for(int i = 0;  i < formats.size();  ++i)
-        {
-            final EmojiFormat format = formats.get(i);
-
-            executors[i] = new EmojiArchiveDownloadExecutor(this, context, format, parentTask, emojiNames);
-            executors[i].add(
-                    Uri.parse("file:" + EmojidexFileUtils.getTemporaryPath()),
-                    EmojidexFileUtils.getRemoteEmojiArchivePath(format, config.getSourceRootPath())
-            );
-        }
-
-        return executors;
+        taskManager.finishTask(handle);
     }
 
     /**
      * Update emojidex database.
-     * @param parentTask    Parent task.
+     * @param handle    Download handle.
+     * @param emojies   Download json parameters.
+     * @param type      Task type.
      */
-    void updateDatabase(JsonDownloadTask parentTask)
+    void updateDatabase(int handle, EmojiVector emojies, TaskType type)
     {
-        // Update local json file.
-        JsonParam.writeToFile(
-                context,
-                EmojidexFileUtils.getLocalJsonUri(),
-                localJsonParams.values()
+        if(emojies.size() == 0)
+            return;
+
+        // Copy parameters.
+        for(int i = 0;  i < emojies.size();  ++i)
+        {
+            final com.emojidex.libemojidex.Emojidex.Data.Emoji emoji = emojies.get(i);
+            final Emoji localParam = findLocalParam(emoji.getCode());
+            copyParam(localParam, emoji);
+
+            // Log task type when utf or extended.
+            if(type == TaskType.UTF)
+                localParam.setType("utf");
+            else if(type == TaskType.EXTENDED)
+                localParam.setType("extended");
+        }
+
+        // Overwrite local json file.
+        saveJson();
+    }
+
+    /**
+     * Update emoji checksum.
+     * @param emojiName     Emoji name.
+     * @param format        Emoji format.
+     */
+    void updateChecksums(String emojiName, EmojiFormat format)
+    {
+        final Emoji emoji = findLocalParam(emojiName);
+        emoji.getCurrentChecksums().set(
+                format,
+                emoji.getChecksums().get(format)
         );
-        VersionManager.getInstance().save(context);
 
-        // Reload emojidex.
-        Emojidex.getInstance().reload();
-
-        // Notify to listeners.
-        for(DownloadListener listener : listeners)
-            listener.onUpdateDatabase(parentTask.getHandle());
+        saveHandler.removeCallbacks(saveRunnable);
+        if(++dirtyCount >= DIRTY_COUNT_MAX)
+        {
+            saveJson();
+            dirtyCount = 0;
+        }
+        else
+        {
+            saveHandler.postDelayed(saveRunnable, SAVE_DELAY);
+        }
     }
 
     /**
@@ -460,12 +332,12 @@ public class EmojiDownloader
      * @param emojiName     Emoji name.
      * @return              Local json parameter object.
      */
-    private JsonParam findLocalParam(String emojiName)
+    private Emoji findLocalParam(String emojiName)
     {
-        JsonParam result = localJsonParams.get(emojiName);
+        Emoji result = localJsonParams.get(emojiName);
         if(result == null)
         {
-            result = new JsonParam();
+            result = new Emoji();
             localJsonParams.put(emojiName, result);
         }
         return result;
@@ -476,7 +348,7 @@ public class EmojiDownloader
      * @param dest  Destination.
      * @param src   Source.
      */
-    private void copyParam(JsonParam dest, Emoji src)
+    private void copyParam(Emoji dest, com.emojidex.libemojidex.Emojidex.Data.Emoji src)
     {
         dest.setCode(src.getCode());
         dest.setMoji(src.getMoji());
@@ -529,76 +401,40 @@ public class EmojiDownloader
         dest.setAttribution(src.getAttribution());
         dest.setUserID(src.getUser_id());
 
-        // Skip checksums.
+        // checksums
+        {
+            final com.emojidex.libemojidex.Emojidex.Data.Checksums srcChecksums = src.getChecksums();
+            final Emoji.Checksums destChecksums = dest.getChecksums();
+
+            destChecksums.setSvg(srcChecksums.sum("svg", ""));
+
+            for(EmojiFormat format : EmojiFormat.values())
+                destChecksums.setPng(
+                        format,
+                        srcChecksums.sum("png", format.getResolution())
+                );
+        }
 
         dest.setFavorited(src.getFavorited());
     }
 
     /**
-     * Check emoji is already downloaded.
-     * @param local     Local parameter.
-     * @param remote    Remote parameter.
-     * @param format    Emoji format.
-     * @return          Return true if emoji is already downloaded.
+     * Save json file.
      */
-    private boolean isAlreadyDownloaded(JsonParam local, Emoji remote, EmojiFormat format)
+    private void saveJson()
     {
-        boolean existsFile = EmojidexFileUtils.existsLocalFile(EmojidexFileUtils.getLocalEmojiUri(remote.getCode(), format));
+        // Overwrite local json file.
+        EmojidexFileUtils.writeJsonToFile(
+                EmojidexFileUtils.getLocalJsonUri(),
+                localJsonParams.values()
+        );
+        VersionManager.getInstance().save(context);
 
-        // Check checksums.
-        final String localChecksum = local.getChecksums().get(format);
-        final String remoteChecksum = (format == EmojiFormat.SVG)
-                ? remote.getChecksums().sum("svg", null)
-                : remote.getChecksums().sum("png", format.getResolution());
+        // Reload emojidex.
+        Emojidex.getInstance().reload();
 
-        if(     existsFile
-            &&  (   remoteChecksum == null
-            ||  remoteChecksum.equals(localChecksum)   ))
-            return true;
-
-        local.getChecksums().set(format, remoteChecksum);
-
-        return false;
+        // Notify to listeners.
+        for(DownloadListener listener : listeners)
+            listener.onUpdateDatabase();
     }
-
-    /**
-     * Download result.
-     */
-    public static class Result
-    {
-        private int succeeded = 0;
-        private int total = 0;
-
-        public int getSucceededCount()
-        {
-            return succeeded;
-        }
-
-        public int getFailedCount()
-        {
-            return total - succeeded;
-        }
-
-        public int getTotalCount()
-        {
-            return total;
-        }
-
-        void addSucceeded(int count)
-        {
-            succeeded += count;
-        }
-
-        void addTotal(int count)
-        {
-            total += count;
-        }
-
-        void add(Result result)
-        {
-            succeeded += result.succeeded;
-            total += result.total;
-        }
-    }
-
 }

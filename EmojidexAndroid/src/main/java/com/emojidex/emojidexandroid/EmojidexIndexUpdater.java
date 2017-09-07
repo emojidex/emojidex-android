@@ -5,9 +5,9 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.emojidex.emojidexandroid.downloader.DownloadConfig;
 import com.emojidex.emojidexandroid.downloader.DownloadListener;
 import com.emojidex.emojidexandroid.downloader.EmojiDownloader;
+import com.emojidex.emojidexandroid.downloader.arguments.IndexDownloadArguments;
 
 /**
  * Created by kou on 16/04/01.
@@ -44,16 +44,15 @@ public class EmojidexIndexUpdater
         Log.d(TAG, "Start index update.");
 
         final UserData userdata = UserData.getInstance();
-        final DownloadConfig config =
-                new DownloadConfig()
-                        .addFormat(EmojiFormat.toFormat(context.getString(R.string.emoji_format_default)))
-                        .addFormat(EmojiFormat.toFormat(context.getString(R.string.emoji_format_key)))
-                        .setUser(userdata.getUsername(), userdata.getAuthToken())
-                ;
         final int limit = EmojidexKeyboard.create(context).getKeyCountMax();
 
         final EmojiDownloader downloader = EmojiDownloader.getInstance();
-        downloadHandle = downloader.downloadIndex(config, limit, 1, pageCount);
+        downloadHandle = downloader.downloadIndexEmoji(
+                new IndexDownloadArguments()
+                    .setLimit(limit)
+                    .setEndPage(pageCount)
+                    .setUser(userdata.getUsername(), userdata.getAuthToken())
+        );
 
         if(downloadHandle != EmojiDownloader.HANDLE_NULL)
         {
@@ -90,13 +89,13 @@ public class EmojidexIndexUpdater
         }
 
         @Override
-        public void onFinish(int handle, EmojiDownloader.Result result)
+        public void onFinish(int handle, boolean result)
         {
             if(handle == downloadHandle)
             {
                 // Save update time.
                 // If emoji download failed, execute force update next time.
-                final long updateTime = result.getFailedCount() > 0 ? 0 : System.currentTimeMillis();
+                final long updateTime = result ? System.currentTimeMillis() : 0;
                 final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
                 final SharedPreferences.Editor prefEditor = pref.edit();
                 prefEditor.putLong(context.getString(R.string.preference_key_last_update_time_index), updateTime);
@@ -110,7 +109,7 @@ public class EmojidexIndexUpdater
         }
 
         @Override
-        public void onCancelled(int handle, EmojiDownloader.Result result)
+        public void onCancelled(int handle, boolean result)
         {
             if(handle == downloadHandle)
             {

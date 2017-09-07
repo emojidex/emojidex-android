@@ -23,7 +23,6 @@ import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
-import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.ViewFlipper;
 
@@ -42,6 +41,7 @@ import java.util.List;
  */
 public class EmojidexIME extends InputMethodService {
     static final String TAG = MainActivity.TAG + "::EmojidexIME";
+    // TODO kore iru ?
     static EmojidexIME currentInstance = null;
 
     private final Handler invalidateHandler;
@@ -63,8 +63,6 @@ public class EmojidexIME extends InputMethodService {
 
     private ViewFlipper keyboardViewFlipper;
     private boolean swipeFlag = false;
-
-    private PopupWindow popup;
 
     private HistoryManager historyManager;
     private FavoriteManager favoriteManager;
@@ -202,10 +200,10 @@ public class EmojidexIME extends InputMethodService {
         initStartCategory();
 
         // Emoji download.
-        new EmojidexUpdater(this).startUpdateThread();
-
         indexUpdater = new EmojidexIndexUpdater(this);
         indexUpdater.startUpdateThread(2);
+        
+        new EmojidexUpdater(this).startUpdateThread();
     }
 
     @Override
@@ -877,21 +875,16 @@ public class EmojidexIME extends InputMethodService {
     private class CustomDownloadListener extends DownloadListener
     {
         @Override
-        public void onUpdateDatabase(int handle)
+        public void onDownloadJson(int handle, String... emojiNames)
         {
             reloadHandler.sendMessage(reloadHandler.obtainMessage());
         }
 
         @Override
-        public void onDownloadEmoji(int handle, String emojiName)
+        public void onDownloadImage(int handle, String emojiName, EmojiFormat format)
         {
+            // TODO kore de ii no ka ?
             invalidate(emojiName);
-        }
-
-        @Override
-        public void onDownloadEmojiArchive(int handle, String... emojiNames)
-        {
-            invalidate(emojiNames);
         }
     }
 }

@@ -22,9 +22,9 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.emojidex.emojidexandroid.downloader.DownloadConfig;
 import com.emojidex.emojidexandroid.downloader.DownloadListener;
 import com.emojidex.emojidexandroid.downloader.EmojiDownloader;
+import com.emojidex.emojidexandroid.downloader.arguments.SearchDownloadArguments;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.HashMap;
@@ -195,17 +195,14 @@ public class SearchActivity extends Activity {
                 searchManager.clear();
 
                 final UserData userdata = UserData.getInstance();
-                final DownloadConfig config =
-                        new DownloadConfig()
-                                .addFormat(EmojiFormat.toFormat(getString(R.string.emoji_format_default)))
-                                .addFormat(EmojiFormat.toFormat(getString(R.string.emoji_format_key)))
-                                .addFormat(EmojiFormat.toFormat(getString(R.string.emoji_format_seal)))
-                                .setUser(userdata.getUsername(), userdata.getAuthToken())
-                        ;
-
                 final EmojiDownloader downloader = EmojiDownloader.getInstance();
 
-                downloadHandle = downloader.downloadSearchEmoji(searchText, category, config);
+//                downloadHandle = downloader.downloadSearchEmoji(searchText, category, config);
+                downloadHandle = downloader.downloadSearchEmoji(
+                        new SearchDownloadArguments(searchText)
+                            .setCategory(category)
+                            .setUser(userdata.getUsername(), userdata.getAuthToken())
+                );
 
                 if(downloadHandle != EmojiDownloader.HANDLE_NULL)
                     Emojidex.getInstance().addDownloadListener(new CustomDownloadListener());
@@ -311,7 +308,7 @@ public class SearchActivity extends Activity {
         }
 
         @Override
-        public void onFinish(int handle, EmojiDownloader.Result result)
+        public void onFinish(int handle, boolean result)
         {
             if(handle == downloadHandle)
             {
@@ -321,7 +318,7 @@ public class SearchActivity extends Activity {
         }
 
         @Override
-        public void onCancelled(int handle, EmojiDownloader.Result result)
+        public void onCancelled(int handle, boolean result)
         {
             if(handle == downloadHandle)
             {

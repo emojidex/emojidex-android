@@ -6,9 +6,10 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.emojidex.emojidexandroid.downloader.DownloadConfig;
 import com.emojidex.emojidexandroid.downloader.DownloadListener;
 import com.emojidex.emojidexandroid.downloader.EmojiDownloader;
+import com.emojidex.emojidexandroid.downloader.arguments.ExtendedDownloadArguments;
+import com.emojidex.emojidexandroid.downloader.arguments.UTFDownloadArguments;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -23,6 +24,8 @@ class EmojidexUpdater {
     private final Emojidex emojidex;
 
     private final Collection<Integer> downloadHandles = new LinkedHashSet<Integer>();
+
+    private boolean succeeded;
 
     /**
      * Construct object.
@@ -59,19 +62,20 @@ class EmojidexUpdater {
 
         Log.d(TAG, "Start update.");
 
+        succeeded = true;
+
         final UserData userdata = UserData.getInstance();
-        final DownloadConfig config =
-                new DownloadConfig()
-                        .addFormat(EmojiFormat.toFormat(context.getString(R.string.emoji_format_default)))
-                        .addFormat(EmojiFormat.toFormat(context.getString(R.string.emoji_format_key)))
-                        .setUser(userdata.getUsername(), userdata.getAuthToken())
-                ;
         final EmojiDownloader downloader = emojidex.getEmojiDownloader();
+
+        // TODO utf extended hogepiyofoobar
 
         boolean result = false;
 
         // UTF
-        int handle = downloader.downloadUTFEmoji(config);
+        int handle = downloader.downloadUTFEmoji(
+                new UTFDownloadArguments()
+                    .setUser(userdata.getUsername(), userdata.getAuthToken())
+        );
         if(handle != EmojiDownloader.HANDLE_NULL)
         {
             downloadHandles.add(handle);
@@ -79,7 +83,10 @@ class EmojidexUpdater {
         }
 
         // Extended
-        handle = downloader.downloadExtendedEmoji(config);
+        handle = downloader.downloadExtendedEmoji(
+                new ExtendedDownloadArguments()
+                    .setUser(userdata.getUsername(), userdata.getAuthToken())
+        );
         if(handle != EmojiDownloader.HANDLE_NULL)
         {
             downloadHandles.add(handle);
@@ -152,38 +159,41 @@ class EmojidexUpdater {
     private class CustomDownloadListener extends DownloadListener
     {
         @Override
-        public void onFinish(int handle, EmojiDownloader.Result result)
+        public void onFinish(int handle, boolean result)
         {
-            if(     downloadHandles.remove(handle)
-                &&  downloadHandles.isEmpty()       )
-            {
-                // If emoji download failed, execute force update next time.
-                final long updateTime = result.getFailedCount() > 0 ? 0 : System.currentTimeMillis();
-                final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
-                final SharedPreferences.Editor prefEditor = pref.edit();
-                prefEditor.putLong(context.getString(R.string.preference_key_last_update_time), updateTime);
-                prefEditor.commit();
-
-                // Show message.
-                Toast.makeText(context, R.string.ime_message_update_complete, Toast.LENGTH_SHORT).show();
-
-                // Remove listener.
-                emojidex.removeDownloadListener(this);
-
-                Log.d(TAG, "End update.");
-            }
+            finishMethod(handle, result, "End update.");
         }
 
         @Override
-        public void onCancelled(int handle, EmojiDownloader.Result result)
+        public void onCancelled(int handle, boolean result)
         {
-            if(     downloadHandles.remove(handle)
-                    &&  downloadHandles.isEmpty()       )
-            {
-                // Remove listener.
-                emojidex.removeDownloadListener(this);
+            finishMethod(handle, result, "Cancel update.");
+        }
 
-                Log.d(TAG, "Cancel update.");
+        private void finishMethod(int handle, boolean result, String msg)
+        {
+            if(downloadHandles.remove(handle))
+            {
+                succeeded = (succeeded && result);
+
+                // End update.
+                if(downloadHandles.isEmpty())
+                {
+                    // If emoji download failed, execute force update next time.
+                    final long updateTime = succeeded ? System.currentTimeMillis() : 0;
+                    final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+                    final SharedPreferences.Editor prefEditor = pref.edit();
+                    prefEditor.putLong(context.getString(R.string.preference_key_last_update_time), updateTime);
+                    prefEditor.commit();
+
+                    // Show message.
+                    Toast.makeText(context, R.string.ime_message_update_complete, Toast.LENGTH_SHORT).show();
+
+                    // Remove listener.
+                    emojidex.removeDownloadListener(this);
+
+                    Log.d(TAG, msg);
+                }
             }
         }
     }

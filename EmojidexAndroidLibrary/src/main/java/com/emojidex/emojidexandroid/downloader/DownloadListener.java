@@ -1,14 +1,15 @@
 package com.emojidex.emojidexandroid.downloader;
 
+import com.emojidex.emojidexandroid.EmojiFormat;
+
 /**
  * Created by kou on 14/12/01.
  */
 public class DownloadListener {
     /**
      * Called when update emojidex database.
-     * @param handle    Download handle.
      */
-    public void onUpdateDatabase(int handle)
+    public void onUpdateDatabase()
     {
         // nop
     }
@@ -24,21 +25,12 @@ public class DownloadListener {
     }
 
     /**
-     * Called when complete download emoji.
+     * Called when complete download emoji image.
      * @param handle        Download handle.
      * @param emojiName     Download emoji name.
+     * @param format        Download emoji format.
      */
-    public void onDownloadEmoji(int handle, String emojiName)
-    {
-        // nop
-    }
-
-    /**
-     * Called when complete download emoji archive.
-     * @param handle        Download handle.
-     * @param emojiNames    Download emoji names.
-     */
-    public void onDownloadEmojiArchive(int handle, String... emojiNames)
+    public void onDownloadImage(int handle, String emojiName, EmojiFormat format)
     {
         // nop
     }
@@ -46,9 +38,9 @@ public class DownloadListener {
     /**
      * Called when finish download task.
      * @param handle    Download handle.
-     * @param result    Download result.
+     * @param result    true if download succeeded.
      */
-    public void onFinish(int handle, EmojiDownloader.Result result)
+    public void onFinish(int handle, boolean result)
     {
         // nop
     }
@@ -56,9 +48,9 @@ public class DownloadListener {
     /**
      * Called when cancelled emoji download.
      * @param handle    Download handle.
-     * @param result    Download result.
+     * @param result    true if download succeeded.
      */
-    public void onCancelled(int handle, EmojiDownloader.Result result)
+    public void onCancelled(int handle, boolean result)
     {
         // nop
     }
