@@ -43,7 +43,6 @@ public class EmojidexIndexUpdater
 
         Log.d(TAG, "Start index update.");
 
-        final UserData userdata = UserData.getInstance();
         final int limit = EmojidexKeyboard.create(context).getKeyCountMax();
 
         final EmojiDownloader downloader = EmojiDownloader.getInstance();
@@ -51,7 +50,6 @@ public class EmojidexIndexUpdater
                 new IndexDownloadArguments()
                     .setLimit(limit)
                     .setEndPage(pageCount)
-                    .setUser(userdata.getUsername(), userdata.getAuthToken())
         );
 
         if(downloadHandle != EmojiDownloader.HANDLE_NULL)

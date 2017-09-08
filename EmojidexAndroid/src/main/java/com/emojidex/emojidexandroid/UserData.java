@@ -35,6 +35,7 @@ public class UserData {
     public void setUserData(String authToken, String username) {
         this.authToken = authToken;
         this.username = username;
+        Emojidex.getInstance().setUser(username, authToken);
         save();
     }
 
@@ -91,6 +92,7 @@ public class UserData {
         if (token.equals("") || name.equals("")) {
             authToken = "";
             username = "";
+            Emojidex.getInstance().setUser(username, authToken);
             return;
         }
 
@@ -101,6 +103,7 @@ public class UserData {
 
             authToken = new String(decryptedToken, "utf-8");
             username = new String(decryptedName, "utf-8");
+            Emojidex.getInstance().setUser(username, authToken);
         } catch (KeyChainException | CryptoInitializationException | IOException e) {
             e.printStackTrace();
         }
@@ -109,6 +112,7 @@ public class UserData {
     public void reset() {
         username = "";
         authToken = "";
+        Emojidex.getInstance().setUser(username, authToken);
         SharedPreferences.Editor editor = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE).edit();
         editor.clear().apply();
     }

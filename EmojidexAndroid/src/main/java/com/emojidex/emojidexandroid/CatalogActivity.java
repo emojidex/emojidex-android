@@ -131,6 +131,10 @@ public class CatalogActivity extends Activity
         searchManager.load();
         indexManager = SaveDataManager.getInstance(this, SaveDataManager.Type.Index);
         indexManager.load();
+
+        // Initialize user data.
+        final UserData userdata = UserData.getInstance();
+        userdata.init(this);
     }
 
     private void initGridView()

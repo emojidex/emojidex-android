@@ -64,7 +64,6 @@ class EmojidexUpdater {
 
         succeeded = true;
 
-        final UserData userdata = UserData.getInstance();
         final EmojiDownloader downloader = emojidex.getEmojiDownloader();
 
         // TODO utf extended hogepiyofoobar
@@ -74,7 +73,6 @@ class EmojidexUpdater {
         // UTF
         int handle = downloader.downloadUTFEmoji(
                 new UTFDownloadArguments()
-                    .setUser(userdata.getUsername(), userdata.getAuthToken())
         );
         if(handle != EmojiDownloader.HANDLE_NULL)
         {
@@ -85,7 +83,6 @@ class EmojidexUpdater {
         // Extended
         handle = downloader.downloadExtendedEmoji(
                 new ExtendedDownloadArguments()
-                    .setUser(userdata.getUsername(), userdata.getAuthToken())
         );
         if(handle != EmojiDownloader.HANDLE_NULL)
         {

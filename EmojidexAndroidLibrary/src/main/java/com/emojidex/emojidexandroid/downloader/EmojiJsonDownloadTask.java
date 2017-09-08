@@ -29,7 +29,7 @@ class EmojiJsonDownloadTask extends AbstractJsonDownloadTask{
     protected Collection downloadJson()
     {
         final EmojiDownloadArguments arguments = (EmojiDownloadArguments)getArguments();
-        final Client client = createEmojidexClient(arguments.getUserName(), arguments.getAuthToken());
+        final Client client = createEmojidexClient();
         final Emoji emoji = client.getSearch().find(arguments.getEmojiName(), true);
         final Collection collection = new Collection();
         if( !emoji.getCode().isEmpty() )

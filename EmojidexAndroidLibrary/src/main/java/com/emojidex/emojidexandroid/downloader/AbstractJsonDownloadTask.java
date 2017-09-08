@@ -1,6 +1,8 @@
 package com.emojidex.emojidexandroid.downloader;
 
 import com.emojidex.emojidexandroid.EmojiFormat;
+import com.emojidex.emojidexandroid.Emojidex;
+import com.emojidex.emojidexandroid.EmojidexUser;
 import com.emojidex.emojidexandroid.downloader.arguments.AbstractJsonDownloadArguments;
 import com.emojidex.emojidexandroid.downloader.arguments.ArgumentsInterface;
 import com.emojidex.emojidexandroid.downloader.arguments.ImageDownloadArguments;
@@ -15,6 +17,8 @@ import java.util.ArrayList;
  */
 abstract class AbstractJsonDownloadTask extends AbstractDownloadTask
 {
+    private final EmojidexUser user;
+
     private Collection collection = null;
 
     /**
@@ -24,22 +28,23 @@ abstract class AbstractJsonDownloadTask extends AbstractDownloadTask
     public AbstractJsonDownloadTask(ArgumentsInterface arguments)
     {
         super(arguments);
+
+        user = Emojidex.getInstance().getUser();
     }
 
     /**
      * Create emojidex client.
-     * @param username      User name.
-     * @param authtoken     Auth token.
      * @return              Emojidex client.
      */
-    protected Client createEmojidexClient(String username, String authtoken)
+    protected Client createEmojidexClient()
     {
         // Create client.
         final Client client = new Client();
 
         // Login if has username and auth_token.
-        if(     username != null && !username.isEmpty()
-            &&  authtoken != null && !authtoken.isEmpty()   )
+        final String username = user.getUserName();
+        final String authtoken = user.getAuthToken();
+        if( !username.isEmpty() && !authtoken.isEmpty() )
         {
             client.getUser().authorize(username, authtoken);
         }
