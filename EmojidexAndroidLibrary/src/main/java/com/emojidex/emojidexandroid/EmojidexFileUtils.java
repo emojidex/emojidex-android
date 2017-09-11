@@ -376,6 +376,7 @@ public class EmojidexFileUtils
                 result = new ArrayList<Emoji>();
                 result.add(mapper.readValue(parser, Emoji.class));
             }
+            parser.close();
             is.close();
         }
         catch(IOException e)

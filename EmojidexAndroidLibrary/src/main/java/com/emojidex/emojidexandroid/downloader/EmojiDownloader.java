@@ -409,10 +409,15 @@ public class EmojiDownloader
             destChecksums.setSvg(srcChecksums.sum("svg", ""));
 
             for(EmojiFormat format : EmojiFormat.values())
+            {
+                if(format == EmojiFormat.SVG)
+                    continue;
+
                 destChecksums.setPng(
                         format,
                         srcChecksums.sum("png", format.getResolution())
                 );
+            }
         }
 
         dest.setFavorited(src.getFavorited());

@@ -14,7 +14,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.text.Editable;
@@ -62,8 +61,6 @@ public class MainActivity extends Activity {
 
     private final DownloadListener downloadListener = new CustomDownloadListener();
     private EmojiFormat defaultFormat;
-    private EmojiFormat keyFormat;
-    private Handler updateTextHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,32 +70,6 @@ public class MainActivity extends Activity {
         inputMethodManager = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
 
         defaultFormat = EmojiFormat.toFormat(getString(R.string.emoji_format_default));
-        keyFormat = EmojiFormat.toFormat(getString(R.string.emoji_format_key));
-
-        updateTextHandler = new Handler() {
-            @Override
-            public void handleMessage(Message msg)
-            {
-                editText.removeTextChangedListener(textWatcher);
-
-                final int oldStart = editText.getSelectionStart();
-                final int oldEnd = editText.getSelectionEnd();
-
-                final Editable text = editText.getText();
-                text.replace(
-                        0, text.length(),
-                        toggleState ? emojify(text, false) : toUnicodeString(text)
-                );
-
-                final int length = editText.length();
-                editText.setSelection(
-                        Math.min(oldStart, length),
-                        Math.min(oldEnd, length)
-                );
-
-                editText.addTextChangedListener(textWatcher);
-            }
-        };
 
         initEmojidexEditor();
         getIntentData();
@@ -927,7 +898,25 @@ public class MainActivity extends Activity {
 
             // Update text.
             if(toggleState)
-                updateTextHandler.sendMessage(updateTextHandler.obtainMessage());
+            {
+                editText.removeTextChangedListener(textWatcher);
+
+                final int oldStart = editText.getSelectionStart();
+                final int oldEnd = editText.getSelectionEnd();
+
+                text.replace(
+                        0, text.length(),
+                        emojify(text, false)
+                );
+
+                final int length = editText.length();
+                editText.setSelection(
+                        Math.min(oldStart, length),
+                        Math.min(oldEnd, length)
+                );
+
+                editText.addTextChangedListener(textWatcher);
+            }
         }
     }
 }
