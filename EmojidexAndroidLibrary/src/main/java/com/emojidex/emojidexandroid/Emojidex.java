@@ -110,6 +110,7 @@ public class Emojidex {
         boolean result = EmojidexFileUtils.deleteFiles(EmojidexFileUtils.getLocalRootUri());
         reload();
         getEmojiDownloader().reload();
+        ImageLoader.getInstance().clearCache();
         Log.d(TAG, "Delete all cache files in local storage.");
         return result;
     }

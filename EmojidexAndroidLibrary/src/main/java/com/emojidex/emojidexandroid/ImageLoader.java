@@ -113,6 +113,14 @@ public class ImageLoader
     }
 
     /**
+     * Clear cache.
+     */
+    public void clearCache()
+    {
+        bitmapCache.evictAll();
+    }
+
+    /**
      * Load image.
      * @param name          Emoji name.
      * @param format        Emoji format.
