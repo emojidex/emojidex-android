@@ -4,13 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 
 import com.emojidex.emojidexandroidlibrary.R;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -41,61 +35,13 @@ class EmojiManager {
 
     /**
      * Add emoji from json file.
-     * @param path  Json file path.
-     */
-    public void add(String path)
-    {
-        try
-        {
-            final File file = new File(path);
-            final InputStream is = new FileInputStream(file);
-            add(is);
-            is.close();
-        }
-        catch(IOException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Add emoji from json file.
      * @param uri   Json file uri.
      */
     public void add(Uri uri)
     {
-        try
-        {
-            final InputStream is = context.getContentResolver().openInputStream(uri);
-            add(is);
-            is.close();
-        }
-        catch(IOException e)
-        {
-            e.printStackTrace();
-        }
-    }
+        final ArrayList<Emoji> newEmojies = EmojidexFileUtils.readJsonFromFile(uri);
 
-    /**
-     * Add emoji from json file.
-     * @param is    Json file input stream.
-     */
-    public void add(InputStream is)
-    {
-        ArrayList<Emoji> newEmojies = null;
-
-        // Load emoji from json.
-        try
-        {
-            final ObjectMapper objectMapper = new ObjectMapper();
-            newEmojies = objectMapper.readValue(is, new TypeReference<ArrayList<Emoji>>(){});
-        }
-        catch(IOException e)
-        {
-            e.printStackTrace();
-        }
-
-        if(newEmojies == null)
+        if(newEmojies == null || newEmojies.isEmpty())
             return;
 
         // Initialize and add emoji.

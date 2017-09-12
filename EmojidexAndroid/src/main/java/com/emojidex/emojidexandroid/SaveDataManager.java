@@ -23,6 +23,7 @@ public class SaveDataManager {
     public static final int CAPACITY_INFINITY = 0;
 
     private static final SaveDataManager[] managers = new SaveDataManager[Type.values().length];
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     protected final Context context;
     private final Type type;
@@ -227,9 +228,8 @@ public class SaveDataManager {
     {
         try
         {
-            final ObjectMapper objectMapper = new ObjectMapper();
             final OutputStream os = context.openFileOutput(filename, Context.MODE_PRIVATE);
-            objectMapper.writeValue(os, emojiNames);
+            mapper.writeValue(os, emojiNames);
             os.close();
         }
         catch(IOException e)
@@ -249,10 +249,10 @@ public class SaveDataManager {
 
         try
         {
-            final ObjectMapper objectMapper = new ObjectMapper();
             final InputStream is = context.openFileInput(filename);
             final TypeReference<LinkedHashSet<String>> typeReference = new TypeReference<LinkedHashSet<String>>(){};
-            final LinkedHashSet<String> loadEmojiNames = objectMapper.readValue(is, typeReference);
+            final LinkedHashSet<String> loadEmojiNames = mapper.readValue(is, typeReference);
+            is.close();
             emojiNames.addAll(loadEmojiNames);
         }
         catch(IOException e)
