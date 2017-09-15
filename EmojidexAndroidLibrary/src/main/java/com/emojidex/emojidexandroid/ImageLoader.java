@@ -117,7 +117,8 @@ public class ImageLoader
      */
     public void clearCache()
     {
-        bitmapCache.evictAll();
+        if(bitmapCache != null)
+            bitmapCache.evictAll();
     }
 
     /**

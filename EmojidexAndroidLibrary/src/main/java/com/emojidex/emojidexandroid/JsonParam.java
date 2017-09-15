@@ -3,6 +3,7 @@ package com.emojidex.emojidexandroid;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -321,5 +322,84 @@ public class JsonParam {
     public void setFavorited(long favorited)
     {
         this.favorited = favorited;
+    }
+
+    /**
+     * Copy parameter from src.
+     * @param src   Source.
+     */
+    void copy(com.emojidex.libemojidex.Emojidex.Data.Emoji src)
+    {
+        setCode(src.getCode());
+        setMoji(src.getMoji());
+        setUnicode(src.getUnicode());
+        setCategory(src.getCategory());
+
+        // tags
+        {
+            final com.emojidex.libemojidex.StringVector srcTags = src.getTags();
+            final long tagsCount = srcTags.size();
+            List<String> destTags = getTags();
+            if(destTags == null)
+                destTags = new ArrayList<String>();
+            else
+                destTags.clear();
+            for(int i = 0;  i < tagsCount;  ++i)
+                destTags.add(srcTags.get(i));
+            setTags(destTags);
+        }
+
+
+        setLink(src.getLink());
+        setBase(src.getBase());
+
+        // variants
+        {
+            final com.emojidex.libemojidex.StringVector srcVariants = src.getVariants();
+            final long variantsCount = srcVariants.size();
+            List<String> destVariants = getVariants();
+            if(destVariants == null)
+                destVariants = new ArrayList<String>();
+            else
+                destVariants.clear();
+            for(int i = 0;  i < variantsCount;  ++i)
+                destVariants.add(srcVariants.get(i));
+            setVariants(destVariants);
+        }
+
+        setScore(src.getScore());
+        setCurrentPrice(src.getCurrent_price());
+        setPrimary(src.getPrimary());
+        setRegisteredAt(src.getRegistered_at());
+        setPermalock(src.getPermalock());
+        setCopyrightLock(src.getCopyright_lock());
+        setLinkExpiration(src.getLink_expiration());
+        setLockExpiration(src.getLock_expiration());
+        setTimesChanged(src.getTimes_changed());
+        setWide(src.getIs_wide());
+        setTimesUsed(src.getTimes_used());
+        setAttribution(src.getAttribution());
+        setUserID(src.getUser_id());
+
+        // checksums
+        {
+            final com.emojidex.libemojidex.Emojidex.Data.Checksums srcChecksums = src.getChecksums();
+            final Emoji.Checksums destChecksums = getChecksums();
+
+            destChecksums.setSvg(srcChecksums.sum("svg", ""));
+
+            for(EmojiFormat format : EmojiFormat.values())
+            {
+                if(format == EmojiFormat.SVG)
+                    continue;
+
+                destChecksums.setPng(
+                        format,
+                        srcChecksums.sum("png", format.getResolution())
+                );
+            }
+        }
+
+        setFavorited(src.getFavorited());
     }
 }
