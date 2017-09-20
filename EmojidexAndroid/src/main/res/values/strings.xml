@@ -154,7 +154,7 @@
     <string name="editor_text_size_small" translatable="false">20</string>
     <string name="editor_text_size_medium" translatable="false">25</string>
     <string name="editor_text_size_large" translatable="false">30</string>
-    <string name="editor_text_size_default" translatable="false">@string/editor_text_size_small</string>
+    <string name="editor_text_size_default" translatable="false">@string/editor_text_size_medium</string>
 
     <string name="ime_category_id_history" translatable="false">history</string>
     <string name="ime_category_id_favorite" translatable="false">favorite</string>
