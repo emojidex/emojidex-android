@@ -49,7 +49,15 @@
 
         <activity
             android:name="com.emojidex.emojidexandroid.SettingsActivity"
-            android:label="@string/settings_title">
+            android:label="@string/settings_title"
+            android:launchMode="singleTask" >
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="emojidexandroidsettings" />
+            </intent-filter>
         </activity>
 
         <activity
