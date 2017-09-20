@@ -858,10 +858,11 @@ public class MainActivity extends Activity {
                 if(!isAnimating)
                     return;
 
-                final int start = editText.getSelectionStart();
-                final int end = editText.getSelectionEnd();
+                editText.removeTextChangedListener(textWatcher);
+
                 editText.setText(editText.getText());
-                editText.setSelection(start, end);
+
+                editText.addTextChangedListener(textWatcher);
 
                 handler.postDelayed(this, 100);
             }
