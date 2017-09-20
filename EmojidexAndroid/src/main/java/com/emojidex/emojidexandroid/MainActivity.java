@@ -48,6 +48,7 @@ import com.google.android.gms.ads.AdView;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.List;
+import java.util.Set;
 
 public class MainActivity extends Activity {
     static final String TAG = "EmojidexAndroid";
@@ -696,6 +697,12 @@ public class MainActivity extends Activity {
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
 
@@ -720,6 +727,37 @@ public class MainActivity extends Activity {
             for(DynamicDrawableSpan span : text.getSpans(0, length, DynamicDrawableSpan.class))
                 span.getDrawable().setBounds(0, 0, size, size);
         }
+
+        // emojidex login
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        Set categories = intent.getCategories();
+
+        if (action.equals(Intent.ACTION_VIEW) || categories.contains((Intent.CATEGORY_BROWSABLE))) {
+            if (intent.hasExtra("auth_token") && intent.hasExtra("username")) {
+                String authToken = intent.getExtras().getString("auth_token");
+                String username = intent.getExtras().getString("username");
+
+                final UserData userData = UserData.getInstance();
+                userData.setUserData(authToken, username);
+
+                setLoginButtonVisibility(false);
+                final HistoryManager hm = HistoryManager.getInstance(this);
+                final FavoriteManager fm = FavoriteManager.getInstance(this);
+                hm.saveBackup();
+                fm.saveBackup();
+                hm.loadFromUser();
+                fm.loadFromUser();
+
+                Toast.makeText(getApplicationContext(),
+                        getString(R.string.menu_login_success) + userData.getUsername(),
+                        Toast.LENGTH_SHORT).show();
+                analytics.logEvent(FirebaseAnalytics.Event.LOGIN, new Bundle());
+            } else {
+                Toast.makeText(getApplicationContext(),
+                        getString(R.string.menu_login_cancel), Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     @Override
@@ -738,36 +776,17 @@ public class MainActivity extends Activity {
      * @param v view
      */
     public void loginEmojidex(View v) {
-        Intent intent = new Intent(MainActivity.this, WebViewActivity.class);
-        intent.putExtra("URL", EMOJIDEX_URL + "/mobile_app/login");
-        startActivityForResult(intent, LOGIN_RESULT);
+        Uri uri = Uri.parse(EMOJIDEX_URL + "/mobile_app/login?user_agent=emojidexNativeClient");
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(intent);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        final HistoryManager hm = HistoryManager.getInstance(this);
-        final FavoriteManager fm = FavoriteManager.getInstance(this);
-
         // Get result.
         switch (requestCode) {
-            case LOGIN_RESULT:
-                if (resultCode == Activity.RESULT_OK) {
-                    setLoginButtonVisibility(false);
-                    hm.saveBackup();
-                    fm.saveBackup();
-                    hm.loadFromUser();
-                    fm.loadFromUser();
-                    Toast.makeText(getApplicationContext(),
-                            getString(R.string.menu_login_success) + userData.getUsername(),
-                            Toast.LENGTH_SHORT).show();
-                    analytics.logEvent(FirebaseAnalytics.Event.LOGIN, new Bundle());
-                } else {
-                    Toast.makeText(getApplicationContext(),
-                            getString(R.string.menu_login_cancel), Toast.LENGTH_SHORT).show();
-                }
-                break;
             case REGISTER_RESULT:
                 if(data == null)
                 {
@@ -786,7 +805,6 @@ public class MainActivity extends Activity {
                             data.getStringExtra("message"), Toast.LENGTH_SHORT).show();
                 }
                 break;
-
         }
     }
 
