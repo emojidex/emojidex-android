@@ -30,6 +30,7 @@ import java.util.Set;
  * Created by nazuki on 2014/01/31.
  */
 public class SettingsActivity extends PreferenceActivity {
+    private static final String EMOJIDEX_URL = "https://www.emojidex.com";
     private int fragmentId;
 
     private FirebaseAnalytics analytics;
@@ -429,7 +430,7 @@ public class SettingsActivity extends PreferenceActivity {
      * Logout from emojidex web site.
      */
     private void logoutEmojidex() {
-        Uri uri = Uri.parse(getString(R.string.emojidex_url) + "/mobile_app/logout?user_agent=emojidexNativeClient");
+        Uri uri = Uri.parse(EMOJIDEX_URL + "/mobile_app/logout");
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(intent);
     }

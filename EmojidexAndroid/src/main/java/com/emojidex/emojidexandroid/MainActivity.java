@@ -51,6 +51,8 @@ import java.util.Set;
 
 public class MainActivity extends Activity {
     static final String TAG = "EmojidexAndroid";
+    private static final String EMOJIDEX_URL = "https://www.emojidex.com";
+    private static final String EMOJIDEX_QUERY = "?user_agent=emojidexNativeClient";
 
     private InputMethodManager inputMethodManager;
     private boolean isAnimating;
@@ -791,7 +793,7 @@ public class MainActivity extends Activity {
      * @param v view
      */
     public void loginEmojidex(View v) {
-        Uri uri = Uri.parse(getString(R.string.emojidex_url) + "/mobile_app/login?user_agent=emojidexNativeClient");
+        Uri uri = Uri.parse(EMOJIDEX_URL + "/mobile_app/login" + EMOJIDEX_QUERY);
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(intent);
     }
@@ -801,7 +803,7 @@ public class MainActivity extends Activity {
      * @param v view
      */
     public void registerNewEmoji(View v) {
-        Uri uri = Uri.parse(getString(R.string.emojidex_url) + "/mobile_app/new_emoji?user_agent=emojidexNativeClient");
+        Uri uri = Uri.parse(EMOJIDEX_URL + "/mobile_app/new_emoji" + EMOJIDEX_QUERY);
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(intent);
     }
@@ -811,7 +813,7 @@ public class MainActivity extends Activity {
      * @param v view
      */
     public void showMyEmoji(View v) {
-        Uri uri = Uri.parse(getString(R.string.emojidex_url) + "/users/" + UserData.getInstance().getUsername());
+        Uri uri = Uri.parse(EMOJIDEX_URL + "/users/" + UserData.getInstance().getUsername());
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(intent);
         analytics.logEvent("show_my_emoji", new Bundle());
