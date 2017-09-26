@@ -80,6 +80,17 @@ public class EmojidexAnimationDrawable extends AnimationDrawable
         return skipFirst;
     }
 
+    @Override
+    public void setBounds(int left, int top, int right, int bottom)
+    {
+        super.setBounds(left, top, right, bottom);
+
+        for(int i = 0;  i < getNumberOfFrames();  ++i)
+        {
+            getFrame(i).setBounds(getBounds());
+        }
+    }
+
     private void calcTime()
     {
         if(!isRunning())

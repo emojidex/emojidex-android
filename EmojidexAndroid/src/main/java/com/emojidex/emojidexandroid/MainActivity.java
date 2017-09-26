@@ -14,7 +14,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.text.Editable;
@@ -62,8 +61,6 @@ public class MainActivity extends Activity {
 
     private final DownloadListener downloadListener = new CustomDownloadListener();
     private EmojiFormat defaultFormat;
-    private EmojiFormat keyFormat;
-    private Handler updateTextHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,32 +70,6 @@ public class MainActivity extends Activity {
         inputMethodManager = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
 
         defaultFormat = EmojiFormat.toFormat(getString(R.string.emoji_format_default));
-        keyFormat = EmojiFormat.toFormat(getString(R.string.emoji_format_key));
-
-        updateTextHandler = new Handler() {
-            @Override
-            public void handleMessage(Message msg)
-            {
-                editText.removeTextChangedListener(textWatcher);
-
-                final int oldStart = editText.getSelectionStart();
-                final int oldEnd = editText.getSelectionEnd();
-
-                final Editable text = editText.getText();
-                text.replace(
-                        0, text.length(),
-                        toggleState ? emojify(text, false) : toUnicodeString(text)
-                );
-
-                final int length = editText.length();
-                editText.setSelection(
-                        Math.min(oldStart, length),
-                        Math.min(oldEnd, length)
-                );
-
-                editText.addTextChangedListener(textWatcher);
-            }
-        };
 
         initEmojidexEditor();
         getIntentData();
@@ -338,9 +309,7 @@ public class MainActivity extends Activity {
                     final int length = text.length();
                     if(length != 0)
                     {
-                        final int size = (int)editText.getTextSize();
-                        for(DynamicDrawableSpan span : text.getSpans(0, length, DynamicDrawableSpan.class))
-                            span.getDrawable().setBounds(0, 0, size, size);
+                        setTextImageSize(text);
                     }
 
                     s.replace(0, s.length(), text);
@@ -350,9 +319,7 @@ public class MainActivity extends Activity {
                 else
                 {
                     // Resize emoji image.
-                    final int size = (int)editText.getTextSize();
-                    for(DynamicDrawableSpan span : imageSpans)
-                        span.getDrawable().setBounds(0, 0, size, size);
+                    setTextImageSize(imageSpans);
                 }
             }
             else
@@ -713,9 +680,7 @@ public class MainActivity extends Activity {
         final int length = text.length();
         if(length != 0)
         {
-            final int size = (int)editText.getTextSize();
-            for(DynamicDrawableSpan span : text.getSpans(0, length, DynamicDrawableSpan.class))
-                span.getDrawable().setBounds(0, 0, size, size);
+            setTextImageSize(text);
         }
     }
 
@@ -887,10 +852,11 @@ public class MainActivity extends Activity {
                 if(!isAnimating)
                     return;
 
-                final int start = editText.getSelectionStart();
-                final int end = editText.getSelectionEnd();
+                editText.removeTextChangedListener(textWatcher);
+
                 editText.setText(editText.getText());
-                editText.setSelection(start, end);
+
+                editText.addTextChangedListener(textWatcher);
 
                 handler.postDelayed(this, 100);
             }
@@ -900,6 +866,20 @@ public class MainActivity extends Activity {
     private void stopAnimation()
     {
         isAnimating = false;
+    }
+
+    private void setTextImageSize(Spannable text)
+    {
+        setTextImageSize(
+                text.getSpans(0, text.length(), DynamicDrawableSpan.class)
+        );
+    }
+
+    private void setTextImageSize(DynamicDrawableSpan[] spans)
+    {
+        final int size = (int)editText.getTextSize();
+        for(DynamicDrawableSpan span : spans)
+            span.getDrawable().setBounds(0, 0, size, size);
     }
 
     /**
@@ -927,7 +907,25 @@ public class MainActivity extends Activity {
 
             // Update text.
             if(toggleState)
-                updateTextHandler.sendMessage(updateTextHandler.obtainMessage());
+            {
+                editText.removeTextChangedListener(textWatcher);
+
+                final int oldStart = editText.getSelectionStart();
+                final int oldEnd = editText.getSelectionEnd();
+
+                final CharSequence newText = emojify(text, false);
+                setTextImageSize((Spannable)newText);
+
+                text.replace(0, text.length(), newText);
+
+                final int length = editText.length();
+                editText.setSelection(
+                        Math.min(oldStart, length),
+                        Math.min(oldEnd, length)
+                );
+
+                editText.addTextChangedListener(textWatcher);
+            }
         }
     }
 }

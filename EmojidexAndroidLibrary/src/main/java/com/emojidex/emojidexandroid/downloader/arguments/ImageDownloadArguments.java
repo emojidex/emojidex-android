@@ -71,7 +71,6 @@ public class ImageDownloadArguments implements ArgumentsInterface {
 
         return      ArgumentsUtils.equals(emojiName, arg.emojiName)
                 &&  ArgumentsUtils.equals(format, arg.format)
-                &&  super.equals(obj)
                 ;
     }
 }

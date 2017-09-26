@@ -7,9 +7,7 @@ import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.provider.OpenableColumns;
 
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
@@ -35,6 +33,8 @@ public class EmojidexFileUtils
     private static final String REMOTE_ROOT_PATH_DEFAULT = "https://cdn.emojidex.com";
     private static final String API_ROOT_PATH = "https://www.emojidex.com/api/v1";
     private static final String JSON_FILENAME = "emoji.json";
+
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     private static Context context = null;
     private static boolean hasContentProvider = false;
@@ -361,21 +361,8 @@ public class EmojidexFileUtils
         try
         {
             final InputStream is = context.getContentResolver().openInputStream(uri);
-            final ObjectMapper mapper = new ObjectMapper();
-            JsonNode node = mapper.readTree(is);
-            if(node.has("emoji"))
-                node = node.get("emoji");
-            final JsonParser parser = node.traverse();
-            if(node.isArray())
-            {
-                final TypeReference<ArrayList<Emoji>> tr = new TypeReference<ArrayList<Emoji>>(){};
-                result = mapper.readValue(parser, tr);
-            }
-            else
-            {
-                result = new ArrayList<Emoji>();
-                result.add(mapper.readValue(parser, Emoji.class));
-            }
+            final TypeReference<ArrayList<Emoji>> tr = new TypeReference<ArrayList<Emoji>>(){};
+            result = mapper.readValue(is, tr);
             is.close();
         }
         catch(IOException e)
@@ -406,7 +393,6 @@ public class EmojidexFileUtils
         try
         {
             final OutputStream os = context.getContentResolver().openOutputStream(uri);
-            final ObjectMapper mapper = new ObjectMapper();
             mapper.writeValue(os, emojies);
             os.close();
         }

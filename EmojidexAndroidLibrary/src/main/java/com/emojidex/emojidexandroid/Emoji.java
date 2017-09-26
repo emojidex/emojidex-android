@@ -16,15 +16,16 @@ import java.util.List;
  * Created by kou on 14/10/03.
  */
 public class Emoji extends JsonParam {
-    @JsonProperty("current_checksums")      private Checksums current_checksums = null;
-    @JsonProperty("type")                   private String type = null;
+    private Checksums current_checksums = null;
+    private String type = null;
 
-    @JsonIgnore     private final List<Integer> codes = new ArrayList<Integer>();
+    private final List<Integer> codes = new ArrayList<Integer>();
 
-    @JsonIgnore     private Context context;
-    @JsonIgnore     private Resources res;
-    @JsonIgnore     private boolean hasOriginalCodes = false;
+    private Context context;
+    private Resources res;
+    private boolean hasOriginalCodes = false;
 
+    @JsonProperty("current_checksums")
     public Checksums getCurrentChecksums()
     {
         if(current_checksums == null)
@@ -100,6 +101,7 @@ public class Emoji extends JsonParam {
      * Get emoji codes.
      * @return  Emoji codes.
      */
+    @JsonIgnore
     public List<Integer> getCodes()
     {
         return codes;
@@ -110,6 +112,7 @@ public class Emoji extends JsonParam {
      * @param format    Image format.
      * @return          Image.
      */
+    @JsonIgnore
     public Drawable getDrawable(EmojiFormat format)
     {
         return getDrawable(format, -1);
@@ -121,6 +124,7 @@ public class Emoji extends JsonParam {
      * @param size      Drawable size.
      * @return          Image.
      */
+    @JsonIgnore
     public Drawable getDrawable(EmojiFormat format, float size)
     {
         return getDrawable(format, size, true);
@@ -134,6 +138,7 @@ public class Emoji extends JsonParam {
      * @param autoDownload  Auto download image when image is old or not found.
      * @return              Image.
      */
+    @JsonIgnore
     public Drawable getDrawable(EmojiFormat format, float size, boolean autoDownload)
     {
         // Load image.
@@ -179,6 +184,7 @@ public class Emoji extends JsonParam {
      * @param format    Emoji format.
      * @return          Bitmap array.
      */
+    @JsonIgnore
     public Bitmap[] getBitmaps(EmojiFormat format)
     {
         // Load image.

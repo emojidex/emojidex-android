@@ -1,44 +1,46 @@
 package com.emojidex.emojidexandroid;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 /**
  * Created by kou on 14/10/10.
  */
-@JsonIgnoreProperties(ignoreUnknown=true)
 public class JsonParam {
-    @JsonProperty("code")               private String code = null;
-    @JsonProperty("moji")               private String moji = null;
-    @JsonProperty("unicode")            private String unicode = null;
-    @JsonProperty("category")           private String category = null;
-    @JsonProperty("tags")               private List<String> tags = null;
-    @JsonProperty("link")               private String link = null;
-    @JsonProperty("base")               private String base = null;
-    @JsonProperty("variants")           private List<String> variants = null;
-    @JsonProperty("score")              private int score = 0;
-    @JsonProperty("current_price")      private double current_price = 0.0;
-    @JsonProperty("primary")            private boolean primary = true;
-    @JsonProperty("registered_at")      private String registered_at = null;
-    @JsonProperty("permalock")          private boolean permalock = false;
-    @JsonProperty("copyright_lock")     private boolean copyright_lock = false;
-    @JsonProperty("link_expiration")    private String link_expiration = null;
-    @JsonProperty("lock_expiration")    private String lock_expiration = null;
-    @JsonProperty("times_changed")      private long times_changed = 0;
-    @JsonProperty("is_wide")            private boolean is_wide = false;
-    @JsonProperty("times_used")         private long times_used = 0;
-    @JsonProperty("attribution")        private String attribution = null;
-    @JsonProperty("user_id")            private String user_id = null;
-    @JsonProperty("checksums")          private Checksums checksums = null;
-    @JsonProperty("favorited")          private long favorited = 0;
+    private String code = null;
+    private String moji = null;
+    private String unicode = null;
+    private String category = null;
+    private List<String> tags = null;
+    private String link = null;
+    private String base = null;
+    private List<String> variants = null;
+    private int score = 0;
+    private double current_price = 0.0;
+    private boolean primary = true;
+    private String registered_at = null;
+    private boolean permalock = false;
+    private boolean copyright_lock = false;
+    private String link_expiration = null;
+    private String lock_expiration = null;
+    private long times_changed = 0;
+    private boolean is_wide = false;
+    private long times_used = 0;
+    private String attribution = null;
+    private String user_id = null;
+    private Checksums checksums = null;
+    private long favorited = 0;
 
     public static class Checksums
     {
-        @JsonProperty("svg")   private String svg = null;
-        @JsonProperty("png")   private HashMap<String, String> png = null;
+        private String svg = null;
+
+        @JsonProperty("")
+        private HashMap<String, String> png = null;
 
         public String getSvg()
         {
@@ -50,6 +52,7 @@ public class JsonParam {
             this.svg = svg;
         }
 
+        @JsonIgnore
         public String getPng(EmojiFormat format)
         {
             return png == null ? null : png.get(format.getResolution());
@@ -62,6 +65,7 @@ public class JsonParam {
             png.put(format.getResolution(), checksum);
         }
 
+        @JsonIgnore
         public String get(EmojiFormat format)
         {
             if(format == EmojiFormat.SVG)
@@ -77,6 +81,7 @@ public class JsonParam {
                 setPng(format, checksum);
         }
     }
+
 
     public String getCode()
     {
@@ -168,6 +173,7 @@ public class JsonParam {
         this.score = score;
     }
 
+    @JsonProperty("current_price")
     public double getCurrentPrice()
     {
         return current_price;
@@ -188,6 +194,7 @@ public class JsonParam {
         this.primary = primary;
     }
 
+    @JsonProperty("registered_at")
     public String getRegisteredAt()
     {
         return registered_at;
@@ -208,6 +215,7 @@ public class JsonParam {
         this.permalock = permalock;
     }
 
+    @JsonProperty("copyright_lock")
     public boolean isCopyrightLock()
     {
         return copyright_lock;
@@ -218,6 +226,7 @@ public class JsonParam {
         this.copyright_lock = copyrightLock;
     }
 
+    @JsonProperty("link_expiration")
     public String getLinkExpiration()
     {
         return link_expiration;
@@ -228,6 +237,7 @@ public class JsonParam {
         this.link_expiration = linkExpiration;
     }
 
+    @JsonProperty("lock_expiration")
     public String getLockExpiration()
     {
         return lock_expiration;
@@ -238,6 +248,7 @@ public class JsonParam {
         this.lock_expiration = lockExpiration;
     }
 
+    @JsonProperty("times_changed")
     public long getTimesChanged()
     {
         return times_changed;
@@ -248,6 +259,7 @@ public class JsonParam {
         this.times_changed = timesChanged;
     }
 
+    @JsonProperty("is_wide")
     public boolean isWide()
     {
         return is_wide;
@@ -258,6 +270,7 @@ public class JsonParam {
         this.is_wide = wide;
     }
 
+    @JsonProperty("times_used")
     public long getTimesUsed()
     {
         return times_used;
@@ -278,6 +291,7 @@ public class JsonParam {
         this.attribution = attribution;
     }
 
+    @JsonProperty("user_id")
     public String getUserID()
     {
         return user_id;
@@ -308,5 +322,84 @@ public class JsonParam {
     public void setFavorited(long favorited)
     {
         this.favorited = favorited;
+    }
+
+    /**
+     * Copy parameter from src.
+     * @param src   Source.
+     */
+    void copy(com.emojidex.libemojidex.Emojidex.Data.Emoji src)
+    {
+        setCode(src.getCode());
+        setMoji(src.getMoji());
+        setUnicode(src.getUnicode());
+        setCategory(src.getCategory());
+
+        // tags
+        {
+            final com.emojidex.libemojidex.StringVector srcTags = src.getTags();
+            final long tagsCount = srcTags.size();
+            List<String> destTags = getTags();
+            if(destTags == null)
+                destTags = new ArrayList<String>();
+            else
+                destTags.clear();
+            for(int i = 0;  i < tagsCount;  ++i)
+                destTags.add(srcTags.get(i));
+            setTags(destTags);
+        }
+
+
+        setLink(src.getLink());
+        setBase(src.getBase());
+
+        // variants
+        {
+            final com.emojidex.libemojidex.StringVector srcVariants = src.getVariants();
+            final long variantsCount = srcVariants.size();
+            List<String> destVariants = getVariants();
+            if(destVariants == null)
+                destVariants = new ArrayList<String>();
+            else
+                destVariants.clear();
+            for(int i = 0;  i < variantsCount;  ++i)
+                destVariants.add(srcVariants.get(i));
+            setVariants(destVariants);
+        }
+
+        setScore(src.getScore());
+        setCurrentPrice(src.getCurrent_price());
+        setPrimary(src.getPrimary());
+        setRegisteredAt(src.getRegistered_at());
+        setPermalock(src.getPermalock());
+        setCopyrightLock(src.getCopyright_lock());
+        setLinkExpiration(src.getLink_expiration());
+        setLockExpiration(src.getLock_expiration());
+        setTimesChanged(src.getTimes_changed());
+        setWide(src.getIs_wide());
+        setTimesUsed(src.getTimes_used());
+        setAttribution(src.getAttribution());
+        setUserID(src.getUser_id());
+
+        // checksums
+        {
+            final com.emojidex.libemojidex.Emojidex.Data.Checksums srcChecksums = src.getChecksums();
+            final Emoji.Checksums destChecksums = getChecksums();
+
+            destChecksums.setSvg(srcChecksums.sum("svg", ""));
+
+            for(EmojiFormat format : EmojiFormat.values())
+            {
+                if(format == EmojiFormat.SVG)
+                    continue;
+
+                destChecksums.setPng(
+                        format,
+                        srcChecksums.sum("png", format.getResolution())
+                );
+            }
+        }
+
+        setFavorited(src.getFavorited());
     }
 }

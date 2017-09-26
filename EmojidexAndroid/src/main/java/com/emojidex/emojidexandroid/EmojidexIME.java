@@ -8,7 +8,6 @@ import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.os.Handler;
-import android.os.Message;
 import android.preference.PreferenceManager;
 import android.text.InputType;
 import android.util.Log;
@@ -41,13 +40,10 @@ import java.util.List;
  */
 public class EmojidexIME extends InputMethodService {
     static final String TAG = MainActivity.TAG + "::EmojidexIME";
-    // TODO kore iru ?
     static EmojidexIME currentInstance = null;
 
-    private final Handler invalidateHandler;
-    private final Handler reloadHandler;
-
     private Emojidex emojidex;
+    private EmojiFormat keyFormat;
 
     private InputMethodManager inputMethodManager = null;
     private int showIMEPickerCode = 0;
@@ -88,20 +84,6 @@ public class EmojidexIME extends InputMethodService {
     public EmojidexIME()
     {
         setTheme(R.style.IMETheme);
-
-        invalidateHandler = new Handler(){
-            @Override
-            public void handleMessage(Message msg) {
-                keyboardViewManager.getCurrentView().invalidateKey(msg.arg1);
-            }
-        };
-        reloadHandler = new Handler() {
-            @Override
-            public void handleMessage(Message msg)
-            {
-                reload();
-            }
-        };
     }
 
     @Override
@@ -118,6 +100,8 @@ public class EmojidexIME extends InputMethodService {
 
         emojidex = Emojidex.getInstance();
         emojidex.initialize(this);
+
+        keyFormat = EmojiFormat.toFormat(getString(R.string.emoji_format_key));
 
         // Create PreferenceManager.
         historyManager = HistoryManager.getInstance(this);
@@ -548,9 +532,7 @@ public class EmojidexIME extends InputMethodService {
             {
                 if(keys.get(i).popupCharacters.equals(emojiName))
                 {
-                    final Message msg = invalidateHandler.obtainMessage();
-                    msg.arg1 = i;
-                    invalidateHandler.sendMessage(msg);
+                    keyboardViewManager.getCurrentView().invalidateKey(i);
 
                     break;
                 }
@@ -877,14 +859,14 @@ public class EmojidexIME extends InputMethodService {
         @Override
         public void onDownloadJson(int handle, String... emojiNames)
         {
-            reloadHandler.sendMessage(reloadHandler.obtainMessage());
+            reload();
         }
 
         @Override
         public void onDownloadImage(int handle, String emojiName, EmojiFormat format)
         {
-            // TODO kore de ii no ka ?
-            invalidate(emojiName);
+            if(keyFormat.equals(format))
+                invalidate(emojiName);
         }
     }
 }

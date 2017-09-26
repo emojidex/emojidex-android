@@ -56,10 +56,11 @@ public class Emojidex {
 
         EmojidexFileUtils.initialize(this.context);
         VersionManager.getInstance().optimize(this.context);
-        getEmojiDownloader().initialize(this.context);
 
         manager = new EmojiManager(this.context);
         manager.add(EmojidexFileUtils.getLocalJsonUri());
+
+        getEmojiDownloader().initialize(this.context, manager);
 
         defaultFormat = EmojiFormat.toFormat(this.context.getResources().getString(R.string.emoji_format_default));
         user = new EmojidexUser();
@@ -133,7 +134,7 @@ public class Emojidex {
 
         boolean result = EmojidexFileUtils.deleteFiles(EmojidexFileUtils.getLocalRootUri());
         reload();
-        getEmojiDownloader().reload();
+        ImageLoader.getInstance().clearCache();
         Log.d(TAG, "Delete all cache files in local storage.");
         return result;
     }

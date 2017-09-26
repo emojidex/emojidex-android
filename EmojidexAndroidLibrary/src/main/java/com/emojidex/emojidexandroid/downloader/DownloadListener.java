@@ -7,14 +7,6 @@ import com.emojidex.emojidexandroid.EmojiFormat;
  */
 public class DownloadListener {
     /**
-     * Called when update emojidex database.
-     */
-    public void onUpdateDatabase()
-    {
-        // nop
-    }
-
-    /**
      * Called when complete download json.
      * @param handle        Download handle.
      * @param emojiNames    Emoji names from download json.
