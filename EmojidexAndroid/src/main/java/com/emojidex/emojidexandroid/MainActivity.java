@@ -309,9 +309,7 @@ public class MainActivity extends Activity {
                     final int length = text.length();
                     if(length != 0)
                     {
-                        final int size = (int)editText.getTextSize();
-                        for(DynamicDrawableSpan span : text.getSpans(0, length, DynamicDrawableSpan.class))
-                            span.getDrawable().setBounds(0, 0, size, size);
+                        setTextImageSize(text);
                     }
 
                     s.replace(0, s.length(), text);
@@ -321,9 +319,7 @@ public class MainActivity extends Activity {
                 else
                 {
                     // Resize emoji image.
-                    final int size = (int)editText.getTextSize();
-                    for(DynamicDrawableSpan span : imageSpans)
-                        span.getDrawable().setBounds(0, 0, size, size);
+                    setTextImageSize(imageSpans);
                 }
             }
             else
@@ -684,9 +680,7 @@ public class MainActivity extends Activity {
         final int length = text.length();
         if(length != 0)
         {
-            final int size = (int)editText.getTextSize();
-            for(DynamicDrawableSpan span : text.getSpans(0, length, DynamicDrawableSpan.class))
-                span.getDrawable().setBounds(0, 0, size, size);
+            setTextImageSize(text);
         }
     }
 
@@ -858,10 +852,11 @@ public class MainActivity extends Activity {
                 if(!isAnimating)
                     return;
 
-                final int start = editText.getSelectionStart();
-                final int end = editText.getSelectionEnd();
+                editText.removeTextChangedListener(textWatcher);
+
                 editText.setText(editText.getText());
-                editText.setSelection(start, end);
+
+                editText.addTextChangedListener(textWatcher);
 
                 handler.postDelayed(this, 100);
             }
@@ -871,6 +866,20 @@ public class MainActivity extends Activity {
     private void stopAnimation()
     {
         isAnimating = false;
+    }
+
+    private void setTextImageSize(Spannable text)
+    {
+        setTextImageSize(
+                text.getSpans(0, text.length(), DynamicDrawableSpan.class)
+        );
+    }
+
+    private void setTextImageSize(DynamicDrawableSpan[] spans)
+    {
+        final int size = (int)editText.getTextSize();
+        for(DynamicDrawableSpan span : spans)
+            span.getDrawable().setBounds(0, 0, size, size);
     }
 
     /**
@@ -904,10 +913,10 @@ public class MainActivity extends Activity {
                 final int oldStart = editText.getSelectionStart();
                 final int oldEnd = editText.getSelectionEnd();
 
-                text.replace(
-                        0, text.length(),
-                        emojify(text, false)
-                );
+                final CharSequence newText = emojify(text, false);
+                setTextImageSize((Spannable)newText);
+
+                text.replace(0, text.length(), newText);
 
                 final int length = editText.length();
                 editText.setSelection(
