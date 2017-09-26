@@ -263,6 +263,16 @@ public class Emoji extends JsonParam {
     }
 
     /**
+     * Check initialized.
+     * @return      true if already initialized.
+     */
+    @JsonIgnore
+    boolean isInitialized()
+    {
+        return !codes.isEmpty();
+    }
+
+    /**
      * Check emoji has codes.
      * @return  true if emoji has code.
      */

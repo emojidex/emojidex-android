@@ -7,9 +7,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.emojidex.emojidexandroid.downloader.DownloadListener;
-import com.emojidex.emojidexandroid.downloader.EmojiDownloader;
-import com.emojidex.emojidexandroid.downloader.arguments.ExtendedDownloadArguments;
-import com.emojidex.emojidexandroid.downloader.arguments.UTFDownloadArguments;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -62,41 +59,18 @@ class EmojidexUpdater {
 
         Log.d(TAG, "Start update.");
 
-        succeeded = true;
-
-        final UserData userdata = UserData.getInstance();
-        final EmojiDownloader downloader = emojidex.getEmojiDownloader();
-
-        // TODO utf extended hogepiyofoobar
-
-        boolean result = false;
-
-        // UTF
-        int handle = downloader.downloadUTFEmoji(
-                new UTFDownloadArguments()
-                    .setUser(userdata.getUsername(), userdata.getAuthToken())
+        downloadHandles.addAll(
+                emojidex.update()
         );
-        if(handle != EmojiDownloader.HANDLE_NULL)
-        {
-            downloadHandles.add(handle);
-            result = true;
-        }
 
-        // Extended
-        handle = downloader.downloadExtendedEmoji(
-                new ExtendedDownloadArguments()
-                    .setUser(userdata.getUsername(), userdata.getAuthToken())
-        );
-        if(handle != EmojiDownloader.HANDLE_NULL)
+        final boolean hasHandle = !downloadHandles.isEmpty();
+        if(hasHandle)
         {
-            downloadHandles.add(handle);
-            result = true;
-        }
-
-        if(result)
             emojidex.addDownloadListener(new CustomDownloadListener());
+            succeeded = true;
+        }
 
-        return result;
+        return hasHandle;
     }
 
     /**

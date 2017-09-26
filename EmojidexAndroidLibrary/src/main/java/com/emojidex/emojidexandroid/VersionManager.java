@@ -35,7 +35,7 @@ public class VersionManager {
         try
         {
             final OutputStream os = context.getContentResolver().openOutputStream(uri);
-            os.write(BuildConfig.VERSION_CODE);
+            os.write(String.valueOf(BuildConfig.VERSION_CODE).getBytes());
             os.close();
         }
         catch(IOException e)
@@ -84,6 +84,7 @@ public class VersionManager {
         // version <= 0.0.8
         if(version == 0)
         {
+            // TODO refactoring
             // Replace '_' to ' ' in emoji codes.
             final Uri uri = EmojidexFileUtils.getLocalJsonUri();
             final ArrayList<Emoji> params = EmojidexFileUtils.readJsonFromFile(uri);
