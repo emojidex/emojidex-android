@@ -7,9 +7,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.emojidex.emojidexandroid.downloader.DownloadListener;
-import com.emojidex.emojidexandroid.downloader.EmojiDownloader;
-import com.emojidex.emojidexandroid.downloader.arguments.ExtendedDownloadArguments;
-import com.emojidex.emojidexandroid.downloader.arguments.UTFDownloadArguments;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
