@@ -8,6 +8,8 @@ import com.emojidex.emojidexandroidlibrary.BuildConfig;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 
 /**
@@ -33,7 +35,7 @@ public class VersionManager {
         try
         {
             final OutputStream os = context.getContentResolver().openOutputStream(uri);
-            os.write(BuildConfig.VERSION_NAME.getBytes());
+            os.write(String.valueOf(BuildConfig.VERSION_CODE).getBytes());
             os.close();
         }
         catch(IOException e)
@@ -42,47 +44,57 @@ public class VersionManager {
         }
     }
 
-    public String load(Context context)
+    public int load(Context context)
     {
         final Uri uri = EmojidexFileUtils.getLocalFileUri(filename);
         try
         {
-            String result = "";
+            String version = "";
             final InputStream is = context.getContentResolver().openInputStream(uri);
             byte[] buffer = new byte[16];
             int readByte;
             while( (readByte = is.read(buffer)) != -1 )
-                result += new String(buffer, 0, readByte);
+                version += new String(buffer, 0, readByte);
             is.close();
-            return result;
+            return NumberFormat.getInstance().parse(version).intValue();
         }
         catch(IOException e)
         {
             e.printStackTrace();
         }
-        return null;
+        catch(ParseException e)
+        {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     public void optimize(Context context)
     {
-        final String version = load(context);
+        final int version = load(context);
 
         if(optimizeJson(context, version))
             save(context);
     }
 
-    private boolean optimizeJson(Context context, String version)
+    private boolean optimizeJson(Context context, int version)
     {
-        // Replace '_' to ' ' in emoji codes.
-        if(version == null)
+        boolean result = false;
+
+        // version <= 0.0.8
+        if(version == 0)
         {
+            // TODO refactoring
+            // Replace '_' to ' ' in emoji codes.
             final Uri uri = EmojidexFileUtils.getLocalJsonUri();
             final ArrayList<Emoji> params = EmojidexFileUtils.readJsonFromFile(uri);
             for(JsonParam param : params)
                 param.setCode(param.getCode().replace('_', ' '));
             EmojidexFileUtils.writeJsonToFile(uri, params);
-            return true;
+
+            result = true;
         }
-        return false;
+
+        return result;
     }
 }

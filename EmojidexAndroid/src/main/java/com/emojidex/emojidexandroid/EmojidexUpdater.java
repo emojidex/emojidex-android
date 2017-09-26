@@ -62,38 +62,18 @@ class EmojidexUpdater {
 
         Log.d(TAG, "Start update.");
 
-        succeeded = true;
-
-        final EmojiDownloader downloader = emojidex.getEmojiDownloader();
-
-        // TODO utf extended hogepiyofoobar
-
-        boolean result = false;
-
-        // UTF
-        int handle = downloader.downloadUTFEmoji(
-                new UTFDownloadArguments()
+        downloadHandles.addAll(
+                emojidex.update()
         );
-        if(handle != EmojiDownloader.HANDLE_NULL)
-        {
-            downloadHandles.add(handle);
-            result = true;
-        }
 
-        // Extended
-        handle = downloader.downloadExtendedEmoji(
-                new ExtendedDownloadArguments()
-        );
-        if(handle != EmojiDownloader.HANDLE_NULL)
+        final boolean hasHandle = !downloadHandles.isEmpty();
+        if(hasHandle)
         {
-            downloadHandles.add(handle);
-            result = true;
-        }
-
-        if(result)
             emojidex.addDownloadListener(new CustomDownloadListener());
+            succeeded = true;
+        }
 
-        return result;
+        return hasHandle;
     }
 
     /**

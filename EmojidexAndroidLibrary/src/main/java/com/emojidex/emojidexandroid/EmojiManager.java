@@ -19,6 +19,9 @@ public class EmojiManager {
     private final Context context;
 
     private final ArrayList<Emoji> emojies = new ArrayList<Emoji>();
+    private final ArrayList<Emoji> utfEmojies = new ArrayList<Emoji>();
+    private final ArrayList<Emoji> extendedEmojies = new ArrayList<Emoji>();
+    private final ArrayList<Emoji> otherEmojies = new ArrayList<Emoji>();
     private final HashMap<String, Emoji> emojiTableFromName = new HashMap<String, Emoji>();
     private final HashMap<List<Integer>, Emoji> emojiTableFromCodes = new HashMap<List<Integer>, Emoji>();
     private final HashMap<String, ArrayList<Emoji>> categorizedEmojies = new HashMap<String, ArrayList<Emoji>>();
@@ -69,6 +72,9 @@ public class EmojiManager {
     public void reset()
     {
         emojies.clear();
+        utfEmojies.clear();
+        extendedEmojies.clear();
+        otherEmojies.clear();
         emojiTableFromName.clear();
         emojiTableFromCodes.clear();
         categorizedEmojies.clear();
@@ -116,6 +122,33 @@ public class EmojiManager {
     }
 
     /**
+     * Get UTF emoji list.
+     * @return      UTF emoji list.
+     */
+    public List<Emoji> getUTFEmojiList()
+    {
+        return utfEmojies;
+    }
+
+    /**
+     * Get extended emoji list.
+     * @return      Extended emoji list.
+     */
+    public List<Emoji> getExtendedEmojiList()
+    {
+        return extendedEmojies;
+    }
+
+    /**
+     * Get other emoji list.
+     * @return      Other emoji list.
+     */
+    public List<Emoji> getOtherEmojiList()
+    {
+        return otherEmojies;
+    }
+
+    /**
      * Get category name list.
      * @return  Category name list.
      */
@@ -140,19 +173,50 @@ public class EmojiManager {
             {
                 emoji = new Emoji();
 
-                emoji.setType(type);
-                emoji.copy(src);
+                copy(emoji, type, src);
 
                 initialize(emoji);
             } else
             {
-                emoji.setType(type);
-                emoji.copy(src);
+                copy(emoji, type, src);
             }
         }
 
         // Save json.
         save();
+    }
+
+    /**
+     * Copy emoji parameter.
+     * @param dest      Destination emoji.
+     * @param type      Download type.
+     * @param src       Source.
+     */
+    private void copy(Emoji dest, String type, com.emojidex.libemojidex.Emojidex.Data.Emoji src)
+    {
+        final String oldType = dest.getType();
+
+        if(     oldType == null
+            ||  (   !oldType.equals(type)
+                &&  !oldType.equals("utf")
+                &&  !oldType.equals("extended") )   )
+        {
+            dest.setType(type);
+
+            if(dest.isInitialized())
+            {
+                otherEmojies.remove(dest);
+
+                if(type.equals("utf"))
+                    utfEmojies.add(dest);
+                else if(type.equals("extended"))
+                    extendedEmojies.add(dest);
+                else
+                    otherEmojies.add(dest);
+            }
+        }
+
+        dest.copy(src);
     }
 
     /**
@@ -190,6 +254,14 @@ public class EmojiManager {
 
         // Add emoji to tables.
         emojies.add(emoji);
+
+        if("utf".equals(emoji.getType()))
+            utfEmojies.add(emoji);
+        else if("extended".equals(emoji.getType()))
+            extendedEmojies.add(emoji);
+        else
+            otherEmojies.add(emoji);
+
         emojiTableFromName.put(emoji.getCode(), emoji);
         emojiTableFromCodes.put(emoji.getCodes(), emoji);
 

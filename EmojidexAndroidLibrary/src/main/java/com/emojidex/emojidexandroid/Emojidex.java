@@ -5,9 +5,13 @@ import android.util.Log;
 
 import com.emojidex.emojidexandroid.downloader.DownloadListener;
 import com.emojidex.emojidexandroid.downloader.EmojiDownloader;
+import com.emojidex.emojidexandroid.downloader.arguments.EmojiDownloadArguments;
+import com.emojidex.emojidexandroid.downloader.arguments.ExtendedDownloadArguments;
+import com.emojidex.emojidexandroid.downloader.arguments.UTFDownloadArguments;
 import com.emojidex.emojidexandroidlibrary.R;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 /**
@@ -109,6 +113,61 @@ public class Emojidex {
             throw new EmojidexIsNotInitializedException();
 
         getEmojiDownloader().removeListener(listener);
+    }
+
+    /**
+     * Update emojidex database.
+     * @return      Download handle array.
+     */
+    public Collection<Integer> update()
+    {
+        final Collection<Integer> handles = new LinkedHashSet<Integer>();
+
+        // UTF
+        {
+            final int handle = getEmojiDownloader().downloadUTFEmoji(
+                    new UTFDownloadArguments()
+            );
+            if(handle != EmojiDownloader.HANDLE_NULL)
+                handles.add(handle);
+        }
+
+        // Extended
+        {
+            final int handle = getEmojiDownloader().downloadExtendedEmoji(
+                    new ExtendedDownloadArguments()
+            );
+            if(handle != EmojiDownloader.HANDLE_NULL)
+                handles.add(handle);
+        }
+
+        // Other
+        {
+            final List<Emoji> otherEmojies = getOtherEmojiList();
+            if(     !otherEmojies.isEmpty()
+                &&  !getUTFEmojiList().isEmpty()
+                &&  !getExtendedEmojiList().isEmpty()   )
+            {
+                final int count = otherEmojies.size();
+                final EmojiDownloadArguments[] argumentsArray = new EmojiDownloadArguments[count];
+
+                for(int i = 0;  i < count;  ++i)
+                {
+                    final Emoji emoji = otherEmojies.get(i);
+                    argumentsArray[i] = new EmojiDownloadArguments(emoji.getCode());
+                }
+
+                final int[] results = getEmojiDownloader().downloadEmojies(argumentsArray);
+
+                for(int handle : results)
+                {
+                    if(handle != EmojiDownloader.HANDLE_NULL)
+                        handles.add(handle);
+                }
+            }
+        }
+
+        return handles;
     }
 
     /**
@@ -279,6 +338,42 @@ public class Emojidex {
             throw new EmojidexIsNotInitializedException();
 
         return manager.getAllEmojiList();
+    }
+
+    /**
+     * Get UTF emoji list.
+     * @return      UTF emoji list.
+     */
+    public List<Emoji> getUTFEmojiList()
+    {
+        if( !isInitialized() )
+            throw new EmojidexIsNotInitializedException();
+
+        return manager.getUTFEmojiList();
+    }
+
+    /**
+     * Get extended emoji list.
+     * @return      Extended emoji list.
+     */
+    public List<Emoji> getExtendedEmojiList()
+    {
+        if( !isInitialized() )
+            throw new EmojidexIsNotInitializedException();
+
+        return manager.getExtendedEmojiList();
+    }
+
+    /**
+     * Get other emoji list.
+     * @return      Other emoji list.
+     */
+    public List<Emoji> getOtherEmojiList()
+    {
+        if( !isInitialized() )
+            throw new EmojidexIsNotInitializedException();
+
+        return manager.getOtherEmojiList();
     }
 
     /**
