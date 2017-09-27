@@ -18,6 +18,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.ListAdapter;
 import android.widget.RadioButton;
 
+import com.emojidex.emojidexandroid.comparator.ScoreComparator;
 import com.emojidex.emojidexandroid.downloader.DownloadListener;
 import com.emojidex.emojidexandroid.downloader.arguments.ImageDownloadArguments;
 import com.emojidex.libemojidex.Emojidex.Service.User;
@@ -26,6 +27,7 @@ import com.google.android.gms.ads.AdView;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class CatalogActivity extends Activity
@@ -201,14 +203,23 @@ public class CatalogActivity extends Activity
         {
             List<String> emojiNames = indexManager.getEmojiNames();
             currentCatalog = createEmojiList(emojiNames);
+
+            // Sort.
+            Collections.sort(currentCatalog, new ScoreComparator());
         }
         else if(categoryName.equals(getString(R.string.ime_category_id_all)))
         {
             currentCatalog = emojidex.getAllEmojiList();
+
+            // Sort.
+            Collections.sort(currentCatalog, new ScoreComparator());
         }
         else
         {
             currentCatalog = emojidex.getEmojiList(categoryName);
+
+            // Sort.
+            Collections.sort(currentCatalog, new ScoreComparator());
         }
 
         if(currentCatalog != null)

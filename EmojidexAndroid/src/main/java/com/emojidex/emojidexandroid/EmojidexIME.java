@@ -25,6 +25,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.RadioButton;
 import android.widget.ViewFlipper;
 
+import com.emojidex.emojidexandroid.comparator.ScoreComparator;
 import com.emojidex.emojidexandroid.downloader.DownloadListener;
 
 import java.io.File;
@@ -472,7 +473,18 @@ public class EmojidexIME extends InputMethodService {
         else if(category.equals(getString(R.string.ime_category_id_index)))
         {
             final List<String> emojiNames = indexManager.getEmojiNames();
-            keyboardViewManager.initializeFromName(emojiNames, defaultPage);
+            final List<Emoji> emojies = new ArrayList<Emoji>(emojiNames.size());
+            for(String name : emojiNames)
+            {
+                final Emoji emoji = emojidex.getEmoji(name);
+                if(emoji != null)
+                    emojies.add(emoji);
+            }
+
+            // Sort.
+            Collections.sort(emojies, new ScoreComparator());
+
+            keyboardViewManager.initialize(emojies, defaultPage);
         }
         else
         {
@@ -498,14 +510,7 @@ public class EmojidexIME extends InputMethodService {
                     : new ArrayList<Emoji>();
 
             // Sort emoji list.
-            Collections.sort(emojies, new Comparator<Emoji>()
-            {
-                @Override
-                public int compare(Emoji lhs, Emoji rhs)
-                {
-                    return rhs.getScore() - lhs.getScore();
-                }
-            });
+            Collections.sort(emojies, new ScoreComparator());
 
             // Add emoji list.
             categorizedEmojies.put(category, emojies);
