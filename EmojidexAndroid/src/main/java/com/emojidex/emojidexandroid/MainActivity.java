@@ -104,12 +104,6 @@ public class MainActivity extends Activity {
             case R.id.action_conversion_switch:
                 switchToggle();
                 return true;
-            case R.id.action_emojidex_web:
-                openEmojidexWebSite();
-                return true;
-            case R.id.action_settings:
-                openSettings(null);
-                return true;
         }
         return false;
     }
@@ -633,8 +627,9 @@ public class MainActivity extends Activity {
 
     /**
      * Open the emojidex web site.
+     * @param v view
      */
-    public void openEmojidexWebSite() {
+    public void openEmojidexWebSite(View v) {
         Uri uri = Uri.parse(getString(R.string.emojidex_url));
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(intent);
