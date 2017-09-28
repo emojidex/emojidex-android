@@ -57,7 +57,6 @@ public class CatalogActivity extends Activity
     private FirebaseAnalytics analytics;
 
     private EmojidexIndexUpdater indexUpdater = null;
-    private int indexPageCount = 0;
     private final int indexLoadPageCount = 2;
 
     private final CustomDownloadListener downloadListener = new CustomDownloadListener();
@@ -90,10 +89,9 @@ public class CatalogActivity extends Activity
         }
 
         // Emoji download.
-        indexUpdater = new EmojidexIndexUpdater(this);
-        indexPageCount = indexLoadPageCount;
+        indexUpdater = new EmojidexIndexUpdater(this, EmojidexKeyboard.create(this).getKeyCountMax());
         if( !new EmojidexUpdater(this).startUpdateThread() )
-            indexUpdater.startUpdateThread(indexPageCount);
+            indexUpdater.startUpdateThread(indexLoadPageCount);
 
         initAds();
         setAdsVisibility();
@@ -441,8 +439,8 @@ public class CatalogActivity extends Activity
         if(     currentCategory == null
             ||  !currentCategory.equals("index")    )
             return;
-        indexPageCount += indexLoadPageCount;
-        indexUpdater.startUpdateThread(indexPageCount, true);
+        int count = gridView.getCount() / indexUpdater.getLimit() + indexLoadPageCount;
+        indexUpdater.startUpdateThread(count, true);
     }
 
     private void initAnimation()
