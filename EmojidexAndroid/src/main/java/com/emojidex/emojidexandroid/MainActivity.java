@@ -11,7 +11,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -46,12 +45,12 @@ import com.google.android.gms.ads.AdView;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.List;
+import java.util.Set;
 
 public class MainActivity extends Activity {
     static final String TAG = "EmojidexAndroid";
-    private static final int LOGIN_RESULT = 1000;
-    private static final int REGISTER_RESULT = 1001;
     private static final String EMOJIDEX_URL = "https://www.emojidex.com";
+    private static final String EMOJIDEX_QUERY = "?user_agent=emojidexNativeClient";
 
     private InputMethodManager inputMethodManager;
     private boolean isAnimating;
@@ -660,6 +659,12 @@ public class MainActivity extends Activity {
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
 
@@ -682,6 +687,56 @@ public class MainActivity extends Activity {
         {
             setTextImageSize(text);
         }
+
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        Set categories = intent.getCategories();
+
+        if (!Intent.ACTION_VIEW.equals(action) || !categories.contains(Intent.CATEGORY_BROWSABLE)) return;
+
+        // emojidex login
+        if ("login".equals(intent.getStringExtra("action"))) {
+            if (intent.hasExtra("auth_token") && intent.hasExtra("username")) {
+                String authToken = intent.getStringExtra("auth_token");
+                String username = intent.getStringExtra("username");
+
+                final UserData userData = UserData.getInstance();
+                userData.setUserData(authToken, username);
+
+                setLoginButtonVisibility(false);
+                final HistoryManager hm = HistoryManager.getInstance(this);
+                final FavoriteManager fm = FavoriteManager.getInstance(this);
+                hm.saveBackup();
+                fm.saveBackup();
+                hm.loadFromUser();
+                fm.loadFromUser();
+
+                Toast.makeText(getApplicationContext(),
+                        getString(R.string.menu_login_success) + userData.getUsername(),
+                        Toast.LENGTH_SHORT).show();
+                analytics.logEvent(FirebaseAnalytics.Event.LOGIN, new Bundle());
+            } else {
+                Toast.makeText(getApplicationContext(),
+                        getString(R.string.menu_login_cancel), Toast.LENGTH_SHORT).show();
+            }
+        } else if("register_emoji".equals(intent.getStringExtra("action"))) {
+            // register emoji
+            if (intent.hasExtra("result")) {
+                if ("true".equals(intent.getStringExtra("result"))) {
+                    Toast.makeText(getApplicationContext(),
+                            intent.getStringExtra("message") + getString(R.string.menu_new_success),
+                            Toast.LENGTH_SHORT).show();
+                    analytics.logEvent("registered_emoji", new Bundle());
+                } else {
+                    Toast.makeText(getApplicationContext(),
+                            intent.getStringExtra("message"), Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(getApplicationContext(),
+                        getString(R.string.menu_new_failure),
+                        Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     @Override
@@ -700,56 +755,9 @@ public class MainActivity extends Activity {
      * @param v view
      */
     public void loginEmojidex(View v) {
-        Intent intent = new Intent(MainActivity.this, WebViewActivity.class);
-        intent.putExtra("URL", EMOJIDEX_URL + "/mobile_app/login");
-        startActivityForResult(intent, LOGIN_RESULT);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        final HistoryManager hm = HistoryManager.getInstance(this);
-        final FavoriteManager fm = FavoriteManager.getInstance(this);
-
-        // Get result.
-        switch (requestCode) {
-            case LOGIN_RESULT:
-                if (resultCode == Activity.RESULT_OK) {
-                    setLoginButtonVisibility(false);
-                    hm.saveBackup();
-                    fm.saveBackup();
-                    hm.loadFromUser();
-                    fm.loadFromUser();
-                    Toast.makeText(getApplicationContext(),
-                            getString(R.string.menu_login_success) + userData.getUsername(),
-                            Toast.LENGTH_SHORT).show();
-                    analytics.logEvent(FirebaseAnalytics.Event.LOGIN, new Bundle());
-                } else {
-                    Toast.makeText(getApplicationContext(),
-                            getString(R.string.menu_login_cancel), Toast.LENGTH_SHORT).show();
-                }
-                break;
-            case REGISTER_RESULT:
-                if(data == null)
-                {
-                    Toast.makeText(getApplicationContext(),
-                            getString(R.string.menu_new_failure),
-                            Toast.LENGTH_SHORT).show();
-                    break;
-                }
-                if (resultCode == Activity.RESULT_OK) {
-                    Toast.makeText(getApplicationContext(),
-                            data.getStringExtra("message") + getString(R.string.menu_new_success),
-                            Toast.LENGTH_SHORT).show();
-                    analytics.logEvent("registered_emoji", new Bundle());
-                } else if (resultCode == Activity.RESULT_FIRST_USER){
-                    Toast.makeText(getApplicationContext(),
-                            data.getStringExtra("message"), Toast.LENGTH_SHORT).show();
-                }
-                break;
-
-        }
+        Uri uri = Uri.parse(EMOJIDEX_URL + "/mobile_app/login" + EMOJIDEX_QUERY);
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(intent);
     }
 
     /**
@@ -757,22 +765,9 @@ public class MainActivity extends Activity {
      * @param v view
      */
     public void registerNewEmoji(View v) {
-        final String url = EMOJIDEX_URL + "/emoji/new";
-
-        // API level is 19.
-        if(Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT)
-        {
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-            startActivity(intent);
-        }
-        // API level is not 19.
-        else
-        {
-            Intent intent = new Intent(MainActivity.this, WebViewActivity.class);
-            intent.putExtra("URL", url);
-            startActivityForResult(intent, REGISTER_RESULT);
-        }
-
+        Uri uri = Uri.parse(EMOJIDEX_URL + "/mobile_app/new_emoji" + EMOJIDEX_QUERY);
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(intent);
     }
 
     /**
@@ -780,8 +775,8 @@ public class MainActivity extends Activity {
      * @param v view
      */
     public void showMyEmoji(View v) {
-        Intent intent = new Intent(MainActivity.this, WebViewActivity.class);
-        intent.putExtra("URL", EMOJIDEX_URL + "/users/" + UserData.getInstance().getUsername());
+        Uri uri = Uri.parse(EMOJIDEX_URL + "/users/" + UserData.getInstance().getUsername());
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(intent);
         analytics.logEvent("show_my_emoji", new Bundle());
     }

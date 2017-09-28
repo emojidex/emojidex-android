@@ -6,6 +6,7 @@ import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -23,12 +24,12 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by nazuki on 2014/01/31.
  */
 public class SettingsActivity extends PreferenceActivity {
-    private static final int LOGOUT_RESULT = 1000;
     private static final String EMOJIDEX_URL = "https://www.emojidex.com";
     private int fragmentId;
 
@@ -429,21 +430,30 @@ public class SettingsActivity extends PreferenceActivity {
      * Logout from emojidex web site.
      */
     private void logoutEmojidex() {
-        Intent intent = new Intent(SettingsActivity.this, WebViewActivity.class);
-        intent.putExtra("URL", EMOJIDEX_URL + "/mobile_app/logout");
-        startActivityForResult(intent, LOGOUT_RESULT);
+        Uri uri = Uri.parse(EMOJIDEX_URL + "/mobile_app/logout");
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(intent);
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    protected void onNewIntent(Intent intent) {
+        setIntent(intent);
+        super.onNewIntent(intent);
+    }
 
-        if (requestCode != LOGOUT_RESULT) return;
+    @Override
+    protected void onResume() {
+        super.onResume();
 
-        final PreferenceFragment fragment = (PreferenceFragment)getFragmentManager().findFragmentById(fragmentId);
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        Set categories = intent.getCategories();
 
-        if (resultCode == Activity.RESULT_OK)
-        {
+        if (!Intent.ACTION_VIEW.equals(action) || !categories.contains(Intent.CATEGORY_BROWSABLE)) return;
+
+        if ("logout".equals(intent.getStringExtra("action"))) {
+            final PreferenceFragment fragment = (PreferenceFragment)getFragmentManager().findFragmentById(fragmentId);
+
             UserData.getInstance().reset();
             HistoryManager.getInstance(this).loadBackup();
             FavoriteManager.getInstance(this).loadBackup();
@@ -453,11 +463,6 @@ public class SettingsActivity extends PreferenceActivity {
 
             Toast.makeText(getApplicationContext(),
                     getString(R.string.settings_logout_emojidex_succeeded), Toast.LENGTH_SHORT).show();
-        }
-        else
-        {
-            Toast.makeText(getApplicationContext(),
-                    getString(R.string.settings_logout_emojidex_failed), Toast.LENGTH_SHORT).show();
         }
     }
 }
