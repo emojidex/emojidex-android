@@ -29,7 +29,7 @@ class SearchJsonDownloadTask extends AbstractJsonDownloadTask {
     protected Collection downloadJson()
     {
         final SearchDownloadArguments arguments = (SearchDownloadArguments)getArguments();
-        final Client client = createEmojidexClient(arguments.getUserName(), arguments.getAuthToken());
+        final Client client = createEmojidexClient();
         final QueryOpts options = new QueryOpts()
                 .detailed(true)
                 .limit(0x7FFFFFFF)

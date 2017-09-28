@@ -29,7 +29,7 @@ class IndexJsonDownloadTask extends AbstractJsonDownloadTask{
     protected Collection downloadJson()
     {
         final IndexDownloadArguments arguments = (IndexDownloadArguments)getArguments();
-        final Client client = createEmojidexClient(arguments.getUserName(), arguments.getAuthToken());
+        final Client client = createEmojidexClient();
         final Collection collection = client.getIndexes().emoji(arguments.getStartPage(), arguments.getLimit(), true);
         for(int i = arguments.getStartPage();  i < arguments.getEndPage();  ++i)
             collection.more();

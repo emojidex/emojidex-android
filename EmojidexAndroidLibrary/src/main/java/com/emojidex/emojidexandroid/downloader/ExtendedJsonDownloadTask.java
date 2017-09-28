@@ -28,7 +28,7 @@ class ExtendedJsonDownloadTask extends AbstractJsonDownloadTask{
     protected Collection downloadJson()
     {
         final ExtendedDownloadArguments arguments = (ExtendedDownloadArguments)getArguments();
-        final Client client = createEmojidexClient(arguments.getUserName(), arguments.getAuthToken());
+        final Client client = createEmojidexClient();
         return client.getIndexes().extendedEmoji(arguments.getLocale().getLocale(), true);
     }
 }

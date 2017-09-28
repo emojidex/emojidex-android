@@ -45,14 +45,13 @@ public class EmojidexIndexUpdater
 
         Log.d(TAG, "Start index update.");
 
-        final UserData userdata = UserData.getInstance();
+        final int limit = EmojidexKeyboard.create(context).getKeyCountMax();
 
         final EmojiDownloader downloader = EmojiDownloader.getInstance();
         downloadHandle = downloader.downloadIndexEmoji(
                 new IndexDownloadArguments()
                     .setLimit(limit)
                     .setEndPage(pageCount)
-                    .setUser(userdata.getUsername(), userdata.getAuthToken())
         );
 
         if(downloadHandle != EmojiDownloader.HANDLE_NULL)

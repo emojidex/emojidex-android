@@ -11,8 +11,6 @@ import java.util.LinkedHashSet;
 
 public abstract class AbstractJsonDownloadArguments<Type extends AbstractJsonDownloadArguments> implements ArgumentsInterface {
     private final Collection<EmojiFormat> formats;
-    private String username;
-    private String authtoken;
 
     /**
      * Construct object.
@@ -20,8 +18,6 @@ public abstract class AbstractJsonDownloadArguments<Type extends AbstractJsonDow
     public AbstractJsonDownloadArguments()
     {
         formats = new LinkedHashSet();
-        username = null;
-        authtoken = null;
     }
 
     /**
@@ -78,37 +74,6 @@ public abstract class AbstractJsonDownloadArguments<Type extends AbstractJsonDow
         return formats;
     }
 
-    /**
-     * Set user data.
-     * @param username      User name.(Default value is null)
-     * @param authtoken     Auth token.(Default value is null)
-     * @return              Self.
-     */
-    public Type setUser(String username, String authtoken)
-    {
-        this.username = username;
-        this.authtoken = authtoken;
-        return (Type)this;
-    }
-
-    /**
-     * Get user name.
-     * @return      User name.
-     */
-    public String getUserName()
-    {
-        return username;
-    }
-
-    /**
-     * Get auth token.
-     * @return      Auth token.
-     */
-    public String getAuthToken()
-    {
-        return authtoken;
-    }
-
     @Override
     public boolean equals(Object obj)
     {
@@ -126,7 +91,6 @@ public abstract class AbstractJsonDownloadArguments<Type extends AbstractJsonDow
                 return false;
         }
 
-        return      ArgumentsUtils.equals(username, arg.username)
-                &&  ArgumentsUtils.equals(authtoken, arg.authtoken);
+        return true;
     }
 }
