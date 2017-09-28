@@ -27,6 +27,7 @@ public class Emojidex {
     private Context context = null;
     private EmojiManager manager;
     private EmojiFormat defaultFormat;
+    private EmojidexUser user;
 
     /**
      * Get singleton instance.
@@ -56,14 +57,38 @@ public class Emojidex {
         }
 
         this.context = context.getApplicationContext();
+
         EmojidexFileUtils.initialize(this.context);
         VersionManager.getInstance().optimize(this.context);
+
         manager = new EmojiManager(this.context);
         manager.add(EmojidexFileUtils.getLocalJsonUri());
+
         getEmojiDownloader().initialize(this.context, manager);
+
         defaultFormat = EmojiFormat.toFormat(this.context.getResources().getString(R.string.emoji_format_default));
+        user = new EmojidexUser();
 
         Log.d(TAG, "Initialize complete.");
+    }
+
+    /**
+     * Set emojidex user.
+     * @param username      User name.
+     * @param authtoken     Auth token.
+     */
+    public void setUser(String username, String authtoken)
+    {
+        user = new EmojidexUser(username, authtoken);
+    }
+
+    /**
+     * Get emojidex user.
+     * @return      Emojidex user.
+     */
+    public EmojidexUser getUser()
+    {
+        return user;
     }
 
     /**

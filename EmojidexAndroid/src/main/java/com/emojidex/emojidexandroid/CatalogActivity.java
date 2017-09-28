@@ -5,8 +5,11 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.HorizontalScrollView;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.RadioButton;
 
@@ -53,10 +57,11 @@ public class CatalogActivity extends Activity
     private FirebaseAnalytics analytics;
 
     private EmojidexIndexUpdater indexUpdater = null;
-    private int indexPageCount = 0;
     private final int indexLoadPageCount = 2;
 
     private final CustomDownloadListener downloadListener = new CustomDownloadListener();
+
+    private final List<Drawable> animationDrawables = new ArrayList<Drawable>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -84,10 +89,9 @@ public class CatalogActivity extends Activity
         }
 
         // Emoji download.
-        indexUpdater = new EmojidexIndexUpdater(this);
-        indexPageCount = indexLoadPageCount;
+        indexUpdater = new EmojidexIndexUpdater(this, EmojidexKeyboard.create(this).getKeyCountMax());
         if( !new EmojidexUpdater(this).startUpdateThread() )
-            indexUpdater.startUpdateThread(indexPageCount);
+            indexUpdater.startUpdateThread(indexLoadPageCount);
 
         initAds();
         setAdsVisibility();
@@ -126,6 +130,10 @@ public class CatalogActivity extends Activity
         searchManager.load();
         indexManager = SaveDataManager.getInstance(this, SaveDataManager.Type.Index);
         indexManager.load();
+
+        // Initialize user data.
+        final UserData userdata = UserData.getInstance();
+        userdata.init(this);
     }
 
     private void initGridView()
@@ -137,6 +145,14 @@ public class CatalogActivity extends Activity
             {
                 final Emoji emoji = (Emoji)parent.getAdapter().getItem(position);
                 sendEmoji(emoji);
+            }
+        });
+
+        gridView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom)
+            {
+                onListUpdate();
             }
         });
 
@@ -427,8 +443,42 @@ public class CatalogActivity extends Activity
         if(     currentCategory == null
             ||  !currentCategory.equals("index")    )
             return;
-        indexPageCount += indexLoadPageCount;
-        indexUpdater.startUpdateThread(indexPageCount, true);
+        int count = gridView.getCount() / indexUpdater.getLimit() + indexLoadPageCount;
+        indexUpdater.startUpdateThread(count, true);
+    }
+
+    private void initAnimation()
+    {
+        final boolean isAnimating = !animationDrawables.isEmpty();
+        animationDrawables.clear();
+
+        final int count = gridView.getChildCount();
+        for(int i = 0;  i < count;  ++i)
+        {
+            final Drawable drawable = ((ImageView)gridView.getChildAt(i)).getDrawable();
+            if(drawable instanceof AnimationDrawable)
+                animationDrawables.add(drawable);
+        }
+
+        // Skip if not found animation emoji or already animating.
+        if(animationDrawables.isEmpty() || isAnimating)
+            return;
+
+        // Start animation.
+        final Handler handler = new Handler();
+        handler.post(new Runnable() {
+            @Override
+            public void run()
+            {
+                if(animationDrawables.isEmpty())
+                    return;
+
+                for(Drawable drawable : animationDrawables)
+                    drawable.invalidateSelf();
+
+                handler.postDelayed(this, 100);
+            }
+        });
     }
 
     private void downloadImages()
@@ -449,6 +499,12 @@ public class CatalogActivity extends Activity
         );
     }
 
+    private void onListUpdate()
+    {
+        initAnimation();
+        downloadImages();
+    }
+
     private class GridViewScrollListener implements AbsListView.OnScrollListener
     {
         @Override
@@ -457,13 +513,10 @@ public class CatalogActivity extends Activity
             switch(scrollState)
             {
                 case SCROLL_STATE_IDLE:
-                    adapter.autoDownloadImage(false);
-                    downloadImages();
+                    onListUpdate();
                     break;
                 case SCROLL_STATE_TOUCH_SCROLL:
                 case SCROLL_STATE_FLING:
-                    adapter.autoDownloadImage(false);
-                    break;
                 default:
             }
         }

@@ -28,7 +28,7 @@ class UTFJsonDownloadTask extends AbstractJsonDownloadTask {
     protected Collection downloadJson()
     {
         final UTFDownloadArguments arguments = (UTFDownloadArguments)getArguments();
-        final Client client = createEmojidexClient(arguments.getUserName(), arguments.getAuthToken());
+        final Client client = createEmojidexClient();
         return client.getIndexes().utfEmoji(arguments.getLocale().getLocale(), true);
     }
 }

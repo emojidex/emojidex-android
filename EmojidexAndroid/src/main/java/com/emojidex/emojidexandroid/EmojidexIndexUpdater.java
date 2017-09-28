@@ -17,13 +17,15 @@ public class EmojidexIndexUpdater
     static final String TAG = MainActivity.TAG + "::EmojidexIndexUpdater";
 
     private final Context context;
+    private final int limit;
     private final SaveDataManager indexManager;
 
     private int downloadHandle = EmojiDownloader.HANDLE_NULL;
 
-    public EmojidexIndexUpdater(Context context)
+    public EmojidexIndexUpdater(Context context, int limit)
     {
         this.context = context;
+        this.limit = limit;
         indexManager = SaveDataManager.getInstance(this.context, SaveDataManager.Type.Index);
     }
 
@@ -43,7 +45,6 @@ public class EmojidexIndexUpdater
 
         Log.d(TAG, "Start index update.");
 
-        final UserData userdata = UserData.getInstance();
         final int limit = EmojidexKeyboard.create(context).getKeyCountMax();
 
         final EmojiDownloader downloader = EmojiDownloader.getInstance();
@@ -51,7 +52,6 @@ public class EmojidexIndexUpdater
                 new IndexDownloadArguments()
                     .setLimit(limit)
                     .setEndPage(pageCount)
-                    .setUser(userdata.getUsername(), userdata.getAuthToken())
         );
 
         if(downloadHandle != EmojiDownloader.HANDLE_NULL)
@@ -61,6 +61,11 @@ public class EmojidexIndexUpdater
         }
 
         return false;
+    }
+
+    public int getLimit()
+    {
+        return limit;
     }
 
     private boolean checkExecUpdate()

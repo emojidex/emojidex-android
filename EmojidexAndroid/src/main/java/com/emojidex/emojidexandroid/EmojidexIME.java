@@ -184,7 +184,7 @@ public class EmojidexIME extends InputMethodService {
         initStartCategory();
 
         // Emoji download.
-        indexUpdater = new EmojidexIndexUpdater(this);
+        indexUpdater = new EmojidexIndexUpdater(this, EmojidexKeyboard.create(this).getKeyCountMax());
         indexUpdater.startUpdateThread(2);
         
         new EmojidexUpdater(this).startUpdateThread();

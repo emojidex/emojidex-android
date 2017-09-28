@@ -70,7 +70,6 @@ class TextConverter {
                         emojidex.getEmojiDownloader().downloadEmojies(
                                 new EmojiDownloadArguments(emojiName)
                                         .addFormat(format)
-                                        // TODO .setUser(username, authotoken) sinakucha nano de ha
                         );
                     }
 
