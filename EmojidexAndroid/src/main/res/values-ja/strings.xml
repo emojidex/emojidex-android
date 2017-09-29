@@ -166,5 +166,7 @@
     <string name="tutorial_header_15">シールキットの使い方(2)</string>
     <string name="tutorial_header_16">シールキットの使い方(3)</string>
     <string name="tutorial_header_17">シールキットの使い方(4)</string>
+    <string name="menu_emojidex_web">emojidexサイト</string>
+    <string name="menu_settings">設定</string>
 
 </resources>
