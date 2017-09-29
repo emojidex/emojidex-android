@@ -60,6 +60,7 @@ public class UserData {
     }
 
     private void save() {
+        // TODO destroy deprecated (?)
         Crypto crypto = new Crypto(new SharedPrefsBackedKeyChain(context), new SystemNativeCryptoLibrary());
         if (!crypto.isAvailable()) return;
 
@@ -80,6 +81,7 @@ public class UserData {
     }
 
     private void load() {
+        // TODO destroy deprecated (?)
         Crypto crypto = new Crypto(new SharedPrefsBackedKeyChain(context), new SystemNativeCryptoLibrary());
         if (!crypto.isAvailable()) return;
 
