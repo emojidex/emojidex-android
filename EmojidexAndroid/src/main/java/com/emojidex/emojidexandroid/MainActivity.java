@@ -699,6 +699,8 @@ public class MainActivity extends Activity {
             if (intent.hasExtra("auth_token") && intent.hasExtra("username")) {
                 String authToken = intent.getStringExtra("auth_token");
                 String username = intent.getStringExtra("username");
+                intent.removeExtra("auth_token");
+                intent.removeExtra("username");
 
                 final UserData userData = UserData.getInstance();
                 userData.setUserData(authToken, username);
@@ -731,6 +733,8 @@ public class MainActivity extends Activity {
                     Toast.makeText(getApplicationContext(),
                             intent.getStringExtra("message"), Toast.LENGTH_SHORT).show();
                 }
+                intent.removeExtra("result");
+                intent.removeExtra("message");
             } else {
                 Toast.makeText(getApplicationContext(),
                         getString(R.string.menu_new_failure),
