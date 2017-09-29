@@ -85,6 +85,9 @@ public class HistoryManager extends SaveDataManager
             return;
         }
 
+        final List<String> updateEmojies = new ArrayList<String>(emojiNames);
+        emojiNames.clear();
+
         task = new ThreadTask();
         task.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, new Runnable(){
             @Override
@@ -98,13 +101,16 @@ public class HistoryManager extends SaveDataManager
                 if( !user.authorize(username, authtoken) )
                     return;
 
-                final Iterator<String> it = emojiNames.iterator();
+                final Iterator<String> it = updateEmojies.iterator();
                 while(it.hasNext())
                 {
                     final String emojiName = it.next();
                     if(user.addHistory(emojiName))
                         it.remove();
                 }
+
+                for(int i = updateEmojies.size()-1;  i >= 0;  --i)
+                    emojiNames.add(updateEmojies.get(i));
 
                 Log.d(TAG, "Save user history.");
             }
