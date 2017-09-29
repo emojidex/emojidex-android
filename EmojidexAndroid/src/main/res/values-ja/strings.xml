@@ -10,8 +10,6 @@
     <string name="menu_clear">クリア</string>
     <string name="menu_clear_search">検索結果クリア</string>
     <string name="menu_conversion_switch">自動変換切り替え</string>
-    <string name="menu_emojidex_web">emojidexウェブ</string>
-    <string name="menu_settings">設定</string>
 
     <string name="menu_login">emojidexにログイン</string>
     <string name="menu_login_success">ログイン : </string>
