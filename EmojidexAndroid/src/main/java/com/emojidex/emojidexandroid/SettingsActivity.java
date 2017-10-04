@@ -155,7 +155,7 @@ public class SettingsActivity extends PreferenceActivity {
             standardOnly.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object o) {
-                    // ((SettingsActivity) parentActivity).sendLogEvent("settings_standard_only");
+                    ((SettingsActivity) parentActivity).sendLogEvent("settings_standard_only");
                     return true;
                 }
             });
