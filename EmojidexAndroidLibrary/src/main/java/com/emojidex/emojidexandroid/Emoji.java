@@ -293,4 +293,13 @@ public class Emoji extends JsonParam {
 
         return drawable;
     }
+
+    /**
+     * Check standard or not.
+     * @return true or false
+     */
+    @JsonIgnore
+    public boolean isStandard() {
+        return !getUnicode().equals("");
+    }
 }

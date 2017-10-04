@@ -454,21 +454,22 @@ public class EmojidexIME extends InputMethodService {
             return;
 
         currentCategory = category;
+        final boolean standardOnly = isStandardOnly();
 
         if(category.equals(getString(R.string.ime_category_id_history)))
         {
             final List<String> emojiNames = historyManager.getEmojiNames();
-            keyboardViewManager.initializeFromName(emojiNames, defaultPage);
+            keyboardViewManager.initializeFromName(emojiNames, defaultPage, standardOnly);
         }
         else if(category.equals(getString(R.string.ime_category_id_favorite)))
         {
             final List<String> emojiNames = favoriteManager.getEmojiNames();
-            keyboardViewManager.initializeFromName(emojiNames, defaultPage);
+            keyboardViewManager.initializeFromName(emojiNames, defaultPage, standardOnly);
         }
         else if(category.equals(getString(R.string.ime_category_id_search)))
         {
             final List<String> emojiNames = searchManager.getEmojiNames();
-            keyboardViewManager.initializeFromName(emojiNames, defaultPage);
+            keyboardViewManager.initializeFromName(emojiNames, defaultPage, standardOnly);
         }
         else if(category.equals(getString(R.string.ime_category_id_index)))
         {
@@ -477,8 +478,9 @@ public class EmojidexIME extends InputMethodService {
             for(String name : emojiNames)
             {
                 final Emoji emoji = emojidex.getEmoji(name);
-                if(emoji != null)
-                    emojies.add(emoji);
+                if(emoji != null) {
+                    if (!standardOnly || emoji.isStandard()) emojies.add(emoji);
+                }
             }
 
             // Sort.
@@ -515,6 +517,15 @@ public class EmojidexIME extends InputMethodService {
             // Add emoji list.
             categorizedEmojies.put(category, emojies);
         }
+
+        if (isStandardOnly()) {
+            List<Emoji> removeEmojies = new ArrayList<>();
+            for (Emoji emoji : emojies) {
+                if (!emoji.isStandard()) removeEmojies.add(emoji);
+            }
+            emojies.removeAll(removeEmojies);
+        }
+
         return emojies;
     }
 
@@ -873,5 +884,14 @@ public class EmojidexIME extends InputMethodService {
             if(keyFormat.equals(format))
                 invalidate(emojiName);
         }
+    }
+
+    /**
+     * Get standard emoji only preference
+     * @return true or false
+     */
+    private boolean isStandardOnly() {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        return pref.getBoolean(getString(R.string.preference_key_standard_only), false);
     }
 }

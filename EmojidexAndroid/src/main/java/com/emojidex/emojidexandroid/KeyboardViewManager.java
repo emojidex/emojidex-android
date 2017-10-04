@@ -102,10 +102,23 @@ public class KeyboardViewManager {
      */
     public void initializeFromName(List<String> emojiNames, int defaultPage)
     {
+        initializeFromName(emojiNames, defaultPage, false);
+    }
+
+    /**
+     * Initialize manager from emoji name.
+     * @param emojiNames    Emoji name of regist to manager.
+     * @param defaultPage   Default page number.
+     * @param standardOnly  Standard emoji only
+     */
+    public void initializeFromName(List<String> emojiNames, int defaultPage, boolean standardOnly)
+    {
         final Emojidex emojidex = Emojidex.getInstance();
         final ArrayList<Emoji> emojies = new ArrayList<Emoji>(emojiNames.size());
-        for(String emojiName : emojiNames)
-            emojies.add(emojidex.getEmoji(emojiName));
+        for(String emojiName : emojiNames) {
+            Emoji emoji = emojidex.getEmoji(emojiName);
+            if (!standardOnly || emoji.isStandard()) emojies.add(emoji);
+        }
         initialize(emojies, defaultPage);
     }
 
