@@ -16,4 +16,15 @@
         <item>14日</item>
     </string-array>
 
+    <!-- sort -->
+    <string-array name="sort_items">
+        <item>スコアが高い順</item>
+        <item>スコアが低い順</item>
+        <item>作成日時が新しい順</item>
+        <item>作成日時が古い順</item>
+        <item>お気に入りが多い順</item>
+        <item>お気に入りが少ない順</item>
+        <item>コードが短い順</item>
+    </string-array>
+
 </resources>

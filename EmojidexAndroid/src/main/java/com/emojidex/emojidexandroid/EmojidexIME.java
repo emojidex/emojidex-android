@@ -20,19 +20,22 @@ import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.RadioButton;
+import android.widget.Spinner;
 import android.widget.ViewFlipper;
 
 import com.emojidex.emojidexandroid.comparator.ScoreComparator;
 import com.emojidex.emojidexandroid.downloader.DownloadListener;
+import com.emojidex.libemojidex.Emojidex.Service.User;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -78,6 +81,8 @@ public class EmojidexIME extends InputMethodService {
     private final HashMap<String, List<Emoji>> categorizedEmojies = new HashMap<String, List<Emoji>>();
 
     private final CustomDownloadListener downloadListener = new CustomDownloadListener();
+
+    private Spinner sortItemSpinner;
 
     /**
      * Construct EmojidexIME object.
@@ -130,6 +135,25 @@ public class EmojidexIME extends InputMethodService {
         // Sync user data.
         historyManager.loadFromUser();
         favoriteManager.loadFromUser();
+
+        // Sort item spinner
+        sortItemSpinner = (Spinner)layout.findViewById(R.id.ime_sort_items);
+        ArrayAdapter<CharSequence> adapter
+                = ArrayAdapter.createFromResource(getApplicationContext(), R.array.sort_items, R.layout.spinner_textview);
+        adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        sortItemSpinner.setAdapter(adapter);
+        final String[] sortKeys = { "score", "unpopular", "newest", "oldest", "liked", "unliked", "shortest" };
+        sortItemSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                Log.e("test", "selected index: " + i + "   type: " + sortKeys[i]);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                // nop
+            }
+        });
 
         return layout;
     }
@@ -218,6 +242,14 @@ public class EmojidexIME extends InputMethodService {
 
         // Regist download listener.
         emojidex.addDownloadListener(downloadListener);
+
+        // Set sort items spinner visibility.
+        User user = new User();
+        if (userdata.isLogined() && user.authorize(userdata.getUsername(), userdata.getAuthToken())) {
+            sortItemSpinner.setVisibility(View.VISIBLE);
+        } else {
+            sortItemSpinner.setVisibility(View.GONE);
+        }
     }
 
     @Override
