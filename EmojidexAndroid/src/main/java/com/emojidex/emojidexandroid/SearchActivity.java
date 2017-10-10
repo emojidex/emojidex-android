@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -62,6 +63,13 @@ public class SearchActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Have no menu.
         return false;
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent)
+    {
+        if(!fromCatalog)
+            switchIME();
     }
 
     @Override

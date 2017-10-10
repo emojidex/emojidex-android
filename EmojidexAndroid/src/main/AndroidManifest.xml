@@ -81,7 +81,8 @@
             android:name="com.emojidex.emojidexandroid.SearchActivity"
             android:label="@string/app_name"
             android:theme="@style/IMETheme"
-            android:windowSoftInputMode="stateAlwaysVisible">
+            android:windowSoftInputMode="stateAlwaysVisible"
+            android:launchMode="singleTop">
         </activity>
 
         <activity
