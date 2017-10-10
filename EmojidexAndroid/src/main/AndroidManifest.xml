@@ -88,7 +88,8 @@
             android:name="com.emojidex.emojidexandroid.CatalogActivity"
             android:label="@string/app_name_catalog"
             android:icon="@drawable/ic_catalog"
-            android:theme="@android:style/Theme.NoTitleBar">
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.PICK"/>
                 <action android:name="android.intent.action.GET_CONTENT"/>
