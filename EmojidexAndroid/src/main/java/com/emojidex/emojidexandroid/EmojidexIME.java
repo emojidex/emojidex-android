@@ -28,7 +28,7 @@ import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.ViewFlipper;
 
-import com.emojidex.emojidexandroid.comparator.ScoreComparator;
+import com.emojidex.emojidexandroid.comparator.EmojiComparator;
 import com.emojidex.emojidexandroid.downloader.DownloadListener;
 import com.emojidex.libemojidex.Emojidex.Service.User;
 
@@ -83,6 +83,7 @@ public class EmojidexIME extends InputMethodService {
     private final CustomDownloadListener downloadListener = new CustomDownloadListener();
 
     private Spinner sortItemSpinner;
+    private String currentSortType = EmojiComparator.SORT_KEYS[0];
 
     /**
      * Construct EmojidexIME object.
@@ -142,11 +143,11 @@ public class EmojidexIME extends InputMethodService {
                 = ArrayAdapter.createFromResource(getApplicationContext(), R.array.sort_items, R.layout.spinner_textview);
         adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
         sortItemSpinner.setAdapter(adapter);
-        final String[] sortKeys = { "score", "unpopular", "newest", "oldest", "liked", "unliked", "shortest" };
+        final String[] sortKeys = EmojiComparator.SORT_KEYS;
         sortItemSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                Log.e("test", "selected index: " + i + "   type: " + sortKeys[i]);
+                changeCategory(currentCategory, 0, sortKeys[i]);
             }
 
             @Override
@@ -481,11 +482,17 @@ public class EmojidexIME extends InputMethodService {
      */
     public void changeCategory(String category, int defaultPage)
     {
-        if( category == null ||
-            (currentCategory != null && currentCategory.equals(category))   )
-            return;
+        changeCategory(category, defaultPage, currentSortType);
+    }
+
+    public void changeCategory(String category, int defaultPage, String sortType)
+    {
+        if (category == null) return;
+        if (sortType == null) sortType = EmojiComparator.SORT_KEYS[0];
+        if (category.equals(currentCategory) && sortType.equals(currentSortType)) return;
 
         currentCategory = category;
+        currentSortType = sortType;
         final boolean standardOnly = isStandardOnly();
 
         if(category.equals(getString(R.string.ime_category_id_history)))
@@ -516,13 +523,17 @@ public class EmojidexIME extends InputMethodService {
             }
 
             // Sort.
-            Collections.sort(emojies, new ScoreComparator());
+            Collections.sort(emojies, new EmojiComparator(currentSortType));
 
             keyboardViewManager.initialize(emojies, defaultPage);
         }
         else
         {
             final List<Emoji> emojies = getCategorizedEmojies(category);
+
+            // Sort.
+            Collections.sort(emojies, new EmojiComparator(currentSortType));
+
             keyboardViewManager.initialize(emojies, defaultPage);
         }
 
@@ -542,9 +553,6 @@ public class EmojidexIME extends InputMethodService {
             emojies = src != null
                     ? new ArrayList<Emoji>(src)
                     : new ArrayList<Emoji>();
-
-            // Sort emoji list.
-            Collections.sort(emojies, new ScoreComparator());
 
             // Add emoji list.
             categorizedEmojies.put(category, emojies);

@@ -25,6 +25,7 @@
         <item>お気に入りが多い順</item>
         <item>お気に入りが少ない順</item>
         <item>コードが短い順</item>
+        <item>コードが長い順</item>
     </string-array>
 
 </resources>

@@ -18,7 +18,7 @@
             android:orientation="horizontal">
 
             <Spinner
-                android:layout_width="100dp"
+                android:layout_width="170dp"
                 android:layout_height="match_parent"
                 android:id="@+id/ime_sort_items"
                 android:entries="@array/sort_items"
