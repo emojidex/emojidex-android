@@ -663,12 +663,6 @@ public class MainActivity extends Activity {
     protected void onResume() {
         super.onResume();
 
-        // Initialize login button.
-        setLoginButtonVisibility(!UserData.getInstance().isLogined());
-
-        // Initialize ads.
-        setAdsVisibility();
-
         // Initialize text size.
         final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         editText.setTextSize(Float.valueOf(pref.getString(
@@ -700,7 +694,6 @@ public class MainActivity extends Activity {
                 final UserData userData = UserData.getInstance();
                 userData.setUserData(authToken, username);
 
-                setLoginButtonVisibility(false);
                 final HistoryManager hm = HistoryManager.getInstance(this);
                 final FavoriteManager fm = FavoriteManager.getInstance(this);
                 hm.saveBackup();
@@ -736,6 +729,12 @@ public class MainActivity extends Activity {
                         Toast.LENGTH_SHORT).show();
             }
         }
+
+        // Initialize login button.
+        setLoginButtonVisibility(!UserData.getInstance().isLogined());
+
+        // Initialize ads.
+        setAdsVisibility();
     }
 
     @Override
