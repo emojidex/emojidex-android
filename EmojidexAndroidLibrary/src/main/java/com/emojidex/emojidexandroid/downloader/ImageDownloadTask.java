@@ -13,7 +13,6 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -25,6 +24,8 @@ import javax.net.ssl.HttpsURLConnection;
 
 class ImageDownloadTask extends AbstractDownloadTask{
     private static final int BUFFER_SIZE = 4096;
+    private static final int CONNECT_TIMEOUT = 10 * 1000;   // milliseconds
+    private static final int READ_TIMEOUT = 10 * 1000;      // milliseconds
 
     private final Context context;
 
@@ -51,19 +52,22 @@ class ImageDownloadTask extends AbstractDownloadTask{
     {
         // Download image.
         final ImageDownloadArguments arguments = (ImageDownloadArguments)getArguments();
+        HttpsURLConnection connection = null;
 
         try
         {
             final URL url = new URL(EmojidexFileUtils.getRemoteEmojiPath(arguments.getEmojiName(), arguments.getFormat()));
 
-            final HttpURLConnection connection = (HttpsURLConnection)url.openConnection();
+            connection = (HttpsURLConnection)url.openConnection();
             connection.setAllowUserInteraction(false);
             connection.setInstanceFollowRedirects(true);
             connection.setRequestMethod("GET");
-            //connection.setSSLSocketFactory(HttpURLConnection.getDefaultSSLSocketFactory());
+            connection.setConnectTimeout(CONNECT_TIMEOUT);
+            connection.setReadTimeout(READ_TIMEOUT);
+
             connection.connect();
 
-            if(connection.getResponseCode() == HttpURLConnection.HTTP_OK)
+            if(connection.getResponseCode() == HttpsURLConnection.HTTP_OK)
             {
                 final Uri dest = EmojidexFileUtils.getLocalEmojiUri(arguments.getEmojiName(), arguments.getFormat());
 
@@ -89,15 +93,25 @@ class ImageDownloadTask extends AbstractDownloadTask{
                 dis.close();
                 dos.close();
             }
+
+            connection.disconnect();
         }
         catch(MalformedURLException e)
         {
             e.printStackTrace();
+
+            if(connection != null)
+                connection.disconnect();
+
             return false;
         }
         catch(IOException e)
         {
             e.printStackTrace();
+
+            if(connection != null)
+                connection.disconnect();
+
             return false;
         }
 
