@@ -237,6 +237,7 @@ public class Emojidex {
      * @param autoDeEmojify     If true, execute deEmojify before emojify.
      * @param useImage          If true, use phantom-emoji image.
      * @param format            Image format.
+     *                          If value is null, use default format.
      * @return                  Emojidex text.
      */
     public CharSequence emojify(CharSequence text, boolean autoDeEmojify, boolean useImage, EmojiFormat format)
@@ -250,6 +251,7 @@ public class Emojidex {
      * @param autoDeEmojify     If true, execute deEmojify before emojify.
      * @param useImage          If true, use phantom-emoji image.
      * @param format            Image format.
+     *                          If value is null, use default format.
      * @param autoDownload      Auto download flag.
      *                          If true, auto download emoji when find unknown emoji.
      * @return                  Emojidex text.
@@ -262,7 +264,7 @@ public class Emojidex {
         return TextConverter.emojify(
                 autoDeEmojify ? deEmojify(text) : text,
                 useImage,
-                format,
+                (format != null) ? format : getDefaultFormat(),
                 autoDownload
         );
     }
