@@ -32,6 +32,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class CatalogActivity extends Activity
@@ -92,8 +93,9 @@ public class CatalogActivity extends Activity
 
         // Emoji download.
         indexUpdater = new EmojidexIndexUpdater(this, EmojidexKeyboard.create(this).getKeyCountMax());
-        if( !new EmojidexUpdater(this).startUpdateThread() )
-            indexUpdater.startUpdateThread(indexLoadPageCount);
+        indexUpdater.startUpdateThread(indexLoadPageCount);
+
+        new EmojidexUpdater(this).startUpdateThread();
 
         initAds();
         setAdsVisibility();
@@ -200,6 +202,8 @@ public class CatalogActivity extends Activity
 
         currentCategory = categoryName;
 
+        Comparator<Emoji> comparator = null;
+
         if(categoryName.equals(getString(R.string.ime_category_id_history)))
         {
             List<String> emojiNames = historyManager.getEmojiNames();
@@ -221,28 +225,30 @@ public class CatalogActivity extends Activity
             currentCatalog = createEmojiList(emojiNames);
 
             // Sort.
-            Collections.sort(currentCatalog, new ScoreComparator());
+            comparator = new ScoreComparator();
         }
         else if(categoryName.equals(getString(R.string.ime_category_id_all)))
         {
             currentCatalog = emojidex.getAllEmojiList();
 
             // Sort.
-            Collections.sort(currentCatalog, new ScoreComparator());
+            comparator = new ScoreComparator();
         }
         else
         {
             currentCatalog = emojidex.getEmojiList(categoryName);
 
             // Sort.
-            Collections.sort(currentCatalog, new ScoreComparator());
+            comparator = new ScoreComparator();
         }
 
-        if(currentCatalog != null)
-        {
-            adapter = new CatalogAdapter(this, format, currentCatalog);
-            gridView.setAdapter(adapter);
-        }
+        if(currentCatalog == null)
+            currentCatalog = new ArrayList<Emoji>();
+        else if(comparator != null)
+            Collections.sort(currentCatalog, comparator);
+
+        adapter = new CatalogAdapter(this, format, currentCatalog);
+        gridView.setAdapter(adapter);
     }
 
     public void onClickSearchButton(View view)
