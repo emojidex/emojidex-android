@@ -34,6 +34,7 @@ public class JsonParam {
     private String user_id = null;
     private Checksums checksums = null;
     private long favorited = 0;
+    private String created_at = null;
 
     public static class Checksums
     {
@@ -324,6 +325,17 @@ public class JsonParam {
         this.favorited = favorited;
     }
 
+    @JsonProperty("created_at")
+    public String getCreatedAt()
+    {
+        return created_at;
+    }
+
+    public void setCreatedAt(String createdAt)
+    {
+        this.created_at = createdAt;
+    }
+
     /**
      * Copy parameter from src.
      * @param src   Source.
@@ -401,5 +413,6 @@ public class JsonParam {
         }
 
         setFavorited(src.getFavorited());
+        setCreatedAt(src.getCreated_at());
     }
 }
