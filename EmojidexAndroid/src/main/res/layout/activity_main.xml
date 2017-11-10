@@ -14,7 +14,7 @@
         android:layout_height="45dp"
         android:orientation="horizontal"
         android:gravity="center"
-        android:background="#327AB7">
+        android:background="@color/primary">
 
         <ImageButton
             android:layout_width="wrap_content"
@@ -49,7 +49,7 @@
             android:layout_marginLeft="8dp"
             android:background="@drawable/button_white"
             android:text="@string/menu_new_emoji"
-            android:textColor="#327AB7"
+            android:textColor="@color/primary"
             android:visibility="gone"
             android:onClick="registerNewEmoji"/>
 
@@ -60,7 +60,7 @@
             android:layout_marginLeft="8dp"
             android:background="@drawable/button_white"
             android:text="My emoji"
-            android:textColor="#327AB7"
+            android:textColor="@color/primary"
             android:visibility="gone"
             android:onClick="showMyEmoji"/>
 

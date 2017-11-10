@@ -3,44 +3,48 @@ package com.emojidex.emojidexandroid.comparator;
 import com.emojidex.emojidexandroid.Emoji;
 
 import java.util.Comparator;
-import java.util.HashMap;
 
 /**
  * Created by kou on 17/09/27.
  */
 
 public class EmojiComparator implements Comparator<Emoji> {
-    private static final int SCORE = 0;
-    private static final int UNPOPULAR = 1;
-    private static final int NEWEST = 2;
-    private static final int OLDEST = 3;
-    private static final int LIKED = 4;
-    private static final int UNLIKED = 5;
-    private static final int SHORTEST = 6;
-    private static final int LONGEST = 7;
-    public static final String[] SORT_KEYS = { "score", "unpopular", "newest", "oldest",
-                                               "liked", "unliked", "shortest", "longest" };
-    private static final HashMap<String, Integer> keyMap = new HashMap<String, Integer>() {
-        {
-            put("score", SCORE);
-            put("unpopular", UNPOPULAR);
-            put("newest", NEWEST);
-            put("oldest", OLDEST);
-            put("liked", LIKED);
-            put("unliked", UNLIKED);
-            put("shortest", SHORTEST);
-            put("longest", LONGEST);
+    public enum SortType {
+        SCORE(0),
+        UNPOPULAR(1),
+        NEWEST(2),
+        OLDEST(3),
+        LIKED(4),
+        UNLIKED(5),
+        SHORTEST(6),
+        LONGEST(7);
+
+        private final int value;
+
+        SortType(int value) {
+            this.value = value;
         }
-    } ;
 
-    private int type;
+        public int getValue() {
+            return value;
+        }
 
-    public EmojiComparator() {
-        this.type = SCORE;
+        public static SortType fromInt(int value) {
+            for (SortType type : SortType.values()) {
+                if (type.getValue() == value)  return type;
+            }
+            return SCORE;
+        }
     }
 
-    public EmojiComparator(String type) {
-        this.type = keyMap.get(type);
+    private SortType type;
+
+    public EmojiComparator() {
+        this.type = SortType.SCORE;
+    }
+
+    public EmojiComparator(SortType type) {
+        this.type = type;
     }
 
     @Override
@@ -79,7 +83,7 @@ public class EmojiComparator implements Comparator<Emoji> {
 
         }
 
-        if (temp == 0 && type != SCORE && type != UNPOPULAR) temp = rhs.getScore() - lhs.getScore();
+        if (temp == 0 && type != SortType.SCORE && type != SortType.UNPOPULAR) temp = rhs.getScore() - lhs.getScore();
 
         return temp;
     }

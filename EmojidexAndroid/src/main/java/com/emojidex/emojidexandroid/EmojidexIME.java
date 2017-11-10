@@ -20,12 +20,9 @@ import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.RadioButton;
-import android.widget.Spinner;
 import android.widget.ViewFlipper;
 
 import com.emojidex.emojidexandroid.comparator.EmojiComparator;
@@ -52,6 +49,7 @@ public class EmojidexIME extends InputMethodService {
     private InputMethodManager inputMethodManager = null;
     private int showIMEPickerCode = 0;
     private int showSearchWindowCode = 0;
+    private int showFilterWindowCode = 0;
     private EmojidexSubKeyboardView subKeyboardView = null;
     private Keyboard.Key keyEnter = null;
     private int keyEnterIndex;
@@ -82,8 +80,8 @@ public class EmojidexIME extends InputMethodService {
 
     private final CustomDownloadListener downloadListener = new CustomDownloadListener();
 
-    private Spinner sortItemSpinner;
-    private String currentSortType = EmojiComparator.SORT_KEYS[0];
+    private EmojiComparator.SortType currentSortType;
+    private boolean standardOnly = false;
 
     /**
      * Construct EmojidexIME object.
@@ -101,6 +99,7 @@ public class EmojidexIME extends InputMethodService {
         inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
         showIMEPickerCode = getResources().getInteger(R.integer.ime_keycode_show_ime_picker);
         showSearchWindowCode = getResources().getInteger(R.integer.ime_keycode_show_search_window);
+        showFilterWindowCode = getResources().getInteger(R.integer.ime_keycode_show_filter_window);
 
         // Initialize Emojidex object.
         new CacheAnalyzer().analyze(this);
@@ -119,6 +118,9 @@ public class EmojidexIME extends InputMethodService {
         // Initialize user data.
         userdata = UserData.getInstance();
         userdata.init(this);
+
+        currentSortType = getSortType();
+        standardOnly = isStandardOnly();
     }
 
     @Override
@@ -136,25 +138,6 @@ public class EmojidexIME extends InputMethodService {
         // Sync user data.
         historyManager.loadFromUser();
         favoriteManager.loadFromUser();
-
-        // Sort item spinner
-        sortItemSpinner = (Spinner)layout.findViewById(R.id.ime_sort_items);
-        ArrayAdapter<CharSequence> adapter
-                = ArrayAdapter.createFromResource(getApplicationContext(), R.array.sort_items, R.layout.spinner_textview);
-        adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-        sortItemSpinner.setAdapter(adapter);
-        final String[] sortKeys = EmojiComparator.SORT_KEYS;
-        sortItemSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                changeCategory(currentCategory, 0, sortKeys[i]);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-                // nop
-            }
-        });
 
         return layout;
     }
@@ -243,14 +226,6 @@ public class EmojidexIME extends InputMethodService {
 
         // Regist download listener.
         emojidex.addDownloadListener(downloadListener);
-
-        // Set sort items spinner visibility.
-        User user = new User();
-        if (userdata.isLogined() && user.authorize(userdata.getUsername(), userdata.getAuthToken())) {
-            sortItemSpinner.setVisibility(View.VISIBLE);
-        } else {
-            sortItemSpinner.setVisibility(View.GONE);
-        }
     }
 
     @Override
@@ -482,18 +457,14 @@ public class EmojidexIME extends InputMethodService {
      */
     public void changeCategory(String category, int defaultPage)
     {
-        changeCategory(category, defaultPage, currentSortType);
-    }
-
-    public void changeCategory(String category, int defaultPage, String sortType)
-    {
         if (category == null) return;
-        if (sortType == null) sortType = EmojiComparator.SORT_KEYS[0];
-        if (category.equals(currentCategory) && sortType.equals(currentSortType)) return;
+        if (currentSortType == null) currentSortType = EmojiComparator.SortType.SCORE;
+        if (category.equals(currentCategory) &&
+                currentSortType.equals(getSortType()) && standardOnly == isStandardOnly()) return;
 
         currentCategory = category;
-        currentSortType = sortType;
-        final boolean standardOnly = isStandardOnly();
+        currentSortType = getSortType();
+        standardOnly = isStandardOnly();
 
         if(category.equals(getString(R.string.ime_category_id_history)))
         {
@@ -558,7 +529,7 @@ public class EmojidexIME extends InputMethodService {
             categorizedEmojies.put(category, emojies);
         }
 
-        if (isStandardOnly()) {
+        if (standardOnly) {
             List<Emoji> removeEmojies = new ArrayList<>();
             for (Emoji emoji : emojies) {
                 if (!emoji.isStandard()) removeEmojies.add(emoji);
@@ -764,6 +735,10 @@ public class EmojidexIME extends InputMethodService {
             {
                 showSearchWindow();
             }
+            else if (primaryCode == showFilterWindowCode)
+            {
+                showFilterWindow();
+            }
             else
             {
                 // Input emoji.
@@ -815,6 +790,15 @@ public class EmojidexIME extends InputMethodService {
          */
         private void showSearchWindow() {
             final Intent intent = new Intent(EmojidexIME.this, SearchActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
+
+        /**
+         * Show emoji filter window.
+         */
+        private void showFilterWindow() {
+            final Intent intent = new Intent(EmojidexIME.this, FilterActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }
@@ -931,7 +915,24 @@ public class EmojidexIME extends InputMethodService {
      * @return true or false
      */
     private boolean isStandardOnly() {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences pref = getSharedPreferences(FilterActivity.PREF_NAME, Context.MODE_PRIVATE);
         return pref.getBoolean(getString(R.string.preference_key_standard_only), false);
+    }
+
+    /**
+     * Get sort type preference
+     * @return sort type
+     */
+    private EmojiComparator.SortType getSortType() {
+        User user = new User();
+
+        if (userdata.isLogined() &&
+                user.authorize(userdata.getUsername(), userdata.getAuthToken()) && (user.getPremium() || user.getPro())) {
+            SharedPreferences pref = getSharedPreferences(FilterActivity.PREF_NAME, Context.MODE_PRIVATE);
+            int sortType = pref.getInt(getString(R.string.preference_key_sort_type), EmojiComparator.SortType.SCORE.getValue());
+            return EmojiComparator.SortType.fromInt(sortType);
+        } else {
+            return EmojiComparator.SortType.SCORE;
+        }
     }
 }

@@ -12,10 +12,6 @@
             android:defaultValue="@string/preference_entryvalue_text_size_default"
             android:entries="@array/settings_text_size_entries"
             android:entryValues="@array/settings_text_size_entryvalues"/>
-        <SwitchPreference
-            android:key="@string/preference_key_standard_only"
-            android:title="@string/settings_standard_only"
-            android:defaultValue="false"/>
     </PreferenceCategory>
     <PreferenceCategory
         android:title="@string/settings_category_update">
