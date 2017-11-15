@@ -2,7 +2,11 @@ package com.emojidex.emojidexandroid.comparator;
 
 import com.emojidex.emojidexandroid.Emoji;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Comparator;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by kou on 17/09/27.
@@ -38,6 +42,7 @@ public class EmojiComparator implements Comparator<Emoji> {
     }
 
     private SortType type;
+    private SimpleDateFormat format;
 
     public EmojiComparator() {
         this.type = SortType.SCORE;
@@ -59,12 +64,10 @@ public class EmojiComparator implements Comparator<Emoji> {
                 temp = lhs.getScore() - rhs.getScore();
                 break;
             case NEWEST:
-                // TODO: created_at
-                temp = rhs.getScore() - lhs.getScore();
+                temp = dateCompare(rhs.getCreatedAt(), lhs.getCreatedAt());
                 break;
             case OLDEST:
-                // TODO: created_at
-                temp = rhs.getScore() - lhs.getScore();
+                temp = dateCompare(lhs.getCreatedAt(), rhs.getCreatedAt());
                 break;
             case LIKED:
                 temp = (int)(rhs.getFavorited() - lhs.getFavorited());
@@ -83,8 +86,32 @@ public class EmojiComparator implements Comparator<Emoji> {
 
         }
 
-        if (temp == 0 && type != SortType.SCORE && type != SortType.UNPOPULAR) temp = rhs.getScore() - lhs.getScore();
+        if (temp == 0 && type != SortType.NEWEST && type != SortType.OLDEST) {
+            temp = dateCompare(lhs.getCreatedAt(), rhs.getCreatedAt());
+        }
 
         return temp;
+    }
+
+    private Date stringToDate(String dateString) {
+        if (format == null) format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
+
+        Date date = null;
+        try {
+            date = format.parse(dateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
+    }
+
+    private int dateCompare(String dateString1, String dateString2) {
+        if (dateString1 == null || dateString2 == null) return 0;
+
+        Date date1 = stringToDate(dateString1);
+        Date date2 = stringToDate(dateString2);
+        if (date1 == null || date2 == null) return 0;
+
+        return date1.compareTo(date2);
     }
 }
