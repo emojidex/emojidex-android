@@ -106,7 +106,7 @@ public class EmojiComparator implements Comparator<Emoji> {
     }
 
     private int dateCompare(String dateString1, String dateString2) {
-        if (dateString1 == null || dateString2 == null) return 0;
+        if (dateString1 == null || dateString1.equals("") || dateString2 == null || dateString2.equals("")) return 0;
 
         Date date1 = stringToDate(dateString1);
         Date date2 = stringToDate(dateString2);
