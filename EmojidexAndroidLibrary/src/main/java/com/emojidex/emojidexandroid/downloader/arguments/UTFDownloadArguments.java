@@ -16,7 +16,7 @@ public class UTFDownloadArguments extends AbstractJsonDownloadArguments<UTFDownl
     {
         super();
 
-        locale = EmojidexLocale.DEFAULT;
+        locale = EmojidexLocale.getDefault();
     }
 
     /**
@@ -26,7 +26,7 @@ public class UTFDownloadArguments extends AbstractJsonDownloadArguments<UTFDownl
      */
     public UTFDownloadArguments setLocale(EmojidexLocale locale)
     {
-        this.locale = (locale == null) ? EmojidexLocale.DEFAULT : locale;
+        this.locale = (locale == null) ? EmojidexLocale.getDefault() : locale;
         return this;
     }
 

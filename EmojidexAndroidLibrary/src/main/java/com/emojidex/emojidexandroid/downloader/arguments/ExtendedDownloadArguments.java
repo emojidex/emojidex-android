@@ -16,7 +16,7 @@ public class ExtendedDownloadArguments extends AbstractJsonDownloadArguments<Ext
     {
         super();
 
-        locale = EmojidexLocale.DEFAULT;
+        locale = EmojidexLocale.getDefault();
     }
 
     /**
@@ -26,7 +26,7 @@ public class ExtendedDownloadArguments extends AbstractJsonDownloadArguments<Ext
      */
     public ExtendedDownloadArguments setLocale(EmojidexLocale locale)
     {
-        this.locale = (locale == null) ? EmojidexLocale.DEFAULT : locale;
+        this.locale = (locale == null) ? EmojidexLocale.getDefault() : locale;
         return this;
     }
 
