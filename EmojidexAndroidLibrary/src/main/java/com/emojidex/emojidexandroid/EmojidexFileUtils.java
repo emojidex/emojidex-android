@@ -213,7 +213,20 @@ public class EmojidexFileUtils
      */
     public static Uri getTemporaryUri(String suffix)
     {
-        final String filename = System.currentTimeMillis() + suffix;
+        return getTemporaryFileUri(System.currentTimeMillis() + suffix);
+    }
+
+    /**
+     * Generate temporary root directory uri.
+     * @return  Temporary root directory uri.
+     */
+    public static Uri getTemporaryRootUri()
+    {
+        return getTemporaryFileUri("");
+    }
+
+    private static Uri getTemporaryFileUri(String filename)
+    {
         return hasContentProvider ?
                 EmojidexProvider.getUri(TMP_DIR + "/" + filename) :
                 Uri.parse("file:" + localRoot + "/" + TMP_DIR + "/" + filename);
