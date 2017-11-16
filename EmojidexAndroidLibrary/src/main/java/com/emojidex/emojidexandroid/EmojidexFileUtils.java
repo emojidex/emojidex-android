@@ -30,6 +30,7 @@ import java.util.Locale;
 public class EmojidexFileUtils
 {
     private static final String CACHE_DIR = "emojidex_caches";
+    private static final String TMP_DIR = "tmp";
     private static final String REMOTE_ROOT_PATH_DEFAULT = "https://cdn.emojidex.com";
     private static final String API_ROOT_PATH = "https://www.emojidex.com/api/v1";
     private static final String JSON_FILENAME = "emoji.json";
@@ -187,7 +188,6 @@ public class EmojidexFileUtils
     {
         return API_ROOT_PATH;
     }
-
     /**
      * Generate temporary path.
      * @return      Temporary path.
@@ -195,6 +195,28 @@ public class EmojidexFileUtils
     public static String getTemporaryPath()
     {
         return context.getExternalCacheDir().getPath() + "/tmp" + System.currentTimeMillis();
+    }
+
+    /**
+     * Generate temporary uri.
+     * @return  Temporary uri.
+     */
+    public static Uri getTemporaryUri()
+    {
+        return getTemporaryUri("");
+    }
+
+    /**
+     * Generate temporary uri.
+     * @param   suffix  Suffix of uri.(default value is empty string)
+     * @return          Temporary uri.
+     */
+    public static Uri getTemporaryUri(String suffix)
+    {
+        final String filename = System.currentTimeMillis() + suffix;
+        return hasContentProvider ?
+                EmojidexProvider.getUri(TMP_DIR + "/" + filename) :
+                Uri.parse("file:" + localRoot + "/" + TMP_DIR + "/" + filename);
     }
 
     /**
