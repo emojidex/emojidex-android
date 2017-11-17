@@ -13,7 +13,6 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.preference.SwitchPreference;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,7 +78,6 @@ public class SettingsActivity extends PreferenceActivity {
             // Initialize.
             createDefaultKeyboardPreference();
             createTextSizePreference();
-            createStandardOnlyPreference();
             createUpdateIntervalPreference();
             createClearDataPreference();
             createTutorialPreference();
@@ -144,22 +142,6 @@ public class SettingsActivity extends PreferenceActivity {
                     return true;
                 }
             });
-        }
-
-        /**
-         * Create standard emoji only preference.
-         */
-        private void createStandardOnlyPreference()
-        {
-            final SwitchPreference standardOnly = (SwitchPreference)findPreference(getString(R.string.preference_key_standard_only));
-            standardOnly.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object o) {
-                    ((SettingsActivity) parentActivity).sendLogEvent("settings_standard_only");
-                    return true;
-                }
-            });
-
         }
 
         /**

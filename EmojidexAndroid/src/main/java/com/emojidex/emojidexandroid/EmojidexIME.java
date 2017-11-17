@@ -25,14 +25,14 @@ import android.widget.HorizontalScrollView;
 import android.widget.RadioButton;
 import android.widget.ViewFlipper;
 
-import com.emojidex.emojidexandroid.comparator.ScoreComparator;
+import com.emojidex.emojidexandroid.comparator.EmojiComparator;
 import com.emojidex.emojidexandroid.downloader.DownloadListener;
+import com.emojidex.libemojidex.Emojidex.Service.User;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -49,6 +49,7 @@ public class EmojidexIME extends InputMethodService {
     private InputMethodManager inputMethodManager = null;
     private int showIMEPickerCode = 0;
     private int showSearchWindowCode = 0;
+    private int showFilterWindowCode = 0;
     private EmojidexSubKeyboardView subKeyboardView = null;
     private Keyboard.Key keyEnter = null;
     private int keyEnterIndex;
@@ -79,6 +80,9 @@ public class EmojidexIME extends InputMethodService {
 
     private final CustomDownloadListener downloadListener = new CustomDownloadListener();
 
+    private EmojiComparator.SortType currentSortType;
+    private boolean standardOnly = false;
+
     /**
      * Construct EmojidexIME object.
      */
@@ -95,6 +99,7 @@ public class EmojidexIME extends InputMethodService {
         inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
         showIMEPickerCode = getResources().getInteger(R.integer.ime_keycode_show_ime_picker);
         showSearchWindowCode = getResources().getInteger(R.integer.ime_keycode_show_search_window);
+        showFilterWindowCode = getResources().getInteger(R.integer.ime_keycode_show_filter_window);
 
         // Initialize Emojidex object.
         new CacheAnalyzer().analyze(this);
@@ -113,6 +118,9 @@ public class EmojidexIME extends InputMethodService {
         // Initialize user data.
         userdata = UserData.getInstance();
         userdata.init(this);
+
+        currentSortType = getSortType();
+        standardOnly = isStandardOnly();
     }
 
     @Override
@@ -449,12 +457,14 @@ public class EmojidexIME extends InputMethodService {
      */
     public void changeCategory(String category, int defaultPage)
     {
-        if( category == null ||
-            (currentCategory != null && currentCategory.equals(category))   )
-            return;
+        if (category == null) return;
+        if (currentSortType == null) currentSortType = EmojiComparator.SortType.SCORE;
+        if (category.equals(currentCategory) &&
+                currentSortType.equals(getSortType()) && standardOnly == isStandardOnly()) return;
 
         currentCategory = category;
-        final boolean standardOnly = isStandardOnly();
+        currentSortType = getSortType();
+        standardOnly = isStandardOnly();
 
         if(category.equals(getString(R.string.ime_category_id_history)))
         {
@@ -484,13 +494,17 @@ public class EmojidexIME extends InputMethodService {
             }
 
             // Sort.
-            Collections.sort(emojies, new ScoreComparator());
+            Collections.sort(emojies, new EmojiComparator(currentSortType));
 
             keyboardViewManager.initialize(emojies, defaultPage);
         }
         else
         {
             final List<Emoji> emojies = getCategorizedEmojies(category);
+
+            // Sort.
+            Collections.sort(emojies, new EmojiComparator(currentSortType));
+
             keyboardViewManager.initialize(emojies, defaultPage);
         }
 
@@ -511,14 +525,11 @@ public class EmojidexIME extends InputMethodService {
                     ? new ArrayList<Emoji>(src)
                     : new ArrayList<Emoji>();
 
-            // Sort emoji list.
-            Collections.sort(emojies, new ScoreComparator());
-
             // Add emoji list.
             categorizedEmojies.put(category, emojies);
         }
 
-        if (isStandardOnly()) {
+        if (standardOnly) {
             List<Emoji> removeEmojies = new ArrayList<>();
             for (Emoji emoji : emojies) {
                 if (!emoji.isStandard()) removeEmojies.add(emoji);
@@ -724,6 +735,10 @@ public class EmojidexIME extends InputMethodService {
             {
                 showSearchWindow();
             }
+            else if (primaryCode == showFilterWindowCode)
+            {
+                showFilterWindow();
+            }
             else
             {
                 // Input emoji.
@@ -775,6 +790,15 @@ public class EmojidexIME extends InputMethodService {
          */
         private void showSearchWindow() {
             final Intent intent = new Intent(EmojidexIME.this, SearchActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
+
+        /**
+         * Show emoji filter window.
+         */
+        private void showFilterWindow() {
+            final Intent intent = new Intent(EmojidexIME.this, FilterActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }
@@ -891,7 +915,24 @@ public class EmojidexIME extends InputMethodService {
      * @return true or false
      */
     private boolean isStandardOnly() {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences pref = getSharedPreferences(FilterActivity.PREF_NAME, Context.MODE_PRIVATE);
         return pref.getBoolean(getString(R.string.preference_key_standard_only), false);
+    }
+
+    /**
+     * Get sort type preference
+     * @return sort type
+     */
+    private EmojiComparator.SortType getSortType() {
+        User user = new User();
+
+        if (userdata.isLogined() &&
+                user.authorize(userdata.getUsername(), userdata.getAuthToken()) && (user.getPremium() || user.getPro())) {
+            SharedPreferences pref = getSharedPreferences(FilterActivity.PREF_NAME, Context.MODE_PRIVATE);
+            int sortType = pref.getInt(getString(R.string.preference_key_sort_type), EmojiComparator.SortType.SCORE.getValue());
+            return EmojiComparator.SortType.fromInt(sortType);
+        } else {
+            return EmojiComparator.SortType.SCORE;
+        }
     }
 }

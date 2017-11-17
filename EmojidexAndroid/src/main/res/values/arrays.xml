@@ -26,4 +26,16 @@
         <item>604800000</item>
         <item>1209600000</item>
     </string-array>
+
+    <!-- sort -->
+    <string-array name="sort_items">
+        <item>score</item>
+        <item>unpopular</item>
+        <item>newest</item>
+        <item>oldest</item>
+        <item>liked</item>
+        <item>unliked</item>
+        <item>shortest</item>
+        <item>longest</item>
+    </string-array>
 </resources>

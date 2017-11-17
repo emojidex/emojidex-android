@@ -111,7 +111,6 @@
     <string name="settings_keyboard_button">Default keyboard</string>
     <string name="settings_keyboard_button_summary">Set your default keyboard here</string>
     <string name="settings_text_size">Text size</string>
-    <string name="settings_standard_only">Standard emoji only</string>
     <string name="settings_entry_default_keyboard_nothing">Nothing</string>
     <string name="settings_update_interval">Update interval</string>
     <string name="settings_update_now">Update now</string>
@@ -183,7 +182,6 @@
     <string name="preference_key_start_category" translatable="false">startCategory</string>
     <string name="preference_key_default_keyboard" translatable="false">defaultKeyboard</string>
     <string name="preference_key_text_size" translatable="false">textSize</string>
-    <string name="preference_key_standard_only" translatable="false">standardOnly</string>
     <string name="preference_key_last_update_time" translatable="false">lastUpdateTime</string>
     <string name="preference_key_update_interval" translatable="false">updateInterval</string>
     <string name="preference_key_update_now" translatable="false">updateNow</string>
@@ -200,7 +198,8 @@
     <string name="preference_entryvalue_update_interval_default" translatable="false">604800000</string>
     <string name="preference_key_last_update_time_index" translatable="false">lastUpdateTimeIndex</string>
     <string name="preference_key_usagestats_check_ignore" translatable="false">usagestatsCheckIgnore</string>
-
+    <string name="preference_key_standard_only" translatable="false">showStandardOnly</string>
+    <string name="preference_key_sort_type" translatable="false">sortType</string>
 
     <!-- tutorial -->
     <string name="tutorial_title">Using emojidex</string>
@@ -223,4 +222,7 @@
     <string name="tutorial_header_17">Using the Seal Kit (4)</string>
     <string name="usagestats_dialog_message">In order to detect what app to send a seal to, emojidex must have permission to view app usage.</string>
 
+    <!-- filter window -->
+    <string name="standard_only">Standard emoji only</string>
+    <string name="filtering">Filtering</string>
 </resources>

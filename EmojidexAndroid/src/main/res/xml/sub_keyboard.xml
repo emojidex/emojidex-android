@@ -12,8 +12,9 @@
         <Key android:codes="22" android:keyIcon="@drawable/ime_key_right" android:isRepeatable="true" />
         <Key android:codes="67" android:keyIcon="@drawable/ime_key_delete" android:isRepeatable="true" />
         <Key android:codes="66" android:keyIcon="@drawable/ime_key_enter" />
-        <Key android:codes="@integer/ime_keycode_show_search_window"
-             android:keyIcon="@android:drawable/ic_menu_search" android:keyEdgeFlags="right" />
+        <Key android:codes="@integer/ime_keycode_show_search_window" android:keyIcon="@android:drawable/ic_menu_search" />
+        <Key android:codes="@integer/ime_keycode_show_filter_window"
+             android:keyIcon="@drawable/ic_filter_list_white_24dp" android:keyEdgeFlags="right" />
     </Row>
 
 </Keyboard>

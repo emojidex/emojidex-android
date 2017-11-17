@@ -22,7 +22,7 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.RadioButton;
 
-import com.emojidex.emojidexandroid.comparator.ScoreComparator;
+import com.emojidex.emojidexandroid.comparator.EmojiComparator;
 import com.emojidex.emojidexandroid.downloader.DownloadListener;
 import com.emojidex.emojidexandroid.downloader.arguments.ImageDownloadArguments;
 import com.emojidex.libemojidex.Emojidex.Service.User;
@@ -225,21 +225,21 @@ public class CatalogActivity extends Activity
             currentCatalog = createEmojiList(emojiNames);
 
             // Sort.
-            comparator = new ScoreComparator();
+            comparator = new EmojiComparator();
         }
         else if(categoryName.equals(getString(R.string.ime_category_id_all)))
         {
             currentCatalog = emojidex.getAllEmojiList();
 
             // Sort.
-            comparator = new ScoreComparator();
+            comparator = new EmojiComparator();
         }
         else
         {
             currentCatalog = emojidex.getEmojiList(categoryName);
 
             // Sort.
-            comparator = new ScoreComparator();
+            comparator = new EmojiComparator();
         }
 
         if(currentCatalog == null)

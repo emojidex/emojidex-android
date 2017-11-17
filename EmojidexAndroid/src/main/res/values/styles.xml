@@ -52,4 +52,10 @@
         <item name="android:keyBackground">@drawable/ime_subkeyboard_key_background</item>
     </style>
 
+    <!-- Spinner -->
+    <style name="SpinnerTextViewItem" parent="@android:style/Widget.TextView">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:paddingLeft">10dp</item>
+    </style>
+
 </resources>
