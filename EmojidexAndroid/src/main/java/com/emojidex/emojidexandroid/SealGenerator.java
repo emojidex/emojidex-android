@@ -6,9 +6,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.net.Uri;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * Created by kou on 15/07/30.
@@ -78,7 +77,7 @@ public class SealGenerator {
      */
     private void createTemporaryFile(Emoji emoji)
     {
-        final File temporaryFile = new File(EmojidexFileUtils.getTemporaryPath() + ".png");
+        final Uri tmpUri = EmojidexFileUtils.getTemporaryUri(".png");
         useLow = false;
 
         // If file not found, use default format.
@@ -103,7 +102,7 @@ public class SealGenerator {
             canvas.drawBitmap(bitmap, 0, 0, null);
 
             // Save temporary file.
-            final FileOutputStream os = new FileOutputStream(temporaryFile);
+            final OutputStream os = context.getContentResolver().openOutputStream(tmpUri);
             newBitmap.compress(Bitmap.CompressFormat.PNG, 100, os);
             os.close();
         }
@@ -114,6 +113,6 @@ public class SealGenerator {
             return;
         }
 
-        uri = Uri.fromFile(temporaryFile);
+        uri = tmpUri;
     }
 }

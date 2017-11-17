@@ -69,6 +69,8 @@ public class Emojidex {
         defaultFormat = EmojiFormat.toFormat(this.context.getResources().getString(R.string.emoji_format_default));
         user = new EmojidexUser();
 
+        EmojidexFileUtils.deleteFiles(EmojidexFileUtils.getTemporaryRootUri());
+
         Log.d(TAG, "Initialize complete.");
     }
 
