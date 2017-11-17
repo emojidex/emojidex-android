@@ -7,7 +7,6 @@ import java.util.Locale;
  */
 
 public enum EmojidexLocale {
-    DEFAULT,
     JAPANESE("ja"),
     ENGLISH("en")
     ;
@@ -15,18 +14,17 @@ public enum EmojidexLocale {
     private final String locale;
 
     /**
-     * Construct object for DEFAULT.
+     * Get default locale.
      */
-    EmojidexLocale()
+    public static EmojidexLocale getDefault()
     {
         final Locale defaultLocale = Locale.getDefault();
 
         if(     defaultLocale.equals(Locale.JAPAN)
             ||  defaultLocale.equals(Locale.JAPANESE)   )
-            locale = "ja";
+            return JAPANESE;
 
-        else
-            locale = "en";
+        return ENGLISH;
     }
 
     /**
