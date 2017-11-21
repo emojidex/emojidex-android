@@ -1,4 +1,4 @@
-package com.emojidex.emojidexandroid;
+package com.emojidex.emojidexandroid.animation;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;

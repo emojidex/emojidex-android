@@ -6,6 +6,8 @@ import android.content.res.XmlResourceParser;
 import android.inputmethodservice.Keyboard;
 import android.util.DisplayMetrics;
 
+import com.emojidex.emojidexandroid.animation.EmojidexAnimationDrawable;
+
 import java.util.LinkedList;
 import java.util.List;
 
