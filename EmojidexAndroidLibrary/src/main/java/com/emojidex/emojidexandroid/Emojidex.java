@@ -3,6 +3,7 @@ package com.emojidex.emojidexandroid;
 import android.content.Context;
 import android.util.Log;
 
+import com.emojidex.emojidexandroid.animation.updater.AnimationUpdater;
 import com.emojidex.emojidexandroid.downloader.DownloadListener;
 import com.emojidex.emojidexandroid.downloader.EmojiDownloader;
 import com.emojidex.emojidexandroid.downloader.arguments.EmojiDownloadArguments;
@@ -23,6 +24,8 @@ public class Emojidex {
     public static final String SEPARATOR = ":";
 
     private static final Emojidex INSTANCE = new Emojidex();
+
+    private final AnimationUpdaterManager animationUpdaterManager = new AnimationUpdaterManager();
 
     private Context context = null;
     private EmojiManager manager;
@@ -282,6 +285,33 @@ public class Emojidex {
             throw new EmojidexIsNotInitializedException();
 
         return TextConverter.deEmojify(text);
+    }
+
+    /**
+     * Add animation updater.
+     * @param updater   Animation updater.
+     */
+    public void addAnimationUpdater(AnimationUpdater updater)
+    {
+        animationUpdaterManager.regist(updater);
+    }
+
+    /**
+     * Remove animation updater.
+     * @param updater   Animation updater.
+     */
+    public void removeAnimationUpdater(AnimationUpdater updater)
+    {
+        animationUpdaterManager.unregist(updater);
+    }
+
+    /**
+     * Set animation update interval time.
+     * @param interval  Animation update interval time.(milli seconds/default value is 100)
+     */
+    public void setAnimationUpdateInterval(int interval)
+    {
+        animationUpdaterManager.setAnimationUpdateInterval(interval);
     }
 
     /**
