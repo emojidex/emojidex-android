@@ -58,6 +58,7 @@ public class EmojidexIME extends InputMethodService {
     private View layout;
     private HorizontalScrollView categoryScrollView;
     private Button categoryAllButton;
+    private Button myEmojiButton;
 
     private ViewFlipper keyboardViewFlipper;
     private boolean swipeFlag = false;
@@ -130,10 +131,12 @@ public class EmojidexIME extends InputMethodService {
 
         // Get all category button.
         categoryAllButton = (Button)layout.findViewById(R.id.ime_category_button_all);
+        myEmojiButton = (Button)layout.findViewById(R.id.ime_category_button_my_emoji);
 
         createCategorySelector();
         createKeyboardView();
         createSubKeyboardView();
+        setMyEmojiButtonVisibility(userdata.isLogined());
 
         // Sync user data.
         historyManager.loadFromUser();
@@ -933,6 +936,17 @@ public class EmojidexIME extends InputMethodService {
             return EmojiComparator.SortType.fromInt(sortType);
         } else {
             return EmojiComparator.SortType.SCORE;
+        }
+    }
+
+    /**
+     * set my_emoji button visibility.
+     */
+    public void setMyEmojiButtonVisibility(boolean isShow) {
+        if (isShow) {
+            myEmojiButton.setVisibility(View.VISIBLE);
+        } else {
+            myEmojiButton.setVisibility(View.GONE);
         }
     }
 }
