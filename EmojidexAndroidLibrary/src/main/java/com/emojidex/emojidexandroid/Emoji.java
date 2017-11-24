@@ -24,6 +24,7 @@ public class Emoji extends JsonParam {
     private Context context;
     private Resources res;
     private boolean hasOriginalCodes = false;
+    private String text = "";
 
     @JsonProperty("current_checksums")
     public Checksums getCurrentChecksums()
@@ -210,10 +211,41 @@ public class Emoji extends JsonParam {
     }
 
     /**
+     * Get plain text.
+     * @return      Text.
+     */
+    String getText()
+    {
+        return text;
+    }
+
+    /**
      * Initialize emoji object.
-     * @param kind  Emoji kind.
+     * @param context   Context.
      */
     void initialize(Context context)
+    {
+        initialize(context, getMoji());
+    }
+
+    /**
+     * Initialize emoji object.
+     * @param context   Context.
+     * @param codes     Original emoji code.
+     */
+    void initialize(Context context, int codes)
+    {
+        hasOriginalCodes = true;
+
+        initialize(context, new String(Character.toChars(codes)));
+    }
+
+    /**
+     * Initialize emoji object.
+     * @param context   Context.
+     * @param moji      Moji.
+     */
+    private void initialize(Context context, String moji)
     {
         this.context = context;
         res = this.context.getResources();
@@ -224,7 +256,6 @@ public class Emoji extends JsonParam {
             imageLoader.initialize(this.context);
 
         // Set codes.
-        final String moji = getMoji();
         final int count = moji.codePointCount(0, moji.length());
         int next = 0;
         for(int i = 0;  i < count;  ++i)
@@ -242,24 +273,12 @@ public class Emoji extends JsonParam {
         // Adjustment text.
         if(codes.size() < count)
         {
-            String newMoji = "";
+            text = "";
             for(Integer codePoint : codes)
-                newMoji += String.valueOf(Character.toChars(codePoint));
-            setMoji(newMoji);
+                text += String.valueOf(Character.toChars(codePoint));
         }
-    }
-
-    /**
-     * Initialize emoji object.
-     * @param res       Resources object.
-     * @param codes     Original emoji code.
-     */
-    void initialize(Context context, int codes)
-    {
-        setMoji(new String(Character.toChars(codes)));
-        hasOriginalCodes = true;
-
-        initialize(context);
+        else
+            text = moji;
     }
 
     /**
