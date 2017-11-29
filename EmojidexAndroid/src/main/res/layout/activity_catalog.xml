@@ -89,6 +89,15 @@
             android:onClick="onClickLoginButton" />
 
         <ImageButton
+            android:id="@+id/catalog_filter"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_filter_list_black_24dp"
+            android:background="@null"
+            android:onClick="onClickFilterButton"/>
+
+        <ImageButton
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_weight="1"

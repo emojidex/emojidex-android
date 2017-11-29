@@ -13,6 +13,7 @@ import android.widget.Spinner;
 
 import com.emojidex.emojidexandroid.comparator.EmojiComparator;
 import com.emojidex.libemojidex.Emojidex.Service.User;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 
 public class FilterActivity extends Activity {
@@ -23,10 +24,14 @@ public class FilterActivity extends Activity {
 
     private boolean sortable = false;
 
+    private boolean fromCatalog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.window_filter);
+
+        fromCatalog = getIntent().getBooleanExtra("Catalog", false);
 
         initializeContentView();
     }
@@ -102,7 +107,13 @@ public class FilterActivity extends Activity {
             final int sortType = sortSpinner.getSelectedItemPosition();
             editor.putInt(getString(R.string.preference_key_sort_type), sortType);
             editor.apply();
-            // FirebaseAnalytics.getInstance(this).logEvent("sort", new Bundle());
+
+            String type;
+            if (fromCatalog)
+                type = "sealkit_sort";
+            else
+                type = "sort";
+            FirebaseAnalytics.getInstance(this).logEvent(type, new Bundle());
         }
 
         closeWindow();
