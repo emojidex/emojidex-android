@@ -199,6 +199,7 @@
     <string name="preference_entryvalue_text_size_default" translatable="false">@string/editor_text_size_default</string>
     <string name="preference_entryvalue_update_interval_default" translatable="false">604800000</string>
     <string name="preference_key_last_update_time_index" translatable="false">lastUpdateTimeIndex</string>
+    <string name="preference_key_last_update_time_my_emoji" translatable="false">lastUpdateTimeMyEmoji</string>
     <string name="preference_key_usagestats_check_ignore" translatable="false">usagestatsCheckIgnore</string>
     <string name="preference_key_standard_only" translatable="false">showStandardOnly</string>
     <string name="preference_key_sort_type" translatable="false">sortType</string>
