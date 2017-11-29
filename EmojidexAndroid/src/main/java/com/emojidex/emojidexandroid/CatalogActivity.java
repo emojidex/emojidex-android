@@ -18,9 +18,11 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.HorizontalScrollView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.RadioButton;
+import android.widget.Toast;
 
 import com.emojidex.emojidexandroid.comparator.EmojiComparator;
 import com.emojidex.emojidexandroid.downloader.DownloadListener;
@@ -34,9 +36,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 public class CatalogActivity extends Activity
 {
+    private static final String EMOJIDEX_URL = "https://www.emojidex.com";
+    private static final String EMOJIDEX_QUERY = "?user_agent=emojidexNativeClient";
+
     private GridView gridView;
     private CatalogAdapter adapter;
 
@@ -55,6 +61,7 @@ public class CatalogActivity extends Activity
     private ViewGroup categoriesView;
     private Button categoryAllButton;
     private Button myEmojiButton;
+    private ImageButton loginButton;
 
     private boolean isPick = false;
 
@@ -68,8 +75,6 @@ public class CatalogActivity extends Activity
     private final CustomDownloadListener downloadListener = new CustomDownloadListener();
 
     private final List<Drawable> animationDrawables = new ArrayList<Drawable>();
-
-    private UserData userdata;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -102,6 +107,7 @@ public class CatalogActivity extends Activity
 
         new EmojidexUpdater(this).startUpdateThread();
 
+        UserData userdata = UserData.getInstance();
         if (userdata.getUsername() != null && !userdata.getUsername().equals("")) {
             myEmojiUpdater = new EmojidexMyEmojiUpdater(this, userdata.getUsername());
             myEmojiUpdater.startUpdateThread(false);
@@ -109,6 +115,9 @@ public class CatalogActivity extends Activity
 
         initAds();
         setAdsVisibility();
+
+        loginButton = (ImageButton) findViewById(R.id.catalog_login);
+        setLoginButtonVisibility();
     }
 
     @Override
@@ -148,7 +157,7 @@ public class CatalogActivity extends Activity
         myEmojiManager.load();
 
         // Initialize user data.
-        userdata = UserData.getInstance();
+        final UserData userdata = UserData.getInstance();
         userdata.init(this);
     }
 
@@ -203,11 +212,7 @@ public class CatalogActivity extends Activity
         }
 
         myEmojiButton = (Button)findViewById(R.id.catalog_my_emoji);
-        if (userdata.isLogined()) {
-            myEmojiButton.setVisibility(View.VISIBLE);
-        } else {
-            myEmojiButton.setVisibility(View.GONE);
-        }
+        setMyEmojiButtonVisibility();
     }
 
     public void onClickCategoryButton(View v)
@@ -377,6 +382,51 @@ public class CatalogActivity extends Activity
     {
         super.onResume();
         initStartCategory();
+
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        Set categories = intent.getCategories();
+
+        if (!Intent.ACTION_VIEW.equals(action) || !categories.contains(Intent.CATEGORY_BROWSABLE)) return;
+
+        // emojidex login
+        if ("login".equals(intent.getStringExtra("action"))) {
+            if (intent.hasExtra("auth_token") && intent.hasExtra("username")) {
+                String authToken = intent.getStringExtra("auth_token");
+                String username = intent.getStringExtra("username");
+                intent.removeExtra("auth_token");
+                intent.removeExtra("username");
+
+                UserData userdata = UserData.getInstance();
+                userdata.setUserData(authToken, username);
+
+                final HistoryManager hm = HistoryManager.getInstance(this);
+                final FavoriteManager fm = FavoriteManager.getInstance(this);
+                hm.saveBackup();
+                fm.saveBackup();
+                hm.loadFromUser();
+                fm.loadFromUser();
+
+                Toast.makeText(getApplicationContext(),
+                        getString(R.string.menu_login_success) + userdata.getUsername(),
+                        Toast.LENGTH_SHORT).show();
+                analytics.logEvent(FirebaseAnalytics.Event.LOGIN, new Bundle());
+            } else {
+                Toast.makeText(getApplicationContext(),
+                        getString(R.string.menu_login_cancel), Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        // set visibility.
+        setAdsVisibility();
+        setLoginButtonVisibility();
+        setMyEmojiButtonVisibility();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
     }
 
     /**
@@ -591,6 +641,41 @@ public class CatalogActivity extends Activity
         {
             if(CatalogActivity.this.format.equals(format))
                 invalidate(emojiName);
+        }
+    }
+
+    /**
+     * Emojidex login.
+     * @param v button
+     */
+    public void onClickLoginButton(View v)
+    {
+        Uri uri = Uri.parse(EMOJIDEX_URL + "/mobile_app/login" + EMOJIDEX_QUERY);
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(intent);
+    }
+
+    /**
+     * Set login button visibility.
+     */
+    private void setLoginButtonVisibility()
+    {
+        if (UserData.getInstance().isLogined()) {
+            loginButton.setVisibility(View.GONE);
+        } else {
+            loginButton.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /**
+     * Set my emoji button visibility.
+     */
+    private void setMyEmojiButtonVisibility()
+    {
+        if (UserData.getInstance().isLogined()) {
+            myEmojiButton.setVisibility(View.VISIBLE);
+        } else {
+            myEmojiButton.setVisibility(View.GONE);
         }
     }
 }
