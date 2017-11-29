@@ -49,10 +49,12 @@ public class CatalogActivity extends Activity
     private FavoriteManager favoriteManager;
     private SaveDataManager searchManager;
     private SaveDataManager indexManager;
+    private SaveDataManager myEmojiManager;
 
     private HorizontalScrollView categoryScrollView;
     private ViewGroup categoriesView;
     private Button categoryAllButton;
+    private Button myEmojiButton;
 
     private boolean isPick = false;
 
@@ -60,11 +62,14 @@ public class CatalogActivity extends Activity
     private FirebaseAnalytics analytics;
 
     private EmojidexIndexUpdater indexUpdater = null;
+    private EmojidexMyEmojiUpdater myEmojiUpdater = null;
     private final int indexLoadPageCount = 2;
 
     private final CustomDownloadListener downloadListener = new CustomDownloadListener();
 
     private final List<Drawable> animationDrawables = new ArrayList<Drawable>();
+
+    private UserData userdata;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -96,6 +101,11 @@ public class CatalogActivity extends Activity
         indexUpdater.startUpdateThread(indexLoadPageCount);
 
         new EmojidexUpdater(this).startUpdateThread();
+
+        if (userdata.getUsername() != null && !userdata.getUsername().equals("")) {
+            myEmojiUpdater = new EmojidexMyEmojiUpdater(this, userdata.getUsername());
+            myEmojiUpdater.startUpdateThread(false);
+        }
 
         initAds();
         setAdsVisibility();
@@ -134,9 +144,11 @@ public class CatalogActivity extends Activity
         searchManager.load();
         indexManager = SaveDataManager.getInstance(this, SaveDataManager.Type.Index);
         indexManager.load();
+        myEmojiManager = SaveDataManager.getInstance(this, SaveDataManager.Type.MyEmoji);
+        myEmojiManager.load();
 
         // Initialize user data.
-        final UserData userdata = UserData.getInstance();
+        userdata = UserData.getInstance();
         userdata.init(this);
     }
 
@@ -189,6 +201,13 @@ public class CatalogActivity extends Activity
 
             categoriesView.addView(newButton);
         }
+
+        myEmojiButton = (Button)findViewById(R.id.catalog_my_emoji);
+        if (userdata.isLogined()) {
+            myEmojiButton.setVisibility(View.VISIBLE);
+        } else {
+            myEmojiButton.setVisibility(View.GONE);
+        }
     }
 
     public void onClickCategoryButton(View v)
@@ -230,6 +249,14 @@ public class CatalogActivity extends Activity
         else if(categoryName.equals(getString(R.string.ime_category_id_all)))
         {
             currentCatalog = emojidex.getAllEmojiList();
+
+            // Sort.
+            comparator = new EmojiComparator();
+        }
+        else if (categoryName.equals(getString(R.string.ime_category_id_my_emoji)))
+        {
+            List<String> emojiNames = myEmojiManager.getEmojiNames();
+            currentCatalog = createEmojiList(emojiNames);
 
             // Sort.
             comparator = new EmojiComparator();

@@ -20,6 +20,15 @@
             android:orientation="horizontal" >
 
             <RadioButton
+                android:id="@+id/catalog_my_emoji"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ime_category_text_my_emoji"
+                android:onClick="onClickCategoryButton"
+                android:contentDescription="@string/ime_category_id_my_emoji"
+                style="@style/IMERadioButtonStyle"/>
+
+            <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/ime_category_text_history"
