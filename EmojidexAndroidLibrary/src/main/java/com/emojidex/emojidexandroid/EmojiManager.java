@@ -3,7 +3,9 @@ package com.emojidex.emojidexandroid;
 import android.content.Context;
 import android.net.Uri;
 
+import com.emojidex.emojidexandroidlibrary.BuildConfig;
 import com.emojidex.emojidexandroidlibrary.R;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,7 +54,7 @@ public class EmojiManager {
      */
     public void add(Uri uri)
     {
-        final ArrayList<Emoji> newEmojies = EmojidexFileUtils.readJsonFromFile(uri);
+        final ArrayList<Emoji> newEmojies = EmojidexFileUtils.readJsonFromFile(uri, new TypeReference<ArrayList<Emoji>>(){}.getType());
 
         if(newEmojies == null || newEmojies.isEmpty())
             return;
@@ -313,11 +315,14 @@ public class EmojiManager {
             isSaving = true;
             dirtyCount = 0;
 
+            // Save emojies.
             EmojidexFileUtils.writeJsonToFile(
                     EmojidexFileUtils.getLocalJsonUri(),
                     emojies
             );
-            VersionManager.getInstance().save(context);
+
+            // Save update info.
+            Emojidex.getInstance().getUpdateInfo().save();
 
             isSaving = false;
             saveTask = null;

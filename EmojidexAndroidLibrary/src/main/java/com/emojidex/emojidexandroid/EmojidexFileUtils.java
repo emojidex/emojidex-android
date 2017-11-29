@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
 import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
@@ -387,22 +388,22 @@ public class EmojidexFileUtils
     /**
      * Read emoji json file.
      * @param uri   Json file uri.
-     * @return      Emoji array.
+     * @param type  Return object type.
+     * @return      Read object.
      */
-    public static ArrayList<Emoji> readJsonFromFile(Uri uri)
+    public static <T> T readJsonFromFile(Uri uri, Type type)
     {
-        ArrayList<Emoji> result;
+        T result;
 
         try
         {
             final InputStream is = context.getContentResolver().openInputStream(uri);
-            final TypeReference<ArrayList<Emoji>> tr = new TypeReference<ArrayList<Emoji>>(){};
-            result = mapper.readValue(is, tr);
+            result = mapper.readValue(is, mapper.getTypeFactory().constructType(type));
             is.close();
         }
         catch(IOException e)
         {
-            result = new ArrayList<Emoji>();
+            result = null;
             e.printStackTrace();
         }
 
@@ -411,10 +412,10 @@ public class EmojidexFileUtils
 
     /**
      * Write emoji json file.
-     * @param uri       Json file uri.
-     * @param emojies   Emoji array.
+     * @param uri   Json file uri.
+     * @param obj   Write object.
      */
-    public static void writeJsonToFile(Uri uri, Collection<Emoji> emojies)
+    public static <T> void writeJsonToFile(Uri uri, T obj)
     {
         // Create directory if uri scheme is file.
         if(uri.getScheme().equals("file"))
@@ -428,7 +429,7 @@ public class EmojidexFileUtils
         try
         {
             final OutputStream os = context.getContentResolver().openOutputStream(uri);
-            mapper.writeValue(os, emojies);
+            mapper.writeValue(os, obj);
             os.close();
         }
         catch(IOException e)

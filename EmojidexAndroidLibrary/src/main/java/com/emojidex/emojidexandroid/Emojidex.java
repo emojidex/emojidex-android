@@ -5,13 +5,9 @@ import android.util.Log;
 
 import com.emojidex.emojidexandroid.downloader.DownloadListener;
 import com.emojidex.emojidexandroid.downloader.EmojiDownloader;
-import com.emojidex.emojidexandroid.downloader.arguments.EmojiDownloadArguments;
-import com.emojidex.emojidexandroid.downloader.arguments.ExtendedDownloadArguments;
-import com.emojidex.emojidexandroid.downloader.arguments.UTFDownloadArguments;
 import com.emojidex.emojidexandroidlibrary.R;
 
 import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.List;
 
 /**
@@ -28,6 +24,8 @@ public class Emojidex {
     private EmojiManager manager;
     private EmojiFormat defaultFormat;
     private EmojidexUser user;
+
+    private UpdateInfo updateInfo;
 
     /**
      * Get singleton instance.
@@ -59,7 +57,11 @@ public class Emojidex {
         this.context = context.getApplicationContext();
 
         EmojidexFileUtils.initialize(this.context);
-        VersionManager.getInstance().optimize(this.context);
+
+        updateInfo = new UpdateInfo();
+        updateInfo.load(this.context);
+
+        VersionManager.getInstance().optimize();
 
         manager = new EmojiManager(this.context);
         manager.add(EmojidexFileUtils.getLocalJsonUri());
@@ -123,53 +125,7 @@ public class Emojidex {
      */
     public Collection<Integer> update()
     {
-        final Collection<Integer> handles = new LinkedHashSet<Integer>();
-
-        // UTF
-        {
-            final int handle = getEmojiDownloader().downloadUTFEmoji(
-                    new UTFDownloadArguments()
-            );
-            if(handle != EmojiDownloader.HANDLE_NULL)
-                handles.add(handle);
-        }
-
-        // Extended
-        {
-            final int handle = getEmojiDownloader().downloadExtendedEmoji(
-                    new ExtendedDownloadArguments()
-            );
-            if(handle != EmojiDownloader.HANDLE_NULL)
-                handles.add(handle);
-        }
-
-        // Other
-        {
-            final List<Emoji> otherEmojies = getOtherEmojiList();
-            if(     !otherEmojies.isEmpty()
-                &&  !getUTFEmojiList().isEmpty()
-                &&  !getExtendedEmojiList().isEmpty()   )
-            {
-                final int count = otherEmojies.size();
-                final EmojiDownloadArguments[] argumentsArray = new EmojiDownloadArguments[count];
-
-                for(int i = 0;  i < count;  ++i)
-                {
-                    final Emoji emoji = otherEmojies.get(i);
-                    argumentsArray[i] = new EmojiDownloadArguments(emoji.getCode());
-                }
-
-                final int[] results = getEmojiDownloader().downloadEmojies(argumentsArray);
-
-                for(int handle : results)
-                {
-                    if(handle != EmojiDownloader.HANDLE_NULL)
-                        handles.add(handle);
-                }
-            }
-        }
-
-        return handles;
+        return UpdateManager.update();
     }
 
     /**
@@ -193,9 +149,14 @@ public class Emojidex {
         if( !isInitialized() )
             throw new EmojidexIsNotInitializedException();
 
+        // Delete cache directory.
         boolean result = EmojidexFileUtils.deleteFiles(EmojidexFileUtils.getLocalRootUri());
+
+        // Reload emojidex database.
         reload();
         ImageLoader.getInstance().clearCache();
+        updateInfo.reset();
+
         Log.d(TAG, "Delete all cache files in local storage.");
         return result;
     }
@@ -411,5 +372,14 @@ public class Emojidex {
     public EmojiDownloader getEmojiDownloader()
     {
         return EmojiDownloader.getInstance();
+    }
+
+    /**
+     * Get update information.
+     * @return      Update information.
+     */
+    public UpdateInfo getUpdateInfo()
+    {
+        return updateInfo;
     }
 }

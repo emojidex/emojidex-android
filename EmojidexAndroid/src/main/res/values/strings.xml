@@ -182,7 +182,6 @@
     <string name="preference_key_start_category" translatable="false">startCategory</string>
     <string name="preference_key_default_keyboard" translatable="false">defaultKeyboard</string>
     <string name="preference_key_text_size" translatable="false">textSize</string>
-    <string name="preference_key_last_update_time" translatable="false">lastUpdateTime</string>
     <string name="preference_key_update_interval" translatable="false">updateInterval</string>
     <string name="preference_key_update_now" translatable="false">updateNow</string>
     <string name="preference_key_logout_emojidex" translatable="false">singoutEmojidex</string>
