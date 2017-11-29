@@ -89,6 +89,24 @@
             android:onClick="onClickLoginButton" />
 
         <ImageButton
+            android:id="@+id/catalog_following"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_person_right_black_24dp"
+            android:background="@null"
+            android:onClick="onClickFollowingButton" />
+
+        <ImageButton
+            android:id="@+id/catalog_followers"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_person_left_black_24dp"
+            android:background="@null"
+            android:onClick="onClickFollowersButton" />
+
+        <ImageButton
             android:id="@+id/catalog_filter"
             android:layout_width="0dp"
             android:layout_height="40dp"

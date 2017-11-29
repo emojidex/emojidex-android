@@ -50,19 +50,33 @@
             android:background="@drawable/button_white"
             android:text="@string/menu_new_emoji"
             android:textColor="@color/primary"
+            android:textSize="12sp"
             android:visibility="gone"
             android:onClick="registerNewEmoji"/>
 
         <Button
-            android:id="@+id/my_emoji_button"
+            android:id="@+id/following_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             android:background="@drawable/button_white"
-            android:text="My emoji"
+            android:text="@string/menu_following"
             android:textColor="@color/primary"
+            android:textSize="12sp"
             android:visibility="gone"
-            android:onClick="showMyEmoji"/>
+            android:onClick="showFollowing"/>
+
+        <Button
+            android:id="@+id/followers_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:background="@drawable/button_white"
+            android:text="@string/menu_followers"
+            android:textColor="@color/primary"
+            android:textSize="12sp"
+            android:visibility="gone"
+            android:onClick="showFollowers"/>
 
         <View
             android:layout_width="0dp"
