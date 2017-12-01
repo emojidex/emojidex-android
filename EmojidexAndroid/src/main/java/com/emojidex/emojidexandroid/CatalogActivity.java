@@ -6,11 +6,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.AnimationDrawable;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -109,7 +110,14 @@ public class CatalogActivity extends Activity
         }
 
         // Emoji download.
-        indexUpdater = new EmojidexIndexUpdater(this, EmojidexKeyboard.create(this).getKeyCountMax());
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        float viewSize = getResources().getDimension(R.dimen.catalog_icon_size) + 10 * metrics.density;
+        Point point = new Point();
+        getWindowManager().getDefaultDisplay().getSize(point);
+        int columns = (int)(point.x / viewSize);
+        int rows = (int)(point.y / viewSize - 1);
+
+        indexUpdater = new EmojidexIndexUpdater(this, columns * rows);
         indexUpdater.startUpdateThread(indexLoadPageCount);
 
         new EmojidexUpdater(this).startUpdateThread();
@@ -397,7 +405,7 @@ public class CatalogActivity extends Activity
     }
 
     private List<Emoji> setEmojiList(List<Emoji> emojies, boolean standardOnly) {
-        if (!standardOnly) return  emojies;
+        if (!standardOnly) return emojies;
 
         List<Emoji> removeEmojies = new ArrayList<>();
         for (Emoji emoji : emojies) {
@@ -422,6 +430,9 @@ public class CatalogActivity extends Activity
         super.onResume();
         initStartCategory();
 
+        // after filtering.
+        changeCategory(currentCategory);
+
         Intent intent = getIntent();
         String action = intent.getAction();
         Set categories = intent.getCategories();
@@ -430,6 +441,8 @@ public class CatalogActivity extends Activity
 
         // emojidex login
         if ("login".equals(intent.getStringExtra("action"))) {
+            intent.removeExtra("action");
+
             if (intent.hasExtra("auth_token") && intent.hasExtra("username")) {
                 String authToken = intent.getStringExtra("auth_token");
                 String username = intent.getStringExtra("username");
@@ -460,9 +473,6 @@ public class CatalogActivity extends Activity
         setAdsVisibility();
         setLoginButtonVisibility();
         setMyEmojiButtonVisibility();
-
-        // after filtering.
-        changeCategory(currentCategory);
     }
 
     @Override
@@ -582,7 +592,7 @@ public class CatalogActivity extends Activity
         if(     currentCategory == null
             ||  !currentCategory.equals("index")    )
             return;
-        int count = gridView.getCount() / indexUpdater.getLimit() + indexLoadPageCount;
+        int count = indexManager.getEmojiNames().size() / indexUpdater.getLimit() + indexLoadPageCount;
         indexUpdater.startUpdateThread(count, true);
     }
 
@@ -712,15 +722,18 @@ public class CatalogActivity extends Activity
     /**
      * Custom emojidex animation updater.
      */
-    private class CustomAnimationUpdater implements AnimationUpdater {
+    private class CustomAnimationUpdater implements AnimationUpdater
+    {
         @Override
-        public void update() {
+        public void update()
+        {
             for (Drawable drawable : animationDrawables)
                 drawable.invalidateSelf();
         }
 
         @Override
-        public Collection<EmojidexAnimationDrawable> getDrawables() {
+        public Collection<EmojidexAnimationDrawable> getDrawables()
+        {
             return animationDrawables;
         }
     }
@@ -729,7 +742,8 @@ public class CatalogActivity extends Activity
      * Get standard emoji only preference
      * @return true or false
      */
-    private boolean isStandardOnly() {
+    private boolean isStandardOnly()
+    {
         SharedPreferences pref = getSharedPreferences(FilterActivity.PREF_NAME, Context.MODE_PRIVATE);
         return pref.getBoolean(getString(R.string.preference_key_standard_only), false);
     }
@@ -744,11 +758,14 @@ public class CatalogActivity extends Activity
         User user = new User();
 
         if (userdata.isLogined() &&
-                user.authorize(userdata.getUsername(), userdata.getAuthToken()) && (user.getPremium() || user.getPro())) {
+                user.authorize(userdata.getUsername(), userdata.getAuthToken()) && (user.getPremium() || user.getPro()))
+        {
             SharedPreferences pref = getSharedPreferences(FilterActivity.PREF_NAME, Context.MODE_PRIVATE);
             int sortType = pref.getInt(getString(R.string.preference_key_sort_type), EmojiComparator.SortType.SCORE.getValue());
             return EmojiComparator.SortType.fromInt(sortType);
-        } else {
+        }
+        else
+        {
             return EmojiComparator.SortType.SCORE;
         }
     }
