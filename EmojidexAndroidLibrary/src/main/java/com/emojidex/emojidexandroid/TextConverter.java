@@ -88,7 +88,7 @@ class TextConverter {
                 else if(emoji.hasOriginalCodes())
                     result.append( text.subSequence(startIndex, endIndex + charCount) );
                 else
-                    result.append(emoji.getMoji());
+                    result.append(emoji.getText());
                 startIndex = endIndex + charCount;
                 startIsSeparator = false;
             }
@@ -215,7 +215,7 @@ class TextConverter {
                 (drawable instanceof EmojidexAnimationDrawable)
                         ? new EmojidexAnimationImageSpan((EmojidexAnimationDrawable)drawable)
                         : new ImageSpan(drawable);
-        final SpannableString result = new SpannableString(emoji.hasOriginalCodes() ? emoji.toTagString() : emoji.getMoji());
+        final SpannableString result = new SpannableString(emoji.hasOriginalCodes() ? emoji.toTagString() : emoji.getText());
         result.setSpan(span, 0, result.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
         return result;
     }
