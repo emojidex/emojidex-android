@@ -79,8 +79,8 @@ class VersionManager {
             });
         }
 
-        // version <= 0.0.15
-        if(version < 5)
+        // version <= 0.0.14
+        if(version <= 4)
         {
             final int ORIGINAL_CODE_START = context.getResources().getInteger(R.integer.original_code_start);
             optimizeEmojiMethods.add(new OptimizeEmojiMethod() {
