@@ -91,7 +91,6 @@ public class UpdateInfo {
     public boolean isNeedUpdate()
     {
         return      !lastUpdateSucceeded
-                ||  lastUpdateVersionCode < 5
                 ||  lastUpdateTime <= 0
                 ;
     }
@@ -133,8 +132,10 @@ public class UpdateInfo {
         final Uri oldUri = EmojidexFileUtils.getLocalFileUri(OLD_FILENAME);
         if(EmojidexFileUtils.existsLocalFile(oldUri))
         {
-            reset();
             lastUpdateVersionCode = loadVersionCodeFromOldSystem(context, oldUri);
+            lastUpdateVersionName = "";
+            lastUpdateTime = System.currentTimeMillis();
+            lastUpdateSucceeded = true;
             dirty = true;
             save();
             EmojidexFileUtils.deleteFiles(oldUri);

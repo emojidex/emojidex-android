@@ -60,10 +60,15 @@ public class EmojiManager {
             return;
 
         // Initialize and add emoji.
+        final VersionManager vm = VersionManager.getInstance();
         emojies.ensureCapacity(emojies.size() + newEmojies.size());
 
         for(Emoji emoji : newEmojies)
         {
+            // Bug check.
+            vm.optimizeEmoji(emoji);
+
+            // Initialize.
             initialize(emoji);
         }
     }

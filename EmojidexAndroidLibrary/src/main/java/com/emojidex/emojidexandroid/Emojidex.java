@@ -61,7 +61,7 @@ public class Emojidex {
         updateInfo = new UpdateInfo();
         updateInfo.load(this.context);
 
-        VersionManager.getInstance().optimize();
+        VersionManager.getInstance().initialize(this.context);
 
         manager = new EmojiManager(this.context);
         manager.add(EmojidexFileUtils.getLocalJsonUri());
