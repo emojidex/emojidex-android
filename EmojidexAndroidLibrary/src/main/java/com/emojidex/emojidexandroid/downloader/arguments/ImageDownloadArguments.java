@@ -7,9 +7,8 @@ import com.emojidex.emojidexandroid.Emojidex;
  * Created by kou on 17/08/29.
  */
 
-public class ImageDownloadArguments implements ArgumentsInterface {
+public class ImageDownloadArguments extends AbstractFileDownloadArguments<ImageDownloadArguments> {
     private String emojiName;
-    private EmojiFormat format;
 
     /**
      * Construct object.
@@ -17,8 +16,9 @@ public class ImageDownloadArguments implements ArgumentsInterface {
      */
     public ImageDownloadArguments(String emojiName)
     {
+        super();
+
         setEmojiName(emojiName);
-        format = Emojidex.getInstance().getDefaultFormat();
     }
 
     /**
@@ -41,26 +41,6 @@ public class ImageDownloadArguments implements ArgumentsInterface {
         return this;
     }
 
-    /**
-     * Get emoji format.
-     * @return      Emoji format.
-     */
-    public EmojiFormat getFormat()
-    {
-        return format;
-    }
-
-    /**
-     * Set emoji format.
-     * @param format        Emoji format.
-     * @return              Self.
-     */
-    public ImageDownloadArguments setFormat(EmojiFormat format)
-    {
-        this.format = (format == null) ? Emojidex.getInstance().getDefaultFormat() : format;
-        return this;
-    }
-
     @Override
     public boolean equals(Object obj)
     {
@@ -70,7 +50,7 @@ public class ImageDownloadArguments implements ArgumentsInterface {
         final ImageDownloadArguments arg = (ImageDownloadArguments)obj;
 
         return      ArgumentsUtils.equals(emojiName, arg.emojiName)
-                &&  ArgumentsUtils.equals(format, arg.format)
+                &&  super.equals(obj)
                 ;
     }
 }

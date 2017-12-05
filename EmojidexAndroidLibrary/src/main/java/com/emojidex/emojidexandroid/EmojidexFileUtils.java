@@ -141,6 +141,16 @@ public class EmojidexFileUtils
     /**
      * Create emoji archive path from remote server.
      * @param format        Emoji format.
+     * @return      Emoji archive path.
+     */
+    public static String getRemoteEmojiArchivePath(EmojiFormat format)
+    {
+        return getRemoteEmojiArchivePath(format, getRemoteRootPathDefault());
+    }
+
+    /**
+     * Create emoji archive path from remote server.
+     * @param format        Emoji format.
      * @param rootPath      Server path.
      * @return      Emoji archive path.
      */

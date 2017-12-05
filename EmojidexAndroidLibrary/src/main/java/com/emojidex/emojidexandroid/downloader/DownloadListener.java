@@ -17,12 +17,12 @@ public class DownloadListener {
     }
 
     /**
-     * Called when complete download emoji image.
+     * Called when complete download emoji images.
      * @param handle        Download handle.
-     * @param emojiName     Download emoji name.
      * @param format        Download emoji format.
+     * @param emojiNames    Download emoji names.
      */
-    public void onDownloadImage(int handle, String emojiName, EmojiFormat format)
+    public void onDownloadImages(int handle, EmojiFormat format, String... emojiNames)
     {
         // nop
     }

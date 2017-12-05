@@ -405,7 +405,7 @@ public class CatalogActivity extends Activity
         gridView.setSelection(position);
     }
 
-    void invalidate(String emojiName)
+    void invalidate(String... emojiNames)
     {
         final int first = gridView.getFirstVisiblePosition();
         for(int i = 0;  i < gridView.getChildCount();  ++i)
@@ -414,10 +414,13 @@ public class CatalogActivity extends Activity
             final View view = gridView.getChildAt(i);
             final Emoji emoji = (Emoji)adapter.getItem(first + i);
 
-            if( emoji.getCode().equals(emojiName) )
+            for(String emojiName : emojiNames)
             {
-                adapter.getView(first + i, view, gridView);
-                return;
+                if( emoji.getCode().equals(emojiName) )
+                {
+                    adapter.getView(first + i, view, gridView);
+                    break;
+                }
             }
         }
     }
@@ -560,10 +563,10 @@ public class CatalogActivity extends Activity
         }
 
         @Override
-        public void onDownloadImage(int handle, String emojiName, EmojiFormat format)
+        public void onDownloadImages(int handle, EmojiFormat format, String... emojiNames)
         {
             if(CatalogActivity.this.format.equals(format))
-                invalidate(emojiName);
+                invalidate(emojiNames);
         }
     }
 }

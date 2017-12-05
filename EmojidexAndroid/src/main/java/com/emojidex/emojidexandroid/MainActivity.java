@@ -881,8 +881,12 @@ public class MainActivity extends Activity {
     private class CustomDownloadListener extends DownloadListener
     {
         @Override
-        public void onDownloadImage(int handle, String emojiName, EmojiFormat format)
+        public void onDownloadImages(int handle, EmojiFormat format, String... emojiNames)
         {
+            // Skip if emoji is not use.
+            if(!toggleState)
+                return;
+
             // Skip if emoji format is not default.
             if( !format.equals(emojidex.getDefaultFormat()) )
                 return;
@@ -899,26 +903,23 @@ public class MainActivity extends Activity {
                     return;
 
             // Update text.
-            if(toggleState)
-            {
-                editText.removeTextChangedListener(textWatcher);
+            editText.removeTextChangedListener(textWatcher);
 
-                final int oldStart = editText.getSelectionStart();
-                final int oldEnd = editText.getSelectionEnd();
+            final int oldStart = editText.getSelectionStart();
+            final int oldEnd = editText.getSelectionEnd();
 
-                final CharSequence newText = emojify(text, false);
-                setTextImageSize((Spannable)newText);
+            final CharSequence newText = emojify(text, false);
+            setTextImageSize((Spannable)newText);
 
-                text.replace(0, text.length(), newText);
+            text.replace(0, text.length(), newText);
 
-                final int length = editText.length();
-                editText.setSelection(
-                        Math.min(oldStart, length),
-                        Math.min(oldEnd, length)
-                );
+            final int length = editText.length();
+            editText.setSelection(
+                    Math.min(oldStart, length),
+                    Math.min(oldEnd, length)
+            );
 
-                editText.addTextChangedListener(textWatcher);
-            }
+            editText.addTextChangedListener(textWatcher);
         }
     }
 }

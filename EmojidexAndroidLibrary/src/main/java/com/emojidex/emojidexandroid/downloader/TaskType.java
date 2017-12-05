@@ -11,5 +11,6 @@ enum TaskType {
     SEARCH,
     EMOJI,
     IMAGE,
+    IMAGE_ARCHIVE,
     ;
 }

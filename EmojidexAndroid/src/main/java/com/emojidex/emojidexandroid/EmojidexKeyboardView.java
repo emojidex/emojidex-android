@@ -647,7 +647,7 @@ public class EmojidexKeyboardView extends KeyboardView {
     private class CustomDownloadListener extends DownloadListener
     {
         @Override
-        public void onDownloadImage(int handle, String emojiName, EmojiFormat format)
+        public void onDownloadImages(int handle, EmojiFormat format, String... emojiNames)
         {
             // Skip if format is not equals.
             if( !EmojidexKeyboardView.this.format.equals(format) )
@@ -667,11 +667,15 @@ public class EmojidexKeyboardView extends KeyboardView {
                 final ImageButton ib = (ImageButton)variantsLayout.getChildAt(i);
                 final String variantName = ib.getContentDescription().toString();
 
-                if( !variantName.equals(emojiName) )
-                    continue;
-
-                final Emoji variant = Emojidex.getInstance().getEmoji(variantName);
-                ib.setImageDrawable(variant.getDrawable(format, iconSize, false));
+                for(String emojiName : emojiNames)
+                {
+                    if(variantName.equals(emojiName))
+                    {
+                        final Emoji variant = Emojidex.getInstance().getEmoji(variantName);
+                        ib.setImageDrawable(variant.getDrawable(format, iconSize, false));
+                        break;
+                    }
+                }
             }
         }
     }

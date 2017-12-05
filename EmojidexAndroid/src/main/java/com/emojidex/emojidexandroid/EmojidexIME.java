@@ -903,10 +903,10 @@ public class EmojidexIME extends InputMethodService {
         }
 
         @Override
-        public void onDownloadImage(int handle, String emojiName, EmojiFormat format)
+        public void onDownloadImages(int handle, EmojiFormat format, String... emojiNames)
         {
             if(keyFormat.equals(format))
-                invalidate(emojiName);
+                invalidate(emojiNames);
         }
     }
 
