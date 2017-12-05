@@ -20,6 +20,14 @@
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/ime_category_text_my_emoji"
+                android:id="@+id/ime_category_button_my_emoji"
+                android:onClick="onClickCategoryButton"
+                android:contentDescription="@string/ime_category_id_my_emoji" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="@string/ime_category_text_history"
                 android:id="@+id/ime_category_button_history"
                 android:onClick="onClickCategoryButton"

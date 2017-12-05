@@ -39,6 +39,7 @@ public class SaveDataManager {
         Search("search.json", CAPACITY_INFINITY),
         Favorite("favorite.json", CAPACITY_INFINITY),
         Index("index.json", CAPACITY_INFINITY),
+        MyEmoji("my_emoji.json", CAPACITY_INFINITY),
         CatalogHistory("catalog_history.json", 18),
         CatalogSearch("catalog_search.json", CAPACITY_INFINITY),
         ;

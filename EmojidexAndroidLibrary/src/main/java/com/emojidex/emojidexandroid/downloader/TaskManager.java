@@ -8,6 +8,7 @@ import com.emojidex.emojidexandroid.downloader.arguments.EmojiDownloadArguments;
 import com.emojidex.emojidexandroid.downloader.arguments.ExtendedDownloadArguments;
 import com.emojidex.emojidexandroid.downloader.arguments.ImageDownloadArguments;
 import com.emojidex.emojidexandroid.downloader.arguments.IndexDownloadArguments;
+import com.emojidex.emojidexandroid.downloader.arguments.MyEmojiDownloadArguments;
 import com.emojidex.emojidexandroid.downloader.arguments.SearchDownloadArguments;
 import com.emojidex.emojidexandroid.downloader.arguments.UTFDownloadArguments;
 
@@ -167,6 +168,27 @@ class TaskManager {
                     }
                 },
                 TASK_PRIORITY_IMAGE
+        );
+    }
+
+    /**
+     * Regist task of download my emojies.
+     * @param arguments     Task arguments.
+     * @return              Task handle.
+     */
+    public int registMyEmoji(MyEmojiDownloadArguments arguments)
+    {
+        return registTask(
+                TaskType.MY_EMOJI,
+                arguments,
+                new TaskGeneratorInterface() {
+                    @Override
+                    public AbstractDownloadTask generate(ArgumentsInterface arguments)
+                    {
+                        return new MyEmojiJsonDownloadTask((MyEmojiDownloadArguments)arguments);
+                    }
+                },
+                TASK_PRIORITY_JSON
         );
     }
 
