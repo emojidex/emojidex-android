@@ -692,7 +692,7 @@ public class MainActivity extends Activity {
                 intent.removeExtra("auth_token");
                 intent.removeExtra("username");
 
-                final UserData userData = UserData.getInstance();
+                userData = UserData.getInstance();
                 userData.setUserData(authToken, username);
 
                 final HistoryManager hm = HistoryManager.getInstance(this);
@@ -736,6 +736,7 @@ public class MainActivity extends Activity {
 
         // Initialize ads.
         setAdsVisibility();
+        setMyEmojiButtonVisibility();
     }
 
     @Override
@@ -921,6 +922,17 @@ public class MainActivity extends Activity {
             );
 
             editText.addTextChangedListener(textWatcher);
+        }
+    }
+
+    /**
+     * set my_emoji button visibility (emojidex IME)
+     */
+    private void setMyEmojiButtonVisibility() {
+        userData = UserData.getInstance();
+
+        if (EmojidexIME.currentInstance != null) {
+            EmojidexIME.currentInstance.setMyEmojiButtonVisibility(userData.isLogined());
         }
     }
 }

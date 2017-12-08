@@ -22,8 +22,6 @@ class EmojidexUpdater {
 
     private final Collection<Integer> downloadHandles = new LinkedHashSet<Integer>();
 
-    private boolean succeeded;
-
     /**
      * Construct object.
      * @param context
@@ -67,7 +65,6 @@ class EmojidexUpdater {
         if(hasHandle)
         {
             emojidex.addDownloadListener(new CustomDownloadListener());
-            succeeded = true;
         }
 
         return hasHandle;
@@ -79,7 +76,10 @@ class EmojidexUpdater {
      */
     private boolean checkExecUpdate()
     {
-        return checkChangeDeviceLanguage() || checkUpdateTime();
+        return      checkChangeDeviceLanguage()
+                ||  emojidex.getUpdateInfo().isNeedUpdate()
+                ||  checkUpdateTime()
+                ;
     }
 
     /**
@@ -108,9 +108,6 @@ class EmojidexUpdater {
 
             // Clear cache.
             emojidex.deleteLocalCache();
-
-            // Reset last update time log.
-            pref.edit().putLong(context.getString(R.string.preference_key_last_update_time), 0).commit();
         }
 
         // Return result.
@@ -124,7 +121,7 @@ class EmojidexUpdater {
     private boolean checkUpdateTime()
     {
         final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
-        final long lastUpdateTime = pref.getLong(context.getString(R.string.preference_key_last_update_time), 0);
+        final long lastUpdateTime = emojidex.getUpdateInfo().getLastUpdateTime();
         final long currentTime = System.currentTimeMillis();
         final long updateInterval = Long.parseLong(pref.getString(context.getString(R.string.preference_key_update_interval), context.getString(R.string.preference_entryvalue_update_interval_default)));
         return (currentTime - lastUpdateTime) > updateInterval;
@@ -135,31 +132,22 @@ class EmojidexUpdater {
         @Override
         public void onFinish(int handle, boolean result)
         {
-            finishMethod(handle, result, "End update.");
+            finishMethod(handle, "End update.");
         }
 
         @Override
         public void onCancelled(int handle, boolean result)
         {
-            finishMethod(handle, result, "Cancel update.");
+            finishMethod(handle, "Cancel update.");
         }
 
-        private void finishMethod(int handle, boolean result, String msg)
+        private void finishMethod(int handle, String msg)
         {
             if(downloadHandles.remove(handle))
             {
-                succeeded = (succeeded && result);
-
                 // End update.
                 if(downloadHandles.isEmpty())
                 {
-                    // If emoji download failed, execute force update next time.
-                    final long updateTime = succeeded ? System.currentTimeMillis() : 0;
-                    final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
-                    final SharedPreferences.Editor prefEditor = pref.edit();
-                    prefEditor.putLong(context.getString(R.string.preference_key_last_update_time), updateTime);
-                    prefEditor.commit();
-
                     // Show message.
                     Toast.makeText(context, R.string.ime_message_update_complete, Toast.LENGTH_SHORT).show();
 

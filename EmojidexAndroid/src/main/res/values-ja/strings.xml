@@ -78,6 +78,7 @@
     <string name="editor_message_conversion_on">自動変換を有効にしました。</string>
     <string name="editor_message_conversion_off">自動変換を無効にしました。</string>
 
+    <string name="ime_category_text_my_emoji">My emoji</string>
     <string name="ime_category_text_history">履歴</string>
     <string name="ime_category_text_favorite">お気に入り</string>
     <string name="ime_category_text_search">検索</string>

@@ -12,5 +12,6 @@ enum TaskType {
     EMOJI,
     IMAGE,
     IMAGE_ARCHIVE,
+    MY_EMOJI,
     ;
 }
