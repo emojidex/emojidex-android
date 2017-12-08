@@ -195,7 +195,7 @@ public class EmojidexKeyboardView extends KeyboardView {
 
                 // Set emoji url.
                 final TextView urlText = (TextView)view.findViewById(R.id.emoji_url_text);
-                urlText.setText(PathUtils.getRemoteEmojiPath(key.popupCharacters.toString(), EmojiFormat.PNG_SEAL, "http://assets.emojidex.com/emoji"));
+                urlText.setText(EmojidexFileUtils.getRemoteEmojiPath(key.popupCharacters.toString(), EmojiFormat.PNG_SEAL, "http://assets.emojidex.com"));
                 view.findViewById(R.id.emoji_url_copy_button).setOnClickListener(new OnClickListener()
                 {
                     @Override
