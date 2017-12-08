@@ -39,6 +39,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.emojidex.emojidexandroid.downloader.DownloadListener;
+import com.emojidex.emojidexandroid.downloader.arguments.ImageDownloadArguments;
 import com.emojidex.libemojidex.Emojidex.Service.User;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;

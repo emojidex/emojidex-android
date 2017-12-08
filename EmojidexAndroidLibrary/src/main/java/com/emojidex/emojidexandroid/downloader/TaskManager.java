@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import com.emojidex.emojidexandroid.downloader.arguments.ArgumentsInterface;
 import com.emojidex.emojidexandroid.downloader.arguments.EmojiDownloadArguments;
 import com.emojidex.emojidexandroid.downloader.arguments.ExtendedDownloadArguments;
+import com.emojidex.emojidexandroid.downloader.arguments.ImageArchiveDownloadArguments;
 import com.emojidex.emojidexandroid.downloader.arguments.ImageDownloadArguments;
 import com.emojidex.emojidexandroid.downloader.arguments.IndexDownloadArguments;
 import com.emojidex.emojidexandroid.downloader.arguments.SearchDownloadArguments;
@@ -164,6 +165,28 @@ class TaskManager {
                     public AbstractDownloadTask generate(ArgumentsInterface arguments)
                     {
                         return new ImageDownloadTask((ImageDownloadArguments)arguments, context);
+                    }
+                },
+                TASK_PRIORITY_IMAGE
+        );
+    }
+
+    /**
+     * Regist task of download emoji image archive.
+     * @param arguments     Task arguments.
+     * @param context       Context.
+     * @return              Task handle.
+     */
+    public int registImageArchive(ImageArchiveDownloadArguments arguments, final Context context)
+    {
+        return registTask(
+                TaskType.IMAGE_ARCHIVE,
+                arguments,
+                new TaskGeneratorInterface() {
+                    @Override
+                    public AbstractDownloadTask generate(ArgumentsInterface arguments)
+                    {
+                        return new ImageArchiveDownloadTask((ImageArchiveDownloadArguments)arguments, context);
                     }
                 },
                 TASK_PRIORITY_IMAGE

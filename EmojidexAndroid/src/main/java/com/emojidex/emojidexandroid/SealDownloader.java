@@ -40,6 +40,7 @@ public class SealDownloader {
         // Download seal.
         final EmojiDownloader downloader = EmojiDownloader.getInstance();
         downloadHandle = downloader.downloadImages(
+                true,
                 new ImageDownloadArguments(name)
                     .setFormat(EmojiFormat.toFormat(parentActivity.getString(R.string.emoji_format_seal)))
         )[0];

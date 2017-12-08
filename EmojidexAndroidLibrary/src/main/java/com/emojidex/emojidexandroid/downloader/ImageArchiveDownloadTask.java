@@ -52,6 +52,15 @@ public class ImageArchiveDownloadTask extends AbstractFileDownloadTask {
     }
 
     @Override
+    protected boolean download()
+    {
+        final boolean result = super.download();
+        if(result)
+            uncompress();
+        return result;
+    }
+
+    @Override
     protected String getRemotePath()
     {
         final ImageArchiveDownloadArguments arguments = (ImageArchiveDownloadArguments)getArguments();
@@ -70,9 +79,6 @@ public class ImageArchiveDownloadTask extends AbstractFileDownloadTask {
         if(result)
         {
             final EmojiFormat format = ((ImageArchiveDownloadArguments)getArguments()).getFormat();
-
-            // Uncompress archive file.
-            uncompress();
 
             // Reload image.
             ImageLoader.getInstance().reload(format);
@@ -109,7 +115,9 @@ public class ImageArchiveDownloadTask extends AbstractFileDownloadTask {
 
             int n;
             while((n = xzIn.read(buffer)) != -1)
+            {
                 tarOut.write(buffer, 0, n);
+            }
 
             tarOut.close();
             xzIn.close();
@@ -124,7 +132,7 @@ public class ImageArchiveDownloadTask extends AbstractFileDownloadTask {
 
             for(TarArchiveEntry entry = tarIn.getNextTarEntry(); entry != null; entry = tarIn.getNextTarEntry())
             {
-                String emojiName = entry.getName();
+                String emojiName = new File(entry.getName()).getName();
                 final int extPos = emojiName.lastIndexOf('.');
                 if(extPos != -1)
                     emojiName = emojiName.substring(0, extPos);

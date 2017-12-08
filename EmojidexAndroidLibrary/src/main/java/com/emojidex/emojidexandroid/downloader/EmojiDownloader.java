@@ -1,12 +1,15 @@
 package com.emojidex.emojidexandroid.downloader;
 
 import android.content.Context;
+import android.net.Uri;
 
 import com.emojidex.emojidexandroid.Emoji;
 import com.emojidex.emojidexandroid.EmojiFormat;
 import com.emojidex.emojidexandroid.EmojiManager;
+import com.emojidex.emojidexandroid.EmojidexFileUtils;
 import com.emojidex.emojidexandroid.downloader.arguments.EmojiDownloadArguments;
 import com.emojidex.emojidexandroid.downloader.arguments.ExtendedDownloadArguments;
+import com.emojidex.emojidexandroid.downloader.arguments.ImageArchiveDownloadArguments;
 import com.emojidex.emojidexandroid.downloader.arguments.ImageDownloadArguments;
 import com.emojidex.emojidexandroid.downloader.arguments.IndexDownloadArguments;
 import com.emojidex.emojidexandroid.downloader.arguments.SearchDownloadArguments;
@@ -150,8 +153,20 @@ public class EmojiDownloader
      */
     public int[] downloadImages(ImageDownloadArguments... argumentsArray)
     {
+        return downloadImages(false, argumentsArray);
+    }
+
+    /**
+     * Download emoji images.
+     * @param ignoreArchive     Ignore archive file flag,
+     * @param argumentsArray    Download arguments array.
+     * @return                  Download handle array.
+     */
+    public int[] downloadImages(boolean ignoreArchive, ImageDownloadArguments... argumentsArray)
+    {
         final int[] handles = new int[argumentsArray.length];
         boolean doRun = false;
+        boolean doDownloadArchive = false;
 
         for(int i = argumentsArray.length - 1;  i >= 0;  --i)
         {
@@ -167,10 +182,33 @@ public class EmojiDownloader
                 continue;
             }
 
+            // Download archive if emoji is utf and not found image.
+            if(     !ignoreArchive
+                &&  emoji.getType().equals("utf")   )
+            {
+                handles[i] = HANDLE_NULL;
+                if( !doDownloadArchive )
+                {
+                    final Uri uri = EmojidexFileUtils.getLocalEmojiUri(emoji.getCode(), arguments.getFormat());
+                    if( !EmojidexFileUtils.existsLocalFile(uri) )
+                    {
+                        handles[i] = taskManager.registImageArchive(
+                                new ImageArchiveDownloadArguments()
+                                        .setFormat(arguments.getFormat()),
+                                context
+                        );
+                        doDownloadArchive = true;
+                        doRun = doRun || (handles[i] != HANDLE_NULL);
+                        continue;
+                    }
+                }
+                else
+                    continue;
+            }
+
             // Download image.
             handles[i] = taskManager.registImage(arguments, context);
-            if(handles[i] != HANDLE_NULL)
-                doRun = true;
+            doRun = doRun || (handles[i] != HANDLE_NULL);
         }
         if( doRun )
             taskManager.runNextTasks();
