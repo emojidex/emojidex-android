@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.provider.OpenableColumns;
 
@@ -33,6 +34,9 @@ public class EmojidexFileUtils
     private static final String API_ROOT_PATH = "https://www.emojidex.com/api/v1";
     private static final String EMOJI_JSON_FILENAME = "emoji.json";
     private static final String MOJI_CODES_JSON_FILENAME = "moji_codes.json";
+
+    private static final String LOCAL_SAVE_PATH =
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath() + "/emojidex-assets";
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
@@ -450,5 +454,30 @@ public class EmojidexFileUtils
         {
             // nop
         }
+    }
+
+    /**
+     * Get local storage path for save a seal.
+     * @return Local storage uri.
+     */
+    public static Uri getLocalSaveUri(String emojiName, EmojiFormat format)
+    {
+        return Uri.parse("file:" + getLocalSavePath(emojiName, format));
+    }
+
+    /**
+     * Get external storage path for save a seal.
+     * @param emojiName Emoji name.
+     * @param format Emoji format.
+     * @return Emoji path in external storage.
+     */
+    public static String getLocalSavePath(String emojiName, EmojiFormat format)
+    {
+        return LOCAL_SAVE_PATH + "/" + emojiName + format.getExtension();
+    }
+
+    public static String getLocalSaveFolder()
+    {
+        return LOCAL_SAVE_PATH;
     }
 }

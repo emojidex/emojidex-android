@@ -145,6 +145,13 @@
     <string name="send_seal_not_found">シールが見つかりません。</string>
     <string name="send_seal_not_found_ok">OK</string>
 
+    <string name="select_dialog_title">選択してください</string>
+    <string name="select_dialog_send_seal">シールを送信する</string>
+    <string name="select_dialog_save_seal">シールを保存する</string>
+    <string name="failed_make_folder">シールを保存するフォルダの作成に失敗しました。</string>
+    <string name="save_seal_dialog_title">シール保存準備中...</string>
+    <string name="save_seal_success">シールを保存しました。</string>
+
     <string name="usagestats_dialog_message">シール送信機能が送信先のアプリを探知するのに、アプリ使用状況へのアクセスを許可する必要があります。</string>
     <string name="usagestats_dialog_checkbox_text">今後表示しない</string>
     <string name="usagestats_dialog_ignore_button">無視</string>

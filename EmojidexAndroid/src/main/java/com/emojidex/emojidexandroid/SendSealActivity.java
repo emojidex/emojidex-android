@@ -120,7 +120,7 @@ public class SendSealActivity extends Activity {
             }
         });
 
-        downloader.download(emojiName);
+        downloader.downloadForSend(emojiName);
     }
 
     /**
