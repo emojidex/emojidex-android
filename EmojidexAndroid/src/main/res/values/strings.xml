@@ -239,4 +239,7 @@
     <!-- filter window -->
     <string name="standard_only">Standard emoji only</string>
     <string name="filtering">Filtering</string>
+
+    <!-- photo editor -->
+    <string name="open_error">The image could not be opened.</string>
 </resources>

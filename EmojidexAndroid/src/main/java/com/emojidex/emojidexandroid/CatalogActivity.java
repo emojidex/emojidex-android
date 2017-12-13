@@ -60,6 +60,7 @@ public class CatalogActivity extends Activity
     private static final String EMOJIDEX_QUERY = "?user_agent=emojidexNativeClient";
 
     private static final int REQUEST_EXTERNAL_STORAGE = 1000;
+    private static final int SELECT_PHOTO = 1001;
     private static final String[] PERMISSIONS_STORAGE = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -709,6 +710,33 @@ public class CatalogActivity extends Activity
             saveEmoji(selectedEmoji);
             selectedEmoji = null;
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        if (requestCode != SELECT_PHOTO || resultCode != Activity.RESULT_OK || data == null)
+        {
+            super.onActivityResult(requestCode, resultCode, data);
+            return;
+        }
+
+        // After selecting a photo.
+        Intent intent = new Intent(CatalogActivity.this, PhotoEditorActivity.class);
+        intent.setData(data.getData());
+        startActivity(intent);
+    }
+
+    /**
+     * Click photo edit button. Select photo to edit.
+     * @param v button.
+     */
+    public void onClickPhotoEditorButton(View v)
+    {
+        Intent intent = new Intent();
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("image/*");
+        startActivityForResult(intent, SELECT_PHOTO);
     }
 
     /**

@@ -183,4 +183,7 @@
     <!-- filter window -->
     <string name="standard_only">標準絵文字のみ表示</string>
     <string name="filtering">フィルタリング</string>
+
+    <!-- photo editor -->
+    <string name="open_error">画像を開くことができませんでした。</string>
 </resources>

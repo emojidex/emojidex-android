@@ -126,6 +126,11 @@
         <activity android:name="com.google.android.gms.ads.AdActivity"
                   android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"/>
 
+        <activity
+            android:name=".PhotoEditorActivity"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
         <provider
             android:name="com.emojidex.emojidexandroid.EmojidexProvider"
             android:authorities="com.emojidex.emojidexandroid.provider"

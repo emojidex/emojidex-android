@@ -122,6 +122,14 @@
             android:src="@drawable/ic_search_black_24dp"
             android:background="@null"
             android:onClick="onClickSearchButton"/>
+
+        <ImageButton
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_photo_filter_black_24dp"
+            android:background="@null"
+            android:onClick="onClickPhotoEditorButton" />
     </LinearLayout>
 
     <GridView
