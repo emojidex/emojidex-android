@@ -17,6 +17,7 @@ public class SealGenerator {
 
     private Uri uri = null;
     private boolean useLow = false;
+    private Uri destUri = null;
 
     /**
      * Construct object.
@@ -72,12 +73,21 @@ public class SealGenerator {
     }
 
     /**
+     * Set save destination uri.
+     * @param uri Uri
+     */
+    public void setDestUri(Uri uri)
+    {
+        destUri = uri;
+    }
+
+    /**
      * Create temporary file.
      * @param emoji     Emoji.
      */
     private void createTemporaryFile(Emoji emoji)
     {
-        final Uri tmpUri = EmojidexFileUtils.getTemporaryUri(".png");
+        final Uri tmpUri = destUri == null ? EmojidexFileUtils.getTemporaryUri(".png") : destUri;
         useLow = false;
 
         // If file not found, use default format.

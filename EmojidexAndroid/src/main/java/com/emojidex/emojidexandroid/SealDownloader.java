@@ -35,7 +35,7 @@ public class SealDownloader {
      */
     public void downloadForSend(String name)
     {
-        download(name, R.string.send_seal_dialog_title, true);
+        download(name, R.string.send_seal_dialog_title);
     }
 
     /**
@@ -44,16 +44,15 @@ public class SealDownloader {
      */
     public void downloadForSave(String name)
     {
-        download(name, R.string.save_seal_dialog_title, false);
+        download(name, R.string.save_seal_dialog_title);
     }
 
     /**
      * Download seal.
      * @param name  Emoji name.
      * @param titleId Dialog title.
-     * @param useDefaultPath Use default save folder path.
      */
-    public void download(String name, int titleId, boolean useDefaultPath)
+    public void download(String name, int titleId)
     {
         canceled = false;
 
@@ -63,7 +62,6 @@ public class SealDownloader {
                 true,
                 new ImageDownloadArguments(name)
                     .setFormat(EmojiFormat.toFormat(parentActivity.getString(R.string.emoji_format_seal)))
-                    .setUseDefaultPath(useDefaultPath)
         )[0];
 
         // If already downloaded.

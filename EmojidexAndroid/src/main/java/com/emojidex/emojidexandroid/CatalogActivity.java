@@ -525,6 +525,11 @@ public class CatalogActivity extends Activity
 
                 String path = EmojidexFileUtils.getLocalSavePath(emojiName, EmojiFormat.PNG_SEAL);
                 String text = getString(R.string.save_seal_success) + "\n" + path;
+
+                final SealGenerator generator = new SealGenerator(CatalogActivity.this);
+                generator.setDestUri(EmojidexFileUtils.getLocalSaveUri(emojiName, EmojiFormat.PNG_SEAL));
+                generator.generate(emojiName);
+
                 MediaScannerConnection.scanFile(
                         getApplicationContext(), new String[] { path }, new String[] { "image/jpg" }, null);
                 Toast.makeText(CatalogActivity.this, text, Toast.LENGTH_LONG).show();
