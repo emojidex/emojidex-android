@@ -9,6 +9,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
@@ -19,6 +22,7 @@ import android.util.DisplayMetrics;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -100,6 +104,8 @@ public class CatalogActivity extends Activity
 
     private EmojiComparator.SortType currentSortType;
     private boolean standardOnly;
+
+    private int selectedColor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -206,6 +212,7 @@ public class CatalogActivity extends Activity
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)
             {
                 final Emoji emoji = (Emoji)parent.getAdapter().getItem(position);
+                selectedColor = Color.WHITE;
                 sendEmoji(emoji);
             }
         });
@@ -369,6 +376,7 @@ public class CatalogActivity extends Activity
                 historyManager.addFirst(emojiName);
 
                 final SealGenerator generator = new SealGenerator(CatalogActivity.this);
+                generator.setBackgroundColor(selectedColor);
                 generator.generate(emojiName);
 
                 if (generator.useLowQuality()) {
@@ -449,6 +457,7 @@ public class CatalogActivity extends Activity
         emojies.removeAll(removeEmojies);
 
         return emojies;
+    }
 
     /**
      * Show dialog.
@@ -457,25 +466,78 @@ public class CatalogActivity extends Activity
      */
     private void showSelectDialog(final Emoji emoji)
     {
-        final CharSequence[] items = { getString(R.string.select_dialog_send_seal),
-                getString(R.string.select_dialog_save_seal) };
+        // Create dialog layout.
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        final View layout = inflater.inflate(R.layout.dialog_sealkit, (ViewGroup) findViewById(R.id.dialog_sealkit_root));
+        selectedColor = Color.WHITE;
+
+        final ImageView image = (ImageView) layout.findViewById(R.id.dialog_sealkit_image);
+        Drawable drawable = emoji.getDrawable(EmojiFormat.toFormat(getString(R.string.emoji_format_catalog)));
+        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+        drawable = new BitmapDrawable(getResources(),
+                Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() * 3, bitmap.getHeight() * 3, true));
+        image.setImageDrawable(drawable);
+        image.setBackgroundColor(selectedColor);
+
+        Button white = (Button) layout.findViewById(R.id.dialog_sealkit_white);
+        white.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view) {
+                image.setBackgroundColor(Color.WHITE);
+                selectedColor = Color.WHITE;
+            }
+        });
+        Button transparent = (Button) layout.findViewById(R.id.dialog_sealkit_transparent);
+        transparent.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view) {
+                image.setBackgroundColor(Color.TRANSPARENT);
+                selectedColor = Color.TRANSPARENT;
+            }
+        });
+        Button black = (Button) layout.findViewById(R.id.dialog_sealkit_black);
+        black.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view) {
+                image.setBackgroundColor(Color.BLACK);
+                selectedColor = Color.BLACK;
+            }
+        });
+        Button gray = (Button) layout.findViewById(R.id.dialog_sealkit_gray);
+        gray.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view) {
+                image.setBackgroundColor(Color.GRAY);
+                selectedColor = Color.GRAY;
+            }
+        });
+
         final AlertDialog.Builder dialog = new AlertDialog.Builder(CatalogActivity.this);
         dialog.setTitle(getString(R.string.select_dialog_title));
-        dialog.setItems(
-                items,
+        dialog.setView(layout);
+        dialog.setNegativeButton(
+                R.string.select_dialog_send_seal,
                 new DialogInterface.OnClickListener()
                 {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i)
                     {
-                        if (i == 0)
-                        {
-                            sendEmoji(emoji);
-                        }
-                        else
-                        {
-                            prepareSaveEmoji(emoji);
-                        }
+                        sendEmoji(emoji);
+                    }
+                }
+        );
+        dialog.setPositiveButton(
+                R.string.select_dialog_save_seal,
+                new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i)
+                    {
+                        prepareSaveEmoji(emoji);
                     }
                 }
         );
@@ -520,6 +582,7 @@ public class CatalogActivity extends Activity
 
                 // Generate seal.
                 final SealGenerator generator = new SealGenerator(CatalogActivity.this);
+                generator.setBackgroundColor(selectedColor);
                 generator.generate(emojiName);
 
                 // Save image.
@@ -561,8 +624,8 @@ public class CatalogActivity extends Activity
         downloader.download(
                 emojiName,
                 getString(R.string.save_seal_dialog_title),
-                getString(R.string.send_seal_dialog_message),
-                getString(R.string.send_seal_dialog_cancel)
+                getString(R.string.save_seal_dialog_message),
+                getString(R.string.save_seal_dialog_cancel)
         );
     }
 

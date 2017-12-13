@@ -152,6 +152,7 @@
     <string name="select_dialog_title">Please select</string>
     <string name="select_dialog_send_seal">Send this seal.</string>
     <string name="select_dialog_save_seal">Save this seal.</string>
+    <string name="select_dialog_color">Background color</string>
     <string name="failed_save_seal">Failed save seal.</string>
     <string name="save_seal_dialog_title">Getting seal...</string>
     <string name="save_seal_dialog_message" translatable="false">@string/send_seal_dialog_message</string>
