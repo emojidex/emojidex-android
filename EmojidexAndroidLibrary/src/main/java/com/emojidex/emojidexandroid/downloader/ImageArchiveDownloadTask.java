@@ -14,10 +14,9 @@ import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.xz.XZCompressorInputStream;
 import org.apache.commons.compress.utils.IOUtils;
 
-import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
@@ -29,7 +28,7 @@ public class ImageArchiveDownloadTask extends AbstractFileDownloadTask {
     private static final int BUFFER_SIZE = 4096;
 
     private final Context context;
-    private final Uri temporaryUri;
+    private final ByteArrayOutputStream outXz = new ByteArrayOutputStream();
 
     private final ArrayList<String> emojiNames = new ArrayList<String>();
 
@@ -40,9 +39,8 @@ public class ImageArchiveDownloadTask extends AbstractFileDownloadTask {
      */
     public ImageArchiveDownloadTask(ImageArchiveDownloadArguments arguments, Context context)
     {
-        super(arguments, context);
+        super(arguments);
         this.context = context;
-        temporaryUri = Uri.parse("file:" + EmojidexFileUtils.getTemporaryPath());
     }
 
     @Override
@@ -68,9 +66,9 @@ public class ImageArchiveDownloadTask extends AbstractFileDownloadTask {
     }
 
     @Override
-    protected Uri getLocalUri()
+    protected OutputStream getOutputStream()
     {
-        return temporaryUri;
+        return outXz;
     }
 
     @Override
@@ -99,35 +97,28 @@ public class ImageArchiveDownloadTask extends AbstractFileDownloadTask {
     private void uncompress()
     {
         final ImageArchiveDownloadArguments arguments = (ImageArchiveDownloadArguments)getArguments();
-        final byte[] buffer = new byte[BUFFER_SIZE];
-        final ContentResolver cr = context.getContentResolver();
 
         try
         {
             // xz -> tar
             final XZCompressorInputStream xzIn = new XZCompressorInputStream(
-                    new BufferedInputStream(
-                            cr.openInputStream(temporaryUri)
-                    )
+                    new ByteArrayInputStream(outXz.toByteArray())
             );
-            final File tarFile = new File(EmojidexFileUtils.getTemporaryPath());
-            final FileOutputStream tarOut = new FileOutputStream(tarFile);
+            final ByteArrayOutputStream tarOut = new ByteArrayOutputStream();
 
+            final byte[] buffer = new byte[BUFFER_SIZE];
             int n;
             while((n = xzIn.read(buffer)) != -1)
-            {
                 tarOut.write(buffer, 0, n);
-            }
 
             tarOut.close();
             xzIn.close();
 
             // tar -> files
+            final ContentResolver cr = context.getContentResolver();
             final EmojiFormat format = arguments.getFormat();
             final TarArchiveInputStream tarIn = new TarArchiveInputStream(
-                    new BufferedInputStream(
-                            new FileInputStream(tarFile)
-                    )
+                    new ByteArrayInputStream(tarOut.toByteArray())
             );
 
             for(TarArchiveEntry entry = tarIn.getNextTarEntry(); entry != null; entry = tarIn.getNextTarEntry())
@@ -148,13 +139,9 @@ public class ImageArchiveDownloadTask extends AbstractFileDownloadTask {
                 // Add to list.
                 emojiNames.add(emojiName);
             }
-
-            tarFile.delete();
         } catch(Exception e)
         {
             e.printStackTrace();
         }
-
-        EmojidexFileUtils.deleteFiles(temporaryUri);
     }
 }

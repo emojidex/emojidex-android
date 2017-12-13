@@ -1,15 +1,9 @@
 package com.emojidex.emojidexandroid.downloader;
 
-import android.content.Context;
-import android.net.Uri;
-
 import com.emojidex.emojidexandroid.downloader.arguments.AbstractFileDownloadArguments;
 
-import java.io.BufferedOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -25,25 +19,19 @@ abstract class AbstractFileDownloadTask extends AbstractDownloadTask {
     private static final int CONNECT_TIMEOUT = 10 * 1000;   // milliseconds
     private static final int READ_TIMEOUT = 10 * 1000;      // milliseconds
 
-    private final Context context;
-
     /**
      * Construct object.
      * @param arguments     Download arguments.
-     * @param context       Context.
      */
-    public AbstractFileDownloadTask(AbstractFileDownloadArguments arguments, Context context)
+    public AbstractFileDownloadTask(AbstractFileDownloadArguments arguments)
     {
         super(arguments);
-
-        this.context = context;
     }
 
     @Override
     protected boolean download()
     {
         // Download image.
-        final AbstractFileDownloadArguments arguments = (AbstractFileDownloadArguments)getArguments();
         HttpsURLConnection connection = null;
 
         try
@@ -61,29 +49,17 @@ abstract class AbstractFileDownloadTask extends AbstractDownloadTask {
 
             if(connection.getResponseCode() == HttpsURLConnection.HTTP_OK)
             {
-                final Uri dest = getLocalUri();
-
-                // Create directory if destination uri is file and not found directory.
-                if(dest.getScheme().equals("file"))
-                {
-                    final File parentDir = new File(dest.getPath()).getParentFile();
-                    if(!parentDir.exists())
-                        parentDir.mkdirs();
-                }
-
                 // Download file.
-                final OutputStream os = context.getContentResolver().openOutputStream(dest);
-
-                final DataInputStream dis = new DataInputStream(connection.getInputStream());
-                final DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(os));
+                final OutputStream os = getOutputStream();
+                final InputStream is = connection.getInputStream();
 
                 final byte[] buffer = new byte[BUFFER_SIZE];
                 int readByte;
-                while((readByte = dis.read(buffer)) != -1)
-                    dos.write(buffer, 0, readByte);
+                while((readByte = is.read(buffer)) != -1)
+                    os.write(buffer, 0, readByte);
 
-                dis.close();
-                dos.close();
+                is.close();
+                os.close();
             }
 
             connection.disconnect();
@@ -117,8 +93,8 @@ abstract class AbstractFileDownloadTask extends AbstractDownloadTask {
     protected abstract String getRemotePath();
 
     /**
-     * Get local file path.
-     * @return      Local file path.
+     * Get output stream.
+     * @return      Output stream.
      */
-    protected abstract Uri getLocalUri();
+    protected abstract OutputStream getOutputStream();
 }
