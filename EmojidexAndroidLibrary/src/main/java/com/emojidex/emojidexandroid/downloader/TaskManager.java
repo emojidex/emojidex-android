@@ -27,7 +27,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 class TaskManager {
     public final static int TASK_PRIORITY_JSON = 1000;
-    public final static int TASK_PRIORITY_IMAGE = 2000;
+    public final static int TASK_PRIORITY_IMAGE_ARCHIVE = 2000;
+    public final static int TASK_PRIORITY_IMAGE = 3000;
 
     private final Map<Integer, ArrayDeque<AbstractDownloadTask>> idleTasks;
     private final Collection<AbstractDownloadTask> runningTasks;
@@ -190,7 +191,7 @@ class TaskManager {
                         return new ImageArchiveDownloadTask((ImageArchiveDownloadArguments)arguments, context);
                     }
                 },
-                TASK_PRIORITY_IMAGE
+                TASK_PRIORITY_IMAGE_ARCHIVE
         );
     }
 
