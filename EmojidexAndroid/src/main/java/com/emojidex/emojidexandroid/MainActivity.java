@@ -12,7 +12,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.text.Editable;
@@ -38,6 +37,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.emojidex.emojidexandroid.animation.EmojidexAnimationImageSpan;
+import com.emojidex.emojidexandroid.animation.updater.AnimationUpdater;
+import com.emojidex.emojidexandroid.animation.updater.TextViewAnimationUpdater;
 import com.emojidex.emojidexandroid.downloader.DownloadListener;
 import com.emojidex.emojidexandroid.downloader.arguments.ImageDownloadArguments;
 import com.emojidex.libemojidex.Emojidex.Service.User;
@@ -54,7 +56,6 @@ public class MainActivity extends Activity {
     private static final String EMOJIDEX_QUERY = "?user_agent=emojidexNativeClient";
 
     private InputMethodManager inputMethodManager;
-    private boolean isAnimating;
 
     private AdView adView;
     private FirebaseAnalytics analytics;
@@ -151,6 +152,7 @@ public class MainActivity extends Activity {
 
     private EditText editText;
     private final TextWatcher textWatcher = new CustomTextWatcher();
+    private AnimationUpdater animationUpdater;
 
     private ToggleButton toggleButton;
     private boolean toggleState = true;
@@ -209,6 +211,9 @@ public class MainActivity extends Activity {
         if (userData.isLogined()) {
             setLoginButtonVisibility(false);
         }
+
+        // Init animation updater.
+        animationUpdater = new CustomAnimationUpdater(editText);
     }
 
     private CharSequence emojify(final CharSequence cs)
@@ -829,38 +834,16 @@ public class MainActivity extends Activity {
 
     private void startAnimation()
     {
-        if(isAnimating)
-            return;
-
         final Editable text = editText.getText();
         if(text.getSpans(0, text.length(), EmojidexAnimationImageSpan.class).length == 0)
             return;
 
-        isAnimating = true;
-
-        final Handler handler = new Handler();
-        handler.post(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                if(!isAnimating)
-                    return;
-
-                editText.removeTextChangedListener(textWatcher);
-
-                editText.setText(editText.getText());
-
-                editText.addTextChangedListener(textWatcher);
-
-                handler.postDelayed(this, 100);
-            }
-        });
+        emojidex.addAnimationUpdater(animationUpdater);
     }
 
     private void stopAnimation()
     {
-        isAnimating = false;
+        emojidex.removeAnimationUpdater(animationUpdater);
     }
 
     private void setTextImageSize(Spannable text)
@@ -933,6 +916,25 @@ public class MainActivity extends Activity {
 
         if (EmojidexIME.currentInstance != null) {
             EmojidexIME.currentInstance.setMyEmojiButtonVisibility(userData.isLogined());
+        }
+    }
+
+    /**
+     * Custom emojidex animation updater.
+     */
+    private class CustomAnimationUpdater extends TextViewAnimationUpdater
+    {
+        public CustomAnimationUpdater(TextView textView)
+        {
+            super(textView);
+        }
+
+        @Override
+        public void update()
+        {
+            editText.removeTextChangedListener(textWatcher);
+            super.update();
+            editText.addTextChangedListener(textWatcher);
         }
     }
 }

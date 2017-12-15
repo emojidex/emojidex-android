@@ -7,6 +7,8 @@ import android.text.style.DynamicDrawableSpan;
 import android.text.style.ImageSpan;
 import android.util.Log;
 
+import com.emojidex.emojidexandroid.animation.EmojidexAnimationDrawable;
+import com.emojidex.emojidexandroid.animation.EmojidexAnimationImageSpan;
 import com.emojidex.emojidexandroid.downloader.arguments.EmojiDownloadArguments;
 
 import java.util.LinkedList;

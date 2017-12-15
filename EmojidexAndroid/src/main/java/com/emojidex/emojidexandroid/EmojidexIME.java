@@ -7,7 +7,6 @@ import android.content.res.Configuration;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.text.InputType;
 import android.util.Log;
@@ -25,6 +24,8 @@ import android.widget.HorizontalScrollView;
 import android.widget.RadioButton;
 import android.widget.ViewFlipper;
 
+import com.emojidex.emojidexandroid.animation.EmojidexAnimationDrawable;
+import com.emojidex.emojidexandroid.animation.updater.AnimationUpdater;
 import com.emojidex.emojidexandroid.comparator.EmojiComparator;
 import com.emojidex.emojidexandroid.downloader.DownloadListener;
 import com.emojidex.libemojidex.Emojidex.Service.User;
@@ -32,6 +33,7 @@ import com.emojidex.libemojidex.Emojidex.Service.User;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -77,11 +79,10 @@ public class EmojidexIME extends InputMethodService {
     private EmojidexIndexUpdater indexUpdater = null;
     private EmojidexMyEmojiUpdater myEmojiUpdater = null;
 
-    private boolean isAnimating = false;
-
     private final HashMap<String, List<Emoji>> categorizedEmojies = new HashMap<String, List<Emoji>>();
 
     private final CustomDownloadListener downloadListener = new CustomDownloadListener();
+    private final CustomAnimationUpdater animationUpdater = new CustomAnimationUpdater();
 
     private EmojiComparator.SortType currentSortType;
     private boolean standardOnly = false;
@@ -686,29 +687,12 @@ public class EmojidexIME extends InputMethodService {
 
     private void startAnimation()
     {
-        if(isAnimating)
-            return;
-
-        isAnimating = true;
-
-        final Handler handler = new Handler();
-        handler.post(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                if(!isAnimating)
-                    return;
-
-                keyboardViewManager.getCurrentView().invalidateAnimation();
-                handler.postDelayed(this, 100);
-            }
-        });
+        emojidex.addAnimationUpdater(animationUpdater);
     }
 
     private void stopAnimation()
     {
-        isAnimating = false;
+        emojidex.removeAnimationUpdater(animationUpdater);
     }
 
     /**
@@ -971,6 +955,24 @@ public class EmojidexIME extends InputMethodService {
             myEmojiButton.setVisibility(View.VISIBLE);
         } else {
             myEmojiButton.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * Custom emojidex animation updater.
+     */
+    private class CustomAnimationUpdater implements AnimationUpdater
+    {
+        @Override
+        public void update()
+        {
+            keyboardViewManager.getCurrentView().invalidateAnimation();
+        }
+
+        @Override
+        public Collection<EmojidexAnimationDrawable> getDrawables()
+        {
+            return keyboardViewManager.getCurrentView().getAnimationDrawables();
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.emojidex.emojidexandroid;
+package com.emojidex.emojidexandroid.animation;
 
 import android.graphics.Canvas;
 import android.graphics.drawable.AnimationDrawable;
@@ -89,6 +89,16 @@ public class EmojidexAnimationDrawable extends AnimationDrawable
         {
             getFrame(i).setBounds(getBounds());
         }
+    }
+
+    public long getCurrentTime()
+    {
+        return timer;
+    }
+
+    public int getCurrentDuration()
+    {
+        return getDuration(currentIndex);
     }
 
     private void calcTime()

@@ -9,7 +9,6 @@ import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +23,8 @@ import android.widget.ListAdapter;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
+import com.emojidex.emojidexandroid.animation.EmojidexAnimationDrawable;
+import com.emojidex.emojidexandroid.animation.updater.AnimationUpdater;
 import com.emojidex.emojidexandroid.comparator.EmojiComparator;
 import com.emojidex.emojidexandroid.downloader.DownloadListener;
 import com.emojidex.emojidexandroid.downloader.arguments.ImageDownloadArguments;
@@ -33,6 +34,7 @@ import com.google.android.gms.ads.AdView;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -74,7 +76,8 @@ public class CatalogActivity extends Activity
 
     private final CustomDownloadListener downloadListener = new CustomDownloadListener();
 
-    private final List<Drawable> animationDrawables = new ArrayList<Drawable>();
+    private final List<EmojidexAnimationDrawable> animationDrawables = new ArrayList<EmojidexAnimationDrawable>();
+    private final CustomAnimationUpdater animationUpdater = new CustomAnimationUpdater();
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -546,36 +549,21 @@ public class CatalogActivity extends Activity
 
     private void initAnimation()
     {
-        final boolean isAnimating = !animationDrawables.isEmpty();
         animationDrawables.clear();
 
         final int count = gridView.getChildCount();
         for(int i = 0;  i < count;  ++i)
         {
             final Drawable drawable = ((ImageView)gridView.getChildAt(i)).getDrawable();
-            if(drawable instanceof AnimationDrawable)
-                animationDrawables.add(drawable);
+            if(drawable instanceof EmojidexAnimationDrawable)
+                animationDrawables.add((EmojidexAnimationDrawable)drawable);
         }
 
-        // Skip if not found animation emoji or already animating.
-        if(animationDrawables.isEmpty() || isAnimating)
-            return;
-
-        // Start animation.
-        final Handler handler = new Handler();
-        handler.post(new Runnable() {
-            @Override
-            public void run()
-            {
-                if(animationDrawables.isEmpty())
-                    return;
-
-                for(Drawable drawable : animationDrawables)
-                    drawable.invalidateSelf();
-
-                handler.postDelayed(this, 100);
-            }
-        });
+        // If found animation emoji, start animation.
+        if(animationDrawables.isEmpty())
+            emojidex.removeAnimationUpdater(animationUpdater);
+        else
+            emojidex.addAnimationUpdater(animationUpdater);
     }
 
     private void downloadImages()
@@ -679,6 +667,25 @@ public class CatalogActivity extends Activity
             myEmojiButton.setVisibility(View.VISIBLE);
         } else {
             myEmojiButton.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * Custom emojidex animation updater.
+     */
+    private class CustomAnimationUpdater implements AnimationUpdater
+    {
+        @Override
+        public void update()
+        {
+            for(Drawable drawable : animationDrawables)
+                drawable.invalidateSelf();
+        }
+
+        @Override
+        public Collection<EmojidexAnimationDrawable> getDrawables()
+        {
+            return animationDrawables;
         }
     }
 }
