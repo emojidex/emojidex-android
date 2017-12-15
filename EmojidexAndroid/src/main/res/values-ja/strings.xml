@@ -186,4 +186,8 @@
 
     <!-- photo editor -->
     <string name="open_error">画像を開くことができませんでした。</string>
+    <string name="save_image_success">画像を保存しました。</string>
+    <string name="save_image_failed">画像の保存に失敗しました。</string>
+    <string name="new_image">新規作成</string>
+    <string name="new_image_message">現在の画像を破棄して新しく作成しますか？</string>
 </resources>

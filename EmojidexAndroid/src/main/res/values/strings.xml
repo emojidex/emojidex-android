@@ -242,4 +242,8 @@
 
     <!-- photo editor -->
     <string name="open_error">The image could not be opened.</string>
+    <string name="save_image_success">Image saved.</string>
+    <string name="save_image_failed">Failed to save image.</string>
+    <string name="new_image">New</string>
+    <string name="new_image_message">Delete the current image and create a new image?</string>
 </resources>

@@ -38,10 +38,72 @@
         android:layout_weight="1"
         android:orientation="horizontal" >
 
-        <TextView
+        <ImageButton
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="5dp"
+            android:src="@drawable/ic_fiber_new_black_24dp"
+            android:background="@null"
+            android:onClick="prepareNewImage" />
+
+        <ImageButton
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="5dp"
+            android:src="@drawable/ic_save_black_24dp"
+            android:background="@null"
+            android:onClick="prepareSaveImage" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="作成中..." />
+            android:src="@drawable/editor_button_toggle_on"
+            android:onClick="setEmoji" />
+
+        <ImageButton
+            android:id="@+id/photo_editor_move_button"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="5dp"
+            android:src="@drawable/ic_move_black_24dp"
+            android:background="@null"
+            android:onClick="setModeToMove" />
+
+        <ImageButton
+            android:id="@+id/photo_editor_scale_button"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="5dp"
+            android:src="@drawable/ic_scale_black_24dp"
+            android:background="@null"
+            android:onClick="setModeToScale" />
+
+        <ImageButton
+            android:id="@+id/photo_editor_roll_button"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="5dp"
+            android:src="@drawable/ic_roll_black_24dp"
+            android:background="@null"
+            android:onClick="setModeToRoll" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="5dp"
+            android:src="@drawable/ic_clear_black_24dp"
+            android:background="@null"
+            android:onClick="clearImage" />
 
     </LinearLayout>
 
