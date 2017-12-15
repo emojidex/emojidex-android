@@ -4,6 +4,8 @@ import android.content.Context;
 import android.net.Uri;
 
 import com.emojidex.emojidexandroidlibrary.BuildConfig;
+import com.emojidex.emojidexandroidlibrary.R;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,86 +17,95 @@ import java.util.ArrayList;
 /**
  * Created by kou on 17/05/26.
  */
-
-public class VersionManager {
+class VersionManager {
     private static final VersionManager instance = new VersionManager();
-    private static final String filename = "emojidex_lib_version";
 
+    private ArrayList<OptimizeEmojiMethod> optimizeEmojiMethods = new ArrayList<OptimizeEmojiMethod>();
+
+    /**
+     * Get singleton instance.
+     * @return      Singleton instance.
+     */
     public static VersionManager getInstance()
     {
         return instance;
     }
 
+    /**
+     * Private constructor.
+     */
     private VersionManager()
-    {;
+    {
     }
 
-    public void save(Context context)
+    /**
+     * Initialize version manager.
+     * @param context   Context.
+     */
+    public void initialize(Context context)
     {
-        final Uri uri = EmojidexFileUtils.getLocalFileUri(filename);
-        try
-        {
-            final OutputStream os = context.getContentResolver().openOutputStream(uri);
-            os.write(String.valueOf(BuildConfig.VERSION_CODE).getBytes());
-            os.close();
-        }
-        catch(IOException e)
-        {
-            e.printStackTrace();
-        }
+        createOptimizeEmojiMethods(context);
     }
 
-    public int load(Context context)
+    /**
+     * Optimize emoji.
+     * @param emoji     Target emoji.
+     */
+    public void optimizeEmoji(Emoji emoji)
     {
-        final Uri uri = EmojidexFileUtils.getLocalFileUri(filename);
-        try
-        {
-            String version = "";
-            final InputStream is = context.getContentResolver().openInputStream(uri);
-            byte[] buffer = new byte[16];
-            int readByte;
-            while( (readByte = is.read(buffer)) != -1 )
-                version += new String(buffer, 0, readByte);
-            is.close();
-            return NumberFormat.getInstance().parse(version).intValue();
-        }
-        catch(IOException e)
-        {
-            e.printStackTrace();
-        }
-        catch(ParseException e)
-        {
-            e.printStackTrace();
-        }
-        return 0;
+        for(OptimizeEmojiMethod method : optimizeEmojiMethods)
+            method.optimize(emoji);
     }
 
-    public void optimize(Context context)
+    /**
+     * Create optimize emoji methods.
+     * @param context   Context.
+     */
+    private void createOptimizeEmojiMethods(Context context)
     {
-        final int version = load(context);
-
-        if(optimizeJson(context, version))
-            save(context);
-    }
-
-    private boolean optimizeJson(Context context, int version)
-    {
-        boolean result = false;
+        final int version = Emojidex.getInstance().getUpdateInfo().getLastUpdateVersionCode();
 
         // version <= 0.0.8
         if(version == 0)
         {
-            // TODO refactoring
-            // Replace '_' to ' ' in emoji codes.
-            final Uri uri = EmojidexFileUtils.getLocalJsonUri();
-            final ArrayList<Emoji> params = EmojidexFileUtils.readJsonFromFile(uri);
-            for(JsonParam param : params)
-                param.setCode(param.getCode().replace('_', ' '));
-            EmojidexFileUtils.writeJsonToFile(uri, params);
-
-            result = true;
+            optimizeEmojiMethods.add(new OptimizeEmojiMethod() {
+                @Override
+                public void optimize(Emoji emoji)
+                {
+                    // Replace '_' to ' ' in emoji codes.
+                    emoji.setCode(emoji.getCode().replace('_', ' '));
+                    Emojidex.getInstance().getUpdateInfo().update(true);
+                }
+            });
         }
 
-        return result;
+        // version <= 0.0.14
+        if(version <= 4)
+        {
+            final int ORIGINAL_CODE_START = context.getResources().getInteger(R.integer.original_code_start);
+            optimizeEmojiMethods.add(new OptimizeEmojiMethod() {
+                @Override
+                public void optimize(Emoji emoji)
+                {
+                    // Clear moji if moji is original code.
+                    final String moji = emoji.getMoji();
+                    if(     moji != null
+                        &&  !moji.isEmpty()
+                        &&  moji.codePointAt(0) >= ORIGINAL_CODE_START  )
+                    {
+                        emoji.setMoji("");
+                        Emojidex.getInstance().getUpdateInfo().update(true);
+                    }
+                }
+            });
+        }
+    }
+
+    /**
+     * Optimize emoji method interface.
+     */
+    interface OptimizeEmojiMethod
+    {
+        void optimize(Emoji emoji);
     }
 }

@@ -60,6 +60,7 @@ public class EmojidexIME extends InputMethodService {
     private View layout;
     private HorizontalScrollView categoryScrollView;
     private Button categoryAllButton;
+    private Button myEmojiButton;
 
     private ViewFlipper keyboardViewFlipper;
     private boolean swipeFlag = false;
@@ -68,6 +69,7 @@ public class EmojidexIME extends InputMethodService {
     private FavoriteManager favoriteManager;
     private SaveDataManager searchManager;
     private SaveDataManager indexManager;
+    private SaveDataManager myEmojiManager;
     private KeyboardViewManager keyboardViewManager;
 
     private UserData userdata;
@@ -75,6 +77,7 @@ public class EmojidexIME extends InputMethodService {
     private String currentCategory = null;
 
     private EmojidexIndexUpdater indexUpdater = null;
+    private EmojidexMyEmojiUpdater myEmojiUpdater = null;
 
     private final HashMap<String, List<Emoji>> categorizedEmojies = new HashMap<String, List<Emoji>>();
 
@@ -115,6 +118,7 @@ public class EmojidexIME extends InputMethodService {
         favoriteManager = FavoriteManager.getInstance(this);
         searchManager = SaveDataManager.getInstance(this, SaveDataManager.Type.Search);
         indexManager = SaveDataManager.getInstance(this, SaveDataManager.Type.Index);
+        myEmojiManager = SaveDataManager.getInstance(this, SaveDataManager.Type.MyEmoji);
 
         // Initialize user data.
         userdata = UserData.getInstance();
@@ -131,10 +135,12 @@ public class EmojidexIME extends InputMethodService {
 
         // Get all category button.
         categoryAllButton = (Button)layout.findViewById(R.id.ime_category_button_all);
+        myEmojiButton = (Button)layout.findViewById(R.id.ime_category_button_my_emoji);
 
         createCategorySelector();
         createKeyboardView();
         createSubKeyboardView();
+        setMyEmojiButtonVisibility(userdata.isLogined());
 
         // Sync user data.
         historyManager.loadFromUser();
@@ -153,6 +159,7 @@ public class EmojidexIME extends InputMethodService {
             historyManager.load();
             searchManager.load();
             indexManager.load();
+            myEmojiManager.load();
             favoriteManager.load();
         }
 
@@ -198,6 +205,11 @@ public class EmojidexIME extends InputMethodService {
         indexUpdater.startUpdateThread(2);
         
         new EmojidexUpdater(this).startUpdateThread();
+
+        if (userdata.getUsername() != null && !userdata.getUsername().equals("")) {
+            myEmojiUpdater = new EmojidexMyEmojiUpdater(this, userdata.getUsername());
+            myEmojiUpdater.startUpdateThread(false);
+        }
     }
 
     @Override
@@ -492,6 +504,21 @@ public class EmojidexIME extends InputMethodService {
                 if(emoji != null) {
                     if (!standardOnly || emoji.isStandard()) emojies.add(emoji);
                 }
+            }
+
+            // Sort.
+            Collections.sort(emojies, new EmojiComparator(currentSortType));
+
+            keyboardViewManager.initialize(emojies, defaultPage);
+        }
+        else if (category.equals(getString(R.string.ime_category_id_my_emoji)))
+        {
+            final List<String> emojiNames = myEmojiManager.getEmojiNames();
+            final List<Emoji> emojies = new ArrayList<Emoji>(emojiNames.size());
+            for(String name : emojiNames)
+            {
+                final Emoji emoji = emojidex.getEmoji(name);
+                if(emoji != null) emojies.add(emoji);
             }
 
             // Sort.
@@ -917,6 +944,17 @@ public class EmojidexIME extends InputMethodService {
             return EmojiComparator.SortType.fromInt(sortType);
         } else {
             return EmojiComparator.SortType.SCORE;
+        }
+    }
+
+    /**
+     * set my_emoji button visibility.
+     */
+    public void setMyEmojiButtonVisibility(boolean isShow) {
+        if (isShow) {
+            myEmojiButton.setVisibility(View.VISIBLE);
+        } else {
+            myEmojiButton.setVisibility(View.GONE);
         }
     }
 
