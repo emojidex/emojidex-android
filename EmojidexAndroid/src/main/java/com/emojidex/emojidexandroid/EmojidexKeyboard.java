@@ -25,6 +25,7 @@ public class EmojidexKeyboard extends Keyboard {
     private int rowCount;
 
     private final List<Integer> hasAnimationIndices;
+    private final List<EmojidexAnimationDrawable> animationDrawables;
 
     /**
      * Construct object.
@@ -53,6 +54,7 @@ public class EmojidexKeyboard extends Keyboard {
         rowCount = Math.max(rowCount, 1);
 
         hasAnimationIndices = new LinkedList<Integer>();
+        animationDrawables = new LinkedList<EmojidexAnimationDrawable>();
     }
 
     /**
@@ -73,7 +75,10 @@ public class EmojidexKeyboard extends Keyboard {
             newKey.y = i / columnCount * (getKeyHeight() + getVerticalGap());
 
             if(newKey.icon instanceof EmojidexAnimationDrawable)
+            {
                 hasAnimationIndices.add(i);
+                animationDrawables.add((EmojidexAnimationDrawable)newKey.icon);
+            }
 
             keys.add(0, newKey);
         }
@@ -85,6 +90,8 @@ public class EmojidexKeyboard extends Keyboard {
     public void reset()
     {
         getKeys().clear();
+        hasAnimationIndices.clear();
+        animationDrawables.clear();
     }
 
     /**
@@ -103,6 +110,15 @@ public class EmojidexKeyboard extends Keyboard {
     public List<Integer> getHasAnimationIndices()
     {
         return hasAnimationIndices;
+    }
+
+    /**
+     * Get animation drawable array.
+     * @return      Animation drawable array.
+     */
+    public List<EmojidexAnimationDrawable> getAnimationDrawables()
+    {
+        return animationDrawables;
     }
 
     @Override

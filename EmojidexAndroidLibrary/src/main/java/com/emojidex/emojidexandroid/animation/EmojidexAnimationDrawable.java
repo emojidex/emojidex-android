@@ -91,6 +91,16 @@ public class EmojidexAnimationDrawable extends AnimationDrawable
         }
     }
 
+    public long getCurrentTime()
+    {
+        return timer;
+    }
+
+    public int getCurrentDuration()
+    {
+        return getDuration(currentIndex);
+    }
+
     private void calcTime()
     {
         if(!isRunning())

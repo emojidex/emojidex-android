@@ -24,6 +24,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.RadioButton;
 import android.widget.ViewFlipper;
 
+import com.emojidex.emojidexandroid.animation.EmojidexAnimationDrawable;
 import com.emojidex.emojidexandroid.animation.updater.AnimationUpdater;
 import com.emojidex.emojidexandroid.comparator.EmojiComparator;
 import com.emojidex.emojidexandroid.downloader.DownloadListener;
@@ -32,6 +33,7 @@ import com.emojidex.libemojidex.Emojidex.Service.User;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -927,6 +929,12 @@ public class EmojidexIME extends InputMethodService {
         public void update()
         {
             keyboardViewManager.getCurrentView().invalidateAnimation();
+        }
+
+        @Override
+        public Collection<EmojidexAnimationDrawable> getDrawables()
+        {
+            return keyboardViewManager.getCurrentView().getAnimationDrawables();
         }
     }
 }

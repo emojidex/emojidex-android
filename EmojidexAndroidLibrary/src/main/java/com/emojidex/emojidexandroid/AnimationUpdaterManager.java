@@ -2,6 +2,7 @@ package com.emojidex.emojidexandroid;
 
 import android.os.Handler;
 
+import com.emojidex.emojidexandroid.animation.EmojidexAnimationDrawable;
 import com.emojidex.emojidexandroid.animation.updater.AnimationUpdater;
 
 import java.util.HashSet;
@@ -11,10 +12,10 @@ import java.util.HashSet;
  */
 
 class AnimationUpdaterManager {
-    private final HashSet<AnimationUpdater> updaters = new HashSet<AnimationUpdater>();
+    private final static long NEXT_UPDATE_TIME_MAX = 0x7FFFFFFF;
+    private final static long NEXT_UPDATE_TIME_MIN = 1000 / 60;
 
-    private int animationInterval = 100;
-    private boolean isAnimating = false;
+    private final HashSet<AnimationUpdater> updaters = new HashSet<AnimationUpdater>();
 
     /**
      * Regist view.
@@ -22,10 +23,13 @@ class AnimationUpdaterManager {
      */
     public void regist(AnimationUpdater updater)
     {
-        updaters.add(updater);
+        // Skip if already regist updater.
+        if(updaters.contains(updater))
+            return;
 
-        if( !isAnimating )
-            startAnimation();
+        // Run animation.
+        updaters.add(updater);
+        startAnimation(updater);
     }
 
     /**
@@ -35,48 +39,48 @@ class AnimationUpdaterManager {
     public void unregist(AnimationUpdater updater)
     {
         updaters.remove(updater);
-
-        if( updaters.isEmpty() )
-            stopAnimation();
-    }
-
-    /**
-     * Set animation update interval time.
-     * @param interval      Animation update interval time.(milli seconds/default value is 100)
-     */
-    public void setAnimationUpdateInterval(int interval)
-    {
-        animationInterval = interval;
     }
 
     /**
      * Start animation.
+     * @param updater   Animation updater.
      */
-    private void startAnimation()
+    private void startAnimation(final AnimationUpdater updater)
     {
-        isAnimating = true;
-
         final Handler handler = new Handler();
-        handler.post(new Runnable() {
+        handler.postDelayed(new Runnable() {
             @Override
             public void run()
             {
-                if( !isAnimating )
+                // End animation if updater is not found.
+                if( !updaters.contains(updater) )
                     return;
 
-                for(AnimationUpdater updater : updaters)
-                    updater.update();
+                // Animation.
+                updater.update();
 
-                handler.postDelayed(this, animationInterval);
+                // Schedule next update.
+                final long nextUpdateTime = calcNextUpdateTime(updater);
+                if(nextUpdateTime < NEXT_UPDATE_TIME_MAX)
+                    handler.postDelayed(this, nextUpdateTime);
             }
-        });
+        }, calcNextUpdateTime(updater));
     }
 
     /**
-     * Stop animation.
+     * Calculation time of next update.
+     * @param updater   Animation updater.
+     * @return          Time of next update.
      */
-    private void stopAnimation()
+    private long calcNextUpdateTime(AnimationUpdater updater)
     {
-        isAnimating = false;
+        long result = NEXT_UPDATE_TIME_MAX;
+        for(EmojidexAnimationDrawable d : updater.getDrawables())
+        {
+            final long time = d.getCurrentDuration() - d.getCurrentTime();
+            result = Math.min(result, time);
+        }
+        result = Math.max(result, NEXT_UPDATE_TIME_MIN);
+        return result;
     }
 }

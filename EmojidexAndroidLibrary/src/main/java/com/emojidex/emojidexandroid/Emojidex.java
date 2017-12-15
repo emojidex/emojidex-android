@@ -306,15 +306,6 @@ public class Emojidex {
     }
 
     /**
-     * Set animation update interval time.
-     * @param interval  Animation update interval time.(milli seconds/default value is 100)
-     */
-    public void setAnimationUpdateInterval(int interval)
-    {
-        animationUpdaterManager.setAnimationUpdateInterval(interval);
-    }
-
-    /**
      * Get initialized flag.
      * @return  true if Emojidex object is initialized.
      */

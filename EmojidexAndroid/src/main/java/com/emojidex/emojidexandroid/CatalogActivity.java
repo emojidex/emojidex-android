@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.RadioButton;
 
+import com.emojidex.emojidexandroid.animation.EmojidexAnimationDrawable;
 import com.emojidex.emojidexandroid.animation.updater.AnimationUpdater;
 import com.emojidex.emojidexandroid.comparator.EmojiComparator;
 import com.emojidex.emojidexandroid.downloader.DownloadListener;
@@ -31,6 +32,7 @@ import com.google.android.gms.ads.AdView;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -64,7 +66,7 @@ public class CatalogActivity extends Activity
 
     private final CustomDownloadListener downloadListener = new CustomDownloadListener();
 
-    private final List<Drawable> animationDrawables = new ArrayList<Drawable>();
+    private final List<EmojidexAnimationDrawable> animationDrawables = new ArrayList<EmojidexAnimationDrawable>();
     private final CustomAnimationUpdater animationUpdater = new CustomAnimationUpdater();
 
     @Override
@@ -473,8 +475,8 @@ public class CatalogActivity extends Activity
         for(int i = 0;  i < count;  ++i)
         {
             final Drawable drawable = ((ImageView)gridView.getChildAt(i)).getDrawable();
-            if(drawable instanceof AnimationDrawable)
-                animationDrawables.add(drawable);
+            if(drawable instanceof EmojidexAnimationDrawable)
+                animationDrawables.add((EmojidexAnimationDrawable)drawable);
         }
 
         // If found animation emoji, start animation.
@@ -563,6 +565,12 @@ public class CatalogActivity extends Activity
         {
             for(Drawable drawable : animationDrawables)
                 drawable.invalidateSelf();
+        }
+
+        @Override
+        public Collection<EmojidexAnimationDrawable> getDrawables()
+        {
+            return animationDrawables;
         }
     }
 }

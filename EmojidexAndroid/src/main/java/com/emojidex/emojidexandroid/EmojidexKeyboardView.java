@@ -33,6 +33,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.emojidex.emojidexandroid.animation.EmojidexAnimationDrawable;
 import com.emojidex.emojidexandroid.downloader.DownloadListener;
 
 import java.util.List;
@@ -123,6 +124,11 @@ public class EmojidexKeyboardView extends KeyboardView {
         return (keyboard instanceof EmojidexKeyboard)
                 ? !((EmojidexKeyboard)keyboard).getHasAnimationIndices().isEmpty()
                 : false;
+    }
+
+    public List<EmojidexAnimationDrawable> getAnimationDrawables()
+    {
+        return ((EmojidexKeyboard)getKeyboard()).getAnimationDrawables();
     }
 
     /**
