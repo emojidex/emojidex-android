@@ -30,29 +30,13 @@ public class SealDownloader {
     }
 
     /**
-     * Download seal for send.
-     * @param name Emoji name.
-     */
-    public void downloadForSend(String name)
-    {
-        download(name, R.string.send_seal_dialog_title);
-    }
-
-    /**
-     * Download seal for save.
-     * @param name Emoji name.
-     */
-    public void downloadForSave(String name)
-    {
-        download(name, R.string.save_seal_dialog_title);
-    }
-
-    /**
      * Download seal.
-     * @param name  Emoji name.
-     * @param titleId Dialog title.
+     * @param name              Emoji name.
+     * @param dialogTitle       Download dialog title.
+     * @param dialogMessage     Download dialog message.
+     * @param dialogCancel      Download dialog cancel button text.
      */
-    public void download(String name, int titleId)
+    public void download(String name, String dialogTitle, String dialogMessage, String dialogCancel)
     {
         canceled = false;
 
@@ -76,12 +60,12 @@ public class SealDownloader {
         // Show progress dialog.
         dialog = new ProgressDialog(parentActivity);
         dialog.setCanceledOnTouchOutside(false);
-        dialog.setTitle(titleId);
-        dialog.setMessage(parentActivity.getString(R.string.send_seal_dialog_message));
+        dialog.setTitle(dialogTitle);
+        dialog.setMessage(dialogMessage);
 
         dialog.setButton(
                 DialogInterface.BUTTON_NEGATIVE,
-                parentActivity.getString(R.string.send_seal_dialog_cancel),
+                dialogCancel,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

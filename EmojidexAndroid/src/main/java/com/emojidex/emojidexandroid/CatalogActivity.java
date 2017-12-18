@@ -13,6 +13,7 @@ import android.graphics.drawable.Drawable;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.support.annotation.NonNull;
@@ -394,7 +395,12 @@ public class CatalogActivity extends Activity
             }
         });
 
-        downloader.downloadForSend(emojiName);
+        downloader.download(
+                emojiName,
+                getString(R.string.send_seal_dialog_title),
+                getString(R.string.send_seal_dialog_message),
+                getString(R.string.send_seal_dialog_cancel)
+        );
     }
 
     private void sendIntent(Uri uri)
@@ -501,42 +507,63 @@ public class CatalogActivity extends Activity
     private void saveEmoji(Emoji emoji)
     {
         final String emojiName = emoji.getCode();
+        final EmojiFormat format = EmojiFormat.toFormat(getString(R.string.emoji_format_seal));
 
-        File file = new File(EmojidexFileUtils.getLocalSaveFolder());
-        if (!file.exists())
-        {
-            if (!file.mkdirs())
-            {
-                Toast.makeText(CatalogActivity.this, R.string.failed_make_folder, Toast.LENGTH_SHORT).show();
-                return;
-            }
-        }
+        final SealDownloader downloader = new SealDownloader(this);
 
-        final SealDownloader downloader = new SealDownloader(CatalogActivity.this);
-
-        downloader.setOnDismissListener(new DialogInterface.OnDismissListener()
-        {
+        downloader.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
-            public void onDismiss(DialogInterface dialogInterface)
+            public void onDismiss(DialogInterface dialog)
             {
-                if (downloader.isCanceled()) return;
+                if(downloader.isCanceled())
+                    return;
 
-                historyManager.addFirst(emojiName);
-
-                String path = EmojidexFileUtils.getLocalSavePath(emojiName, EmojiFormat.PNG_SEAL);
-                String text = getString(R.string.save_seal_success) + "\n" + path;
-
+                // Generate seal.
                 final SealGenerator generator = new SealGenerator(CatalogActivity.this);
-                generator.setDestUri(EmojidexFileUtils.getLocalSaveUri(emojiName, EmojiFormat.PNG_SEAL));
                 generator.generate(emojiName);
 
+                // Save image.
+                final String destPath =
+                        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                        + "/emojidex-assets/"
+                        + emojiName + format.getExtension()
+                        ;
+                final Uri destUri = Uri.parse("file:" + destPath);
+                final Uri srcUri = generator.getUri();
+
+                final File dir = new File(destPath).getParentFile();
+                if( !dir.exists() )
+                    dir.mkdirs();
+
+                if( !EmojidexFileUtils.copyFile(srcUri, destUri) )
+                {
+                    Toast.makeText(CatalogActivity.this, R.string.failed_save_seal, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // Scan image.
                 MediaScannerConnection.scanFile(
-                        getApplicationContext(), new String[] { path }, new String[] { "image/jpg" }, null);
-                Toast.makeText(CatalogActivity.this, text, Toast.LENGTH_LONG).show();
+                        getApplicationContext(),
+                        new String[] { destPath },
+                        new String[] { "image/png" },
+                        null
+                );
+
+                // Notify succeeded.
+                Toast.makeText(
+                        CatalogActivity.this,
+                        getString(R.string.save_seal_success) + "\n" + destPath,
+                        Toast.LENGTH_LONG
+                ).show();
             }
         });
 
-        downloader.downloadForSave(emojiName);
+        downloader.download(
+                emojiName,
+                getString(R.string.save_seal_dialog_title),
+                getString(R.string.send_seal_dialog_message),
+                getString(R.string.send_seal_dialog_cancel)
+        );
     }
 
     @Override

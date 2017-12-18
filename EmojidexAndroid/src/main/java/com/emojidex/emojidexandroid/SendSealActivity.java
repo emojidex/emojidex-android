@@ -120,7 +120,12 @@ public class SendSealActivity extends Activity {
             }
         });
 
-        downloader.downloadForSend(emojiName);
+        downloader.download(
+                emojiName,
+                getString(R.string.send_seal_dialog_title),
+                getString(R.string.send_seal_dialog_message),
+                getString(R.string.send_seal_dialog_cancel)
+        );
     }
 
     /**

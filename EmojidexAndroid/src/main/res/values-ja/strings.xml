@@ -148,7 +148,7 @@
     <string name="select_dialog_title">選択してください</string>
     <string name="select_dialog_send_seal">シールを送信する</string>
     <string name="select_dialog_save_seal">シールを保存する</string>
-    <string name="failed_make_folder">シールを保存するフォルダの作成に失敗しました。</string>
+    <string name="failed_save_seal">シールの保存に失敗しました。</string>
     <string name="save_seal_dialog_title">シール保存準備中...</string>
     <string name="save_seal_success">シールを保存しました。</string>
 
