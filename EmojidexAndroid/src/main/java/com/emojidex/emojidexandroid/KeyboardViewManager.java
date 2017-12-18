@@ -117,7 +117,9 @@ public class KeyboardViewManager {
         final ArrayList<Emoji> emojies = new ArrayList<Emoji>(emojiNames.size());
         for(String emojiName : emojiNames) {
             Emoji emoji = emojidex.getEmoji(emojiName);
-            if (!standardOnly || emoji.isStandard()) emojies.add(emoji);
+            if (emoji != null) {
+                if (!standardOnly || emoji.isStandard()) emojies.add(emoji);
+            }
         }
         initialize(emojies, defaultPage);
     }
