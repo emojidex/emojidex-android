@@ -7,17 +7,11 @@ import com.emojidex.emojidexandroid.EmojidexFileUtils;
 import com.emojidex.emojidexandroid.ImageLoader;
 import com.emojidex.emojidexandroid.downloader.arguments.ImageDownloadArguments;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.OutputStream;
-
 /**
  * Created by kou on 17/08/29.
  */
 
-class ImageDownloadTask extends AbstractFileDownloadTask{
-    private final Context context;
-
+class ImageDownloadTask extends AbstractFileDownloadTask {
     /**
      * Construct object.
      * @param arguments     Download arguments.
@@ -25,9 +19,7 @@ class ImageDownloadTask extends AbstractFileDownloadTask{
      */
     public ImageDownloadTask(ImageDownloadArguments arguments, Context context)
     {
-        super(arguments);
-
-        this.context = context;
+        super(arguments, context);
     }
 
     @Override
@@ -70,28 +62,9 @@ class ImageDownloadTask extends AbstractFileDownloadTask{
     }
 
     @Override
-    protected OutputStream getOutputStream()
+    protected Uri getOutputUri()
     {
         final ImageDownloadArguments arguments = (ImageDownloadArguments)getArguments();
-        final Uri uri = EmojidexFileUtils.getLocalEmojiUri(arguments.getEmojiName(), arguments.getFormat());
-
-        // Create directory if destination uri is file and not found directory.
-        if(uri.getScheme().equals("file"))
-        {
-            final File parentDir = new File(uri.getPath()).getParentFile();
-            if(!parentDir.exists())
-                parentDir.mkdirs();
-        }
-
-        try
-        {
-            return context.getContentResolver().openOutputStream(uri);
-        }
-        catch(FileNotFoundException e)
-        {
-            e.printStackTrace();
-        }
-
-        return null;
+        return EmojidexFileUtils.getLocalEmojiUri(arguments.getEmojiName(), arguments.getFormat());
     }
 }

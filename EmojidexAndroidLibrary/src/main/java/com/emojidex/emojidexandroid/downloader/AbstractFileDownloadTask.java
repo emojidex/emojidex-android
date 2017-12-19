@@ -1,7 +1,11 @@
 package com.emojidex.emojidexandroid.downloader;
 
+import android.content.Context;
+import android.net.Uri;
+
 import com.emojidex.emojidexandroid.downloader.arguments.AbstractFileDownloadArguments;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -19,13 +23,18 @@ abstract class AbstractFileDownloadTask extends AbstractDownloadTask {
     private static final int CONNECT_TIMEOUT = 10 * 1000;   // milliseconds
     private static final int READ_TIMEOUT = 10 * 1000;      // milliseconds
 
+    private final Context context;
+
     /**
      * Construct object.
      * @param arguments     Download arguments.
+     * @param context       Context.
      */
-    public AbstractFileDownloadTask(AbstractFileDownloadArguments arguments)
+    public AbstractFileDownloadTask(AbstractFileDownloadArguments arguments, Context context)
     {
         super(arguments);
+
+        this.context = context;
     }
 
     @Override
@@ -49,8 +58,18 @@ abstract class AbstractFileDownloadTask extends AbstractDownloadTask {
 
             if(connection.getResponseCode() == HttpsURLConnection.HTTP_OK)
             {
+                final Uri dest = getOutputUri();
+
+                // Create directory if destination uri is file and not found directory.
+                if(dest.getScheme().equals("file"))
+                {
+                    final File parentDir = new File(dest.getPath()).getParentFile();
+                    if(!parentDir.exists())
+                        parentDir.mkdirs();
+                }
+
                 // Download file.
-                final OutputStream os = getOutputStream();
+                final OutputStream os = context.getContentResolver().openOutputStream(dest);
                 final InputStream is = connection.getInputStream();
 
                 final byte[] buffer = new byte[BUFFER_SIZE];
@@ -87,14 +106,23 @@ abstract class AbstractFileDownloadTask extends AbstractDownloadTask {
     }
 
     /**
+     * Get context.
+     * @return      Context.
+     */
+    protected Context getContext()
+    {
+        return context;
+    }
+
+    /**
      * Get remote file path.
      * @return      Remote file path.
      */
     protected abstract String getRemotePath();
 
     /**
-     * Get output stream.
-     * @return      Output stream.
+     * Get output uri.
+     * @return      Output uri.
      */
-    protected abstract OutputStream getOutputStream();
+    protected abstract Uri getOutputUri();
 }
