@@ -205,7 +205,7 @@ public class EmojidexFileUtils
      */
     public static String getTemporaryPath()
     {
-        return context.getExternalCacheDir().getPath() + "/tmp" + System.currentTimeMillis();
+        return context.getCacheDir().getPath() + "/tmp" + System.currentTimeMillis();
     }
 
     /**

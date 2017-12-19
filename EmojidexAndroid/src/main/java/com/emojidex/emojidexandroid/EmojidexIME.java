@@ -633,7 +633,7 @@ public class EmojidexIME extends InputMethodService {
      */
     private void deleteCache()
     {
-        File cacheDir = getExternalCacheDir();
+        File cacheDir = getCacheDir();
         if (cacheDir == null) return;
 
         File[] list = cacheDir.listFiles();
