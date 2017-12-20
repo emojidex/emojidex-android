@@ -5,37 +5,9 @@
               android:layout_height="match_parent"
               android:background="@android:color/white" >
 
-    <com.emojidex.emojidexandroid.view.VScrollView
-        android:id="@+id/photo_editor_vscroll"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-
-        <com.emojidex.emojidexandroid.view.HScrollView
-            android:id="@+id/photo_editor_hscroll"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <FrameLayout
-                android:id="@+id/photo_editor_frame"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:id="@+id/photo_editor_base_image"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:scaleType="centerCrop"
-                    android:adjustViewBounds="true" />
-
-            </FrameLayout>
-        </com.emojidex.emojidexandroid.view.HScrollView>
-    </com.emojidex.emojidexandroid.view.VScrollView>
-
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:orientation="horizontal" >
 
         <ImageButton
@@ -63,7 +35,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/editor_button_toggle_on"
-            android:onClick="setEmoji" />
+            android:onClick="showKeyboard" />
 
         <ImageButton
             android:id="@+id/photo_editor_move_button"
@@ -105,6 +77,38 @@
             android:background="@null"
             android:onClick="clearImage" />
 
+        <EditText
+            android:id="@+id/photo_editor_text"
+            android:layout_width="1dp"
+            android:layout_height="1dp" />
+
     </LinearLayout>
+
+    <com.emojidex.emojidexandroid.view.VScrollView
+        android:id="@+id/photo_editor_vscroll"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <com.emojidex.emojidexandroid.view.HScrollView
+            android:id="@+id/photo_editor_hscroll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <FrameLayout
+                android:id="@+id/photo_editor_frame"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/photo_editor_base_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:scaleType="centerCrop"
+                    android:adjustViewBounds="true" />
+
+            </FrameLayout>
+        </com.emojidex.emojidexandroid.view.HScrollView>
+    </com.emojidex.emojidexandroid.view.VScrollView>
 
 </LinearLayout>

@@ -19,8 +19,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -61,6 +65,10 @@ public class PhotoEditorActivity extends Activity {
     private ImageButton scaleButton;
     private ImageButton rollButton;
 
+    private Emojidex emojidex;
+    private EditText editText;
+    private TextWatcher textWatcher;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState)
     {
@@ -73,7 +81,8 @@ public class PhotoEditorActivity extends Activity {
 
     private void initViews()
     {
-        Emojidex.getInstance().initialize(getApplicationContext());
+        emojidex = Emojidex.getInstance();
+        emojidex.initialize(getApplicationContext());
 
         vScrollView = (VScrollView) findViewById(R.id.photo_editor_vscroll);
         hScrollView = (HScrollView) findViewById(R.id.photo_editor_hscroll);
@@ -83,6 +92,23 @@ public class PhotoEditorActivity extends Activity {
         moveButton = (ImageButton) findViewById(R.id.photo_editor_move_button);
         scaleButton = (ImageButton) findViewById(R.id.photo_editor_scale_button);
         rollButton = (ImageButton) findViewById(R.id.photo_editor_roll_button);
+
+        textWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                setEmoji();
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        };
+        editText = (EditText) findViewById(R.id.photo_editor_text);
+        editText.addTextChangedListener(textWatcher);
     }
 
     /**
@@ -109,14 +135,21 @@ public class PhotoEditorActivity extends Activity {
 
     /**
      * Set emoji to photo editor frame.
-     * @param v button.
      */
-    public void setEmoji(View v)
+    public void setEmoji()
     {
-        final GestureImageView image = new GestureImageView(getApplicationContext());
+        final String emojiName = emojidex.deEmojify(editText.getText()).toString()
+                                         .replaceAll(":", "");
+                                         //.replaceAll(" ", "_");
+        editText.removeTextChangedListener(textWatcher);
+        editText.setText("");
+        editText.addTextChangedListener(textWatcher);
 
-        // TODO: test
-        final Emoji emoji = Emojidex.getInstance().getEmoji("heart");
+        final Emoji emoji = emojidex.getEmoji(emojiName);
+
+        if (emoji == null) return;
+
+        final GestureImageView image = new GestureImageView(getApplicationContext());
         final Drawable drawable = emoji.getDrawable(EmojiFormat.toFormat(getString(R.string.emoji_format_catalog)));
         image.setImageDrawable(drawable);
         image.setX(100);
@@ -126,6 +159,19 @@ public class PhotoEditorActivity extends Activity {
         image.setLayoutParams(params);
 
         frameLayout.addView(image);
+    }
+
+    /**
+     * Show keyboard.
+     * @param v button.
+     */
+    public void showKeyboard(View v)
+    {
+        InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (inputMethodManager != null) {
+            inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        }
+        editText.requestFocus();
     }
 
     /**
