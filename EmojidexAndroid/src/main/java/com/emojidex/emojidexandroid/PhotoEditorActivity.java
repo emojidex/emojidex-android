@@ -73,6 +73,8 @@ public class PhotoEditorActivity extends Activity {
 
     private void initViews()
     {
+        Emojidex.getInstance().initialize(getApplicationContext());
+
         vScrollView = (VScrollView) findViewById(R.id.photo_editor_vscroll);
         hScrollView = (HScrollView) findViewById(R.id.photo_editor_hscroll);
         frameLayout = (FrameLayout) findViewById(R.id.photo_editor_frame);
@@ -119,6 +121,9 @@ public class PhotoEditorActivity extends Activity {
         image.setImageDrawable(drawable);
         image.setX(100);
         image.setY(100);
+        final FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(drawable.getIntrinsicWidth(),
+                                                                             drawable.getIntrinsicHeight());
+        image.setLayoutParams(params);
 
         frameLayout.addView(image);
     }
@@ -193,7 +198,7 @@ public class PhotoEditorActivity extends Activity {
     public void saveImage()
     {
         // Image has not been added.
-        if (frameLayout.getChildCount() == 1) return;
+        if (frameLayout.getChildCount() == 1 || baseImageView.getWidth() == 0) return;
 
         // Prepare canvas.
         Bitmap bitmap = Bitmap.createBitmap(baseImageView.getWidth(), baseImageView.getHeight(), Bitmap.Config.ARGB_8888);
