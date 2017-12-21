@@ -1,6 +1,7 @@
 package com.emojidex.emojidexandroid;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.List;
 /**
  * Created by kou on 14/10/10.
  */
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class JsonParam {
     private String code = null;
     private String moji = null;

@@ -215,6 +215,7 @@ public class Emoji extends JsonParam {
      * Get plain text.
      * @return      Text.
      */
+    @JsonIgnore
     String getText()
     {
         return text;
