@@ -18,6 +18,8 @@ import java.util.TimerTask;
  * Created by kou on 14/10/03.
  */
 public class EmojiManager {
+    private static final String TAG = "EmojidexAndroidLibrary::EmojiManager";
+
     private final Context context;
 
     private final ArrayList<Emoji> emojies = new ArrayList<Emoji>();
@@ -31,7 +33,7 @@ public class EmojiManager {
     private int nextOriginalCode;
 
     private static final int DIRTY_COUNT_MAX = 500;
-    private static final int SAVE_DELAY = 3000;
+    private static final int SAVE_DELAY = 10 * 1000;
 
     private int dirtyCount = 0;
     private boolean isSaving = false;
@@ -331,6 +333,8 @@ public class EmojiManager {
 
             isSaving = false;
             saveTask = null;
+
+            android.util.Log.d(TAG, "Save emoji.json completed.");
 
             if(dirtyCount > 0)
             {
