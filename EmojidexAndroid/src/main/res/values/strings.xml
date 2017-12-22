@@ -249,4 +249,7 @@
     <string name="new_image_message">Delete the current image and create a new image?</string>
     <string name="prepare_emoji">Prepare emoji...</string>
     <string name="load_emoji_error">Failed to load emoji.</string>
+    <string name="emojidex_keyboard_disabled">The emojidex keyboard is not enabled.\nPlease enable it.</string>
+    <string name="no_input_method">Could not get input method.</string>
+    <string name="select_emojidex_keyboard">Please select emojidex keyboard.</string>
 </resources>

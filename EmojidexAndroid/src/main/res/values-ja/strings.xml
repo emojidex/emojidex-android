@@ -192,4 +192,7 @@
     <string name="new_image_message">現在の画像を破棄して新しく作成しますか？</string>
     <string name="prepare_emoji">絵文字の準備中...</string>
     <string name="load_emoji_error">絵文字のロードに失敗しました。</string>
+    <string name="emojidex_keyboard_disabled">emojidexキーボードが無効です。\n有効にしてください。</string>
+    <string name="no_input_method">キーボードが取得できませんでした。</string>
+    <string name="select_emojidex_keyboard">emojidexキーボードを選択してください。</string>
 </resources>

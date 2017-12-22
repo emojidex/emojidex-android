@@ -15,6 +15,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -23,6 +24,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -78,6 +80,7 @@ public class PhotoEditorActivity extends Activity {
         setContentView(R.layout.activity_photo_editor);
 
         initialize();
+        imeEnableCheck();
         setBaseImage(getIntent());
     }
 
@@ -110,6 +113,42 @@ public class PhotoEditorActivity extends Activity {
         };
         editText = (EditText) findViewById(R.id.photo_editor_text);
         editText.addTextChangedListener(textWatcher);
+    }
+
+    /**
+     * Check IME enable.
+     */
+    private void imeEnableCheck()
+    {
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (inputMethodManager == null)
+        {
+            showToast(getString(R.string.no_input_method));
+            return;
+        }
+
+        // Skip if ime enable.
+        for(InputMethodInfo info : inputMethodManager.getEnabledInputMethodList())
+        {
+            if(info.getServiceName().equals(EmojidexIME.class.getName())) return;
+        }
+
+        // Show dialog and go to settings.
+        final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setMessage(R.string.emojidex_keyboard_disabled);
+        dialog.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) { }
+        });
+        dialog.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                final Intent intent = new Intent(Settings.ACTION_INPUT_METHOD_SETTINGS);
+                startActivity(intent);
+            }
+        });
+        dialog.show();
     }
 
     /**
@@ -238,12 +277,25 @@ public class PhotoEditorActivity extends Activity {
      */
     public void showKeyboard(View v)
     {
-        // TODO: open emojidex keyboard, check enable.
+        String currentIme = android.provider.Settings.Secure.getString(
+                getContentResolver(),
+                Settings.Secure.DEFAULT_INPUT_METHOD
+        );
+
         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (inputMethodManager != null)
+        if (inputMethodManager == null)
         {
-            inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+            showToast(getString(R.string.no_input_method));
+            return;
         }
+
+        if (!currentIme.contains("Emojidex"))
+        {
+            showToast(getString(R.string.select_emojidex_keyboard));
+            inputMethodManager.showInputMethodPicker();
+        }
+
+        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
         editText.requestFocus();
     }
 
@@ -373,9 +425,7 @@ public class PhotoEditorActivity extends Activity {
         if (frameLayout.getChildCount() == 1) return;
 
         for (int i = frameLayout.getChildCount(); i > 1; i--)
-        {
             frameLayout.removeViewAt(i - 1);
-        }
     }
 
     /**
@@ -441,9 +491,7 @@ public class PhotoEditorActivity extends Activity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if (requestCode == REQUEST_EXTERNAL_STORAGE && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-        {
             saveImage();
-        }
     }
 
     @Override
