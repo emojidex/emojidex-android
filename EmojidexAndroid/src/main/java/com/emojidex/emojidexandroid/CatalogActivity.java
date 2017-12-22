@@ -2,14 +2,16 @@ package com.emojidex.emojidexandroid;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.AnimationDrawable;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -79,6 +81,9 @@ public class CatalogActivity extends Activity
     private final List<EmojidexAnimationDrawable> animationDrawables = new ArrayList<EmojidexAnimationDrawable>();
     private final CustomAnimationUpdater animationUpdater = new CustomAnimationUpdater();
 
+    private EmojiComparator.SortType currentSortType;
+    private boolean standardOnly;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -105,7 +110,14 @@ public class CatalogActivity extends Activity
         }
 
         // Emoji download.
-        indexUpdater = new EmojidexIndexUpdater(this, EmojidexKeyboard.create(this).getKeyCountMax());
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        float viewSize = getResources().getDimension(R.dimen.catalog_icon_size) + 10 * metrics.density;
+        Point point = new Point();
+        getWindowManager().getDefaultDisplay().getSize(point);
+        int columns = (int)(point.x / viewSize);
+        int rows = (int)(point.y / viewSize - 1);
+
+        indexUpdater = new EmojidexIndexUpdater(this, columns * rows);
         indexUpdater.startUpdateThread(indexLoadPageCount);
 
         new EmojidexUpdater(this).startUpdateThread();
@@ -162,6 +174,9 @@ public class CatalogActivity extends Activity
         // Initialize user data.
         final UserData userdata = UserData.getInstance();
         userdata.init(this);
+
+        currentSortType = getSortType();
+        standardOnly = isStandardOnly();
     }
 
     private void initGridView()
@@ -225,56 +240,61 @@ public class CatalogActivity extends Activity
 
     private void changeCategory(String categoryName)
     {
-        if(categoryName.equals(currentCategory)) return;
+        if (categoryName == null) return;
+        if (currentSortType == null) currentSortType = EmojiComparator.SortType.SCORE;
+        if (categoryName.equals(currentCategory) &&
+                currentSortType.equals(getSortType()) && standardOnly == isStandardOnly()) return;
 
         currentCategory = categoryName;
+        currentSortType = getSortType();
+        standardOnly = isStandardOnly();
 
         Comparator<Emoji> comparator = null;
 
         if(categoryName.equals(getString(R.string.ime_category_id_history)))
         {
             List<String> emojiNames = historyManager.getEmojiNames();
-            currentCatalog = createEmojiList(emojiNames);
+            currentCatalog = createEmojiList(emojiNames, false);
         }
         else if(categoryName.equals(getString(R.string.ime_category_id_favorite)))
         {
             final List<String> emojiNames = favoriteManager.getEmojiNames();
-            currentCatalog = createEmojiList(emojiNames);
+            currentCatalog = createEmojiList(emojiNames, false);
         }
         else if(categoryName.equals(getString(R.string.ime_category_id_search)))
         {
             List<String> emojiNames = searchManager.getEmojiNames();
-            currentCatalog = createEmojiList(emojiNames);
+            currentCatalog = createEmojiList(emojiNames, false);
         }
         else if(categoryName.equals(getString(R.string.ime_category_id_index)))
         {
             List<String> emojiNames = indexManager.getEmojiNames();
-            currentCatalog = createEmojiList(emojiNames);
+            currentCatalog = createEmojiList(emojiNames, standardOnly);
 
             // Sort.
-            comparator = new EmojiComparator();
+            comparator = new EmojiComparator(currentSortType);
         }
         else if(categoryName.equals(getString(R.string.ime_category_id_all)))
         {
-            currentCatalog = emojidex.getAllEmojiList();
+            currentCatalog = setEmojiList(emojidex.getAllEmojiList(), standardOnly);
 
             // Sort.
-            comparator = new EmojiComparator();
+            comparator = new EmojiComparator(currentSortType);
         }
         else if (categoryName.equals(getString(R.string.ime_category_id_my_emoji)))
         {
             List<String> emojiNames = myEmojiManager.getEmojiNames();
-            currentCatalog = createEmojiList(emojiNames);
+            currentCatalog = createEmojiList(emojiNames, false);
 
             // Sort.
-            comparator = new EmojiComparator();
+            comparator = new EmojiComparator(currentSortType);
         }
         else
         {
-            currentCatalog = emojidex.getEmojiList(categoryName);
+            currentCatalog = setEmojiList(emojidex.getEmojiList(categoryName), standardOnly);
 
             // Sort.
-            comparator = new EmojiComparator();
+            comparator = new EmojiComparator(currentSortType);
         }
 
         if(currentCatalog == null)
@@ -289,6 +309,18 @@ public class CatalogActivity extends Activity
     public void onClickSearchButton(View view)
     {
         Intent intent = new Intent(CatalogActivity.this, SearchActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("Catalog", true);
+        startActivity(intent);
+    }
+
+    /**
+     * Click filter button.
+     * @param v button
+     */
+    public void onClickFilterButton(View v)
+    {
+        final Intent intent = new Intent(CatalogActivity.this, FilterActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("Catalog", true);
         startActivity(intent);
@@ -357,7 +389,7 @@ public class CatalogActivity extends Activity
         }
     }
 
-    private ArrayList<Emoji> createEmojiList(List<String> emojiNames)
+    private ArrayList<Emoji> createEmojiList(List<String> emojiNames, boolean standardOnly)
     {
         emojidex = Emojidex.getInstance();
 
@@ -366,8 +398,20 @@ public class CatalogActivity extends Activity
         {
             final Emoji emoji = emojidex.getEmoji(emojiName);
             if(emoji != null)
-                emojies.add(emoji);
+                if (!standardOnly || emoji.isStandard()) emojies.add(emoji);
         }
+
+        return emojies;
+    }
+
+    private List<Emoji> setEmojiList(List<Emoji> emojies, boolean standardOnly) {
+        if (!standardOnly) return emojies;
+
+        List<Emoji> removeEmojies = new ArrayList<>();
+        for (Emoji emoji : emojies) {
+            if (!emoji.isStandard()) removeEmojies.add(emoji);
+        }
+        emojies.removeAll(removeEmojies);
 
         return emojies;
     }
@@ -386,6 +430,9 @@ public class CatalogActivity extends Activity
         super.onResume();
         initStartCategory();
 
+        // after filtering.
+        changeCategory(currentCategory);
+
         Intent intent = getIntent();
         String action = intent.getAction();
         Set categories = intent.getCategories();
@@ -394,6 +441,8 @@ public class CatalogActivity extends Activity
 
         // emojidex login
         if ("login".equals(intent.getStringExtra("action"))) {
+            intent.removeExtra("action");
+
             if (intent.hasExtra("auth_token") && intent.hasExtra("username")) {
                 String authToken = intent.getStringExtra("auth_token");
                 String username = intent.getStringExtra("username");
@@ -543,7 +592,7 @@ public class CatalogActivity extends Activity
         if(     currentCategory == null
             ||  !currentCategory.equals("index")    )
             return;
-        int count = gridView.getCount() / indexUpdater.getLimit() + indexLoadPageCount;
+        int count = indexManager.getEmojiNames().size() / indexUpdater.getLimit() + indexLoadPageCount;
         indexUpdater.startUpdateThread(count, true);
     }
 
@@ -678,7 +727,7 @@ public class CatalogActivity extends Activity
         @Override
         public void update()
         {
-            for(Drawable drawable : animationDrawables)
+            for (Drawable drawable : animationDrawables)
                 drawable.invalidateSelf();
         }
 
@@ -686,6 +735,38 @@ public class CatalogActivity extends Activity
         public Collection<EmojidexAnimationDrawable> getDrawables()
         {
             return animationDrawables;
+        }
+    }
+
+    /**
+     * Get standard emoji only preference
+     * @return true or false
+     */
+    private boolean isStandardOnly()
+    {
+        SharedPreferences pref = getSharedPreferences(FilterActivity.PREF_NAME, Context.MODE_PRIVATE);
+        return pref.getBoolean(getString(R.string.preference_key_standard_only), false);
+    }
+
+    /**
+     * Get sort type preference
+     * @return sort type
+     */
+    private EmojiComparator.SortType getSortType()
+    {
+        UserData userdata = UserData.getInstance();
+        User user = new User();
+
+        if (userdata.isLogined() &&
+                user.authorize(userdata.getUsername(), userdata.getAuthToken()) && (user.getPremium() || user.getPro()))
+        {
+            SharedPreferences pref = getSharedPreferences(FilterActivity.PREF_NAME, Context.MODE_PRIVATE);
+            int sortType = pref.getInt(getString(R.string.preference_key_sort_type), EmojiComparator.SortType.SCORE.getValue());
+            return EmojiComparator.SortType.fromInt(sortType);
+        }
+        else
+        {
+            return EmojiComparator.SortType.SCORE;
         }
     }
 }

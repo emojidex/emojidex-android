@@ -13,6 +13,7 @@ import android.widget.Spinner;
 
 import com.emojidex.emojidexandroid.comparator.EmojiComparator;
 import com.emojidex.libemojidex.Emojidex.Service.User;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 
 public class FilterActivity extends Activity {
@@ -23,10 +24,14 @@ public class FilterActivity extends Activity {
 
     private boolean sortable = false;
 
+    private boolean fromCatalog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.window_filter);
+
+        fromCatalog = getIntent().getBooleanExtra("Catalog", false);
 
         initializeContentView();
     }
@@ -48,7 +53,8 @@ public class FilterActivity extends Activity {
         userData.init(this);
         User user = new User();
         if (userData.isLogined() &&
-                user.authorize(userData.getUsername(), userData.getAuthToken()) && (user.getPremium() || user.getPro())) {
+                user.authorize(userData.getUsername(), userData.getAuthToken()) && (user.getPremium() || user.getPro()))
+        {
             sortable = true;
         }
 
@@ -70,7 +76,8 @@ public class FilterActivity extends Activity {
 
         // Sort spinner.
         sortSpinner = (Spinner) findViewById(R.id.filter_spinner);
-        if (sortable) {
+        if (sortable)
+        {
             final ArrayAdapter<CharSequence> adapter
                     = ArrayAdapter.createFromResource(this, R.array.sort_items, R.layout.spinner_item);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -78,7 +85,9 @@ public class FilterActivity extends Activity {
             sortSpinner.setBackground(getResources().getDrawable(R.drawable.ime_search_spinner_background));
             int sortType = pref.getInt(getString(R.string.preference_key_sort_type), EmojiComparator.SortType.SCORE.getValue());
             sortSpinner.setSelection(sortType);
-        } else {
+        }
+        else
+        {
             sortSpinner.setVisibility(View.GONE);
         }
 
@@ -98,11 +107,18 @@ public class FilterActivity extends Activity {
         editor.putBoolean(getString(R.string.preference_key_standard_only), standardOnly);
         editor.apply();
 
-        if (sortable) {
+        if (sortable)
+        {
             final int sortType = sortSpinner.getSelectedItemPosition();
             editor.putInt(getString(R.string.preference_key_sort_type), sortType);
             editor.apply();
-            // FirebaseAnalytics.getInstance(this).logEvent("sort", new Bundle());
+
+            String type;
+            if (fromCatalog)
+                type = "sealkit_sort";
+            else
+                type = "sort";
+            FirebaseAnalytics.getInstance(this).logEvent(type, new Bundle());
         }
 
         closeWindow();
@@ -111,9 +127,11 @@ public class FilterActivity extends Activity {
     /**
      * Close this window.
      */
-    private void closeWindow() {
+    private void closeWindow()
+    {
         InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (inputMethodManager != null) {
+        if (inputMethodManager != null && !fromCatalog)
+        {
             inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
         }
         finish();

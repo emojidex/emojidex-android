@@ -45,8 +45,6 @@ public class EmojidexIndexUpdater
 
         Log.d(TAG, "Start index update.");
 
-        final int limit = EmojidexKeyboard.create(context).getKeyCountMax();
-
         final EmojiDownloader downloader = EmojiDownloader.getInstance();
         downloadHandle = downloader.downloadIndexEmoji(
                 new IndexDownloadArguments()
