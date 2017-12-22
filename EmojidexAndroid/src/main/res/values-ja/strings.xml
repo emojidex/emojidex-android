@@ -190,4 +190,6 @@
     <string name="save_image_failed">画像の保存に失敗しました。</string>
     <string name="new_image">新規作成</string>
     <string name="new_image_message">現在の画像を破棄して新しく作成しますか？</string>
+    <string name="prepare_emoji">絵文字の準備中...</string>
+    <string name="load_emoji_error">絵文字のロードに失敗しました。</string>
 </resources>

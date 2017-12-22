@@ -12,7 +12,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
@@ -40,6 +39,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
+ * PhotoEditorActivity
  * Created by Yoshida on 2017/12/13.
  */
 
@@ -102,7 +102,7 @@ public class PhotoEditorActivity extends Activity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2)
             {
-                addEmoji();
+                prepareEmoji();
             }
 
             @Override
@@ -122,6 +122,7 @@ public class PhotoEditorActivity extends Activity {
         if (uri == null)
         {
             if (intent.getExtras() == null || intent.getExtras().get("android.intent.extra.STREAM") == null) return;
+            //noinspection ConstantConditions
             uri = Uri.parse(intent.getExtras().get("android.intent.extra.STREAM").toString());
         }
 
@@ -135,14 +136,14 @@ public class PhotoEditorActivity extends Activity {
         catch (IOException e)
         {
             e.printStackTrace();
-            Toast.makeText(PhotoEditorActivity.this, getString(R.string.open_error), Toast.LENGTH_LONG).show();
+            showToast(getString(R.string.open_error));
         }
     }
 
     /**
-     * Add emoji to photo editor frame.
+     * Prepare emoji.
      */
-    public void addEmoji()
+    public void prepareEmoji()
     {
         // Get emoji code from invisible edit text.
         final String emojiName = emojidex.deEmojify(editText.getText()).toString().replaceAll(":", "");
@@ -152,18 +153,80 @@ public class PhotoEditorActivity extends Activity {
 
         final Emoji emoji = emojidex.getEmoji(emojiName);
 
-        // TODO: emoji downloader
-
         if (emoji == null) return;
+
+        final SealDownloader downloader = new SealDownloader(this);
+        downloader.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog)
+            {
+                if (downloader.isCanceled()) return;
+
+                final SealGenerator generator = new SealGenerator(PhotoEditorActivity.this);
+                generator.setBackgroundColor(Color.TRANSPARENT);
+                generator.generate(emojiName);
+
+                if (generator.useLowQuality())
+                {
+                    final AlertDialog.Builder alertDialog = new AlertDialog.Builder(PhotoEditorActivity.this);
+                    alertDialog.setMessage(R.string.send_seal_not_found);
+                    alertDialog.setPositiveButton(R.string.send_seal_not_found_ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which)
+                        {
+                            dialog.dismiss();
+                        }
+                    });
+                    alertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog)
+                        {
+                            addEmoji(generator.getUri());
+                        }
+                    });
+                    alertDialog.show();
+
+                    return;
+                }
+
+                addEmoji(generator.getUri());
+            }
+        });
+
+        downloader.download(
+                emojiName,
+                getString(R.string.send_seal_dialog_title),
+                getString(R.string.send_seal_dialog_message),
+                getString(R.string.send_seal_dialog_cancel)
+        );
+    }
+
+    /**
+     * Add emoji to photo editor frame.
+     */
+    private void addEmoji(Uri uri)
+    {
+        // Load emoji.
+        Bitmap bitmap;
+        try
+        {
+            InputStream is = getContentResolver().openInputStream(uri);
+            bitmap = BitmapFactory.decodeStream(is);
+            if (is != null) is.close();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            showToast(getString(R.string.load_emoji_error));
+            return;
+        }
 
         // Add emoji image to photo editor.
         final GestureImageView image = new GestureImageView(getApplicationContext());
-        final Drawable drawable = emoji.getDrawable(EmojiFormat.toFormat(getString(R.string.emoji_format_catalog)));
-        image.setImageDrawable(drawable);
+        image.setImageBitmap(bitmap);
         image.setX(100);
         image.setY(100);
-        final FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(drawable.getIntrinsicWidth(),
-                                                                             drawable.getIntrinsicHeight());
+        final FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(bitmap.getWidth(), bitmap.getHeight());
         image.setLayoutParams(params);
 
         frameLayout.addView(image);
@@ -175,6 +238,7 @@ public class PhotoEditorActivity extends Activity {
      */
     public void showKeyboard(View v)
     {
+        // TODO: open emojidex keyboard, check enable.
         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         if (inputMethodManager != null)
         {
@@ -276,8 +340,7 @@ public class PhotoEditorActivity extends Activity {
         {
             if (!saveFolder.mkdir())
             {
-                Toast.makeText(PhotoEditorActivity.this,
-                               getResources().getString(R.string.failed_make_folder), Toast.LENGTH_LONG).show();
+                showToast(getString(R.string.failed_make_folder));
                 return;
             }
         }
@@ -292,15 +355,12 @@ public class PhotoEditorActivity extends Activity {
 
             MediaScannerConnection.scanFile(getApplicationContext(), new String[] { filePath },
                                             new String[] { "image/jpg" }, null);
-            Toast.makeText(PhotoEditorActivity.this,
-                           getResources().getString(R.string.save_image_success) + "\n" + filePath,
-                           Toast.LENGTH_LONG).show();
+            showToast(getString(R.string.save_image_success) + "\n" + filePath);
         }
         catch (IOException e)
         {
             e.printStackTrace();
-            Toast.makeText(PhotoEditorActivity.this,
-                           getResources().getString(R.string.save_image_failed), Toast.LENGTH_LONG).show();
+            showToast(getString(R.string.save_image_failed));
         }
     }
 
@@ -357,6 +417,11 @@ public class PhotoEditorActivity extends Activity {
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("image/*");
         startActivityForResult(intent, SELECT_PHOTO);
+    }
+
+    private void showToast(String text)
+    {
+        Toast.makeText(PhotoEditorActivity.this, text, Toast.LENGTH_LONG).show();
     }
 
     @Override
