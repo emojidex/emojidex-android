@@ -15,7 +15,7 @@
             android:layout_height="40dp"
             android:layout_margin="5dp"
             android:src="@drawable/ic_fiber_new_black_24dp"
-            android:background="@null"
+            android:background="@drawable/button_state"
             android:onClick="prepareNewImage" />
 
         <ImageButton
@@ -23,7 +23,7 @@
             android:layout_height="40dp"
             android:layout_margin="5dp"
             android:src="@drawable/ic_save_black_24dp"
-            android:background="@null"
+            android:background="@drawable/button_state"
             android:onClick="prepareSaveImage" />
 
         <View
@@ -32,9 +32,11 @@
             android:layout_weight="1" />
 
         <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/editor_button_toggle_on"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="5dp"
+            android:src="@drawable/ic_add_black_24dp"
+            android:background="@drawable/button_state"
             android:onClick="showKeyboard" />
 
         <ImageButton
@@ -74,7 +76,7 @@
             android:layout_height="40dp"
             android:layout_margin="5dp"
             android:src="@drawable/ic_clear_black_24dp"
-            android:background="@null"
+            android:background="@drawable/button_state"
             android:onClick="clearImage" />
 
         <EditText
@@ -84,11 +86,16 @@
 
     </LinearLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray"/>
+
     <com.emojidex.emojidexandroid.view.VScrollView
         android:id="@+id/photo_editor_vscroll"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_height="match_parent"
+        android:background="@color/gray">
 
         <com.emojidex.emojidexandroid.view.HScrollView
             android:id="@+id/photo_editor_hscroll"
@@ -97,8 +104,8 @@
 
             <FrameLayout
                 android:id="@+id/photo_editor_frame"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
                 <ImageView
                     android:id="@+id/photo_editor_base_image"

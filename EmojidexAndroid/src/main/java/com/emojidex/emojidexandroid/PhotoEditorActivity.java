@@ -65,9 +65,10 @@ public class PhotoEditorActivity extends Activity {
     private ImageButton scaleButton;
     private ImageButton rollButton;
 
-    private Emojidex emojidex;
     private EditText editText;
     private TextWatcher textWatcher;
+
+    private Emojidex emojidex;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState)
@@ -75,11 +76,11 @@ public class PhotoEditorActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_editor);
 
-        initViews();
+        initialize();
         setBaseImage(getIntent().getData());
     }
 
-    private void initViews()
+    private void initialize()
     {
         emojidex = Emojidex.getInstance();
         emojidex.initialize(getApplicationContext());
@@ -95,17 +96,16 @@ public class PhotoEditorActivity extends Activity {
 
         textWatcher = new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2)
+            {
+                addEmoji();
             }
 
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                setEmoji();
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-            }
+            public void afterTextChanged(Editable editable) { }
         };
         editText = (EditText) findViewById(R.id.photo_editor_text);
         editText.addTextChangedListener(textWatcher);
@@ -134,21 +134,23 @@ public class PhotoEditorActivity extends Activity {
     }
 
     /**
-     * Set emoji to photo editor frame.
+     * Add emoji to photo editor frame.
      */
-    public void setEmoji()
+    public void addEmoji()
     {
-        final String emojiName = emojidex.deEmojify(editText.getText()).toString()
-                                         .replaceAll(":", "");
-                                         //.replaceAll(" ", "_");
+        // Get emoji code from invisible edit text.
+        final String emojiName = emojidex.deEmojify(editText.getText()).toString().replaceAll(":", "");
         editText.removeTextChangedListener(textWatcher);
         editText.setText("");
         editText.addTextChangedListener(textWatcher);
 
         final Emoji emoji = emojidex.getEmoji(emojiName);
 
+        // TODO: emoji downloader
+
         if (emoji == null) return;
 
+        // Add emoji image to photo editor.
         final GestureImageView image = new GestureImageView(getApplicationContext());
         final Drawable drawable = emoji.getDrawable(EmojiFormat.toFormat(getString(R.string.emoji_format_catalog)));
         image.setImageDrawable(drawable);
@@ -167,8 +169,9 @@ public class PhotoEditorActivity extends Activity {
      */
     public void showKeyboard(View v)
     {
-        InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (inputMethodManager != null) {
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (inputMethodManager != null)
+        {
             inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
         }
         editText.requestFocus();
@@ -254,7 +257,7 @@ public class PhotoEditorActivity extends Activity {
         canvas.drawBitmap(((BitmapDrawable) baseImageView.getDrawable()).getBitmap(),
                           baseImageView.getImageMatrix(), null);
 
-        // Draw emoji image.
+        // Draw emoji images.
         for (int i = 1; i < frameLayout.getChildCount(); i++)
         {
             ImageView image = (ImageView) frameLayout.getChildAt(i);
@@ -320,7 +323,8 @@ public class PhotoEditorActivity extends Activity {
             dialog.setMessage(R.string.new_image_message);
             dialog.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                 @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
+                public void onClick(DialogInterface dialogInterface, int i)
+                {
                     newImage();
                 }
             });
@@ -388,7 +392,7 @@ public class PhotoEditorActivity extends Activity {
     private boolean checkExternalStoragePermission()
     {
         int permission = ContextCompat.checkSelfPermission(getApplicationContext(),
-                android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                                                           android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
         return permission == PackageManager.PERMISSION_GRANTED;
     }
 
@@ -439,6 +443,8 @@ public class PhotoEditorActivity extends Activity {
 
                             break;
                     }
+
+                    break;
             }
 
             oldX = newX;
