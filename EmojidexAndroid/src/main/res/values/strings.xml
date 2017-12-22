@@ -3,6 +3,7 @@
 
     <string name="app_name" translatable="false">emojidex</string>
     <string name="app_name_catalog" translatable="false">emojidex Seal Kit</string>
+    <string name="app_name_photo_editor" translatable="false">emojidex Photo Editor</string>
 
     <string name="action_settings">Settings</string>
 

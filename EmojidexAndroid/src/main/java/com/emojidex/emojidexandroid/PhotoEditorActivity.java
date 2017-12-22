@@ -13,6 +13,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -77,7 +78,7 @@ public class PhotoEditorActivity extends Activity {
         setContentView(R.layout.activity_photo_editor);
 
         initialize();
-        setBaseImage(getIntent().getData());
+        setBaseImage(getIntent());
     }
 
     private void initialize()
@@ -113,15 +114,20 @@ public class PhotoEditorActivity extends Activity {
 
     /**
      * Set base image.
-     * @param data photo data.
+     * @param intent photo data.
      */
-    private void setBaseImage(Uri data)
+    private void setBaseImage(Intent intent)
     {
-        if (data == null) return;
+        Uri uri = intent.getData();
+        if (uri == null)
+        {
+            if (intent.getExtras() == null || intent.getExtras().get("android.intent.extra.STREAM") == null) return;
+            uri = Uri.parse(intent.getExtras().get("android.intent.extra.STREAM").toString());
+        }
 
         try
         {
-            InputStream is = getContentResolver().openInputStream(data);
+            InputStream is = getContentResolver().openInputStream(uri);
             Bitmap bitmap = BitmapFactory.decodeStream(is);
             if (is != null) is.close();
             baseImageView.setImageBitmap(bitmap);
@@ -284,6 +290,8 @@ public class PhotoEditorActivity extends Activity {
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, os);
             if (os != null) os.close();
 
+            MediaScannerConnection.scanFile(getApplicationContext(), new String[] { filePath },
+                                            new String[] { "image/jpg" }, null);
             Toast.makeText(PhotoEditorActivity.this,
                            getResources().getString(R.string.save_image_success) + "\n" + filePath,
                            Toast.LENGTH_LONG).show();
@@ -382,7 +390,7 @@ public class PhotoEditorActivity extends Activity {
             return;
         }
 
-        setBaseImage(data.getData());
+        setBaseImage(data);
     }
 
     /**

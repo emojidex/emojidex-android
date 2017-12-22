@@ -128,8 +128,21 @@
 
         <activity
             android:name=".PhotoEditorActivity"
-            android:label="@string/app_name"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+            android:label="@string/app_name_photo_editor"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/jpeg" />
+                <data android:mimeType="image/jpg" />
+                <data android:mimeType="image/png" />
+                <data android:mimeType="image/gif" />
+                <data android:mimeType="image/bmp" />
+                <data android:mimeType="image/bitmap" />
+            </intent-filter>
+
+        </activity>
 
         <provider
             android:name="com.emojidex.emojidexandroid.EmojidexProvider"
