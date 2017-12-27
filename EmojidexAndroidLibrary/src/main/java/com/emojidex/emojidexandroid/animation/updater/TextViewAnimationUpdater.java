@@ -1,6 +1,6 @@
 package com.emojidex.emojidexandroid.animation.updater;
 
-import android.text.Spannable;
+import android.text.Spanned;
 import android.widget.TextView;
 
 import com.emojidex.emojidexandroid.animation.EmojidexAnimationDrawable;
@@ -35,7 +35,7 @@ public class TextViewAnimationUpdater implements AnimationUpdater {
     public Collection<EmojidexAnimationDrawable> getDrawables()
     {
         final ArrayList<EmojidexAnimationDrawable> drawables = new ArrayList<EmojidexAnimationDrawable>();
-        final Spannable text = (Spannable)view.getText();
+        final Spanned text = (Spanned)view.getText();
         for(EmojidexAnimationImageSpan span : text.getSpans(0, text.length(), EmojidexAnimationImageSpan.class))
             drawables.add((EmojidexAnimationDrawable)span.getDrawable());
         return drawables;
