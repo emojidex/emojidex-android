@@ -252,4 +252,5 @@
     <string name="emojidex_keyboard_disabled">The emojidex keyboard is not enabled.\nPlease enable it.</string>
     <string name="no_input_method">Could not get input method.</string>
     <string name="select_emojidex_keyboard">Please select emojidex keyboard.</string>
+    <string name="image_blank">Please select a base image...</string>
 </resources>
