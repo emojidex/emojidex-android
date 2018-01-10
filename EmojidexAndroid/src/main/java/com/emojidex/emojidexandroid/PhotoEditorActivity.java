@@ -15,6 +15,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -58,6 +59,9 @@ public class PhotoEditorActivity extends Activity {
             android.Manifest.permission.READ_EXTERNAL_STORAGE,
             android.Manifest.permission.WRITE_APN_SETTINGS
     };
+
+    private static final String LOCAL_SAVE_PATH =
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath() + "/emojidex-photo-editor";
 
     private VScrollView vScrollView;
     private HScrollView hScrollView;
@@ -387,18 +391,18 @@ public class PhotoEditorActivity extends Activity {
         }
 
         // Create save folder.
-        File saveFolder = new File(EmojidexFileUtils.getLocalSealkitSaveFolder());
+        File saveFolder = new File(LOCAL_SAVE_PATH);
         if (!saveFolder.exists())
         {
             if (!saveFolder.mkdir())
             {
-                showToast(getString(R.string.failed_make_folder));
+                showToast(getString(R.string.save_image_failed));
                 return;
             }
         }
 
         // Save image.
-        String filePath = EmojidexFileUtils.getLocalSealkitSaveFolder() + "/" + System.currentTimeMillis() + ".png";
+        String filePath = LOCAL_SAVE_PATH + "/" + System.currentTimeMillis() + ".png";
         try
         {
             OutputStream os = getContentResolver().openOutputStream(Uri.fromFile(new File(filePath)));
