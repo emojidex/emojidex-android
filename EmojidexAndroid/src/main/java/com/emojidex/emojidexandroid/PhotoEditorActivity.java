@@ -7,15 +7,19 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.ExifInterface;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -169,10 +173,32 @@ public class PhotoEditorActivity extends Activity {
             uri = Uri.parse(intent.getExtras().get("android.intent.extra.STREAM").toString());
         }
 
+        // exif
+        String[] projection = { MediaStore.MediaColumns.DATA };
+        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
+        int orientation = ExifInterface.ORIENTATION_UNDEFINED;
+
+        if (cursor != null)
+        {
+            cursor.moveToFirst();
+            try
+            {
+                ExifInterface exifInterface = new ExifInterface(cursor.getString(0));
+                orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+            cursor.close();
+        }
+
         try
         {
             InputStream is = getContentResolver().openInputStream(uri);
-            Bitmap bitmap = BitmapFactory.decodeStream(is);
+            Bitmap originBitmap = BitmapFactory.decodeStream(is);
+            Bitmap bitmap = Bitmap.createBitmap(originBitmap, 0, 0, originBitmap.getWidth(),
+                                                originBitmap.getHeight(), getMatrix(orientation), true);
             if (is != null) is.close();
             baseImageView.setImageBitmap(bitmap);
         }
@@ -181,6 +207,50 @@ public class PhotoEditorActivity extends Activity {
             e.printStackTrace();
             showToast(getString(R.string.open_error));
         }
+    }
+
+    /**
+     * Get matrix from image exif.
+     * @param orientation orientation
+     * @return matrix
+     */
+    private Matrix getMatrix(int orientation)
+    {
+        Matrix matrix = new Matrix();
+        matrix.reset();
+
+        switch (orientation)
+        {
+            case ExifInterface.ORIENTATION_UNDEFINED:
+                break;
+            case ExifInterface.ORIENTATION_NORMAL:
+                break;
+            case ExifInterface.ORIENTATION_FLIP_HORIZONTAL:
+                matrix.postScale(-1f, 1f);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_180:
+                matrix.postRotate(180f);
+                break;
+            case ExifInterface.ORIENTATION_FLIP_VERTICAL:
+                matrix.postScale(1f, -1f);
+                break;
+            case ExifInterface.ORIENTATION_TRANSPOSE:
+                matrix.postRotate(90f);
+                matrix.postScale(1f, -1f);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_90:
+                matrix.postRotate(90f);
+                break;
+            case ExifInterface.ORIENTATION_TRANSVERSE:
+                matrix.postRotate(-90f);
+                matrix.postScale(1f, -1f);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_270:
+                matrix.postRotate(-90f);
+                break;
+        }
+
+        return matrix;
     }
 
     /**
