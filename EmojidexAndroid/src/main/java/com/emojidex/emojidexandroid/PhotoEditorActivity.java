@@ -12,7 +12,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.ExifInterface;
 import android.media.MediaScannerConnection;
@@ -81,6 +84,8 @@ public class PhotoEditorActivity extends Activity {
 
     private Emojidex emojidex;
 
+    private ColorMatrixColorFilter currentFilter;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState)
     {
@@ -121,6 +126,8 @@ public class PhotoEditorActivity extends Activity {
         };
         editText = (EditText) findViewById(R.id.photo_editor_text);
         editText.addTextChangedListener(textWatcher);
+
+        currentFilter = new ColorMatrixColorFilter(new ColorMatrix());
     }
 
     /**
@@ -201,6 +208,7 @@ public class PhotoEditorActivity extends Activity {
                                                 originBitmap.getHeight(), getMatrix(orientation), true);
             if (is != null) is.close();
             baseImageView.setImageBitmap(bitmap);
+            baseImageView.setColorFilter(currentFilter);
         }
         catch (IOException e)
         {
@@ -341,6 +349,7 @@ public class PhotoEditorActivity extends Activity {
         image.setY(100);
         final FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(bitmap.getWidth(), bitmap.getHeight());
         image.setLayoutParams(params);
+        image.setColorFilter(currentFilter);
 
         frameLayout.addView(image);
     }
@@ -450,14 +459,16 @@ public class PhotoEditorActivity extends Activity {
         Canvas canvas = new Canvas(bitmap);
 
         // Draw base image.
+        Paint paint = new Paint();
+        paint.setColorFilter(baseImageView.getColorFilter());
         canvas.drawBitmap(((BitmapDrawable) baseImageView.getDrawable()).getBitmap(),
-                          baseImageView.getImageMatrix(), null);
+                          baseImageView.getImageMatrix(), paint);
 
         // Draw emoji images.
         for (int i = 1; i < frameLayout.getChildCount(); i++)
         {
             ImageView image = (ImageView) frameLayout.getChildAt(i);
-            canvas.drawBitmap(((BitmapDrawable) image.getDrawable()).getBitmap(), image.getMatrix(), null);
+            canvas.drawBitmap(((BitmapDrawable) image.getDrawable()).getBitmap(), image.getMatrix(), paint);
         }
 
         // Create save folder.
@@ -537,10 +548,61 @@ public class PhotoEditorActivity extends Activity {
         clearImage(null);
         baseImageView.setImageBitmap(null);
 
+        currentFilter = new ColorMatrixColorFilter(new ColorMatrix());
+
         Intent intent = new Intent();
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("image/*");
         startActivityForResult(intent, SELECT_PHOTO);
+    }
+
+    /**
+     * Add filter.
+     * @param v button
+     */
+    public void addFilter(View v)
+    {
+        final CharSequence[] items = getResources().getStringArray(R.array.filter_items);
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle(R.string.select_filter);
+        dialog.setItems(
+                items,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        ColorMatrix matrix = new ColorMatrix();
+                        matrix.reset();
+
+                        switch (i)
+                        {
+                            case 0: // clear
+                                break;
+                            case 1: // grayscale
+                                matrix.setSaturation(0);
+                                break;
+                            case 2: // sepia
+                                matrix.setScale(0.69f, 0.47f, 0.27f, 1f);
+                                break;
+                            case 3: // nega-posi
+                                matrix.set(new float[] { -1, 0, 0, 0, 255,
+                                                         0, -1, 0, 0, 255,
+                                                         0, 0, -1, 0, 255,
+                                                         0, 0, 0, 1, 0 });
+                                break;
+                        }
+
+                        currentFilter = new ColorMatrixColorFilter(matrix);
+                        baseImageView.setColorFilter(currentFilter);
+
+                        for (int j = 1; j < frameLayout.getChildCount(); j++)
+                        {
+                            GestureImageView imageView = (GestureImageView) frameLayout.getChildAt(j);
+                            imageView.setColorFilter(currentFilter);
+                        }
+                    }
+                }
+        );
+        dialog.show();
     }
 
     private void showToast(String text)
