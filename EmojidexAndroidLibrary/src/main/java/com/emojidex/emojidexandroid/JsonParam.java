@@ -37,6 +37,7 @@ public class JsonParam {
     private Checksums checksums = null;
     private long favorited = 0;
     private String created_at = null;
+    private boolean r18 = false;
 
     public static class Checksums
     {
@@ -338,6 +339,16 @@ public class JsonParam {
         this.created_at = createdAt;
     }
 
+    public boolean isR18()
+    {
+        return r18;
+    }
+
+    public void setR18(boolean r18)
+    {
+        this.r18 = r18;
+    }
+
     /**
      * Copy parameter from src.
      * @param src   Source.
@@ -416,5 +427,6 @@ public class JsonParam {
 
         setFavorited(src.getFavorited());
         setCreatedAt(src.getCreated_at());
+        setR18(src.getR18());
     }
 }
