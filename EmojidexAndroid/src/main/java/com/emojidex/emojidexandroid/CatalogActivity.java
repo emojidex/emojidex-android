@@ -85,6 +85,7 @@ public class CatalogActivity extends Activity
 
     private EmojiComparator.SortType currentSortType;
     private boolean standardOnly;
+    private boolean r18Visibility;
 
     private UserData userData;
 
@@ -252,6 +253,7 @@ public class CatalogActivity extends Activity
         currentCategory = categoryName;
         currentSortType = getSortType();
         standardOnly = isStandardOnly();
+        r18Visibility = userData.isLogined() && userData.isR18();
 
         Comparator<Emoji> comparator = null;
 
@@ -268,7 +270,7 @@ public class CatalogActivity extends Activity
         else if(categoryName.equals(getString(R.string.ime_category_id_search)))
         {
             List<String> emojiNames = searchManager.getEmojiNames();
-            currentCatalog = createEmojiList(emojiNames, false);
+            currentCatalog = createEmojiList(emojiNames, standardOnly);
         }
         else if(categoryName.equals(getString(R.string.ime_category_id_index)))
         {
@@ -402,7 +404,7 @@ public class CatalogActivity extends Activity
         {
             final Emoji emoji = emojidex.getEmoji(emojiName);
             if(emoji != null)
-                if (!standardOnly || emoji.isStandard()) emojies.add(emoji);
+                if ((!standardOnly || emoji.isStandard()) && (r18Visibility || !emoji.isR18())) emojies.add(emoji);
         }
 
         return emojies;
@@ -410,11 +412,11 @@ public class CatalogActivity extends Activity
 
     private List<Emoji> setEmojiList(List<Emoji> emojies, boolean standardOnly)
     {
-        if (!standardOnly) return emojies;
+        if (!standardOnly && r18Visibility) return emojies;
 
         List<Emoji> removeEmojies = new ArrayList<>();
         for (Emoji emoji : emojies) {
-            if (!emoji.isStandard()) removeEmojies.add(emoji);
+            if ((standardOnly && !emoji.isStandard()) || (!r18Visibility && emoji.isR18())) removeEmojies.add(emoji);
         }
         emojies.removeAll(removeEmojies);
 

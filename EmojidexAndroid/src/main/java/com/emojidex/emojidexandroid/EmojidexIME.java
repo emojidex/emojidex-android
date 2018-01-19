@@ -86,6 +86,7 @@ public class EmojidexIME extends InputMethodService {
 
     private EmojiComparator.SortType currentSortType;
     private boolean standardOnly = false;
+    private boolean r18Visibility;
 
     /**
      * Construct EmojidexIME object.
@@ -478,16 +479,18 @@ public class EmojidexIME extends InputMethodService {
         currentCategory = category;
         currentSortType = getSortType();
         standardOnly = isStandardOnly();
+        r18Visibility = userdata.isLogined() && userdata.isR18();
+        keyboardViewManager.setR18Visibility(r18Visibility);
 
         if(category.equals(getString(R.string.ime_category_id_history)))
         {
             final List<String> emojiNames = historyManager.getEmojiNames();
-            keyboardViewManager.initializeFromName(emojiNames, defaultPage, standardOnly);
+            keyboardViewManager.initializeFromName(emojiNames, defaultPage, false);
         }
         else if(category.equals(getString(R.string.ime_category_id_favorite)))
         {
             final List<String> emojiNames = favoriteManager.getEmojiNames();
-            keyboardViewManager.initializeFromName(emojiNames, defaultPage, standardOnly);
+            keyboardViewManager.initializeFromName(emojiNames, defaultPage, false);
         }
         else if(category.equals(getString(R.string.ime_category_id_search)))
         {
@@ -502,7 +505,7 @@ public class EmojidexIME extends InputMethodService {
             {
                 final Emoji emoji = emojidex.getEmoji(name);
                 if(emoji != null) {
-                    if (!standardOnly || emoji.isStandard()) emojies.add(emoji);
+                    if ((!standardOnly || emoji.isStandard()) && (r18Visibility || !emoji.isR18())) emojies.add(emoji);
                 }
             }
 
@@ -557,10 +560,10 @@ public class EmojidexIME extends InputMethodService {
             categorizedEmojies.put(category, emojies);
         }
 
-        if (standardOnly) {
+        if (standardOnly || !r18Visibility) {
             List<Emoji> removeEmojies = new ArrayList<>();
             for (Emoji emoji : emojies) {
-                if (!emoji.isStandard()) removeEmojies.add(emoji);
+                if ((standardOnly && !emoji.isStandard()) || (!r18Visibility && emoji.isR18())) removeEmojies.add(emoji);
             }
             emojies.removeAll(removeEmojies);
         }
