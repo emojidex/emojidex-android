@@ -86,6 +86,8 @@ public class CatalogActivity extends Activity
     private EmojiComparator.SortType currentSortType;
     private boolean standardOnly;
 
+    private UserData userData;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -124,9 +126,8 @@ public class CatalogActivity extends Activity
 
         new EmojidexUpdater(this).startUpdateThread();
 
-        UserData userdata = UserData.getInstance();
-        if (userdata.getUsername() != null && !userdata.getUsername().equals("")) {
-            myEmojiUpdater = new EmojidexMyEmojiUpdater(this, userdata.getUsername());
+        if (userData.getUsername() != null && !userData.getUsername().equals("")) {
+            myEmojiUpdater = new EmojidexMyEmojiUpdater(this, userData.getUsername());
             myEmojiUpdater.startUpdateThread(false);
         }
 
@@ -176,8 +177,8 @@ public class CatalogActivity extends Activity
         myEmojiManager.load();
 
         // Initialize user data.
-        final UserData userdata = UserData.getInstance();
-        userdata.init(this);
+        userData = UserData.getInstance();
+        userData.init(this);
 
         currentSortType = getSortType();
         standardOnly = isStandardOnly();
@@ -453,8 +454,7 @@ public class CatalogActivity extends Activity
                     intent.removeExtra("auth_token");
                     intent.removeExtra("username");
 
-                    UserData userdata = UserData.getInstance();
-                    userdata.setUserData(authToken, username);
+                    userData.setUserData(authToken, username);
 
                     final HistoryManager hm = HistoryManager.getInstance(this);
                     final FavoriteManager fm = FavoriteManager.getInstance(this);
@@ -464,7 +464,7 @@ public class CatalogActivity extends Activity
                     fm.loadFromUser();
 
                     Toast.makeText(getApplicationContext(),
-                            getString(R.string.menu_login_success) + userdata.getUsername(),
+                            getString(R.string.menu_login_success) + userData.getUsername(),
                             Toast.LENGTH_SHORT).show();
                     analytics.logEvent(FirebaseAnalytics.Event.LOGIN, new Bundle());
                 }
@@ -577,20 +577,11 @@ public class CatalogActivity extends Activity
      */
     private void setAdsVisibility()
     {
-        UserData userData = UserData.getInstance();
-
-        if (!userData.isLogined())
-        {
+        if (userData.isLogined() && userData.isSubscriber())
+            adView.setVisibility(View.GONE);
+        else
             adView.setVisibility(View.VISIBLE);
-            return;
-        }
 
-        User user = new User();
-        if (user.authorize(userData.getUsername(), userData.getAuthToken()))
-        {
-            if (user.getPremium())
-                adView.setVisibility(View.GONE);
-        }
     }
 
     private void getIndexMore()
@@ -730,14 +721,12 @@ public class CatalogActivity extends Activity
      */
     private void setMenuButtonsVisibility()
     {
-        UserData userData = UserData.getInstance();
         if (userData.isLogined())
         {
             loginButton.setVisibility(View.GONE);
             myEmojiButton.setVisibility(View.VISIBLE);
             followingButton.setVisibility(View.VISIBLE);
-            User user = new User();
-            if (user.authorize(userData.getUsername(), userData.getAuthToken()) && (user.getPremium() || user.getPro()))
+            if (userData.isSubscriber())
                 followersButton.setVisibility(View.VISIBLE);
             else
                 followersButton.setVisibility(View.GONE);
@@ -786,11 +775,7 @@ public class CatalogActivity extends Activity
      */
     private EmojiComparator.SortType getSortType()
     {
-        UserData userdata = UserData.getInstance();
-        User user = new User();
-
-        if (userdata.isLogined() &&
-                user.authorize(userdata.getUsername(), userdata.getAuthToken()) && (user.getPremium() || user.getPro()))
+        if (userData.isLogined() && userData.isSubscriber())
         {
             SharedPreferences pref = getSharedPreferences(FilterActivity.PREF_NAME, Context.MODE_PRIVATE);
             int sortType = pref.getInt(getString(R.string.preference_key_sort_type), EmojiComparator.SortType.SCORE.getValue());

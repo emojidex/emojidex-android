@@ -140,7 +140,7 @@ public class EmojidexIME extends InputMethodService {
         createCategorySelector();
         createKeyboardView();
         createSubKeyboardView();
-        setMyEmojiButtonVisibility(userdata.isLogined());
+        setMyEmojiButtonVisibility();
 
         // Sync user data.
         historyManager.loadFromUser();
@@ -935,14 +935,14 @@ public class EmojidexIME extends InputMethodService {
      * @return sort type
      */
     private EmojiComparator.SortType getSortType() {
-        User user = new User();
-
-        if (userdata.isLogined() &&
-                user.authorize(userdata.getUsername(), userdata.getAuthToken()) && (user.getPremium() || user.getPro())) {
+        if (userdata.isLogined() && userdata.isSubscriber())
+        {
             SharedPreferences pref = getSharedPreferences(FilterActivity.PREF_NAME, Context.MODE_PRIVATE);
             int sortType = pref.getInt(getString(R.string.preference_key_sort_type), EmojiComparator.SortType.SCORE.getValue());
             return EmojiComparator.SortType.fromInt(sortType);
-        } else {
+        }
+        else
+        {
             return EmojiComparator.SortType.SCORE;
         }
     }
@@ -950,12 +950,12 @@ public class EmojidexIME extends InputMethodService {
     /**
      * set my_emoji button visibility.
      */
-    public void setMyEmojiButtonVisibility(boolean isShow) {
-        if (isShow) {
+    public void setMyEmojiButtonVisibility()
+    {
+        if (userdata.isLogined())
             myEmojiButton.setVisibility(View.VISIBLE);
-        } else {
+        else
             myEmojiButton.setVisibility(View.GONE);
-        }
     }
 
     /**

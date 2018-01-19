@@ -41,7 +41,6 @@ import com.emojidex.emojidexandroid.animation.EmojidexAnimationImageSpan;
 import com.emojidex.emojidexandroid.animation.updater.AnimationUpdater;
 import com.emojidex.emojidexandroid.animation.updater.TextViewAnimationUpdater;
 import com.emojidex.emojidexandroid.downloader.DownloadListener;
-import com.emojidex.libemojidex.Emojidex.Service.User;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -672,7 +671,6 @@ public class MainActivity extends Activity {
                     intent.removeExtra("auth_token");
                     intent.removeExtra("username");
 
-                    userData = UserData.getInstance();
                     userData.setUserData(authToken, username);
 
                     final HistoryManager hm = HistoryManager.getInstance(this);
@@ -787,14 +785,12 @@ public class MainActivity extends Activity {
 
     public void setMenuButtonsVisibility()
     {
-        UserData userData = UserData.getInstance();
         if (userData.isLogined())
         {
             loginButton.setVisibility(View.GONE);
             newEmojiButton.setVisibility(View.VISIBLE);
             followingButton.setVisibility(View.VISIBLE);
-            User user = new User();
-            if (user.authorize(userData.getUsername(), userData.getAuthToken()) && (user.getPremium() || user.getPro()))
+            if (userData.isSubscriber())
                 followersButton.setVisibility(View.VISIBLE);
             else
                 followersButton.setVisibility(View.GONE);
@@ -825,20 +821,10 @@ public class MainActivity extends Activity {
      */
     private void setAdsVisibility()
     {
-        userData = UserData.getInstance();
-
-        if (!userData.isLogined())
-        {
+        if (userData.isLogined() && userData.isSubscriber())
+            adView.setVisibility(View.GONE);
+        else
             adView.setVisibility(View.VISIBLE);
-            return;
-        }
-
-        User user = new User();
-        if (user.authorize(userData.getUsername(), userData.getAuthToken()))
-        {
-            if (user.getPremium())
-                adView.setVisibility(View.GONE);
-        }
     }
 
     private void startAnimation()
@@ -922,10 +908,8 @@ public class MainActivity extends Activity {
      * set my_emoji button visibility (emojidex IME)
      */
     private void setMyEmojiButtonVisibility() {
-        userData = UserData.getInstance();
-
         if (EmojidexIME.currentInstance != null) {
-            EmojidexIME.currentInstance.setMyEmojiButtonVisibility(userData.isLogined());
+            EmojidexIME.currentInstance.setMyEmojiButtonVisibility();
         }
     }
 
