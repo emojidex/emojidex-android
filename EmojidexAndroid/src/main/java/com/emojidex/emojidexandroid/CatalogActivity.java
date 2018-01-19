@@ -476,6 +476,7 @@ public class CatalogActivity extends Activity
                             getString(R.string.menu_login_cancel), Toast.LENGTH_SHORT).show();
                 }
             }
+            intent.removeExtra("action");
         }
 
         // set visibility.

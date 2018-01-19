@@ -718,6 +718,7 @@ public class MainActivity extends Activity {
                             Toast.LENGTH_SHORT).show();
                 }
             }
+            intent.removeExtra("action");
         }
 
         // Initialize login button.
