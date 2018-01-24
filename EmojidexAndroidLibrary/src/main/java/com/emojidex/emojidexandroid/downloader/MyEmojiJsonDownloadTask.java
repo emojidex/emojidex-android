@@ -8,7 +8,7 @@ import com.emojidex.libemojidex.Emojidex.Data.Collection;
  * Created by Yoshida on 2017/11/29.
  */
 
-public class MyEmojiJsonDownloadTask extends AbstractJsonDownloadTask {
+class MyEmojiJsonDownloadTask extends AbstractJsonDownloadTask {
     /**
      * Construct object.
      * @param arguments     Download arguments.
