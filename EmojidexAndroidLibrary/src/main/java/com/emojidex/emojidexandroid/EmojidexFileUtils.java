@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.provider.OpenableColumns;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
@@ -21,8 +20,6 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Locale;
 
 /**
@@ -34,7 +31,8 @@ public class EmojidexFileUtils
     private static final String TMP_DIR = "tmp";
     private static final String REMOTE_ROOT_PATH_DEFAULT = "https://cdn.emojidex.com";
     private static final String API_ROOT_PATH = "https://www.emojidex.com/api/v1";
-    private static final String JSON_FILENAME = "emoji.json";
+    private static final String EMOJI_JSON_FILENAME = "emoji.json";
+    private static final String MOJI_CODES_JSON_FILENAME = "moji_codes.json";
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
@@ -75,12 +73,21 @@ public class EmojidexFileUtils
     }
 
     /**
-     * Create json uri from local storage.
+     * Create emoji json uri from local storage.
      * @return  Json uri.
      */
-    public static Uri getLocalJsonUri()
+    public static Uri getLocalEmojiJsonUri()
     {
-        return getLocalFileUri(JSON_FILENAME);
+        return getLocalFileUri(EMOJI_JSON_FILENAME);
+    }
+
+    /**
+     * Create moji codes json uri from local storage.
+     * @return  Json uri.
+     */
+    public static Uri getLocalMojiCodesJsonUri()
+    {
+        return getLocalFileUri(MOJI_CODES_JSON_FILENAME);
     }
 
     /**

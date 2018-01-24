@@ -67,7 +67,7 @@ public class Emojidex {
         VersionManager.getInstance().initialize(this.context);
 
         manager = new EmojiManager(this.context);
-        manager.add(EmojidexFileUtils.getLocalJsonUri());
+        manager.add(EmojidexFileUtils.getLocalEmojiJsonUri());
 
         getEmojiDownloader().initialize(this.context, manager);
 
@@ -140,7 +140,7 @@ public class Emojidex {
             throw new EmojidexIsNotInitializedException();
 
         manager.reset();
-        manager.add(EmojidexFileUtils.getLocalJsonUri());
+        manager.add(EmojidexFileUtils.getLocalEmojiJsonUri());
     }
 
     /**

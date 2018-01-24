@@ -4,6 +4,7 @@ import com.emojidex.emojidexandroid.downloader.DownloadListener;
 import com.emojidex.emojidexandroid.downloader.EmojiDownloader;
 import com.emojidex.emojidexandroid.downloader.arguments.EmojiDownloadArguments;
 import com.emojidex.emojidexandroid.downloader.arguments.ExtendedDownloadArguments;
+import com.emojidex.emojidexandroid.downloader.arguments.MojiCodesDownloadArguments;
 import com.emojidex.emojidexandroid.downloader.arguments.UTFDownloadArguments;
 
 import java.util.Collection;
@@ -32,6 +33,15 @@ class UpdateManager {
 
         // Add listener.
         emojidex.addDownloadListener(new UpdateListener(handles));
+
+        // MojiCodes
+        {
+            final int handle = downloader.downloadMojiCodes(
+                    new MojiCodesDownloadArguments()
+            );
+            if(handle != EmojiDownloader.HANDLE_NULL)
+                handles.add(handle);
+        }
 
         // UTF
         {

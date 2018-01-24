@@ -13,5 +13,6 @@ enum TaskType {
     IMAGE,
     IMAGE_ARCHIVE,
     MY_EMOJI,
+    MOJI_CODES,
     ;
 }

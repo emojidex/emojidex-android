@@ -3,12 +3,14 @@ package com.emojidex.emojidexandroid.downloader;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import com.emojidex.emojidexandroid.MojiCodes;
 import com.emojidex.emojidexandroid.downloader.arguments.ArgumentsInterface;
 import com.emojidex.emojidexandroid.downloader.arguments.EmojiDownloadArguments;
 import com.emojidex.emojidexandroid.downloader.arguments.ExtendedDownloadArguments;
 import com.emojidex.emojidexandroid.downloader.arguments.ImageArchiveDownloadArguments;
 import com.emojidex.emojidexandroid.downloader.arguments.ImageDownloadArguments;
 import com.emojidex.emojidexandroid.downloader.arguments.IndexDownloadArguments;
+import com.emojidex.emojidexandroid.downloader.arguments.MojiCodesDownloadArguments;
 import com.emojidex.emojidexandroid.downloader.arguments.MyEmojiDownloadArguments;
 import com.emojidex.emojidexandroid.downloader.arguments.SearchDownloadArguments;
 import com.emojidex.emojidexandroid.downloader.arguments.UTFDownloadArguments;
@@ -26,9 +28,10 @@ import java.util.concurrent.ThreadPoolExecutor;
  */
 
 class TaskManager {
-    public final static int TASK_PRIORITY_JSON = 1000;
-    public final static int TASK_PRIORITY_IMAGE_ARCHIVE = 2000;
-    public final static int TASK_PRIORITY_IMAGE = 3000;
+    public final static int TASK_PRIORITY_MOJI_CODES = 1000;
+    public final static int TASK_PRIORITY_JSON = 2000;
+    public final static int TASK_PRIORITY_IMAGE_ARCHIVE = 3000;
+    public final static int TASK_PRIORITY_IMAGE = 4000;
 
     private final Map<Integer, ArrayDeque<AbstractDownloadTask>> idleTasks;
     private final Collection<AbstractDownloadTask> runningTasks;
@@ -213,6 +216,27 @@ class TaskManager {
                     }
                 },
                 TASK_PRIORITY_JSON
+        );
+    }
+
+    /**
+     * Regist task of download moji codes.
+     * @param arguments     Task arguments.
+     * @return              Task handle.
+     */
+    public int registMojiCodes(MojiCodesDownloadArguments arguments)
+    {
+        return registTask(
+                TaskType.MOJI_CODES,
+                arguments,
+                new TaskGeneratorInterface() {
+                    @Override
+                    public AbstractDownloadTask generate(ArgumentsInterface arguments)
+                    {
+                        return new MojiCodesDownloadTask((MojiCodesDownloadArguments)arguments);
+                    }
+                },
+                TASK_PRIORITY_MOJI_CODES
         );
     }
 

@@ -38,18 +38,7 @@ abstract class AbstractJsonDownloadTask extends AbstractDownloadTask
      */
     protected Client createEmojidexClient()
     {
-        // Create client.
-        final Client client = new Client();
-
-        // Login if has username and auth_token.
-        final String username = user.getUserName();
-        final String authtoken = user.getAuthToken();
-        if( !username.isEmpty() && !authtoken.isEmpty() )
-        {
-            client.getUser().authorize(username, authtoken);
-        }
-
-        return client;
+        return DownloaderUtils.createEmojidexClient(user);
     }
 
     @Override

@@ -3,7 +3,6 @@ package com.emojidex.emojidexandroid;
 import android.content.Context;
 import android.net.Uri;
 
-import com.emojidex.emojidexandroidlibrary.BuildConfig;
 import com.emojidex.emojidexandroidlibrary.R;
 import com.fasterxml.jackson.core.type.TypeReference;
 
@@ -324,7 +323,7 @@ public class EmojiManager {
 
             // Save emojies.
             EmojidexFileUtils.writeJsonToFile(
-                    EmojidexFileUtils.getLocalJsonUri(),
+                    EmojidexFileUtils.getLocalEmojiJsonUri(),
                     emojies
             );
 

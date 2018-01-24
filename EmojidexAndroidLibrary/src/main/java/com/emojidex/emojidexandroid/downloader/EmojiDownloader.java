@@ -12,6 +12,7 @@ import com.emojidex.emojidexandroid.downloader.arguments.ExtendedDownloadArgumen
 import com.emojidex.emojidexandroid.downloader.arguments.ImageArchiveDownloadArguments;
 import com.emojidex.emojidexandroid.downloader.arguments.ImageDownloadArguments;
 import com.emojidex.emojidexandroid.downloader.arguments.IndexDownloadArguments;
+import com.emojidex.emojidexandroid.downloader.arguments.MojiCodesDownloadArguments;
 import com.emojidex.emojidexandroid.downloader.arguments.MyEmojiDownloadArguments;
 import com.emojidex.emojidexandroid.downloader.arguments.SearchDownloadArguments;
 import com.emojidex.emojidexandroid.downloader.arguments.UTFDownloadArguments;
@@ -224,6 +225,19 @@ public class EmojiDownloader
     public int downloadMyEmoji(MyEmojiDownloadArguments arguments)
     {
         final int handle = taskManager.registMyEmoji(arguments);
+        if(handle != HANDLE_NULL)
+            taskManager.runNextTasks();
+        return handle;
+    }
+
+    /**
+     * Download moji codes.
+     * @param arguments     Download arguments.
+     * @return              Download handle.
+     */
+    public int downloadMojiCodes(MojiCodesDownloadArguments arguments)
+    {
+        final int handle = taskManager.registMojiCodes(arguments);
         if(handle != HANDLE_NULL)
             taskManager.runNextTasks();
         return handle;
