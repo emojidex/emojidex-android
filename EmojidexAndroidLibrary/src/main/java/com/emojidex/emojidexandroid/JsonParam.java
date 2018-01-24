@@ -1,5 +1,6 @@
 package com.emojidex.emojidexandroid;
 
+import com.emojidex.libemojidex.Emojidex.Data.Checksums;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -7,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by kou on 14/10/10.
@@ -37,6 +39,9 @@ public class JsonParam {
     private Checksums checksums = null;
     private long favorited = 0;
     private String created_at = null;
+    private boolean r18 = false;
+    private List<Combination> customizations = null;
+    private List<Combination> combinations = null;
 
     public static class Checksums
     {
@@ -85,6 +90,61 @@ public class JsonParam {
         }
     }
 
+    public static class Combination
+    {
+        private String base;
+        private List<Long> component_layer_order;
+        private List<List<String>> components;
+        private List<HashMap<String, Checksums>> checksums;
+
+        public String getBase()
+        {
+            return base;
+        }
+
+        public void setBase(String base)
+        {
+            this.base = base;
+        }
+
+        @JsonProperty("component_layer_order")
+        public List<Long> getComponentLayerOrder()
+        {
+            if(component_layer_order == null)
+                component_layer_order = new ArrayList<Long>();
+            return component_layer_order;
+        }
+
+        public void setComponentLayerOrder(List<Long> component_layer_order)
+        {
+            this.component_layer_order = component_layer_order;
+        }
+
+        public List<List<String>> getComponents()
+        {
+            if(components == null)
+                components = new ArrayList<List<String>>();
+            return components;
+        }
+
+        public void setComponents(List<List<String>> components)
+        {
+            this.components = components;
+        }
+
+        public List<HashMap<String, Checksums>> getChecksums()
+        {
+            if(checksums == null)
+                checksums = new ArrayList<HashMap<String, Checksums>>();
+            return checksums;
+        }
+
+        public void setChecksums(List<HashMap<String, Checksums>> checksums)
+        {
+            this.checksums = checksums;
+        }
+    }
+
 
     public String getCode()
     {
@@ -128,6 +188,8 @@ public class JsonParam {
 
     public List<String> getTags()
     {
+        if(tags == null)
+            tags = new ArrayList<String>();
         return tags;
     }
 
@@ -158,6 +220,8 @@ public class JsonParam {
 
     public List<String> getVariants()
     {
+        if(variants == null)
+            variants = new ArrayList<String>();
         return variants;
     }
 
@@ -338,6 +402,40 @@ public class JsonParam {
         this.created_at = createdAt;
     }
 
+    public boolean isR18()
+    {
+        return r18;
+    }
+
+    public void setR18(boolean r18)
+    {
+        this.r18 = r18;
+    }
+
+    public List<Combination> getCustomizations()
+    {
+        if(customizations == null)
+            customizations = new ArrayList<Combination>();
+        return customizations;
+    }
+
+    public void setCustomizations(List<Combination> customizations)
+    {
+        this.customizations = customizations;
+    }
+
+    public List<Combination> getCombinations()
+    {
+        if(combinations == null)
+            combinations = new ArrayList<Combination>();
+        return combinations;
+    }
+
+    public void setCombinations(List<Combination> combinations)
+    {
+        this.combinations = combinations;
+    }
+
     /**
      * Copy parameter from src.
      * @param src   Source.
@@ -354,13 +452,9 @@ public class JsonParam {
             final com.emojidex.libemojidex.StringVector srcTags = src.getTags();
             final long tagsCount = srcTags.size();
             List<String> destTags = getTags();
-            if(destTags == null)
-                destTags = new ArrayList<String>();
-            else
-                destTags.clear();
+            destTags.clear();
             for(int i = 0;  i < tagsCount;  ++i)
                 destTags.add(srcTags.get(i));
-            setTags(destTags);
         }
 
 
@@ -372,13 +466,9 @@ public class JsonParam {
             final com.emojidex.libemojidex.StringVector srcVariants = src.getVariants();
             final long variantsCount = srcVariants.size();
             List<String> destVariants = getVariants();
-            if(destVariants == null)
-                destVariants = new ArrayList<String>();
-            else
-                destVariants.clear();
+            destVariants.clear();
             for(int i = 0;  i < variantsCount;  ++i)
                 destVariants.add(srcVariants.get(i));
-            setVariants(destVariants);
         }
 
         setScore(src.getScore());
@@ -396,25 +486,113 @@ public class JsonParam {
         setUserID(src.getUser_id());
 
         // checksums
-        {
-            final com.emojidex.libemojidex.Emojidex.Data.Checksums srcChecksums = src.getChecksums();
-            final Emoji.Checksums destChecksums = getChecksums();
-
-            destChecksums.setSvg(srcChecksums.sum("svg", ""));
-
-            for(EmojiFormat format : EmojiFormat.values())
-            {
-                if(format == EmojiFormat.SVG)
-                    continue;
-
-                destChecksums.setPng(
-                        format,
-                        srcChecksums.sum("png", format.getResolution())
-                );
-            }
-        }
+        copyChecksums(getChecksums(), src.getChecksums());
 
         setFavorited(src.getFavorited());
         setCreatedAt(src.getCreated_at());
+        setR18(src.getR18());
+
+        // customizations
+        copyCombinations(getCustomizations(), src.getCustomizations());
+
+        // combinations
+        copyCombinations(getCombinations(), src.getCombinations());
     }
+
+    /**
+     * Copy checksums from src.
+     * @param dest  Destination.
+     * @param src   Source.
+     */
+    private void copyChecksums(Checksums dest, com.emojidex.libemojidex.Emojidex.Data.Checksums src)
+    {
+        dest.setSvg(src.sum("svg", ""));
+
+        for(EmojiFormat format : EmojiFormat.values())
+        {
+            if(format == EmojiFormat.SVG)
+                continue;
+
+            dest.setPng(
+                    format,
+                    src.sum("png", format.getResolution())
+            );
+        }
+    }
+
+    private void copyCombinations(List<Combination> dest, com.emojidex.libemojidex.CombinationVector src)
+    {
+        final long count = src.size();
+
+        for(int i = 0;  i < count;  ++i)
+        {
+            if(dest.size() <= i)
+                dest.add(new Combination());
+
+            final Combination destCombination = dest.get(i);
+            final com.emojidex.libemojidex.Emojidex.Data.Combination srcCombination = src.get(i);
+
+            // base
+            destCombination.setBase(srcCombination.getBase());
+
+            // component_layer_order
+            {
+                final List<Long> destCLO = destCombination.getComponentLayerOrder();
+                final com.emojidex.libemojidex.UintVector srcCLO = srcCombination.getComponent_layer_order();
+                final long cloCount = srcCLO.size();
+                destCLO.clear();
+                for(int j = 0;  j < cloCount;  ++j)
+                    destCLO.add(srcCLO.get(j));
+            }
+
+            // components
+            {
+                final List<List<String>> destComponentsArray = destCombination.getComponents();
+                final com.emojidex.libemojidex.StringVectorVector srcComponentsArray = srcCombination.getComponents();
+                final long componentsArrayCount = srcComponentsArray.size();
+                for(int j = 0;  j < componentsArrayCount;  ++j)
+                {
+                    if(destComponentsArray.size() <= j)
+                        destComponentsArray.add(new ArrayList<String>());
+                    final List<String> destComponents = destComponentsArray.get(j);
+                    final com.emojidex.libemojidex.StringVector srcComponents = srcComponentsArray.get(j);
+                    final long componentsCount = srcComponents.size();
+                    destComponents.clear();
+                    for(int k = 0;  k < componentsCount;  ++k)
+                        destComponents.add(srcComponents.get(k));
+                }
+                while(destComponentsArray.size() > componentsArrayCount)
+                    destComponentsArray.remove(componentsArrayCount);
+            }
+
+            // checksums
+            {
+                final List<HashMap<String, Checksums>> destChecksumsArray = destCombination.getChecksums();
+                final com.emojidex.libemojidex.ChecksumsMapVector srcChecksumsArray = srcCombination.getChecksums();
+                final long checksumsArrayCount = srcChecksumsArray.size();
+                for(int j = 0;  j < checksumsArrayCount;  ++j)
+                {
+                    if(destChecksumsArray.size() <= j)
+                        destChecksumsArray.add(new HashMap<String, Checksums>());
+                    final HashMap<String, Checksums> destChecksumsMap = destChecksumsArray.get(j);
+                    final HashMap<String, com.emojidex.libemojidex.Emojidex.Data.Checksums> srcChecksumsMap = srcChecksumsArray.get(j);
+                    destChecksumsMap.clear();
+                    for(Map.Entry<String, com.emojidex.libemojidex.Emojidex.Data.Checksums> entry : srcChecksumsMap.entrySet())
+                    {
+                        final Checksums destChecksums = new Checksums();
+                        copyChecksums(destChecksums, entry.getValue());
+                        destChecksumsMap.put(entry.getKey(), destChecksums);
+                    }
+                }
+                while(destChecksumsArray.size() > checksumsArrayCount)
+                    destChecksumsArray.remove(checksumsArrayCount);
+            }
+        }
+
+        // Remove trush.
+        while(dest.size() > count)
+            dest.remove(count);
+    }
+
+
 }
