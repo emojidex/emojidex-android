@@ -53,7 +53,6 @@ class MojiCodesDownloadTask extends AbstractDownloadTask {
         final MojiCodes mojiCodes = new MojiCodes();
         mojiCodes.setMojiString(srcMojiCodes.getMoji_string());
         mojiCodes.setMojiArray(mojiArray);
-        java.util.HashMap<String, String> hoge = srcMojiCodes.getMoji_index();
         mojiCodes.setMojiIndex(srcMojiCodes.getMoji_index());
 
         EmojidexFileUtils.writeJsonToFile(

@@ -36,9 +36,7 @@ class UpdateManager {
 
         // MojiCodes
         {
-            final int handle = downloader.downloadMojiCodes(
-                    new MojiCodesDownloadArguments()
-            );
+            final int handle = MojiCodesManager.getInstance().update();
             if(handle != EmojiDownloader.HANDLE_NULL)
                 handles.add(handle);
         }

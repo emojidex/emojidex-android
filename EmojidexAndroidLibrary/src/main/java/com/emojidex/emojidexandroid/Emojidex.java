@@ -24,11 +24,12 @@ public class Emojidex {
     private final AnimationUpdaterManager animationUpdaterManager = new AnimationUpdaterManager();
 
     private Context context = null;
-    private EmojiManager manager;
+    private EmojiManager emojiManager;
     private EmojiFormat defaultFormat;
     private EmojidexUser user;
 
     private UpdateInfo updateInfo;
+    private MojiCodesManager mojiCodesManager;
 
     /**
      * Get singleton instance.
@@ -66,10 +67,13 @@ public class Emojidex {
 
         VersionManager.getInstance().initialize(this.context);
 
-        manager = new EmojiManager(this.context);
-        manager.add(EmojidexFileUtils.getLocalEmojiJsonUri());
+        mojiCodesManager = MojiCodesManager.getInstance();
+        mojiCodesManager.initialize();
 
-        getEmojiDownloader().initialize(this.context, manager);
+        emojiManager = new EmojiManager(this.context);
+        emojiManager.add(EmojidexFileUtils.getLocalEmojiJsonUri());
+
+        getEmojiDownloader().initialize(this.context, emojiManager);
 
         defaultFormat = EmojiFormat.toFormat(this.context.getResources().getString(R.string.emoji_format_default));
         user = new EmojidexUser();
@@ -139,8 +143,10 @@ public class Emojidex {
         if( !isInitialized() )
             throw new EmojidexIsNotInitializedException();
 
-        manager.reset();
-        manager.add(EmojidexFileUtils.getLocalEmojiJsonUri());
+        emojiManager.reset();
+        emojiManager.add(EmojidexFileUtils.getLocalEmojiJsonUri());
+
+        mojiCodesManager.reload();
     }
 
     /**
@@ -285,7 +291,7 @@ public class Emojidex {
         if( !isInitialized() )
             throw new EmojidexIsNotInitializedException();
 
-        return manager.getEmoji(name);
+        return emojiManager.getEmoji(name);
     }
 
     /**
@@ -298,7 +304,7 @@ public class Emojidex {
         if( !isInitialized() )
             throw new EmojidexIsNotInitializedException();
 
-        return manager.getEmoji(codes);
+        return emojiManager.getEmoji(codes);
     }
 
     /**
@@ -311,7 +317,7 @@ public class Emojidex {
         if( !isInitialized() )
             throw new EmojidexIsNotInitializedException();
 
-        return manager.getEmojiList(category);
+        return emojiManager.getEmojiList(category);
     }
 
     /**
@@ -323,7 +329,7 @@ public class Emojidex {
         if( !isInitialized() )
             throw new EmojidexIsNotInitializedException();
 
-        return manager.getAllEmojiList();
+        return emojiManager.getAllEmojiList();
     }
 
     /**
@@ -335,7 +341,7 @@ public class Emojidex {
         if( !isInitialized() )
             throw new EmojidexIsNotInitializedException();
 
-        return manager.getUTFEmojiList();
+        return emojiManager.getUTFEmojiList();
     }
 
     /**
@@ -347,7 +353,7 @@ public class Emojidex {
         if( !isInitialized() )
             throw new EmojidexIsNotInitializedException();
 
-        return manager.getExtendedEmojiList();
+        return emojiManager.getExtendedEmojiList();
     }
 
     /**
@@ -359,7 +365,7 @@ public class Emojidex {
         if( !isInitialized() )
             throw new EmojidexIsNotInitializedException();
 
-        return manager.getOtherEmojiList();
+        return emojiManager.getOtherEmojiList();
     }
 
     /**
@@ -371,7 +377,7 @@ public class Emojidex {
         if( !isInitialized() )
             throw new EmojidexIsNotInitializedException();
 
-        return manager.getCategoryNames();
+        return emojiManager.getCategoryNames();
     }
 
     /**
@@ -402,5 +408,14 @@ public class Emojidex {
     public UpdateInfo getUpdateInfo()
     {
         return updateInfo;
+    }
+
+    /**
+     * Get moji codes.
+     * @return      Moji codes.
+     */
+    public MojiCodes getMojiCodes()
+    {
+        return mojiCodesManager.getMojiCodes();
     }
 }
