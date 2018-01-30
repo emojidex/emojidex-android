@@ -3,6 +3,7 @@ package com.emojidex.emojidexandroid;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -29,6 +30,8 @@ public class MojiCodes {
     @JsonProperty("moji_array")
     public List<String> getMojiArray()
     {
+        if(moji_array == null)
+            moji_array = new ArrayList<String>();
         return moji_array;
     }
 
@@ -40,6 +43,8 @@ public class MojiCodes {
     @JsonProperty("moji_index")
     public HashMap<String, String> getMojiIndex()
     {
+        if(moji_index == null)
+            moji_index = new HashMap<String, String>();
         return moji_index;
     }
 

@@ -60,20 +60,14 @@ class MojiCodesManager {
         // Initialize regex mojiRegex.
         final List<String> mojiArray = mojiCodes.getMojiArray();
 
-        if(mojiArray.isEmpty())
-        {
-            mojiRegex = "";
-            return;
-        }
-
-        mojiRegex = mojiArray.get(0);
+        mojiRegex = mojiArray.isEmpty() ? "" : mojiArray.get(0);
         final int count = mojiArray.size();
         for(int i = 1;  i < count;  ++i)
             mojiRegex += "|" + mojiArray.get(i);
 
         // Initialize code to utf table.
         for(HashMap.Entry<String, String> entry : mojiCodes.getMojiIndex().entrySet())
-            c2mTable.put(entry.getValue(), entry.getKey());
+            c2mTable.put(entry.getValue().replace("_", " "), entry.getKey());
     }
 
     /**
@@ -99,7 +93,7 @@ class MojiCodesManager {
      */
     public String MojiToCode(String moji)
     {
-        return mojiCodes.getMojiIndex().get(moji);
+        return mojiCodes.getMojiIndex().get(moji).replace("_", " ");
     }
 
     /**
