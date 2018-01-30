@@ -12,6 +12,8 @@ import com.emojidex.emojidexandroid.animation.EmojidexAnimationImageSpan;
 import com.emojidex.emojidexandroid.downloader.arguments.EmojiDownloadArguments;
 
 import java.util.LinkedList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by kou on 14/10/09.
@@ -200,6 +202,77 @@ class TextConverter {
 
         // Put log.
         Log.d(TAG, "deEmojify: " + text + " -> " + result);
+
+        return result;
+    }
+
+    /**
+     * Replace utf string to emojidex code.
+     * @param text      Source text.
+     * @return          Result text.
+     */
+    public static CharSequence codify(CharSequence text)
+    {
+        final SpannableStringBuilder result = new SpannableStringBuilder(text);
+        final MojiCodesManager mojiCodesManager = MojiCodesManager.getInstance();
+
+        {
+            final Pattern pattern = Pattern.compile(mojiCodesManager.getMojiRegex());
+            final Matcher matcher = pattern.matcher(result);
+
+            int offset = 0;
+            while(matcher.find())
+            {
+                final int start = matcher.start() + offset;
+                final int end = matcher.end() + offset;
+                final String code = Emojidex.SEPARATOR + mojiCodesManager.MojiToCode(matcher.group()) + Emojidex.SEPARATOR;
+
+                result.replace(start, end, code);
+
+                offset += code.length() - (end - start);
+            }
+        }
+
+        // Put log.
+        Log.d(TAG, "codify: " + text + " -> " + result);
+
+        return result;
+    }
+
+    /**
+     * Replace emojidex code to utf string.
+     * @param text      Source text.
+     * @return          Result text.
+     */
+    public static CharSequence mojify(CharSequence text)
+    {
+        final SpannableStringBuilder result = new SpannableStringBuilder(text);
+        final MojiCodesManager mojiCodesManager = MojiCodesManager.getInstance();
+
+        {
+            final Pattern pattern = Pattern.compile("(^.*?" + Emojidex.SEPARATOR + "|\\G[^" + Emojidex.SEPARATOR + "]*?[\\r\\n]+.*?" + Emojidex.SEPARATOR + "|.*?)([^" + Emojidex.SEPARATOR + "\\r\\n]+)" + Emojidex.SEPARATOR);
+            final Matcher matcher = pattern.matcher(result);
+            final int group = 2;
+            final int separatorLength = Emojidex.SEPARATOR.length();
+
+            int offset = 0;
+            while(matcher.find())
+            {
+                final String moji = mojiCodesManager.CodeToMoji(matcher.group(group));
+                if(moji == null)
+                    continue;
+
+                final int start = matcher.start(group) - separatorLength + offset;
+                final int end = matcher.end(group) + separatorLength + offset;
+
+                result.replace(start, end, moji);
+
+                offset += moji.length() - (end - start);
+            }
+        }
+
+        // Put log.
+        Log.d(TAG, "codify: " + text + " -> " + result);
 
         return result;
     }

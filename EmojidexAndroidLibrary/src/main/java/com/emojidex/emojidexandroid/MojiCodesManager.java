@@ -4,6 +4,9 @@ import com.emojidex.emojidexandroid.downloader.DownloadListener;
 import com.emojidex.emojidexandroid.downloader.EmojiDownloader;
 import com.emojidex.emojidexandroid.downloader.arguments.MojiCodesDownloadArguments;
 
+import java.util.HashMap;
+import java.util.List;
+
 /**
  * Created by kou on 18/01/24.
  */
@@ -12,6 +15,8 @@ class MojiCodesManager {
     private final static MojiCodesManager INSTANCE = new MojiCodesManager();
 
     private MojiCodes mojiCodes;
+    private String mojiRegex;
+    private HashMap<String, String> c2mTable = new HashMap<String, String>();
 
     /**
      * Get singleton instance.
@@ -43,6 +48,7 @@ class MojiCodesManager {
      */
     public void reload()
     {
+        // Load moji codes json file.
         mojiCodes = EmojidexFileUtils.readJsonFromFile(
                 EmojidexFileUtils.getLocalMojiCodesJsonUri(),
                 MojiCodes.class
@@ -50,6 +56,24 @@ class MojiCodesManager {
 
         if(mojiCodes == null)
             mojiCodes = new MojiCodes();
+
+        // Initialize regex mojiRegex.
+        final List<String> mojiArray = mojiCodes.getMojiArray();
+
+        if(mojiArray.isEmpty())
+        {
+            mojiRegex = "";
+            return;
+        }
+
+        mojiRegex = mojiArray.get(0);
+        final int count = mojiArray.size();
+        for(int i = 1;  i < count;  ++i)
+            mojiRegex += "|" + mojiArray.get(i);
+
+        // Initialize code to utf table.
+        for(HashMap.Entry<String, String> entry : mojiCodes.getMojiIndex().entrySet())
+            c2mTable.put(entry.getValue(), entry.getKey());
     }
 
     /**
@@ -69,12 +93,41 @@ class MojiCodesManager {
     }
 
     /**
+     * Convert moji to code.
+     * @param moji      Moji.
+     * @return          Code.
+     */
+    public String MojiToCode(String moji)
+    {
+        return mojiCodes.getMojiIndex().get(moji);
+    }
+
+    /**
+     * Convert code to moji.
+     * @param code      Code
+     * @return          Moji.
+     */
+    public String CodeToMoji(String code)
+    {
+        return c2mTable.get(code);
+    }
+
+    /**
      * Get moji codes.
      * @return      Moji codes.
      */
     public MojiCodes getMojiCodes()
     {
         return mojiCodes;
+    }
+
+    /**
+     * Get regex moji string.
+     * @return      Regex moji string.
+     */
+    public String getMojiRegex()
+    {
+        return mojiRegex;
     }
 
     /**

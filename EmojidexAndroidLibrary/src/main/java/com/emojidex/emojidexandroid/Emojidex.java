@@ -255,6 +255,32 @@ public class Emojidex {
     }
 
     /**
+     * Replace utf string to emojidex code.
+     * @param text      Source text.
+     * @return          Result text.
+     */
+    public CharSequence codify(CharSequence text)
+    {
+        if( !isInitialized() )
+            throw new EmojidexIsNotInitializedException();
+
+        return TextConverter.codify(text);
+    }
+
+    /**
+     * Replace emojidex code to utf string.
+     * @param text      Source text.
+     * @return          Result text.
+     */
+    public CharSequence mojify(CharSequence text)
+    {
+        if( !isInitialized() )
+            throw new EmojidexIsNotInitializedException();
+
+        return TextConverter.mojify(text);
+    }
+
+    /**
      * Add animation updater.
      * @param updater   Animation updater.
      */
