@@ -223,17 +223,12 @@ public class MainActivity extends Activity {
 
     private CharSequence emojify(final CharSequence cs, boolean autoDownload)
     {
-        return emojidex.emojify(cs, true, true, defaultFormat, autoDownload);
+        return emojidex.emojify(cs, defaultFormat, autoDownload);
     }
 
     private CharSequence deEmojify(final CharSequence cs)
     {
         return emojidex.deEmojify(cs);
-    }
-
-    private CharSequence toUnicodeString(final CharSequence cs)
-    {
-        return emojidex.emojify(cs, true, false);
     }
 
     /**
@@ -255,14 +250,7 @@ public class MainActivity extends Activity {
      */
     private String setShareData()
     {
-        String text;
-
-        if (toggleState)
-            text = toUnicodeString(editText.getText()).toString();
-        else
-            text = editText.getText().toString();
-
-        return  text;
+        return editText.getText().toString();
     }
 
     /**
@@ -305,13 +293,9 @@ public class MainActivity extends Activity {
                     editText.removeTextChangedListener(textWatcher);
 
                     final Spannable text = (Spannable)emojify(s);
-                    final int length = text.length();
-                    if(length != 0)
-                    {
-                        setTextImageSize(text);
-                    }
+                    setTextImageSize(text);
 
-                    s.replace(0, s.length(), text);
+                    editText.setText(text);
 
                     editText.addTextChangedListener(textWatcher);
                 }
@@ -326,10 +310,7 @@ public class MainActivity extends Activity {
                 if(imageSpans.length > 0)
                 {
                     editText.removeTextChangedListener(textWatcher);
-                    for(DynamicDrawableSpan span : imageSpans)
-                        s.removeSpan(span);
-                    final CharSequence subSequence = s.subSequence(start, end).toString();
-                    s.replace(start, end, toUnicodeString(subSequence));
+                    editText.setText(deEmojify(s));
                     editText.addTextChangedListener(textWatcher);
                 }
             }
@@ -510,10 +491,7 @@ public class MainActivity extends Activity {
             if (type.equals("text/plain"))
             {
                 final String text = intent.getStringExtra(Intent.EXTRA_TEXT);
-                if(toggleState)
-                    editText.setText(emojify(text));
-                else
-                    editText.setText(toUnicodeString(text));
+                editText.setText(text);
 
                 // Move cursor to last.
                 editText.setSelection(editText.length());
@@ -549,11 +527,7 @@ public class MainActivity extends Activity {
         ClipData clipData = clipboard.getPrimaryClip();
         CharSequence newText = (clipData == null) ? "" : clipData.getItemAt(0).getText();
 
-        final Editable text = editText.getText();
-        text.replace(
-                0, text.length(),
-                toggleState ? emojify(newText) : toUnicodeString(newText)
-        );
+        editText.setText(newText);
 
         Toast.makeText(this, R.string.editor_message_text_clear_and_paste, Toast.LENGTH_SHORT).show();
 
@@ -574,17 +548,13 @@ public class MainActivity extends Activity {
         toggleState = toggleButton.isChecked();
 
         // convert text
-        final Editable text = editText.getText();
-        if (toggleState)
-        {
-            text.replace(0, text.length(), emojify(text));
-            Toast.makeText(this, R.string.editor_message_conversion_on, Toast.LENGTH_SHORT).show();
-        }
-        else
-        {
-            text.replace(0, text.length(), toUnicodeString(text));
-            Toast.makeText(this, R.string.editor_message_conversion_off, Toast.LENGTH_SHORT).show();
-        }
+        editText.setText(editText.getText());
+
+        Toast.makeText(
+                this,
+                toggleState ? R.string.editor_message_conversion_on : R.string.editor_message_conversion_off,
+                Toast.LENGTH_SHORT
+        ).show();
 
         // Move cursor to last.
         editText.setSelection(editText.length());

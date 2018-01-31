@@ -29,13 +29,12 @@ class TextConverter {
     /**
      * Normal text encode to emojidex text.
      * @param text              Normal text.
-     * @param useImage          If true, use phantom-emoji image.
      * @param format            Image format.
      * @param autoDownload      Auto emoji download flag.
      *                          If true, auto download emoji when find unknown emoji.
      * @return                  Emojidex text.
      */
-    public static CharSequence emojify(CharSequence text, boolean useImage, EmojiFormat format, boolean autoDownload)
+    public static CharSequence emojify(CharSequence text, EmojiFormat format, boolean autoDownload)
     {
         final SpannableString result = new SpannableString(text);
         final MojiCodesManager mojiCodesManager = MojiCodesManager.getInstance();

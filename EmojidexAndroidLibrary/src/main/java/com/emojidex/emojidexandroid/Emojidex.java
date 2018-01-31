@@ -177,65 +177,37 @@ public class Emojidex {
      */
     public CharSequence emojify(CharSequence text)
     {
-        return emojify(text, true);
+        return emojify(text, null);
     }
 
     /**
      * Normal text encode to emojidex text.
      * @param text              Normal text.
-     * @param autoDeEmojify     If true, execute deEmojify before emojify.
-     * @return          Emojidex text.
-     */
-    public CharSequence emojify(CharSequence text, boolean autoDeEmojify)
-    {
-        return emojify(text, autoDeEmojify, true);
-    }
-
-    /**
-     * Normal text encode to emojidex text.
-     * @param text              Normal text.
-     * @param autoDeEmojify     If true, execute deEmojify before emojify.
-     * @param useImage          If true, use phantom-emoji image.
-     * @return                  Emojidex text.
-     */
-    public CharSequence emojify(CharSequence text, boolean autoDeEmojify, boolean useImage)
-    {
-        return emojify(text, autoDeEmojify, useImage, defaultFormat);
-    }
-
-    /**
-     * Normal text encode to emojidex text.
-     * @param text              Normal text.
-     * @param autoDeEmojify     If true, execute deEmojify before emojify.
-     * @param useImage          If true, use phantom-emoji image.
      * @param format            Image format.
      *                          If value is null, use default format.
      * @return                  Emojidex text.
      */
-    public CharSequence emojify(CharSequence text, boolean autoDeEmojify, boolean useImage, EmojiFormat format)
+    public CharSequence emojify(CharSequence text, EmojiFormat format)
     {
-        return emojify(text, autoDeEmojify, useImage, format, true);
+        return emojify(text, format, true);
     }
 
     /**
      * Normal text encode to emojidex text.
      * @param text              Normal text.
-     * @param autoDeEmojify     If true, execute deEmojify before emojify.
-     * @param useImage          If true, use phantom-emoji image.
      * @param format            Image format.
      *                          If value is null, use default format.
      * @param autoDownload      Auto download flag.
      *                          If true, auto download emoji when find unknown emoji.
      * @return                  Emojidex text.
      */
-    public CharSequence emojify(CharSequence text, boolean autoDeEmojify, boolean useImage, EmojiFormat format, boolean autoDownload)
+    public CharSequence emojify(CharSequence text, EmojiFormat format, boolean autoDownload)
     {
         if( !isInitialized() )
             throw new EmojidexIsNotInitializedException();
 
         return TextConverter.emojify(
-                autoDeEmojify ? deEmojify(text) : text,
-                useImage,
+                text,
                 (format != null) ? format : getDefaultFormat(),
                 autoDownload
         );
