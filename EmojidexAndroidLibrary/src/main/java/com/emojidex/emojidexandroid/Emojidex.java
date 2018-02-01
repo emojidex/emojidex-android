@@ -67,9 +67,6 @@ public class Emojidex {
 
         VersionManager.getInstance().initialize(this.context);
 
-        mojiCodesManager = MojiCodesManager.getInstance();
-        mojiCodesManager.initialize();
-
         emojiManager = new EmojiManager(this.context);
         emojiManager.add(EmojidexFileUtils.getLocalEmojiJsonUri());
 
@@ -79,6 +76,9 @@ public class Emojidex {
         user = new EmojidexUser();
 
         EmojidexFileUtils.deleteFiles(EmojidexFileUtils.getTemporaryRootUri());
+
+        mojiCodesManager = MojiCodesManager.getInstance();
+        mojiCodesManager.initialize();
 
         Log.d(TAG, "Initialize complete.");
     }

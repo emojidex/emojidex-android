@@ -40,6 +40,11 @@ class MojiCodesManager {
      */
     public void initialize()
     {
+        // Update moji_codes.json if file is not found.
+        if( !EmojidexFileUtils.existsLocalFile(EmojidexFileUtils.getLocalMojiCodesJsonUri()) )
+            update();
+
+        // Load data from moji_codes.json.
         reload();
     }
 
