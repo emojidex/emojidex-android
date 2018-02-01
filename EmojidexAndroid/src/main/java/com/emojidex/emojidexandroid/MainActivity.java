@@ -295,7 +295,8 @@ public class MainActivity extends Activity {
                     final Spannable text = (Spannable)emojify(s);
                     setTextImageSize(text);
 
-                    editText.setText(text);
+                    s.clear();
+                    s.append(text);
 
                     editText.addTextChangedListener(textWatcher);
                 }
@@ -310,7 +311,9 @@ public class MainActivity extends Activity {
                 if(imageSpans.length > 0)
                 {
                     editText.removeTextChangedListener(textWatcher);
-                    editText.setText(deEmojify(s));
+                    final CharSequence text = deEmojify(s);
+                    s.clear();
+                    s.append(text);
                     editText.addTextChangedListener(textWatcher);
                 }
             }
@@ -528,6 +531,7 @@ public class MainActivity extends Activity {
         CharSequence newText = (clipData == null) ? "" : clipData.getItemAt(0).getText();
 
         editText.setText(newText);
+        editText.setSelection(editText.length());
 
         Toast.makeText(this, R.string.editor_message_text_clear_and_paste, Toast.LENGTH_SHORT).show();
 
@@ -866,7 +870,8 @@ public class MainActivity extends Activity {
             final CharSequence newText = emojify(text, false);
             setTextImageSize((Spannable)newText);
 
-            text.replace(0, text.length(), newText);
+            text.clear();
+            text.append(newText);
 
             final int length = editText.length();
             editText.setSelection(
