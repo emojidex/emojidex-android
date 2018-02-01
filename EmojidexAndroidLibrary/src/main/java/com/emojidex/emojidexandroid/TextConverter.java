@@ -46,11 +46,15 @@ class TextConverter {
 
             while(matcher.find())
             {
+                final String code = matcher.group();
+                if(code.isEmpty())
+                    continue;
+
                 emojifyOne(
                         result,
                         matcher.start(),
                         matcher.end(),
-                        mojiCodesManager.MojiToCode(matcher.group()),
+                        mojiCodesManager.MojiToCode(code),
                         format,
                         autoDownload
                 );
