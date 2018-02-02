@@ -78,7 +78,7 @@ public class Emojidex {
         EmojidexFileUtils.deleteFiles(EmojidexFileUtils.getTemporaryRootUri());
 
         mojiCodesManager = MojiCodesManager.getInstance();
-        mojiCodesManager.initialize();
+        mojiCodesManager.initialize(this.context);
 
         Log.d(TAG, "Initialize complete.");
     }

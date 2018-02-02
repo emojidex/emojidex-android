@@ -1,8 +1,12 @@
 package com.emojidex.emojidexandroid;
 
+import android.content.Context;
+import android.net.Uri;
+
 import com.emojidex.emojidexandroid.downloader.DownloadListener;
 import com.emojidex.emojidexandroid.downloader.EmojiDownloader;
 import com.emojidex.emojidexandroid.downloader.arguments.MojiCodesDownloadArguments;
+import com.emojidex.emojidexandroidlibrary.R;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +18,7 @@ import java.util.List;
 class MojiCodesManager {
     private final static MojiCodesManager INSTANCE = new MojiCodesManager();
 
+    private Context context;
     private MojiCodes mojiCodes;
     private String mojiRegex;
     private HashMap<String, String> c2mTable = new HashMap<String, String>();
@@ -37,9 +42,12 @@ class MojiCodesManager {
 
     /**
      * Initialize object.
+     * @param context   Context.
      */
-    public void initialize()
+    public void initialize(Context context)
     {
+        this.context = context;
+
         // Update moji_codes.json if file is not found.
         if( !EmojidexFileUtils.existsLocalFile(EmojidexFileUtils.getLocalMojiCodesJsonUri()) )
             update();
@@ -53,12 +61,22 @@ class MojiCodesManager {
      */
     public void reload()
     {
-        // Load moji codes json file.
+        // Load moji codes from json file.
         mojiCodes = EmojidexFileUtils.readJsonFromFile(
                 EmojidexFileUtils.getLocalMojiCodesJsonUri(),
                 MojiCodes.class
         );
 
+        // Load moji codes  from resource.
+        if(mojiCodes == null)
+        {
+            mojiCodes = EmojidexFileUtils.readJsonFromFile(
+                    Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.moji_codes),
+                    MojiCodes.class
+            );
+        }
+
+        // If file is not found.
         if(mojiCodes == null)
             mojiCodes = new MojiCodes();
 
