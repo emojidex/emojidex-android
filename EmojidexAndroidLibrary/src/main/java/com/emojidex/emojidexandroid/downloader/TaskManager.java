@@ -3,7 +3,6 @@ package com.emojidex.emojidexandroid.downloader;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.emojidex.emojidexandroid.MojiCodes;
 import com.emojidex.emojidexandroid.downloader.arguments.ArgumentsInterface;
 import com.emojidex.emojidexandroid.downloader.arguments.EmojiDownloadArguments;
 import com.emojidex.emojidexandroid.downloader.arguments.ExtendedDownloadArguments;

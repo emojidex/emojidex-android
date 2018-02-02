@@ -4,7 +4,6 @@ import com.emojidex.emojidexandroid.downloader.DownloadListener;
 import com.emojidex.emojidexandroid.downloader.EmojiDownloader;
 import com.emojidex.emojidexandroid.downloader.arguments.EmojiDownloadArguments;
 import com.emojidex.emojidexandroid.downloader.arguments.ExtendedDownloadArguments;
-import com.emojidex.emojidexandroid.downloader.arguments.MojiCodesDownloadArguments;
 import com.emojidex.emojidexandroid.downloader.arguments.UTFDownloadArguments;
 
 import java.util.Collection;

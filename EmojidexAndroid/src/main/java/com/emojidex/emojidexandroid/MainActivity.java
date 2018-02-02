@@ -41,7 +41,6 @@ import com.emojidex.emojidexandroid.animation.EmojidexAnimationImageSpan;
 import com.emojidex.emojidexandroid.animation.updater.AnimationUpdater;
 import com.emojidex.emojidexandroid.animation.updater.TextViewAnimationUpdater;
 import com.emojidex.emojidexandroid.downloader.DownloadListener;
-import com.emojidex.emojidexandroid.downloader.arguments.ImageDownloadArguments;
 import com.emojidex.libemojidex.Emojidex.Service.User;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
