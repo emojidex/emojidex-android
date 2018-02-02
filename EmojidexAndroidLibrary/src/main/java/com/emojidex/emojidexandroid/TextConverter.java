@@ -12,7 +12,6 @@ import com.emojidex.emojidexandroid.animation.EmojidexAnimationDrawable;
 import com.emojidex.emojidexandroid.animation.EmojidexAnimationImageSpan;
 import com.emojidex.emojidexandroid.downloader.arguments.EmojiDownloadArguments;
 
-import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,15 +45,15 @@ class TextConverter {
 
             while(matcher.find())
             {
-                final String code = matcher.group();
-                if(code.isEmpty())
+                final String moji = matcher.group();
+                if(moji.isEmpty())
                     continue;
 
                 emojifyOne(
                         result,
                         matcher.start(),
                         matcher.end(),
-                        mojiCodesManager.MojiToCode(code),
+                        mojiCodesManager.mojiToCode(moji),
                         format,
                         autoDownload
                 );
@@ -123,7 +122,7 @@ class TextConverter {
                 if(start == end)
                     continue;
 
-                final String code = Emojidex.SEPARATOR + mojiCodesManager.MojiToCode(matcher.group()) + Emojidex.SEPARATOR;
+                final String code = Emojidex.SEPARATOR + mojiCodesManager.mojiToCode(matcher.group()) + Emojidex.SEPARATOR;
 
                 result.replace(start, end, code);
 
@@ -155,7 +154,7 @@ class TextConverter {
             int offset = 0;
             while(matcher.find())
             {
-                final String moji = mojiCodesManager.CodeToMoji(matcher.group(CODE_GROUP));
+                final String moji = mojiCodesManager.codeToMoji(matcher.group(CODE_GROUP));
                 if(moji == null)
                     continue;
 

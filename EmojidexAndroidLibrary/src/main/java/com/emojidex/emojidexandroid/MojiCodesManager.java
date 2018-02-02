@@ -114,7 +114,7 @@ class MojiCodesManager {
      * @param moji      Moji.
      * @return          Code.
      */
-    public String MojiToCode(String moji)
+    public String mojiToCode(String moji)
     {
         return mojiCodes.getMojiIndex().get(moji).replace("_", " ");
     }
@@ -124,7 +124,7 @@ class MojiCodesManager {
      * @param code      Code
      * @return          Moji.
      */
-    public String CodeToMoji(String code)
+    public String codeToMoji(String code)
     {
         return c2mTable.get(code);
     }
