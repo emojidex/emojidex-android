@@ -24,11 +24,12 @@ public class Emojidex {
     private final AnimationUpdaterManager animationUpdaterManager = new AnimationUpdaterManager();
 
     private Context context = null;
-    private EmojiManager manager;
+    private EmojiManager emojiManager;
     private EmojiFormat defaultFormat;
     private EmojidexUser user;
 
     private UpdateInfo updateInfo;
+    private MojiCodesManager mojiCodesManager;
 
     /**
      * Get singleton instance.
@@ -66,15 +67,18 @@ public class Emojidex {
 
         VersionManager.getInstance().initialize(this.context);
 
-        manager = new EmojiManager(this.context);
-        manager.add(EmojidexFileUtils.getLocalJsonUri());
+        emojiManager = new EmojiManager(this.context);
+        emojiManager.add(EmojidexFileUtils.getLocalEmojiJsonUri());
 
-        getEmojiDownloader().initialize(this.context, manager);
+        getEmojiDownloader().initialize(this.context, emojiManager);
 
         defaultFormat = EmojiFormat.toFormat(this.context.getResources().getString(R.string.emoji_format_default));
         user = new EmojidexUser();
 
         EmojidexFileUtils.deleteFiles(EmojidexFileUtils.getTemporaryRootUri());
+
+        mojiCodesManager = MojiCodesManager.getInstance();
+        mojiCodesManager.initialize(this.context);
 
         Log.d(TAG, "Initialize complete.");
     }
@@ -139,8 +143,10 @@ public class Emojidex {
         if( !isInitialized() )
             throw new EmojidexIsNotInitializedException();
 
-        manager.reset();
-        manager.add(EmojidexFileUtils.getLocalJsonUri());
+        emojiManager.reset();
+        emojiManager.add(EmojidexFileUtils.getLocalEmojiJsonUri());
+
+        mojiCodesManager.reload();
     }
 
     /**
@@ -171,65 +177,37 @@ public class Emojidex {
      */
     public CharSequence emojify(CharSequence text)
     {
-        return emojify(text, true);
+        return emojify(text, null);
     }
 
     /**
      * Normal text encode to emojidex text.
      * @param text              Normal text.
-     * @param autoDeEmojify     If true, execute deEmojify before emojify.
-     * @return          Emojidex text.
-     */
-    public CharSequence emojify(CharSequence text, boolean autoDeEmojify)
-    {
-        return emojify(text, autoDeEmojify, true);
-    }
-
-    /**
-     * Normal text encode to emojidex text.
-     * @param text              Normal text.
-     * @param autoDeEmojify     If true, execute deEmojify before emojify.
-     * @param useImage          If true, use phantom-emoji image.
-     * @return                  Emojidex text.
-     */
-    public CharSequence emojify(CharSequence text, boolean autoDeEmojify, boolean useImage)
-    {
-        return emojify(text, autoDeEmojify, useImage, defaultFormat);
-    }
-
-    /**
-     * Normal text encode to emojidex text.
-     * @param text              Normal text.
-     * @param autoDeEmojify     If true, execute deEmojify before emojify.
-     * @param useImage          If true, use phantom-emoji image.
      * @param format            Image format.
      *                          If value is null, use default format.
      * @return                  Emojidex text.
      */
-    public CharSequence emojify(CharSequence text, boolean autoDeEmojify, boolean useImage, EmojiFormat format)
+    public CharSequence emojify(CharSequence text, EmojiFormat format)
     {
-        return emojify(text, autoDeEmojify, useImage, format, true);
+        return emojify(text, format, true);
     }
 
     /**
      * Normal text encode to emojidex text.
      * @param text              Normal text.
-     * @param autoDeEmojify     If true, execute deEmojify before emojify.
-     * @param useImage          If true, use phantom-emoji image.
      * @param format            Image format.
      *                          If value is null, use default format.
      * @param autoDownload      Auto download flag.
      *                          If true, auto download emoji when find unknown emoji.
      * @return                  Emojidex text.
      */
-    public CharSequence emojify(CharSequence text, boolean autoDeEmojify, boolean useImage, EmojiFormat format, boolean autoDownload)
+    public CharSequence emojify(CharSequence text, EmojiFormat format, boolean autoDownload)
     {
         if( !isInitialized() )
             throw new EmojidexIsNotInitializedException();
 
         return TextConverter.emojify(
-                autoDeEmojify ? deEmojify(text) : text,
-                useImage,
+                text,
                 (format != null) ? format : getDefaultFormat(),
                 autoDownload
         );
@@ -246,6 +224,32 @@ public class Emojidex {
             throw new EmojidexIsNotInitializedException();
 
         return TextConverter.deEmojify(text);
+    }
+
+    /**
+     * Replace utf string to emojidex code.
+     * @param text      Source text.
+     * @return          Result text.
+     */
+    public CharSequence codify(CharSequence text)
+    {
+        if( !isInitialized() )
+            throw new EmojidexIsNotInitializedException();
+
+        return TextConverter.codify(text);
+    }
+
+    /**
+     * Replace emojidex code to utf string.
+     * @param text      Source text.
+     * @return          Result text.
+     */
+    public CharSequence mojify(CharSequence text)
+    {
+        if( !isInitialized() )
+            throw new EmojidexIsNotInitializedException();
+
+        return TextConverter.mojify(text);
     }
 
     /**
@@ -285,7 +289,7 @@ public class Emojidex {
         if( !isInitialized() )
             throw new EmojidexIsNotInitializedException();
 
-        return manager.getEmoji(name);
+        return emojiManager.getEmoji(name);
     }
 
     /**
@@ -298,7 +302,7 @@ public class Emojidex {
         if( !isInitialized() )
             throw new EmojidexIsNotInitializedException();
 
-        return manager.getEmoji(codes);
+        return emojiManager.getEmoji(codes);
     }
 
     /**
@@ -311,7 +315,7 @@ public class Emojidex {
         if( !isInitialized() )
             throw new EmojidexIsNotInitializedException();
 
-        return manager.getEmojiList(category);
+        return emojiManager.getEmojiList(category);
     }
 
     /**
@@ -323,7 +327,7 @@ public class Emojidex {
         if( !isInitialized() )
             throw new EmojidexIsNotInitializedException();
 
-        return manager.getAllEmojiList();
+        return emojiManager.getAllEmojiList();
     }
 
     /**
@@ -335,7 +339,7 @@ public class Emojidex {
         if( !isInitialized() )
             throw new EmojidexIsNotInitializedException();
 
-        return manager.getUTFEmojiList();
+        return emojiManager.getUTFEmojiList();
     }
 
     /**
@@ -347,7 +351,7 @@ public class Emojidex {
         if( !isInitialized() )
             throw new EmojidexIsNotInitializedException();
 
-        return manager.getExtendedEmojiList();
+        return emojiManager.getExtendedEmojiList();
     }
 
     /**
@@ -359,7 +363,7 @@ public class Emojidex {
         if( !isInitialized() )
             throw new EmojidexIsNotInitializedException();
 
-        return manager.getOtherEmojiList();
+        return emojiManager.getOtherEmojiList();
     }
 
     /**
@@ -371,7 +375,7 @@ public class Emojidex {
         if( !isInitialized() )
             throw new EmojidexIsNotInitializedException();
 
-        return manager.getCategoryNames();
+        return emojiManager.getCategoryNames();
     }
 
     /**
@@ -402,5 +406,14 @@ public class Emojidex {
     public UpdateInfo getUpdateInfo()
     {
         return updateInfo;
+    }
+
+    /**
+     * Get moji codes.
+     * @return      Moji codes.
+     */
+    public MojiCodes getMojiCodes()
+    {
+        return mojiCodesManager.getMojiCodes();
     }
 }

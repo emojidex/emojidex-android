@@ -1,8 +1,5 @@
 package com.emojidex.emojidexandroid.downloader.arguments;
 
-import com.emojidex.emojidexandroid.EmojiFormat;
-import com.emojidex.emojidexandroid.Emojidex;
-
 /**
  * Created by kou on 17/08/29.
  */

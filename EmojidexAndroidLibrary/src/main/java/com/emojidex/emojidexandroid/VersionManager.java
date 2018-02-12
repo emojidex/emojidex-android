@@ -1,17 +1,9 @@
 package com.emojidex.emojidexandroid;
 
 import android.content.Context;
-import android.net.Uri;
 
-import com.emojidex.emojidexandroidlibrary.BuildConfig;
 import com.emojidex.emojidexandroidlibrary.R;
-import com.fasterxml.jackson.core.type.TypeReference;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.text.NumberFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
 
 /**

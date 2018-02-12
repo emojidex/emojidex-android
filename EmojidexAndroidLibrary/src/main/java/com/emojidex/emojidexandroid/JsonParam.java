@@ -1,6 +1,5 @@
 package com.emojidex.emojidexandroid;
 
-import com.emojidex.libemojidex.Emojidex.Data.Checksums;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

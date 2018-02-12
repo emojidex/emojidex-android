@@ -33,6 +33,13 @@ class UpdateManager {
         // Add listener.
         emojidex.addDownloadListener(new UpdateListener(handles));
 
+        // MojiCodes
+        {
+            final int handle = MojiCodesManager.getInstance().update();
+            if(handle != EmojiDownloader.HANDLE_NULL)
+                handles.add(handle);
+        }
+
         // UTF
         {
             final int handle = downloader.downloadUTFEmoji(

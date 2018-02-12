@@ -3,6 +3,7 @@ package com.emojidex.emojidexandroid;
 import android.graphics.drawable.Drawable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.style.DynamicDrawableSpan;
 import android.text.style.ImageSpan;
 import android.util.Log;
@@ -11,99 +12,72 @@ import com.emojidex.emojidexandroid.animation.EmojidexAnimationDrawable;
 import com.emojidex.emojidexandroid.animation.EmojidexAnimationImageSpan;
 import com.emojidex.emojidexandroid.downloader.arguments.EmojiDownloadArguments;
 
-import java.util.LinkedList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by kou on 14/10/09.
  */
 class TextConverter {
     private static final String TAG = "EmojidexLibrary::TextConverter";
+    private static final String CODE_REGEX = "(^.*?" + Emojidex.SEPARATOR + "|\\G[^" + Emojidex.SEPARATOR + "]*?[\\r\\n]+.*?" + Emojidex.SEPARATOR + "|.*?)([^" + Emojidex.SEPARATOR + "\\r\\n]+)" + Emojidex.SEPARATOR;
+    private static final int CODE_GROUP = 2;
 
     private static final Emojidex emojidex = Emojidex.getInstance();
 
     /**
      * Normal text encode to emojidex text.
      * @param text              Normal text.
-     * @param useImage          If true, use phantom-emoji image.
      * @param format            Image format.
      * @param autoDownload      Auto emoji download flag.
      *                          If true, auto download emoji when find unknown emoji.
      * @return                  Emojidex text.
      */
-    public static CharSequence emojify(CharSequence text, boolean useImage, EmojiFormat format, boolean autoDownload)
+    public static CharSequence emojify(CharSequence text, EmojiFormat format, boolean autoDownload)
     {
-        final SpannableStringBuilder result = new SpannableStringBuilder();
+        final SpannableString result = new SpannableString(text);
+        final MojiCodesManager mojiCodesManager = MojiCodesManager.getInstance();
 
-        final int length = text.length();
-        int charCount;
-        int startIndex = 0;
-        boolean startIsSeparator = false;
-        for(int i = 0;  i < length;  i += charCount)
+        // For moji.
         {
-            final int codePoint = Character.codePointAt(text, i);
-            charCount = Character.charCount(codePoint);
+            final Pattern pattern = Pattern.compile(mojiCodesManager.getMojiRegex());
+            final Matcher matcher = pattern.matcher(result);
 
-            // Find separator.
-            if( String.valueOf(Character.toChars(codePoint)).equals(Emojidex.SEPARATOR) )
+            while(matcher.find())
             {
-                final int endIndex = i;
-
-                // Start character is not separator.
-                if( !startIsSeparator )
-                {
-                    result.append( text.subSequence(startIndex, endIndex) );
-                    startIndex = endIndex;
-                    startIsSeparator = true;
+                final String moji = matcher.group();
+                if(moji.isEmpty())
                     continue;
-                }
 
-                // Get EmojiData by emoji name.
-                final String emojiName = text.subSequence(startIndex + 1, endIndex).toString();
-                final Emoji emoji = emojidex.getEmoji(emojiName);
-
-                // Unknown emoji.
-                if(emoji == null)
-                {
-                    // Auto download emoji.
-                    if(     autoDownload
-                        &&  useImage
-                        &&  !emojiName.isEmpty()    )
-                    {
-                        emojidex.getEmojiDownloader().downloadEmojies(
-                                new EmojiDownloadArguments(emojiName)
-                                        .addFormat(format)
-                        );
-                    }
-
-                    // String is not emoji tag.
-                    result.append( text.subSequence(startIndex, endIndex) );
-                    startIndex = endIndex;
-
-                    continue;
-                }
-
-                // This string is emoji tag !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                if(useImage)
-                {
-                    result.append(createEmojidexText(emoji, format));
-                }
-                else if(emoji.hasOriginalCodes())
-                    result.append( text.subSequence(startIndex, endIndex + charCount) );
-                else
-                    result.append(emoji.getText());
-                startIndex = endIndex + charCount;
-                startIsSeparator = false;
+                emojifyOne(
+                        result,
+                        matcher.start(),
+                        matcher.end(),
+                        mojiCodesManager.mojiToCode(moji),
+                        format,
+                        autoDownload
+                );
             }
         }
 
-        // Last string is not emoji tag.
-        if(startIndex < length)
+        // For code.
         {
-            result.append( text.subSequence(startIndex, length) );
-        }
+            final Pattern pattern = Pattern.compile(CODE_REGEX);
+            final Matcher matcher = pattern.matcher(result);
+            final int separatorLength = Emojidex.SEPARATOR.length();
 
-        // Put log.
-        Log.d(TAG, "emojify: " + text + " -> " + result);
+            while(matcher.find())
+            {
+                emojifyOne(
+                        result,
+                        matcher.start(CODE_GROUP) - separatorLength,
+                        matcher.end(CODE_GROUP) + separatorLength,
+                        matcher.group(CODE_GROUP),
+                        format,
+                        autoDownload
+                );
+            }
+        }
 
         return result;
     }
@@ -115,91 +89,86 @@ class TextConverter {
      */
     public static CharSequence deEmojify(CharSequence text)
     {
-        final SpannableStringBuilder result = new SpannableStringBuilder();
+        if( !(text instanceof Spanned) )
+            return text;
 
-        final LinkedList<Integer> codes = new LinkedList<Integer>();
-        final LinkedList<Integer> tmp = new LinkedList<Integer>();
-        int lastMojiCount = 0;
+        final SpannableString result = new SpannableString(text);
+        for(DynamicDrawableSpan span : result.getSpans(0, result.length(), DynamicDrawableSpan.class))
+            result.removeSpan(span);
 
-        final int length = text.length();
-        int i = 0;
-        while(i < length)
+        return result;
+    }
+
+    /**
+     * Replace utf string to emojidex code.
+     * @param text      Source text.
+     * @return          Result text.
+     */
+    public static CharSequence codify(CharSequence text)
+    {
+        final SpannableStringBuilder result = new SpannableStringBuilder(text);
+        final MojiCodesManager mojiCodesManager = MojiCodesManager.getInstance();
+
         {
-            final int codePoint = Character.codePointAt(text, i);
-            final int charCount = Character.charCount(codePoint);
+            final Pattern pattern = Pattern.compile(mojiCodesManager.getMojiRegex());
+            final Matcher matcher = pattern.matcher(result);
 
-            // 0x200D = ZWJ
-            if(codePoint == 0x200D)
-                lastMojiCount = 0;
-            else if(++lastMojiCount >= 3)
+            int offset = 0;
+            while(matcher.find())
             {
-                lastMojiCount = 0;
+                final int start = matcher.start() + offset;
+                final int end = matcher.end() + offset;
 
-                while(codes.size() > 1)
-                {
-                    // To emoji string when has emoji.
-                    do
-                    {
-                        Emoji emoji = emojidex.getEmoji(codes);
-                        if(emoji == null)
-                        {
-                            tmp.addFirst(codes.removeLast());
-                            continue;
-                        }
-
-                        // Emoji to tag.
-                        result.append(emoji.toTagString());
-
-                        // Next.
-                        codes.clear();
-                        codes.addAll(tmp);
-                        tmp.clear();
-                    } while(codes.size() > 0 && codes.size() + tmp.size() > 1);
-
-                    codes.addAll(tmp);
-                    tmp.clear();
-
-                    // First character is not emoji.
-                    if(codes.size() > 1)
-                        result.append(new String(Character.toChars(codes.removeFirst())));
-                }
-            }
-
-            codes.addLast(codePoint);
-            i += charCount;
-        }
-
-        while( !codes.isEmpty() )
-        {
-            // To emoji string when has emoji.
-            do
-            {
-                Emoji emoji = emojidex.getEmoji(codes);
-                if(emoji == null)
-                {
-                    tmp.addFirst(codes.removeLast());
+                if(start == end)
                     continue;
-                }
 
-                // Emoji to tag.
-                result.append(emoji.toTagString());
+                final String code = Emojidex.SEPARATOR + mojiCodesManager.mojiToCode(matcher.group()) + Emojidex.SEPARATOR;
 
-                // Next.
-                codes.clear();
-                codes.addAll(tmp);
-                tmp.clear();
-            } while(codes.size() > 0);
+                result.replace(start, end, code);
 
-            codes.addAll(tmp);
-            tmp.clear();
-
-            // First character is not emoji.
-            if( !codes.isEmpty() )
-                result.append(new String(Character.toChars(codes.removeFirst())));
+                offset += code.length() - (end - start);
+            }
         }
 
         // Put log.
-        Log.d(TAG, "deEmojify: " + text + " -> " + result);
+        Log.d(TAG, "codify: " + text + " -> " + result);
+
+        return result;
+    }
+
+    /**
+     * Replace emojidex code to utf string.
+     * @param text      Source text.
+     * @return          Result text.
+     */
+    public static CharSequence mojify(CharSequence text)
+    {
+        final SpannableStringBuilder result = new SpannableStringBuilder(text);
+        final MojiCodesManager mojiCodesManager = MojiCodesManager.getInstance();
+
+        {
+            final Pattern pattern = Pattern.compile(CODE_REGEX);
+            final Matcher matcher = pattern.matcher(result);
+            final int separatorLength = Emojidex.SEPARATOR.length();
+
+            int offset = 0;
+            while(matcher.find())
+            {
+                final String moji = mojiCodesManager.codeToMoji(matcher.group(CODE_GROUP));
+                if(moji == null)
+                    continue;
+
+                final int start = matcher.start(CODE_GROUP) - separatorLength + offset;
+                final int end = matcher.end(CODE_GROUP) + separatorLength + offset;
+
+                result.replace(start, end, moji);
+
+                offset += moji.length() - (end - start);
+            }
+        }
+
+        // Put log.
+        Log.d(TAG, "codify: " + text + " -> " + result);
 
         return result;
     }
@@ -212,13 +181,60 @@ class TextConverter {
      */
     static CharSequence createEmojidexText(Emoji emoji, EmojiFormat format)
     {
-        final Drawable drawable = emoji.getDrawable(format);
-        final DynamicDrawableSpan span =
-                (drawable instanceof EmojidexAnimationDrawable)
-                        ? new EmojidexAnimationImageSpan((EmojidexAnimationDrawable)drawable)
-                        : new ImageSpan(drawable);
+        final DynamicDrawableSpan span = createSpan(emoji, format);
         final SpannableString result = new SpannableString(emoji.hasOriginalCodes() ? emoji.toTagString() : emoji.getText());
         result.setSpan(span, 0, result.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
         return result;
+    }
+
+    /**
+     * Emojify support method.
+     * @param str               Target string.
+     * @param start             Emojify area start.
+     * @param end               Emojify area end.
+     * @param code              Emoji name.
+     * @param format            Image format.
+     * @param autoDownload      Auto download flag.
+     */
+    private static void emojifyOne(SpannableString str, int start, int end, String code, EmojiFormat format, boolean autoDownload)
+    {
+        // Skip if already emojify.
+        if(str.getSpans(start, end, DynamicDrawableSpan.class).length > 0)
+            return;
+
+        // Find emoji.
+        final Emoji emoji = emojidex.getEmoji(code);
+
+        // Unknown emoji.
+        if(emoji == null)
+        {
+            if(autoDownload)
+            {
+                emojidex.getEmojiDownloader().downloadEmojies(
+                        new EmojiDownloadArguments(code)
+                                .addFormat(format)
+                );
+            }
+            return;
+        }
+
+        // Emojify.
+        final DynamicDrawableSpan span = createSpan(emoji, format);
+        str.setSpan(span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+    }
+
+    /**
+     * Create image span from emoji.
+     * @param emoji     Emoji.
+     * @param format    Image format.
+     * @return          Image span.
+     */
+    private static DynamicDrawableSpan createSpan(Emoji emoji, EmojiFormat format)
+    {
+        final Drawable drawable = emoji.getDrawable(format);
+        return (drawable instanceof EmojidexAnimationDrawable)
+                ? new EmojidexAnimationImageSpan((EmojidexAnimationDrawable)drawable)
+                : new ImageSpan(drawable)
+                ;
     }
 }

@@ -24,7 +24,7 @@ import java.util.ArrayList;
  * Created by kou on 17/12/05.
  */
 
-public class ImageArchiveDownloadTask extends AbstractFileDownloadTask {
+class ImageArchiveDownloadTask extends AbstractFileDownloadTask {
     private static final int BUFFER_SIZE = 4096;
 
     private final Uri outputUri;
