@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 26
      buildToolsVersion '27.0.3'
 
     defaultConfig {
@@ -39,11 +39,11 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.9.1'
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'org.apache.commons:commons-compress:1.15'
-    compile 'org.tukaani:xz:1.6'
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.2'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'org.apache.commons:commons-compress:1.15'
+    implementation 'org.tukaani:xz:1.6'
 }
 
 // aar
