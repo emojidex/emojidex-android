@@ -96,11 +96,11 @@ public class EmojiComparator implements Comparator<Emoji> {
     private Date stringToDate(String dateString) {
         if (format == null) format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
 
-        Date date = null;
+        Date date;
         try {
             date = format.parse(dateString);
         } catch (ParseException e) {
-            e.printStackTrace();
+            date = null;
         }
         return date;
     }

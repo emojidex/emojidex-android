@@ -170,6 +170,8 @@ public class UpdateInfo {
      */
     private int loadVersionCodeFromOldSystem(Context context, Uri uri)
     {
+        int result;
+
         try
         {
             String version = "";
@@ -179,16 +181,16 @@ public class UpdateInfo {
             while( (readByte = is.read(buffer)) != -1 )
                 version += new String(buffer, 0, readByte);
             is.close();
-            return NumberFormat.getInstance().parse(version).intValue();
+            result = NumberFormat.getInstance().parse(version).intValue();
         }
         catch(IOException e)
         {
-            e.printStackTrace();
+            result = 0;
         }
         catch(ParseException e)
         {
-            e.printStackTrace();
+            result = 0;
         }
-        return 0;
+        return result;
     }
 }

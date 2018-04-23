@@ -51,7 +51,7 @@ public class EmojidexProvider extends ContentProvider
      */
     private File uriToFile(Uri uri)
     {
-        File file = null;
+        File file;
         try
         {
             file = new File(
@@ -61,7 +61,7 @@ public class EmojidexProvider extends ContentProvider
         }
         catch(IOException e)
         {
-            e.printStackTrace();
+            file = null;
         }
         return file;
     }

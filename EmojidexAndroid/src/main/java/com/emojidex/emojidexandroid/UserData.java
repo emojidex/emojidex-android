@@ -76,7 +76,10 @@ public class UserData {
             editor.putString(KEY_NAME, Base64.encodeToString(cipherTextName, Base64.DEFAULT));
             editor.apply();
         } catch (KeyChainException | CryptoInitializationException | IOException e) {
-            e.printStackTrace();
+            SharedPreferences.Editor editor = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE).edit();
+            editor.putString(KEY_TOKEN, "");
+            editor.putString(KEY_NAME, "");
+            editor.apply();
         }
     }
 
@@ -107,7 +110,9 @@ public class UserData {
             username = new String(decryptedName, "utf-8");
             Emojidex.getInstance().setUser(username, authToken);
         } catch (KeyChainException | CryptoInitializationException | IOException e) {
-            e.printStackTrace();
+            authToken = "";
+            username = "";
+            Emojidex.getInstance().setUser(username, authToken);
         }
     }
 

@@ -108,7 +108,6 @@ public class SealGenerator {
         }
         catch(IOException e)
         {
-            e.printStackTrace();
             uri = null;
             return;
         }

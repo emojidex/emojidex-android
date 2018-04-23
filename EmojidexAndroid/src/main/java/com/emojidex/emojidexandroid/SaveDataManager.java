@@ -235,7 +235,7 @@ public class SaveDataManager {
         }
         catch(IOException e)
         {
-            e.printStackTrace();
+            // nop
         }
         Log.d(TAG, "Save \"" + filename + "\". (size = " + emojiNames.size() + ")");
     }
@@ -258,7 +258,7 @@ public class SaveDataManager {
         }
         catch(IOException e)
         {
-            e.printStackTrace();
+            // nop
         }
 
         Log.d(TAG, "Load \"" + filename + "\". (size = " + emojiNames.size() + ")");

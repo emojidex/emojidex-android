@@ -85,8 +85,6 @@ abstract class AbstractFileDownloadTask extends AbstractDownloadTask {
         }
         catch(MalformedURLException e)
         {
-            e.printStackTrace();
-
             if(connection != null)
                 connection.disconnect();
 
@@ -94,8 +92,6 @@ abstract class AbstractFileDownloadTask extends AbstractDownloadTask {
         }
         catch(IOException e)
         {
-            e.printStackTrace();
-
             if(connection != null)
                 connection.disconnect();
 

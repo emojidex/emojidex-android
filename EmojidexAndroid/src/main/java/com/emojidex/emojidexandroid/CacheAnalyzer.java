@@ -91,7 +91,6 @@ class CacheAnalyzer
         catch(Exception e)
         {
             result = false;
-            e.printStackTrace();
         }
 
         return result;

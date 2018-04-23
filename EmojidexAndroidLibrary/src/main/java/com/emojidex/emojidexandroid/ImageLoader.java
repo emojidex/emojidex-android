@@ -349,7 +349,7 @@ public class ImageLoader
             }
             catch(Exception e)
             {
-                e.printStackTrace();
+                result = null;
             }
         }
 
@@ -364,7 +364,7 @@ public class ImageLoader
             }
             catch(Exception e)
             {
-                e.printStackTrace();
+                result = null;
             }
         }
 

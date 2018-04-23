@@ -146,7 +146,7 @@ class ImageArchiveDownloadTask extends AbstractFileDownloadTask {
             tarFile.delete();
         } catch(Exception e)
         {
-            e.printStackTrace();
+            EmojidexFileUtils.deleteFiles(outputUri);
         }
     }
 }

@@ -138,7 +138,7 @@ public class EmojidexFileUtils
         }
         catch (UnsupportedEncodingException e)
         {
-            e.printStackTrace();
+            // nop
         }
         return rootPath + "/emoji/"
                 + format.getResolution() + "/"
@@ -281,16 +281,16 @@ public class EmojidexFileUtils
 
     public static boolean existsLocalFile(Uri uri)
     {
-        boolean result = false;
+        boolean result = true;
+
         try
         {
             ParcelFileDescriptor pfd = context.getContentResolver().openFileDescriptor(uri, "r");
             pfd.close();
-            result = true;
         }
         catch(IOException e)
         {
-            e.printStackTrace();
+            result = false;
         }
         return result;
     }
@@ -377,7 +377,7 @@ public class EmojidexFileUtils
      */
     public static boolean copyFile(Uri src, Uri dest)
     {
-        boolean result = false;
+        boolean result = true;
 
         try
         {
@@ -391,12 +391,10 @@ public class EmojidexFileUtils
 
             inChannel.close();
             outChannel.close();
-
-            result = true;
         }
         catch(IOException e)
         {
-            e.printStackTrace();
+            result = false;
         }
 
         return result;
@@ -421,7 +419,6 @@ public class EmojidexFileUtils
         catch(IOException e)
         {
             result = null;
-            e.printStackTrace();
         }
 
         return result;
@@ -451,7 +448,7 @@ public class EmojidexFileUtils
         }
         catch(IOException e)
         {
-            e.printStackTrace();
+            // nop
         }
     }
 }
