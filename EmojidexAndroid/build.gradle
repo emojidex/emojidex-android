@@ -6,8 +6,8 @@ android {
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 25
-        versionCode 32
+        targetSdkVersion 26
+        versionCode 31
         versionName "1.5.0"
         applicationId "com.emojidex.emojidexandroid"
     }
