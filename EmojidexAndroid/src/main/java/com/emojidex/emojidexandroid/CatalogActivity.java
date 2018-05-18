@@ -21,7 +21,6 @@ import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,8 +60,8 @@ public class CatalogActivity extends Activity
 
     private static final int REQUEST_EXTERNAL_STORAGE = 1000;
     private static final String[] PERMISSIONS_STORAGE = {
-            android.Manifest.permission.READ_EXTERNAL_STORAGE,
-            android.Manifest.permission.WRITE_APN_SETTINGS
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
     private Emoji selectedEmoji;
 
