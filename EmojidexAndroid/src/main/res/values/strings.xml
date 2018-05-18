@@ -21,6 +21,8 @@
     <string name="menu_new_emoji">+ New emoji</string>
     <string name="menu_new_success"> was successfully created.</string>
     <string name="menu_new_failure">emoji registration failed.</string>
+    <string name="menu_following">Following</string>
+    <string name="menu_followers">Followers</string>
     <string name="webview_loading">Loading…</string>
 
     <string name="search">Search</string>

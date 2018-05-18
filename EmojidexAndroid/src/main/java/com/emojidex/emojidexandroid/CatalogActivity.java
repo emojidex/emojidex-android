@@ -66,6 +66,8 @@ public class CatalogActivity extends Activity
     private Button categoryAllButton;
     private Button myEmojiButton;
     private ImageButton loginButton;
+    private ImageButton followingButton;
+    private ImageButton followersButton;
 
     private boolean isPick = false;
 
@@ -132,7 +134,9 @@ public class CatalogActivity extends Activity
         setAdsVisibility();
 
         loginButton = (ImageButton) findViewById(R.id.catalog_login);
-        setLoginButtonVisibility();
+        followingButton = (ImageButton) findViewById(R.id.catalog_following);
+        followersButton = (ImageButton) findViewById(R.id.catalog_followers);
+        setMenuButtonsVisibility();
     }
 
     @Override
@@ -230,7 +234,6 @@ public class CatalogActivity extends Activity
         }
 
         myEmojiButton = (Button)findViewById(R.id.catalog_my_emoji);
-        setMyEmojiButtonVisibility();
     }
 
     public void onClickCategoryButton(View v)
@@ -404,7 +407,8 @@ public class CatalogActivity extends Activity
         return emojies;
     }
 
-    private List<Emoji> setEmojiList(List<Emoji> emojies, boolean standardOnly) {
+    private List<Emoji> setEmojiList(List<Emoji> emojies, boolean standardOnly)
+    {
         if (!standardOnly) return emojies;
 
         List<Emoji> removeEmojies = new ArrayList<>();
@@ -437,42 +441,44 @@ public class CatalogActivity extends Activity
         String action = intent.getAction();
         Set categories = intent.getCategories();
 
-        if (!Intent.ACTION_VIEW.equals(action) || !categories.contains(Intent.CATEGORY_BROWSABLE)) return;
+        if (Intent.ACTION_VIEW.equals(action) && categories.contains(Intent.CATEGORY_BROWSABLE))
+        {
+            // emojidex login
+            if ("login".equals(intent.getStringExtra("action")))
+            {
+                if (intent.hasExtra("auth_token") && intent.hasExtra("username"))
+                {
+                    String authToken = intent.getStringExtra("auth_token");
+                    String username = intent.getStringExtra("username");
+                    intent.removeExtra("auth_token");
+                    intent.removeExtra("username");
 
-        // emojidex login
-        if ("login".equals(intent.getStringExtra("action"))) {
-            intent.removeExtra("action");
+                    UserData userdata = UserData.getInstance();
+                    userdata.setUserData(authToken, username);
 
-            if (intent.hasExtra("auth_token") && intent.hasExtra("username")) {
-                String authToken = intent.getStringExtra("auth_token");
-                String username = intent.getStringExtra("username");
-                intent.removeExtra("auth_token");
-                intent.removeExtra("username");
+                    final HistoryManager hm = HistoryManager.getInstance(this);
+                    final FavoriteManager fm = FavoriteManager.getInstance(this);
+                    hm.saveBackup();
+                    fm.saveBackup();
+                    hm.loadFromUser();
+                    fm.loadFromUser();
 
-                UserData userdata = UserData.getInstance();
-                userdata.setUserData(authToken, username);
-
-                final HistoryManager hm = HistoryManager.getInstance(this);
-                final FavoriteManager fm = FavoriteManager.getInstance(this);
-                hm.saveBackup();
-                fm.saveBackup();
-                hm.loadFromUser();
-                fm.loadFromUser();
-
-                Toast.makeText(getApplicationContext(),
-                        getString(R.string.menu_login_success) + userdata.getUsername(),
-                        Toast.LENGTH_SHORT).show();
-                analytics.logEvent(FirebaseAnalytics.Event.LOGIN, new Bundle());
-            } else {
-                Toast.makeText(getApplicationContext(),
-                        getString(R.string.menu_login_cancel), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),
+                            getString(R.string.menu_login_success) + userdata.getUsername(),
+                            Toast.LENGTH_SHORT).show();
+                    analytics.logEvent(FirebaseAnalytics.Event.LOGIN, new Bundle());
+                }
+                else
+                {
+                    Toast.makeText(getApplicationContext(),
+                            getString(R.string.menu_login_cancel), Toast.LENGTH_SHORT).show();
+                }
             }
         }
 
         // set visibility.
         setAdsVisibility();
-        setLoginButtonVisibility();
-        setMyEmojiButtonVisibility();
+        setMenuButtonsVisibility();
     }
 
     @Override
@@ -696,26 +702,52 @@ public class CatalogActivity extends Activity
     }
 
     /**
-     * Set login button visibility.
+     * Show emojidex following users page
+     * @param v button
      */
-    private void setLoginButtonVisibility()
+    public void onClickFollowingButton(View v)
     {
-        if (UserData.getInstance().isLogined()) {
-            loginButton.setVisibility(View.GONE);
-        } else {
-            loginButton.setVisibility(View.VISIBLE);
-        }
+        Uri uri = Uri.parse(EMOJIDEX_URL + "/following");
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(intent);
+        analytics.logEvent("show_following", new Bundle());
     }
 
     /**
-     * Set my emoji button visibility.
+     * Show emojidex follower users page
+     * @param v button
      */
-    private void setMyEmojiButtonVisibility()
+    public void onClickFollowersButton(View v)
     {
-        if (UserData.getInstance().isLogined()) {
+        Uri uri = Uri.parse(EMOJIDEX_URL + "/followers");
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(intent);
+        analytics.logEvent("show_followers", new Bundle());
+    }
+
+    /**
+     * Set menu buttons visibility.
+     */
+    private void setMenuButtonsVisibility()
+    {
+        UserData userData = UserData.getInstance();
+        if (userData.isLogined())
+        {
+            loginButton.setVisibility(View.GONE);
             myEmojiButton.setVisibility(View.VISIBLE);
-        } else {
+            followingButton.setVisibility(View.VISIBLE);
+            User user = new User();
+            if (user.authorize(userData.getUsername(), userData.getAuthToken()) && (user.getPremium() || user.getPro()))
+                followersButton.setVisibility(View.VISIBLE);
+            else
+                followersButton.setVisibility(View.GONE);
+        }
+        else
+        {
+            loginButton.setVisibility(View.VISIBLE);
             myEmojiButton.setVisibility(View.GONE);
+            followingButton.setVisibility(View.GONE);
+            followersButton.setVisibility(View.GONE);
         }
     }
 
