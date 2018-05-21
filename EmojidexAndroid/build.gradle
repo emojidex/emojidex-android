@@ -10,6 +10,10 @@ android {
         versionCode 31
         versionName "1.5.0"
         applicationId "com.emojidex.emojidexandroid"
+
+        ndk {
+            abiFilters "armeabi", "armeabi-v7a", "x86", "mips"
+        }
     }
     buildTypes {
         release {
