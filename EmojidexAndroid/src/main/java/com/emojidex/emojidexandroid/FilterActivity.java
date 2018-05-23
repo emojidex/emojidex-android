@@ -12,7 +12,6 @@ import android.widget.CheckBox;
 import android.widget.Spinner;
 
 import com.emojidex.emojidexandroid.comparator.EmojiComparator;
-import com.emojidex.libemojidex.Emojidex.Service.User;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 
@@ -51,12 +50,8 @@ public class FilterActivity extends Activity {
 
         UserData userData = UserData.getInstance();
         userData.init(this);
-        User user = new User();
-        if (userData.isLogined() &&
-                user.authorize(userData.getUsername(), userData.getAuthToken()) && (user.getPremium() || user.getPro()))
-        {
+        if (userData.isLogined() && userData.isSubscriber())
             sortable = true;
-        }
 
         // Close button.
         findViewById(R.id.filter_close).setOnClickListener(new View.OnClickListener() {

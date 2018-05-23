@@ -20,6 +20,7 @@ public class KeyboardViewManager {
     private int currentView;
     private int currentPage;
 
+    private boolean r18Visibility;
 
     /**
      * Construct object.
@@ -42,6 +43,8 @@ public class KeyboardViewManager {
         }
 
         currentView = 0;
+
+        r18Visibility = false;
     }
 
     /**
@@ -118,7 +121,7 @@ public class KeyboardViewManager {
         for(String emojiName : emojiNames) {
             Emoji emoji = emojidex.getEmoji(emojiName);
             if (emoji != null) {
-                if (!standardOnly || emoji.isStandard()) emojies.add(emoji);
+                if ((!standardOnly || emoji.isStandard()) && (r18Visibility || !emoji.isR18())) emojies.add(emoji);
             }
         }
         initialize(emojies, defaultPage);
@@ -248,5 +251,14 @@ public class KeyboardViewManager {
             keyboards[destIndex] = EmojidexKeyboard.create(context);
         keyboards[destIndex].initialize(page);
         views[destIndex].setKeyboard(keyboards[destIndex]);
+    }
+
+    /**
+     * set r18 emoji visibility
+     * @param visibility true or false
+     */
+    public void setR18Visibility(boolean visibility)
+    {
+        r18Visibility = visibility;
     }
 }

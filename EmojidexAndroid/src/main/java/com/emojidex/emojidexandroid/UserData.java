@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Base64;
 
+import com.emojidex.libemojidex.Emojidex.Service.User;
 import com.facebook.android.crypto.keychain.SharedPrefsBackedKeyChain;
 import com.facebook.crypto.Crypto;
 import com.facebook.crypto.Entity;
@@ -26,6 +27,10 @@ public class UserData {
     private String authToken;
     private String username;
 
+    private boolean premium;
+    private boolean pro;
+    private boolean r18;
+
     private UserData() {}
 
     public static UserData getInstance() {
@@ -36,6 +41,7 @@ public class UserData {
         this.authToken = authToken;
         this.username = username;
         Emojidex.getInstance().setUser(username, authToken);
+        getUserData();
         save();
     }
 
@@ -97,6 +103,9 @@ public class UserData {
         if (token.equals("") || name.equals("")) {
             authToken = "";
             username = "";
+            premium = false;
+            pro = false;
+            r18 = false;
             Emojidex.getInstance().setUser(username, authToken);
             return;
         }
@@ -109,6 +118,7 @@ public class UserData {
             authToken = new String(decryptedToken, "utf-8");
             username = new String(decryptedName, "utf-8");
             Emojidex.getInstance().setUser(username, authToken);
+            getUserData();
         } catch (KeyChainException | CryptoInitializationException | IOException e) {
             authToken = "";
             username = "";
@@ -119,8 +129,28 @@ public class UserData {
     public void reset() {
         username = "";
         authToken = "";
+        premium = false;
+        pro = false;
+        r18 = false;
         Emojidex.getInstance().setUser(username, authToken);
         SharedPreferences.Editor editor = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE).edit();
         editor.clear().apply();
+    }
+
+    public boolean isPremium() { return premium; }
+
+    public boolean isPro() { return pro; }
+
+    public boolean isSubscriber() { return premium || pro; }
+
+    public boolean isR18() { return r18; }
+
+    private void getUserData() {
+        User user = new User();
+        if (user.authorize(username, authToken)) {
+            premium = user.getPremium();
+            pro = user.getPro();
+            r18 = user.getR18();
+        }
     }
 }
