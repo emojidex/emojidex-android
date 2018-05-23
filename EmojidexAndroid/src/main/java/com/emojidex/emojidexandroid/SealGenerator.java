@@ -17,6 +17,7 @@ public class SealGenerator {
 
     private Uri uri = null;
     private boolean useLow = false;
+    private int backgroundColor;
 
     /**
      * Construct object.
@@ -25,6 +26,7 @@ public class SealGenerator {
     public SealGenerator(Context context)
     {
         this.context = context;
+        this.backgroundColor = Color.WHITE;
     }
 
     /**
@@ -72,6 +74,15 @@ public class SealGenerator {
     }
 
     /**
+     * Set background color.
+     * @param color Color
+     */
+    public void setBackgroundColor(int color)
+    {
+        this.backgroundColor = color;
+    }
+
+    /**
      * Create temporary file.
      * @param emoji     Emoji.
      */
@@ -95,9 +106,9 @@ public class SealGenerator {
         {
             final Bitmap bitmap = bitmaps[0];
 
-            // Change background color to white.
+            // Change background color to selected color. (default: white)
             final Bitmap newBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());
-            newBitmap.eraseColor(Color.WHITE);
+            newBitmap.eraseColor(backgroundColor);
             final Canvas canvas = new Canvas(newBitmap);
             canvas.drawBitmap(bitmap, 0, 0, null);
 

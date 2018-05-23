@@ -1,5 +1,6 @@
 package com.emojidex.emojidexandroid;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -7,11 +8,21 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Point;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -35,6 +46,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -46,6 +58,13 @@ public class CatalogActivity extends Activity
 {
     private static final String EMOJIDEX_URL = "https://www.emojidex.com";
     private static final String EMOJIDEX_QUERY = "?user_agent=emojidexNativeClient";
+
+    private static final int REQUEST_EXTERNAL_STORAGE = 1000;
+    private static final String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+    private Emoji selectedEmoji;
 
     private GridView gridView;
     private CatalogAdapter adapter;
@@ -85,6 +104,8 @@ public class CatalogActivity extends Activity
 
     private EmojiComparator.SortType currentSortType;
     private boolean standardOnly;
+
+    private int selectedColor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -191,6 +212,7 @@ public class CatalogActivity extends Activity
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)
             {
                 final Emoji emoji = (Emoji)parent.getAdapter().getItem(position);
+                selectedColor = Color.WHITE;
                 sendEmoji(emoji);
             }
         });
@@ -204,6 +226,17 @@ public class CatalogActivity extends Activity
         });
 
         gridView.setOnScrollListener(new GridViewScrollListener());
+
+        gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener()
+        {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l)
+            {
+                final Emoji emoji = (Emoji)adapterView.getAdapter().getItem(i);
+                showSelectDialog(emoji);
+                return true;
+            }
+        });
     }
 
     private void initCategory()
@@ -343,6 +376,7 @@ public class CatalogActivity extends Activity
                 historyManager.addFirst(emojiName);
 
                 final SealGenerator generator = new SealGenerator(CatalogActivity.this);
+                generator.setBackgroundColor(selectedColor);
                 generator.generate(emojiName);
 
                 if (generator.useLowQuality()) {
@@ -369,7 +403,12 @@ public class CatalogActivity extends Activity
             }
         });
 
-        downloader.download(emojiName);
+        downloader.download(
+                emojiName,
+                getString(R.string.send_seal_dialog_title),
+                getString(R.string.send_seal_dialog_message),
+                getString(R.string.send_seal_dialog_cancel)
+        );
     }
 
     private void sendIntent(Uri uri)
@@ -418,6 +457,176 @@ public class CatalogActivity extends Activity
         emojies.removeAll(removeEmojies);
 
         return emojies;
+    }
+
+    /**
+     * Show dialog.
+     * Send seal or save seal.
+     * @param emoji emoji
+     */
+    private void showSelectDialog(final Emoji emoji)
+    {
+        // Create dialog layout.
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        final View layout = inflater.inflate(R.layout.dialog_sealkit, (ViewGroup) findViewById(R.id.dialog_sealkit_root));
+        selectedColor = Color.WHITE;
+
+        final ImageView image = (ImageView) layout.findViewById(R.id.dialog_sealkit_image);
+        Drawable drawable = emoji.getDrawable(EmojiFormat.toFormat(getString(R.string.emoji_format_catalog)));
+        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+        drawable = new BitmapDrawable(getResources(),
+                Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() * 3, bitmap.getHeight() * 3, true));
+        image.setImageDrawable(drawable);
+        image.setBackgroundColor(selectedColor);
+
+        Button white = (Button) layout.findViewById(R.id.dialog_sealkit_white);
+        white.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view) {
+                image.setBackgroundColor(Color.WHITE);
+                selectedColor = Color.WHITE;
+            }
+        });
+        Button transparent = (Button) layout.findViewById(R.id.dialog_sealkit_transparent);
+        transparent.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view) {
+                image.setBackgroundColor(Color.TRANSPARENT);
+                selectedColor = Color.TRANSPARENT;
+            }
+        });
+        Button black = (Button) layout.findViewById(R.id.dialog_sealkit_black);
+        black.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view) {
+                image.setBackgroundColor(Color.BLACK);
+                selectedColor = Color.BLACK;
+            }
+        });
+        Button gray = (Button) layout.findViewById(R.id.dialog_sealkit_gray);
+        gray.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view) {
+                image.setBackgroundColor(Color.GRAY);
+                selectedColor = Color.GRAY;
+            }
+        });
+
+        final AlertDialog.Builder dialog = new AlertDialog.Builder(CatalogActivity.this);
+        dialog.setTitle(getString(R.string.select_dialog_title));
+        dialog.setView(layout);
+        dialog.setNegativeButton(
+                R.string.select_dialog_send_seal,
+                new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i)
+                    {
+                        sendEmoji(emoji);
+                    }
+                }
+        );
+        dialog.setPositiveButton(
+                R.string.select_dialog_save_seal,
+                new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i)
+                    {
+                        prepareSaveEmoji(emoji);
+                    }
+                }
+        );
+        dialog.create().show();
+    }
+
+    /**
+     * Prepare save emoji.
+     * @param emoji Emoji
+     */
+    private void prepareSaveEmoji(Emoji emoji)
+    {
+
+        if (checkExternalStoragePermission())
+        {
+            saveEmoji(emoji);
+        }
+        else
+        {
+            selectedEmoji = emoji;
+            ActivityCompat.requestPermissions(
+                    this,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
+        }
+    }
+
+    private void saveEmoji(Emoji emoji)
+    {
+        final String emojiName = emoji.getCode();
+        final EmojiFormat format = EmojiFormat.toFormat(getString(R.string.emoji_format_seal));
+
+        final SealDownloader downloader = new SealDownloader(this);
+
+        downloader.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog)
+            {
+                if(downloader.isCanceled())
+                    return;
+
+                // Generate seal.
+                final SealGenerator generator = new SealGenerator(CatalogActivity.this);
+                generator.setBackgroundColor(selectedColor);
+                generator.generate(emojiName);
+
+                // Save image.
+                final String destPath =
+                        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                        + "/emojidex-assets/"
+                        + emojiName + format.getExtension()
+                        ;
+                final Uri destUri = Uri.parse("file:" + destPath);
+                final Uri srcUri = generator.getUri();
+
+                final File dir = new File(destPath).getParentFile();
+                if( !dir.exists() )
+                    dir.mkdirs();
+
+                if( !EmojidexFileUtils.copyFile(srcUri, destUri) )
+                {
+                    Toast.makeText(CatalogActivity.this, R.string.failed_save_seal, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // Scan image.
+                MediaScannerConnection.scanFile(
+                        getApplicationContext(),
+                        new String[] { destPath },
+                        new String[] { "image/png" },
+                        null
+                );
+
+                // Notify succeeded.
+                Toast.makeText(
+                        CatalogActivity.this,
+                        getString(R.string.save_seal_success) + "\n" + destPath,
+                        Toast.LENGTH_LONG
+                ).show();
+            }
+        });
+
+        downloader.download(
+                emojiName,
+                getString(R.string.save_seal_dialog_title),
+                getString(R.string.save_seal_dialog_message),
+                getString(R.string.save_seal_dialog_cancel)
+        );
     }
 
     @Override
@@ -485,6 +694,18 @@ public class CatalogActivity extends Activity
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
+    {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == REQUEST_EXTERNAL_STORAGE && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+        {
+            saveEmoji(selectedEmoji);
+            selectedEmoji = null;
+        }
     }
 
     /**
@@ -800,5 +1021,12 @@ public class CatalogActivity extends Activity
         {
             return EmojiComparator.SortType.SCORE;
         }
+    }
+
+    private boolean checkExternalStoragePermission()
+    {
+        int permission = ContextCompat.checkSelfPermission(getApplicationContext(),
+                                                           Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        return permission == PackageManager.PERMISSION_GRANTED;
     }
 }

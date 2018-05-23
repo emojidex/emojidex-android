@@ -31,9 +31,12 @@ public class SealDownloader {
 
     /**
      * Download seal.
-     * @param name  Emoji name.
+     * @param name              Emoji name.
+     * @param dialogTitle       Download dialog title.
+     * @param dialogMessage     Download dialog message.
+     * @param dialogCancel      Download dialog cancel button text.
      */
-    public void download(String name)
+    public void download(String name, String dialogTitle, String dialogMessage, String dialogCancel)
     {
         canceled = false;
 
@@ -57,12 +60,12 @@ public class SealDownloader {
         // Show progress dialog.
         dialog = new ProgressDialog(parentActivity);
         dialog.setCanceledOnTouchOutside(false);
-        dialog.setTitle(R.string.send_seal_dialog_title);
-        dialog.setMessage(parentActivity.getString(R.string.send_seal_dialog_message));
+        dialog.setTitle(dialogTitle);
+        dialog.setMessage(dialogMessage);
 
         dialog.setButton(
                 DialogInterface.BUTTON_NEGATIVE,
-                parentActivity.getString(R.string.send_seal_dialog_cancel),
+                dialogCancel,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
