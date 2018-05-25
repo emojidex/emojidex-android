@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_margin="10dp"
+        android:text="@string/photo_editor_help_title"
+        android:textStyle="bold"
+        android:textSize="20sp" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="@string/photo_editor_help_description" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:drawableLeft="@drawable/ic_fiber_new_black_24dp"
+                android:drawablePadding="10dp"
+                android:text="@string/photo_editor_help_new" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:drawableLeft="@drawable/ic_save_black_24dp"
+                android:drawablePadding="10dp"
+                android:text="@string/photo_editor_help_save" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:drawableLeft="@drawable/ic_photo_filter_black_24dp"
+                android:drawablePadding="5dp"
+                android:text="@string/photo_editor_help_filter" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:drawableLeft="@drawable/ic_add_black_24dp"
+                android:drawablePadding="10dp"
+                android:text="@string/photo_editor_help_add" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:drawableLeft="@drawable/ic_move_black_24dp"
+                android:drawablePadding="10dp"
+                android:text="@string/photo_editor_help_move" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:drawableLeft="@drawable/ic_scale_black_24dp"
+                android:drawablePadding="10dp"
+                android:text="@string/photo_editor_help_scale" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:drawableLeft="@drawable/ic_roll_black_24dp"
+                android:drawablePadding="10dp"
+                android:text="@string/photo_editor_help_roll" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:drawableLeft="@drawable/ic_clear_black_24dp"
+                android:drawablePadding="10dp"
+                android:text="@string/photo_editor_help_clear" />
+            <Button
+                android:id="@+id/photo_editor_help_close_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="@string/photo_editor_help_close"
+                android:textColor="@color/white"
+                android:background="@null" />
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

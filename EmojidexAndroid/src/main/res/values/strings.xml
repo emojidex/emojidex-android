@@ -254,4 +254,17 @@
     <string name="select_emojidex_keyboard">Please select emojidex keyboard.</string>
     <string name="image_blank">Please select a base image...</string>
     <string name="select_filter">Select filter</string>
+
+    <!-- photo editor help-->
+    <string name="photo_editor_help_title">Help</string>
+    <string name="photo_editor_help_description">EmojidexPhotoEditor is an application that allows you to paste emojidex emojis or to filter on your favorite images!</string>
+    <string name="photo_editor_help_new">Select base image. All emoji and base images already set are cleared.</string>
+    <string name="photo_editor_help_save">Save the image.</string>
+    <string name="photo_editor_help_filter">Add or clear a filter to the image.</string>
+    <string name="photo_editor_help_add">Display a emojidex keyboard for adding emojis.</string>
+    <string name="photo_editor_help_move">When this button is active, you can move emoji by dragging.</string>
+    <string name="photo_editor_help_scale">When this button is active, you can enlarge / reduce emoji by dragging.</string>
+    <string name="photo_editor_help_roll">When this button is active, you can rotate emoji by dragging.</string>
+    <string name="photo_editor_help_clear">Clear all emojis.</string>
+    <string name="photo_editor_help_close">Close</string>
 </resources>

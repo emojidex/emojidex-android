@@ -28,6 +28,20 @@
             android:contentDescription="@null"
             android:onClick="prepareSaveImage" />
 
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="5dp"
+            android:src="@drawable/ic_help_black_24dp"
+            android:background="@drawable/button_state"
+            android:contentDescription="@null"
+            android:onClick="showHelp" />
+
     </LinearLayout>
 
     <LinearLayout

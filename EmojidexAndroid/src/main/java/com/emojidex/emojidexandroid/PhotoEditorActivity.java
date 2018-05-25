@@ -17,7 +17,7 @@ import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
-import android.media.ExifInterface;
+import android.support.media.ExifInterface;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
@@ -30,6 +30,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodInfo;
@@ -38,6 +39,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import com.emojidex.emojidexandroid.view.HScrollView;
@@ -86,6 +88,8 @@ public class PhotoEditorActivity extends Activity {
 
     private ColorMatrixColorFilter currentFilter;
 
+    private PopupWindow helpWindow;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState)
     {
@@ -102,14 +106,14 @@ public class PhotoEditorActivity extends Activity {
         emojidex = Emojidex.getInstance();
         emojidex.initialize(getApplicationContext());
 
-        vScrollView = (VScrollView) findViewById(R.id.photo_editor_vscroll);
-        hScrollView = (HScrollView) findViewById(R.id.photo_editor_hscroll);
-        frameLayout = (FrameLayout) findViewById(R.id.photo_editor_frame);
-        baseImageView = (ImageView) findViewById(R.id.photo_editor_base_image);
+        vScrollView = findViewById(R.id.photo_editor_vscroll);
+        hScrollView = findViewById(R.id.photo_editor_hscroll);
+        frameLayout = findViewById(R.id.photo_editor_frame);
+        baseImageView = findViewById(R.id.photo_editor_base_image);
 
-        moveButton = (ImageButton) findViewById(R.id.photo_editor_move_button);
-        scaleButton = (ImageButton) findViewById(R.id.photo_editor_scale_button);
-        rollButton = (ImageButton) findViewById(R.id.photo_editor_roll_button);
+        moveButton = findViewById(R.id.photo_editor_move_button);
+        scaleButton = findViewById(R.id.photo_editor_scale_button);
+        rollButton = findViewById(R.id.photo_editor_roll_button);
 
         textWatcher = new TextWatcher() {
             @Override
@@ -124,7 +128,7 @@ public class PhotoEditorActivity extends Activity {
             @Override
             public void afterTextChanged(Editable editable) { }
         };
-        editText = (EditText) findViewById(R.id.photo_editor_text);
+        editText = findViewById(R.id.photo_editor_text);
         editText.addTextChangedListener(textWatcher);
 
         currentFilter = new ColorMatrixColorFilter(new ColorMatrix());
@@ -608,6 +612,39 @@ public class PhotoEditorActivity extends Activity {
     private void showToast(String text)
     {
         Toast.makeText(PhotoEditorActivity.this, text, Toast.LENGTH_LONG).show();
+    }
+
+    /**
+     * Show help popup window.
+     * @param v button
+     */
+    public void showHelp(View v)
+    {
+        helpWindow = new PopupWindow(PhotoEditorActivity.this);
+        final View helpView = getLayoutInflater().inflate(R.layout.popup_photo_editor_help, null);
+        helpView.findViewById(R.id.photo_editor_help_close_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (helpWindow.isShowing()) helpWindow.dismiss();
+            }
+        });
+        helpWindow.setContentView(helpView);
+
+        helpWindow.setOutsideTouchable(true);
+        helpWindow.setFocusable(true);
+
+        final View rootView = getWindow().getDecorView().getRootView();
+        helpWindow.setWidth(rootView.getWidth() - 100);
+        helpWindow.setHeight(rootView.getHeight() - 100);
+
+        helpWindow.showAtLocation(rootView, Gravity.CENTER, 0, 50);
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (helpWindow != null && helpWindow.isShowing()) helpWindow.dismiss();
+
+        super.onDestroy();
     }
 
     @Override

@@ -55,6 +55,7 @@ dependencies {
     implementation 'com.facebook.conceal:conceal:2.0.2@aar'
     implementation 'com.google.android.gms:play-services-ads:15.0.0'
     implementation 'com.google.firebase:firebase-core:15.0.0'
+    implementation "com.android.support:exifinterface:26.1.0"
 }
 
 apply plugin: 'com.google.gms.google-services'
