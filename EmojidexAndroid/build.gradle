@@ -35,14 +35,16 @@ android {
         exclude 'META-INF/LICENSE'
         exclude 'META-INF/NOTICE'
 
-        pickFirst 'libs/armeabi/libgnustl_shared.so_'
-        pickFirst 'libs/armeabi/libcrystax.so_'
-        pickFirst 'libs/arm64-v8a/libgnustl_shared.so_'
-        pickFirst 'libs/arm64-v8a/libcrystax.so_'
-        pickFirst 'libs/x86/libgnustl_shared.so_'
-        pickFirst 'libs/x86/libcrystax.so_'
-        pickFirst 'libs/x86_64/libgnustl_shared.so_'
-        pickFirst 'libs/x86_64/libcrystax.so_'
+        pickFirst 'lib/armeabi/libgnustl_shared.so'
+        pickFirst 'lib/armeabi/libcrystax.so'
+        pickFirst 'lib/armeabi-v7a/libgnustl_shared.so'
+        pickFirst 'lib/armeabi-v7a/libcrystax.so'
+        pickFirst 'lib/arm64-v8a/libgnustl_shared.so'
+        pickFirst 'lib/arm64-v8a/libcrystax.so'
+        pickFirst 'lib/x86/libgnustl_shared.so'
+        pickFirst 'lib/x86/libcrystax.so'
+        pickFirst 'lib/x86_64/libgnustl_shared.so'
+        pickFirst 'lib/x86_64/libcrystax.so'
     }
 }
 
