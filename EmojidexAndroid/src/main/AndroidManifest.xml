@@ -134,14 +134,14 @@
             android:launchMode="singleTask">
 
             <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+
+            <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="image/jpeg" />
-                <data android:mimeType="image/jpg" />
-                <data android:mimeType="image/png" />
-                <data android:mimeType="image/gif" />
-                <data android:mimeType="image/bmp" />
-                <data android:mimeType="image/bitmap" />
+                <data android:mimeType="image/*" />
             </intent-filter>
 
             <intent-filter>

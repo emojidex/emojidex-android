@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -17,15 +16,15 @@ import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
-import android.support.media.ExifInterface;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.media.ExifInterface;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.Editable;
@@ -182,37 +181,31 @@ public class PhotoEditorActivity extends Activity {
             if (intent.getExtras() == null || intent.getExtras().get("android.intent.extra.STREAM") == null) return;
             //noinspection ConstantConditions
             uri = Uri.parse(intent.getExtras().get("android.intent.extra.STREAM").toString());
+            intent.removeExtra("android.intent.extra.STREAM");
         }
-
-        // exif
-        String[] projection = { MediaStore.MediaColumns.DATA };
-        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
-        int orientation = ExifInterface.ORIENTATION_UNDEFINED;
-
-        if (cursor != null)
+        else
         {
-            cursor.moveToFirst();
-            try
-            {
-                ExifInterface exifInterface = new ExifInterface(cursor.getString(0));
-                orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-            cursor.close();
+            intent.setData(null);
         }
 
         try
         {
             InputStream is = getContentResolver().openInputStream(uri);
+
+            // exif
+            assert (is) != null;
+            ExifInterface exifInterface = new ExifInterface(is);
+            int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
+            is.close();
+
+            is = getContentResolver().openInputStream(uri);
             Bitmap originBitmap = BitmapFactory.decodeStream(is);
             Bitmap bitmap = Bitmap.createBitmap(originBitmap, 0, 0, originBitmap.getWidth(),
                                                 originBitmap.getHeight(), getMatrix(orientation), true);
-            if (is != null) is.close();
             baseImageView.setImageBitmap(bitmap);
             baseImageView.setColorFilter(currentFilter);
+
+            if (is != null) is.close();
         }
         catch (IOException e)
         {
@@ -271,11 +264,10 @@ public class PhotoEditorActivity extends Activity {
     public void prepareEmoji()
     {
         // Get emoji code from invisible edit text.
-        final String emojiName = emojidex.deEmojify(editText.getText()).toString().replaceAll(":", "");
+        final String emojiName = emojidex.codify(editText.getText()).toString().replaceAll(":", "");
         editText.removeTextChangedListener(textWatcher);
         editText.setText("");
         editText.addTextChangedListener(textWatcher);
-
         final Emoji emoji = emojidex.getEmoji(emojiName);
 
         if (emoji == null) return;
@@ -551,13 +543,23 @@ public class PhotoEditorActivity extends Activity {
     {
         clearImage(null);
         baseImageView.setImageBitmap(null);
+        baseImageView.setImageDrawable(null);
+        baseImageView.setColorFilter(null);
 
         currentFilter = new ColorMatrixColorFilter(new ColorMatrix());
 
         Intent intent = new Intent();
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        if (Build.VERSION.SDK_INT < 19)
+        {
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+        }
+        else
+        {
+            intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+        }
         intent.setType("image/*");
-        startActivityForResult(intent, SELECT_PHOTO);
+        startActivityForResult(Intent.createChooser(intent, null), SELECT_PHOTO);
     }
 
     /**
@@ -670,13 +672,24 @@ public class PhotoEditorActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
-        if (requestCode != SELECT_PHOTO || resultCode != Activity.RESULT_OK || data == null)
-        {
-            super.onActivityResult(requestCode, resultCode, data);
-            return;
-        }
+        super.onActivityResult(requestCode, resultCode, data);
 
-        setBaseImage(data);
+        if (requestCode == SELECT_PHOTO && resultCode == Activity.RESULT_OK && data != null) setBaseImage(data);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        if (intent != null) setIntent(intent);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        Intent intent = getIntent();
+        if (intent != null && intent.getAction() != null && intent.getAction().equals(Intent.ACTION_SEND)) setBaseImage(intent);
     }
 
     /**
