@@ -242,6 +242,7 @@
     <string name="filtering">Filtering</string>
 
     <!-- photo editor -->
+    <string name="too_large">The image is too large.</string>
     <string name="open_error">The image could not be opened.</string>
     <string name="save_image_success">Image saved.</string>
     <string name="save_image_failed">Failed to save image.</string>

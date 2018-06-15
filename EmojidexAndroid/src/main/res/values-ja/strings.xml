@@ -185,6 +185,7 @@
     <string name="filtering">フィルタリング</string>
 
     <!-- photo editor -->
+    <string name="too_large">画像が大きすぎます。</string>
     <string name="open_error">画像を開くことができませんでした。</string>
     <string name="save_image_success">画像を保存しました。</string>
     <string name="save_image_failed">画像の保存に失敗しました。</string>

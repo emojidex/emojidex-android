@@ -49,6 +49,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import javax.microedition.khronos.egl.EGL10;
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.egl.EGLContext;
+import javax.microedition.khronos.egl.EGLDisplay;
+
 /**
  * PhotoEditorActivity
  * Created by Yoshida on 2017/12/13.
@@ -75,6 +80,7 @@ public class PhotoEditorActivity extends Activity {
     private HScrollView hScrollView;
     private FrameLayout frameLayout;
     private ImageView baseImageView;
+    private int maximumTextureSize;
 
     private ImageButton moveButton;
     private ImageButton scaleButton;
@@ -97,6 +103,7 @@ public class PhotoEditorActivity extends Activity {
 
         initialize();
         imeEnableCheck();
+        getMaxTextureSize();
         setBaseImage(getIntent());
     }
 
@@ -198,13 +205,20 @@ public class PhotoEditorActivity extends Activity {
             int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
             is.close();
 
+            // Set image to imageView.
             is = getContentResolver().openInputStream(uri);
             Bitmap originBitmap = BitmapFactory.decodeStream(is);
             Bitmap bitmap = Bitmap.createBitmap(originBitmap, 0, 0, originBitmap.getWidth(),
                                                 originBitmap.getHeight(), getMatrix(orientation), true);
-            baseImageView.setImageBitmap(bitmap);
-            baseImageView.setColorFilter(currentFilter);
-
+            if (bitmap.getWidth() > maximumTextureSize || bitmap.getHeight() > maximumTextureSize)
+            {
+                showToast(getString(R.string.too_large));
+            }
+            else
+            {
+                baseImageView.setImageBitmap(bitmap);
+                baseImageView.setColorFilter(currentFilter);
+            }
             if (is != null) is.close();
         }
         catch (IOException e)
@@ -759,5 +773,30 @@ public class PhotoEditorActivity extends Activity {
 
             return true;
         }
+    }
+
+    /**
+     * Get maximum texture size of bitmap.
+     */
+    private void getMaxTextureSize() {
+        EGL10 egl = (EGL10) EGLContext.getEGL();
+        EGLDisplay display = egl.eglGetDisplay(EGL10.EGL_DEFAULT_DISPLAY);
+
+        int[] version = new int[2];
+        egl.eglInitialize(display, version);
+
+        int[] totalConfigurations = new int[1];
+        egl.eglGetConfigs(display, null, 0, totalConfigurations);
+
+        EGLConfig[] configurationsList = new EGLConfig[totalConfigurations[0]];
+        egl.eglGetConfigs(display, configurationsList, totalConfigurations[0], totalConfigurations);
+
+        int[] textureSize = new int[1];
+        for (int i = 0; i < totalConfigurations[0]; i++) {
+            egl.eglGetConfigAttrib(display, configurationsList[i], EGL10.EGL_MAX_PBUFFER_WIDTH, textureSize);
+            if (maximumTextureSize < textureSize[0]) maximumTextureSize = textureSize[0];
+        }
+
+        egl.eglTerminate(display);
     }
 }
