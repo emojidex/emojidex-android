@@ -32,7 +32,7 @@
     <string name="text_hint_emoji">絵文字を入力してください。</string>
     <string name="text_hint_text">テキストを入力してください。</string>
     <string name="clear">クリア</string>
-    <string name="clear_and_paste">クリア &amp; 貼り付け</string>
+    <string name="clear_and_paste">クリアして貼り付け</string>
     <string name="convert">変換</string>
 
     <string name="register_favorite">お気に入りに登録しますか？</string>
@@ -201,7 +201,7 @@
 
     <!-- photo editor help-->
     <string name="photo_editor_help_title">ヘルプ</string>
-    <string name="photo_editor_help_description">EmojidexPhotoEditorは、お好きな画像にemojidex絵文字を貼り付けたり、フィルターをかけたりすることができるアプリです！</string>
+    <string name="photo_editor_help_description">emojidexPhotoEditorは、お好きな画像にemojidex絵文字を貼り付けたり、フィルターをかけたりすることができるアプリです！</string>
     <string name="photo_editor_help_new">ベース画像を選択します。すでにセットされている全ての絵文字とベース画像はクリアされます。</string>
     <string name="photo_editor_help_save">画像を保存します。</string>
     <string name="photo_editor_help_filter">画像にフィルターを追加またはクリアします。</string>

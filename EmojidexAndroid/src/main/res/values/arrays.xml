@@ -44,7 +44,7 @@
         <item>Clear</item>
         <item>Grayscale</item>
         <item>Sepia</item>
-        <item>Negative‐positive reversal</item>
+        <item>Invert Color</item>
     </string-array>
 
 </resources>

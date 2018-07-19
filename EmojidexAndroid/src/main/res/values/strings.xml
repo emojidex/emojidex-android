@@ -8,7 +8,7 @@
     <string name="action_settings">Settings</string>
 
     <string name="menu_text_copy">Copy Text</string>
-    <string name="menu_clear_and_paste">Clear &amp; Paste</string>
+    <string name="menu_clear_and_paste">Clear + Paste</string>
     <string name="menu_clear">Clear</string>
     <string name="menu_clear_search">Clear Search Results</string>
     <string name="menu_conversion_switch">Toggle Conversion</string>
@@ -37,7 +37,7 @@
     <string name="text_hint_emoji">You can preview or convert text with emoji here.</string>
     <string name="text_hint_text">Enter or paste text with emoji here.</string>
     <string name="clear">Clear</string>
-    <string name="clear_and_paste">Clear &amp; Paste</string>
+    <string name="clear_and_paste">Clear + Paste</string>
     <string name="convert">Convert</string>
 
     <string name="register_favorite">Add this emoji to your favorites?</string>
@@ -258,14 +258,14 @@
 
     <!-- photo editor help-->
     <string name="photo_editor_help_title">Help</string>
-    <string name="photo_editor_help_description">EmojidexPhotoEditor is an application that allows you to paste emojidex emojis or to filter on your favorite images!</string>
-    <string name="photo_editor_help_new">Select base image. All emoji and base images already set are cleared.</string>
+    <string name="photo_editor_help_description">emojidexPhotoEditor lets you add emoji to any picture or image!</string>
+    <string name="photo_editor_help_new">Select base image [this will clear the current canvas].</string>
     <string name="photo_editor_help_save">Save the image.</string>
-    <string name="photo_editor_help_filter">Add or clear a filter to the image.</string>
+    <string name="photo_editor_help_filter">Applies a filter to the image.</string>
     <string name="photo_editor_help_add">Display a emojidex keyboard for adding emojis.</string>
-    <string name="photo_editor_help_move">When this button is active, you can move emoji by dragging.</string>
-    <string name="photo_editor_help_scale">When this button is active, you can enlarge / reduce emoji by dragging.</string>
-    <string name="photo_editor_help_roll">When this button is active, you can rotate emoji by dragging.</string>
-    <string name="photo_editor_help_clear">Clear all emojis.</string>
+    <string name="photo_editor_help_move">This tool lets you move emoji by dragging them.</string>
+    <string name="photo_editor_help_scale">This tool lets you change the size of emoji.</string>
+    <string name="photo_editor_help_roll">This tool lets you rotate emoji.</string>
+    <string name="photo_editor_help_clear">Clear all emoji.</string>
     <string name="photo_editor_help_close">Close</string>
 </resources>
