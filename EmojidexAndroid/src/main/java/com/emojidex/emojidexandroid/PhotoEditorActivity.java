@@ -277,6 +277,11 @@ public class PhotoEditorActivity extends Activity {
      */
     public void prepareEmoji()
     {
+        if (baseImageView.getDrawable() == null) {
+            Toast.makeText(getApplicationContext(), R.string.select_base_image, Toast.LENGTH_LONG).show();
+            return;
+        }
+
         // Get emoji code from invisible edit text.
         final String emojiName = emojidex.codify(editText.getText()).toString().replaceAll(":", "");
         editText.removeTextChangedListener(textWatcher);
