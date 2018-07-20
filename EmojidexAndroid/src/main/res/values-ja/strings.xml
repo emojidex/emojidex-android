@@ -198,6 +198,7 @@
     <string name="select_emojidex_keyboard">emojidexキーボードを選択してください。</string>
     <string name="image_blank">ベースとなる画像を選択してください。</string>
     <string name="select_filter">フィルター選択</string>
+    <string name="select_base_image">はじめに、ベースとなる画像を選択してください。</string>
 
     <!-- photo editor help-->
     <string name="photo_editor_help_title">ヘルプ</string>
