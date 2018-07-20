@@ -28,4 +28,11 @@
         <item>コードが長い順</item>
     </string-array>
 
+    <string-array name="filter_items">
+        <item>クリア</item>
+        <item>グレースケール</item>
+        <item>セピア</item>
+        <item>ネガポジ反転</item>
+    </string-array>
+
 </resources>

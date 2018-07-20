@@ -39,4 +39,12 @@
         <item>longest</item>
     </string-array>
 
+    <!-- filter -->
+    <string-array name="filter_items">
+        <item>Clear</item>
+        <item>Grayscale</item>
+        <item>Sepia</item>
+        <item>Invert Color</item>
+    </string-array>
+
 </resources>
