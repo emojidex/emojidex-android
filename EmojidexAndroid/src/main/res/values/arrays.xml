@@ -39,12 +39,16 @@
         <item>longest</item>
     </string-array>
 
-    <!-- filter -->
-    <string-array name="filter_items">
-        <item>Clear</item>
+    <!-- effect -->
+    <string-array name="effect_items">
         <item>Grayscale</item>
         <item>Sepia</item>
         <item>Invert Color</item>
+        <item>Flip(vertical)</item>
+        <item>Flip(horizontal)</item>
+        <item>Clear(color filter)</item>
+        <item>Clear(flip)</item>
+        <item>Clear(all)</item>
     </string-array>
 
 </resources>

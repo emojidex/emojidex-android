@@ -476,8 +476,10 @@ public class PhotoEditorActivity extends Activity {
         // Draw base image.
         Paint paint = new Paint();
         paint.setColorFilter(baseImageView.getColorFilter());
-        canvas.drawBitmap(((BitmapDrawable) baseImageView.getDrawable()).getBitmap(),
-                          baseImageView.getImageMatrix(), paint);
+        Matrix matrix = new Matrix();
+        matrix.postScale(baseImageView.getScaleX(), baseImageView.getScaleY(),
+                         baseImageView.getWidth() / 2, baseImageView.getHeight() / 2);
+        canvas.drawBitmap(((BitmapDrawable) baseImageView.getDrawable()).getBitmap(), matrix, paint);
 
         // Draw emoji images.
         for (int i = 1; i < frameLayout.getChildCount(); i++)
@@ -564,6 +566,8 @@ public class PhotoEditorActivity extends Activity {
         baseImageView.setImageBitmap(null);
         baseImageView.setImageDrawable(null);
         baseImageView.setColorFilter(null);
+        baseImageView.setScaleX(1);
+        baseImageView.setScaleY(1);
 
         currentFilter = new ColorMatrixColorFilter(new ColorMatrix());
 
@@ -582,47 +586,92 @@ public class PhotoEditorActivity extends Activity {
     }
 
     /**
-     * Add filter.
+     * Add effect.
      * @param v button
      */
-    public void addFilter(View v)
+    public void addEffect(View v)
     {
-        final CharSequence[] items = getResources().getStringArray(R.array.filter_items);
+        final CharSequence[] items = getResources().getStringArray(R.array.effect_items);
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle(R.string.select_filter);
+        dialog.setTitle(R.string.select_effect);
         dialog.setItems(
                 items,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        ColorMatrix matrix = new ColorMatrix();
-                        matrix.reset();
-
-                        switch (i)
+                        if (i < 3 || i == 5 || i == 7)
                         {
-                            case 0: // clear
-                                break;
-                            case 1: // grayscale
-                                matrix.setSaturation(0);
-                                break;
-                            case 2: // sepia
-                                matrix.setScale(0.69f, 0.47f, 0.27f, 1f);
-                                break;
-                            case 3: // nega-posi
-                                matrix.set(new float[] { -1, 0, 0, 0, 255,
-                                                         0, -1, 0, 0, 255,
-                                                         0, 0, -1, 0, 255,
-                                                         0, 0, 0, 1, 0 });
-                                break;
+                            ColorMatrix colorMatrix = new ColorMatrix();
+                            colorMatrix.reset();
+
+                            switch (i) {
+                                case 0: // grayscale
+                                    colorMatrix.setSaturation(0);
+                                    break;
+                                case 1: // sepia
+                                    colorMatrix.setScale(0.69f, 0.47f, 0.27f, 1f);
+                                    break;
+                                case 2: // nega-posi
+                                    colorMatrix.set(new float[]{-1, 0, 0, 0, 255,
+                                            0, -1, 0, 0, 255,
+                                            0, 0, -1, 0, 255,
+                                            0, 0, 0, 1, 0});
+                                    break;
+                                case 5: // clear (color filter)
+                                case 7: // clear (all)
+                                    break;
+                            }
+
+                            currentFilter = new ColorMatrixColorFilter(colorMatrix);
+                            baseImageView.setColorFilter(currentFilter);
+
+                            for (int j = 1; j < frameLayout.getChildCount(); j++)
+                            {
+                                GestureImageView imageView = (GestureImageView) frameLayout.getChildAt(j);
+                                imageView.setColorFilter(currentFilter);
+                            }
                         }
 
-                        currentFilter = new ColorMatrixColorFilter(matrix);
-                        baseImageView.setColorFilter(currentFilter);
-
-                        for (int j = 1; j < frameLayout.getChildCount(); j++)
+                        if (i == 3 || i == 4 || i > 5)
                         {
-                            GestureImageView imageView = (GestureImageView) frameLayout.getChildAt(j);
-                            imageView.setColorFilter(currentFilter);
+                            float scaleX = baseImageView.getScaleX();
+                            float scaleY = baseImageView.getScaleY();
+                            float width = baseImageView.getWidth();
+                            float height = baseImageView.getHeight();
+                            boolean clearedX = false;
+                            boolean clearedY = false;
+
+                            switch (i) {
+                                case 3: // flip (vertical)
+                                    scaleY = scaleY * -1;
+                                    break;
+                                case 4: // flip (horizontal)
+                                    scaleX = scaleX * -1;
+                                    break;
+                                case 6: // clear (flip)
+                                case 7: // clear (all)
+                                    if (scaleX == -1) clearedX = true;
+                                    if (scaleY == -1) clearedY = true;
+                                    scaleX = 1;
+                                    scaleY = 1;
+
+                                    break;
+                            }
+
+                            baseImageView.setScaleX(scaleX);
+                            baseImageView.setScaleY(scaleY);
+
+                            for (int j = 1; j < frameLayout.getChildCount(); j++)
+                            {
+                                GestureImageView imageView = (GestureImageView) frameLayout.getChildAt(j);
+                                imageView.setScaleX(scaleX);
+                                imageView.setScaleY(scaleY);
+
+                                if (i == 3 || clearedY)
+                                    imageView.setY(height - imageView.getY() - imageView.getHeight());
+                                if (i == 4 || clearedX)
+                                    imageView.setX(width - imageView.getX() - imageView.getWidth());
+                            }
                         }
                     }
                 }

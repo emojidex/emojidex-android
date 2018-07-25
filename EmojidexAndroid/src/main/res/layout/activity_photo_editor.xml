@@ -56,7 +56,7 @@
             android:src="@drawable/ic_photo_filter_black_24dp"
             android:background="@null"
             android:contentDescription="@null"
-            android:onClick="addFilter" />
+            android:onClick="addEffect" />
 
         <View
             android:layout_width="0dp"

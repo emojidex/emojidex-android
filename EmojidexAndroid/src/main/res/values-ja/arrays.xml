@@ -28,11 +28,16 @@
         <item>コードが長い順</item>
     </string-array>
 
-    <string-array name="filter_items">
-        <item>クリア</item>
+    <!-- effect -->
+    <string-array name="effect_items">
         <item>グレースケール</item>
         <item>セピア</item>
         <item>ネガポジ反転</item>
+        <item>上下反転</item>
+        <item>左右反転</item>
+        <item>カラーフィルターをクリア</item>
+        <item>上下左右反転をクリア</item>
+        <item>全てクリア</item>
     </string-array>
 
 </resources>
