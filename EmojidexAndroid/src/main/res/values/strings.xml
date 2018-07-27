@@ -269,4 +269,12 @@
     <string name="photo_editor_help_roll">This tool lets you rotate emoji.</string>
     <string name="photo_editor_help_clear">Clear all emoji.</string>
     <string name="photo_editor_help_close">Close</string>
+
+    <!-- photo editor draw text popup -->
+    <string name="photo_editor_text_title">Combine text</string>
+    <string name="photo_editor_text_preview">Preview</string>
+    <string name="photo_editor_text_hint">Please input the text. (emoji is not allowed)</string>
+    <string name="photo_editor_text_default_color">#000000</string>
+    <string name="photo_editor_text_cancel">Cancel</string>
+    <string name="photo_editor_text_combine">Combine</string>
 </resources>

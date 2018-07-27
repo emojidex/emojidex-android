@@ -39,6 +39,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.emojidex.emojidexandroid.view.HScrollView;
@@ -93,7 +95,10 @@ public class PhotoEditorActivity extends Activity {
 
     private ColorMatrixColorFilter currentFilter;
 
-    private PopupWindow helpWindow;
+    private PopupWindow popupWindow;
+    private EditText previewEditText;
+    private TextView sizeTextView;
+    private TextView colorTextView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState)
@@ -277,8 +282,9 @@ public class PhotoEditorActivity extends Activity {
      */
     public void prepareEmoji()
     {
-        if (baseImageView.getDrawable() == null) {
-            Toast.makeText(getApplicationContext(), R.string.select_base_image, Toast.LENGTH_LONG).show();
+        if (baseImageView.getDrawable() == null)
+        {
+            showToast(getString(R.string.select_base_image));
             return;
         }
 
@@ -370,10 +376,10 @@ public class PhotoEditorActivity extends Activity {
     }
 
     /**
-     * Show keyboard.
+     * Show emojidex keyboard.
      * @param v button.
      */
-    public void showKeyboard(View v)
+    public void showEmojidexKeyboard(View v)
     {
         String currentIme = android.provider.Settings.Secure.getString(
                 getContentResolver(),
@@ -690,29 +696,97 @@ public class PhotoEditorActivity extends Activity {
      */
     public void showHelp(View v)
     {
-        helpWindow = new PopupWindow(PhotoEditorActivity.this);
+        popupWindow = new PopupWindow(PhotoEditorActivity.this);
         final View helpView = getLayoutInflater().inflate(R.layout.popup_photo_editor_help, null);
         helpView.findViewById(R.id.photo_editor_help_close_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (helpWindow.isShowing()) helpWindow.dismiss();
+                if (popupWindow.isShowing()) popupWindow.dismiss();
             }
         });
-        helpWindow.setContentView(helpView);
+        popupWindow.setContentView(helpView);
 
-        helpWindow.setOutsideTouchable(true);
-        helpWindow.setFocusable(true);
+        popupWindow.setOutsideTouchable(true);
+        popupWindow.setFocusable(true);
 
         final View rootView = getWindow().getDecorView().getRootView();
-        helpWindow.setWidth(rootView.getWidth() - 100);
-        helpWindow.setHeight(rootView.getHeight() - 100);
+        popupWindow.setWidth(rootView.getWidth() - 100);
+        popupWindow.setHeight(rootView.getHeight() - 100);
 
-        helpWindow.showAtLocation(rootView, Gravity.CENTER, 0, 50);
+        popupWindow.showAtLocation(rootView, Gravity.CENTER, 0, 50);
+    }
+
+    /**
+     * Draw text. (show popup window)
+     * @param v button.
+     */
+    public void drawText(View v)
+    {
+        popupWindow = new PopupWindow(PhotoEditorActivity.this);
+        final View drawTextView = getLayoutInflater().inflate(R.layout.popup_photo_editor_text, null);
+        drawTextView.findViewById(R.id.photo_editor_text_close_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (popupWindow.isShowing()) popupWindow.dismiss();
+            }
+        });
+        previewEditText = drawTextView.findViewById(R.id.photo_editor_text_preview);
+        sizeTextView = drawTextView.findViewById(R.id.photo_editor_text_size);
+        colorTextView = drawTextView.findViewById(R.id.photo_editor_text_color);
+
+        final SeekBar seekBar = drawTextView.findViewById(R.id.photo_editor_text_seekbar);
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                setSize(progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) { }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) { }
+        });
+        setSize(seekBar.getProgress());
+
+        popupWindow.setContentView(drawTextView);
+        popupWindow.setOutsideTouchable(false);
+        popupWindow.setFocusable(true);
+
+        final View rootView = getWindow().getDecorView().getRootView();
+        popupWindow.setWidth(rootView.getWidth() - 100);
+        popupWindow.setHeight(drawTextView.getHeight() - 100);
+
+        popupWindow.showAtLocation(rootView, Gravity.CENTER, 0, 0);
+    }
+
+    private void setSize(int size)
+    {
+        sizeTextView.setText(String.valueOf(size));
+        previewEditText.setTextSize(size);
+    }
+
+    /**
+     * Open color picker for draw text.
+     * @param v button.
+     */
+    public void openPicker(View v)
+    {
+        if (!popupWindow.isShowing()) return;
+    }
+
+    /**
+     * Combine.
+     * @param v button.
+     */
+    public void combine(View v)
+    {
+
     }
 
     @Override
     protected void onDestroy() {
-        if (helpWindow != null && helpWindow.isShowing()) helpWindow.dismiss();
+        if (popupWindow != null && popupWindow.isShowing()) popupWindow.dismiss();
 
         super.onDestroy();
     }

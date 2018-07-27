@@ -212,4 +212,11 @@
     <string name="photo_editor_help_roll">このボタンがアクティブの時、絵文字をドラッグで回転できます。</string>
     <string name="photo_editor_help_clear">全ての絵文字をクリアします。</string>
     <string name="photo_editor_help_close">閉じる</string>
+
+    <!-- photo editor draw text popup -->
+    <string name="photo_editor_text_title">テキスト合成</string>
+    <string name="photo_editor_text_preview">プレビュー</string>
+    <string name="photo_editor_text_hint">テキストを入力してください。 (絵文字不可)</string>
+    <string name="photo_editor_text_cancel">キャンセル</string>
+    <string name="photo_editor_text_combine">合成</string>
 </resources>
