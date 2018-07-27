@@ -73,11 +73,11 @@
             android:text="@string/photo_editor_text_default_color"
             android:textColor="@color/black" />
         <Button
+            android:id="@+id/photo_editor_text_picker_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/black"
-            android:contentDescription="@null"
-            android:onClick="openPicker"/>
+            android:contentDescription="@null" />
     </LinearLayout>
 
     <LinearLayout
@@ -91,15 +91,13 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginRight="10dp"
-            android:text="@string/photo_editor_text_cancel"
-            android:background="@null" />
+            android:text="@string/photo_editor_text_cancel" />
         <Button
+            android:id="@+id/photo_editor_text_create_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/photo_editor_text_combine"
-            android:background="@null"
-            android:onClick="combine" />
+            android:text="@string/photo_editor_text_create" />
     </LinearLayout>
 
 </LinearLayout>

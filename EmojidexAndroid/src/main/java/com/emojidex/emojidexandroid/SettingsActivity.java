@@ -81,6 +81,7 @@ public class SettingsActivity extends PreferenceActivity {
             createUpdateIntervalPreference();
             createClearDataPreference();
             createTutorialPreference();
+            createLicensePreference();
         }
 
         @Override
@@ -256,6 +257,22 @@ public class SettingsActivity extends PreferenceActivity {
         }
 
         /**
+         * Create license preference.
+         */
+        private void createLicensePreference()
+        {
+            final Preference tutorial = findPreference(getString(R.string.preference_key_license));
+            tutorial.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    ((SettingsActivity) parentActivity).sendLogEvent("settings_show_license");
+                    createLicenseDialog();
+                    return true;
+                }
+            });
+        }
+
+        /**
          * create dialog
          *
          * @param type  Save data type.
@@ -373,6 +390,20 @@ public class SettingsActivity extends PreferenceActivity {
                         }
                     });
             dialog.setNegativeButton(R.string.no,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+            dialog.show();
+        }
+
+        private void createLicenseDialog()
+        {
+            AlertDialog.Builder dialog = new AlertDialog.Builder(parentActivity);
+            dialog.setMessage(R.string.settings_license_text);
+            dialog.setPositiveButton(R.string.yes,
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {

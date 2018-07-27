@@ -34,6 +34,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -45,6 +46,8 @@ import android.widget.Toast;
 
 import com.emojidex.emojidexandroid.view.HScrollView;
 import com.emojidex.emojidexandroid.view.VScrollView;
+import com.jaredrummler.android.colorpicker.ColorPickerDialog;
+import com.jaredrummler.android.colorpicker.ColorPickerDialogListener;
 
 import java.io.File;
 import java.io.IOException;
@@ -61,7 +64,7 @@ import javax.microedition.khronos.egl.EGLDisplay;
  * Created by Yoshida on 2017/12/13.
  */
 
-public class PhotoEditorActivity extends Activity {
+public class PhotoEditorActivity extends Activity implements ColorPickerDialogListener {
     private static final int NONE = -1;
     private static final int MOVE = 0;
     private static final int SCALE = 1;
@@ -99,12 +102,14 @@ public class PhotoEditorActivity extends Activity {
     private EditText previewEditText;
     private TextView sizeTextView;
     private TextView colorTextView;
+    private Button pickerButton;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_editor);
+        setTheme(R.style.Theme_AppCompat);
 
         initialize();
         imeEnableCheck();
@@ -730,9 +735,25 @@ public class PhotoEditorActivity extends Activity {
                 if (popupWindow.isShowing()) popupWindow.dismiss();
             }
         });
+        drawTextView.findViewById(R.id.photo_editor_text_create_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createText();
+                if (popupWindow.isShowing()) popupWindow.dismiss();
+            }
+        });
+
         previewEditText = drawTextView.findViewById(R.id.photo_editor_text_preview);
         sizeTextView = drawTextView.findViewById(R.id.photo_editor_text_size);
         colorTextView = drawTextView.findViewById(R.id.photo_editor_text_color);
+
+        pickerButton = drawTextView.findViewById(R.id.photo_editor_text_picker_button);
+        pickerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ColorPickerDialog.newBuilder().setColor(Color.BLACK).show(PhotoEditorActivity.this);
+            }
+        });
 
         final SeekBar seekBar = drawTextView.findViewById(R.id.photo_editor_text_seekbar);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -767,21 +788,11 @@ public class PhotoEditorActivity extends Activity {
     }
 
     /**
-     * Open color picker for draw text.
-     * @param v button.
+     * Create text.
      */
-    public void openPicker(View v)
+    public void createText()
     {
-        if (!popupWindow.isShowing()) return;
-    }
-
-    /**
-     * Combine.
-     * @param v button.
-     */
-    public void combine(View v)
-    {
-
+        // TODO:
     }
 
     @Override
@@ -843,6 +854,17 @@ public class PhotoEditorActivity extends Activity {
         int permission = ContextCompat.checkSelfPermission(getApplicationContext(),
                                                            android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
         return permission == PackageManager.PERMISSION_GRANTED;
+    }
+
+    @Override
+    public void onColorSelected(int dialogId, int color) {
+        colorTextView.setText("#" + Integer.toHexString(color).substring(2, 8));
+        pickerButton.setBackgroundColor(color);
+        previewEditText.setTextColor(color);
+    }
+
+    @Override
+    public void onDialogDismissed(int dialogId) {
     }
 
     public class GestureImageView extends android.support.v7.widget.AppCompatImageView

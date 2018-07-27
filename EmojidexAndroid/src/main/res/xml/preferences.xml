@@ -48,5 +48,8 @@
         <Preference
             android:key="@string/preference_key_tutorial"
             android:title="@string/settings_tutorial_button"/>
+        <Preference
+            android:key="@string/preference_key_license"
+            android:title="@string/settings_license_button"/>
     </PreferenceCategory>
 </PreferenceScreen>

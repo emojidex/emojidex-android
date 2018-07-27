@@ -139,6 +139,21 @@
     <string name="settings_delete_cache_succeeded">Cache cleared.</string>
     <string name="settings_delete_cache_failed">Failed to clear cache.</string>
     <string name="settings_tutorial_button">Tutorial</string>
+    <string name="settings_license_button">License</string>
+    <string name="settings_license_text" translatable="false">colorpicker.aar\n\n
+        Copyright(C) jaredrummler\n\n
+
+        Licensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License.
+        You may obtain a copy of the License at\n\n
+
+        http://www.apache.org/licenses/LICENSE-2.0\n\n
+
+        Unless required by applicable law or agreed to in writing, software
+        distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and
+        limitations under the License.</string>
 
     <string name="search_dialog_title">Searching...</string>
     <string name="search_dialog_message">Please wait a moment.</string>
@@ -215,6 +230,7 @@
     <string name="preference_key_usagestats_check_ignore" translatable="false">usagestatsCheckIgnore</string>
     <string name="preference_key_standard_only" translatable="false">showStandardOnly</string>
     <string name="preference_key_sort_type" translatable="false">sortType</string>
+    <string name="preference_key_license" translatable="false">license</string>
 
     <!-- tutorial -->
     <string name="tutorial_title">Using emojidex</string>
@@ -271,10 +287,10 @@
     <string name="photo_editor_help_close">Close</string>
 
     <!-- photo editor draw text popup -->
-    <string name="photo_editor_text_title">Combine text</string>
+    <string name="photo_editor_text_title">Create text</string>
     <string name="photo_editor_text_preview">Preview</string>
     <string name="photo_editor_text_hint">Please input the text. (emoji is not allowed)</string>
     <string name="photo_editor_text_default_color">#000000</string>
     <string name="photo_editor_text_cancel">Cancel</string>
-    <string name="photo_editor_text_combine">Combine</string>
+    <string name="photo_editor_text_create">Create</string>
 </resources>
