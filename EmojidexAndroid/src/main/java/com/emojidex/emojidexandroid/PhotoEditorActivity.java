@@ -15,6 +15,7 @@ import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
@@ -368,7 +369,15 @@ public class PhotoEditorActivity extends Activity implements ColorPickerDialogLi
             return;
         }
 
-        // Add emoji image to photo editor.
+        addImageToFrame(bitmap);
+    }
+
+    /**
+     * Add emoji image to photo editor.
+     * @param bitmap image
+     */
+    public void addImageToFrame(Bitmap bitmap)
+    {
         final GestureImageView image = new GestureImageView(getApplicationContext());
         image.setImageBitmap(bitmap);
         image.setX(100);
@@ -722,11 +731,17 @@ public class PhotoEditorActivity extends Activity implements ColorPickerDialogLi
     }
 
     /**
-     * Draw text. (show popup window)
+     * Show create text popup.
      * @param v button.
      */
-    public void drawText(View v)
+    public void showCreateTextPopup(View v)
     {
+        if (baseImageView.getDrawable() == null)
+        {
+            showToast(getString(R.string.select_base_image));
+            return;
+        }
+
         popupWindow = new PopupWindow(PhotoEditorActivity.this);
         final View drawTextView = getLayoutInflater().inflate(R.layout.popup_photo_editor_text, null);
         drawTextView.findViewById(R.id.photo_editor_text_close_button).setOnClickListener(new View.OnClickListener() {
@@ -792,7 +807,53 @@ public class PhotoEditorActivity extends Activity implements ColorPickerDialogLi
      */
     public void createText()
     {
-        // TODO:
+        String text = previewEditText.getText().toString();
+        int size = (int) previewEditText.getTextSize();
+
+        Paint paint = new Paint();
+        paint.setAntiAlias(true);
+        paint.setColor(previewEditText.getCurrentTextColor());
+        paint.setTextSize(size);
+        paint.getTextBounds(text, 0, text.length(), new Rect());
+
+        Paint.FontMetrics matrix = paint.getFontMetrics();
+        int width = (int) paint.measureText(text);
+        int height = (int) (Math.abs(matrix.top) + matrix.bottom);
+
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        canvas.drawText(text, 0, Math.abs(matrix.top), paint);
+
+        addImageToFrame(bitmap);
+    }
+
+
+    /**
+     * Show keyboard for create text.
+     * @param v button
+     */
+    public void showKeyboard(View v)
+    {
+        String currentIme = android.provider.Settings.Secure.getString(
+                getContentResolver(),
+                Settings.Secure.DEFAULT_INPUT_METHOD
+        );
+
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (inputMethodManager == null)
+        {
+            showToast(getString(R.string.no_input_method));
+            return;
+        }
+
+        if (currentIme.contains("Emojidex"))
+        {
+            showToast(getString(R.string.select_other_keyboard));
+            inputMethodManager.showInputMethodPicker();
+        }
+
+        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        previewEditText.requestFocus();
     }
 
     @Override

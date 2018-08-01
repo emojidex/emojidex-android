@@ -80,7 +80,7 @@
             android:src="@drawable/ic_text_fields_black_24dp"
             android:background="@null"
             android:contentDescription="@null"
-            android:onClick="drawText" />
+            android:onClick="showCreateTextPopup" />
 
         <ImageButton
             android:id="@+id/photo_editor_move_button"

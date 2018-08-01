@@ -22,15 +22,27 @@
         android:text="@string/photo_editor_text_preview"
         android:textColor="@color/black" />
 
-    <EditText
-        android:id="@+id/photo_editor_text_preview"
+    <HorizontalScrollView
         android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:layout_margin="10dp"
-        android:gravity="center"
-        android:hint="@string/photo_editor_text_hint"
-        android:textColor="@color/black"
-        android:textSize="12sp" />
+        android:layout_height="170dp"
+        android:layout_margin="10dp">
+        <EditText
+            android:id="@+id/photo_editor_text_preview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:inputType="text" />
+    </HorizontalScrollView>
+
+    <ImageButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_keyboard_black_24dp"
+        android:background="@null"
+        android:onClick="showKeyboard" />
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -39,21 +51,24 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:src="@drawable/ic_format_size_black_24dp"
             android:contentDescription="@null"/>
         <TextView
             android:id="@+id/photo_editor_text_size"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:gravity="center"
             android:textColor="@color/black"/>
         <SeekBar
             android:id="@+id/photo_editor_text_seekbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:progress="12"
+            android:layout_gravity="center"
+            android:progress="15"
             android:min="10"
-            android:max="150" />
+            android:max="160" />
     </LinearLayout>
 
     <LinearLayout
@@ -63,12 +78,14 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:src="@drawable/ic_color_lens_black_24dp"
             android:contentDescription="@null" />
         <TextView
             android:id="@+id/photo_editor_text_color"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:gravity="center"
             android:text="@string/photo_editor_text_default_color"
             android:textColor="@color/black" />
