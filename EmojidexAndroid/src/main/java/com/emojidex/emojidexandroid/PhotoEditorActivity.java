@@ -72,6 +72,9 @@ public class PhotoEditorActivity extends Activity implements ColorPickerDialogLi
     private static final int ROLL = 2;
     private int mode = NONE;
 
+    private static final int DIALOG_TEXT = 2000;
+    private static final int DIALOG_SHADOW = 2001;
+
     private static final int REQUEST_EXTERNAL_STORAGE = 1000;
     private static final int SELECT_PHOTO = 1001;
     private static final String[] PERMISSIONS_STORAGE = {
@@ -104,6 +107,9 @@ public class PhotoEditorActivity extends Activity implements ColorPickerDialogLi
     private TextView sizeTextView;
     private TextView colorTextView;
     private Button pickerButton;
+    private TextView shadowSizeTextView;
+    private TextView shadowColorTextView;
+    private Button shadowPickerButton;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState)
@@ -761,12 +767,21 @@ public class PhotoEditorActivity extends Activity implements ColorPickerDialogLi
         previewEditText = drawTextView.findViewById(R.id.photo_editor_text_preview);
         sizeTextView = drawTextView.findViewById(R.id.photo_editor_text_size);
         colorTextView = drawTextView.findViewById(R.id.photo_editor_text_color);
+        shadowSizeTextView = drawTextView.findViewById(R.id.photo_editor_shadow_size);
+        shadowColorTextView = drawTextView.findViewById(R.id.photo_editor_shadow_color);
 
         pickerButton = drawTextView.findViewById(R.id.photo_editor_text_picker_button);
         pickerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ColorPickerDialog.newBuilder().setColor(Color.BLACK).show(PhotoEditorActivity.this);
+                ColorPickerDialog.newBuilder().setColor(Color.BLACK).setDialogId(DIALOG_TEXT).show(PhotoEditorActivity.this);
+            }
+        });
+        shadowPickerButton = drawTextView.findViewById(R.id.photo_editor_shadow_picker_button);
+        shadowPickerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ColorPickerDialog.newBuilder().setColor(Color.WHITE).setDialogId(DIALOG_SHADOW).show(PhotoEditorActivity.this);
             }
         });
 
@@ -785,6 +800,21 @@ public class PhotoEditorActivity extends Activity implements ColorPickerDialogLi
         });
         setSize(seekBar.getProgress());
 
+        final SeekBar shadowSeekBar = drawTextView.findViewById(R.id.photo_editor_shadow_seekbar);
+        shadowSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                setShadow(progress, previewEditText.getShadowColor());
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) { }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) { }
+        });
+        setShadow(shadowSeekBar.getProgress(), Color.WHITE);
+
         popupWindow.setContentView(drawTextView);
         popupWindow.setOutsideTouchable(false);
         popupWindow.setFocusable(true);
@@ -802,6 +832,12 @@ public class PhotoEditorActivity extends Activity implements ColorPickerDialogLi
         previewEditText.setTextSize(size);
     }
 
+    private void setShadow(int radius, int color)
+    {
+        shadowSizeTextView.setText(String.valueOf(radius));
+        previewEditText.setShadowLayer(radius, 0, 0, color);
+    }
+
     /**
      * Create text.
      */
@@ -814,6 +850,7 @@ public class PhotoEditorActivity extends Activity implements ColorPickerDialogLi
         paint.setAntiAlias(true);
         paint.setColor(previewEditText.getCurrentTextColor());
         paint.setTextSize(size);
+        paint.setShadowLayer(previewEditText.getShadowRadius(), 0, 0, previewEditText.getShadowColor());
         paint.getTextBounds(text, 0, text.length(), new Rect());
 
         Paint.FontMetrics matrix = paint.getFontMetrics();
@@ -826,7 +863,6 @@ public class PhotoEditorActivity extends Activity implements ColorPickerDialogLi
 
         addImageToFrame(bitmap);
     }
-
 
     /**
      * Show keyboard for create text.
@@ -919,9 +955,15 @@ public class PhotoEditorActivity extends Activity implements ColorPickerDialogLi
 
     @Override
     public void onColorSelected(int dialogId, int color) {
-        colorTextView.setText("#" + Integer.toHexString(color).substring(2, 8));
-        pickerButton.setBackgroundColor(color);
-        previewEditText.setTextColor(color);
+        if (dialogId == DIALOG_TEXT) {
+            colorTextView.setText("#" + Integer.toHexString(color).substring(2, 8));
+            pickerButton.setBackgroundColor(color);
+            previewEditText.setTextColor(color);
+        } else {
+            shadowColorTextView.setText("#" + Integer.toHexString(color).substring(2, 8));
+            shadowPickerButton.setBackgroundColor(color);
+            setShadow((int)previewEditText.getShadowRadius(), color);
+        }
     }
 
     @Override

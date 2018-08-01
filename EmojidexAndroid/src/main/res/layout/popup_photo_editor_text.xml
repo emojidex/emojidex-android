@@ -33,7 +33,8 @@
             android:layout_gravity="center_vertical"
             android:textColor="@color/black"
             android:textSize="15sp"
-            android:inputType="text" />
+            android:inputType="text"
+            android:contentDescription="@null" />
     </HorizontalScrollView>
 
     <ImageButton
@@ -41,7 +42,8 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_keyboard_black_24dp"
         android:background="@null"
-        android:onClick="showKeyboard" />
+        android:onClick="showKeyboard"
+        android:contentDescription="@null" />
 
 
     <LinearLayout
@@ -69,6 +71,47 @@
             android:progress="15"
             android:min="10"
             android:max="160" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_check_box_outline_blank_black_24dp"
+            android:contentDescription="@null"/>
+        <TextView
+            android:id="@+id/photo_editor_shadow_color"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="@string/photo_editor_text_default_color"
+            android:textColor="@color/black" />
+        <Button
+            android:id="@+id/photo_editor_shadow_picker_button"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:background="@color/black"
+            android:contentDescription="@null" />
+        <TextView
+            android:id="@+id/photo_editor_shadow_size"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textColor="@color/black"/>
+        <SeekBar
+            android:id="@+id/photo_editor_shadow_seekbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:progress="0"
+            android:min="0"
+            android:max="25" />
     </LinearLayout>
 
     <LinearLayout

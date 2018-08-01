@@ -290,7 +290,6 @@
     <!-- photo editor draw text popup -->
     <string name="photo_editor_text_title">Create text</string>
     <string name="photo_editor_text_preview">Preview</string>
-    <string name="photo_editor_text_hint">Please input the text. (emoji is not allowed)</string>
     <string name="photo_editor_text_default_color">#000000</string>
     <string name="photo_editor_text_cancel">Cancel</string>
     <string name="photo_editor_text_create">Create</string>
