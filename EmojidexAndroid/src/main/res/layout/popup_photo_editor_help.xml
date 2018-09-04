@@ -47,7 +47,7 @@
                 android:layout_margin="10dp"
                 android:drawableLeft="@drawable/ic_photo_filter_black_24dp"
                 android:drawablePadding="5dp"
-                android:text="@string/photo_editor_help_filter" />
+                android:text="@string/photo_editor_help_effect" />
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -197,7 +197,7 @@
     <string name="no_input_method">キーボードが取得できませんでした。</string>
     <string name="select_emojidex_keyboard">emojidexキーボードを選択してください。</string>
     <string name="image_blank">ベースとなる画像を選択してください。</string>
-    <string name="select_filter">フィルター選択</string>
+    <string name="select_effect">エフェクト選択</string>
     <string name="select_base_image">はじめに、ベースとなる画像を選択してください。</string>
 
     <!-- photo editor help-->
@@ -205,7 +205,7 @@
     <string name="photo_editor_help_description">emojidexPhotoEditorは、お好きな画像にemojidex絵文字を貼り付けたり、フィルターをかけたりすることができるアプリです！</string>
     <string name="photo_editor_help_new">ベース画像を選択します。すでにセットされている全ての絵文字とベース画像はクリアされます。</string>
     <string name="photo_editor_help_save">画像を保存します。</string>
-    <string name="photo_editor_help_filter">画像にフィルターを追加またはクリアします。</string>
+    <string name="photo_editor_help_effect">画像にエフェクトを追加またはクリアします。</string>
     <string name="photo_editor_help_add">絵文字を追加するためのemojidexキーボードを表示します。</string>
     <string name="photo_editor_help_move">このボタンがアクティブの時、絵文字をドラッグで移動できます。</string>
     <string name="photo_editor_help_scale">このボタンがアクティブの時、絵文字をドラッグで拡大縮小できます。</string>
