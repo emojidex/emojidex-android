@@ -70,6 +70,8 @@ public class PhotoEditorActivity extends Activity implements ColorPickerDialogLi
     private static final int MOVE = 0;
     private static final int SCALE = 1;
     private static final int ROLL = 2;
+    private static final int V_FLIP = 3;
+    private static final int H_FLIP = 4;
     private int mode = NONE;
 
     private static final int DIALOG_TEXT = 2000;
@@ -94,6 +96,8 @@ public class PhotoEditorActivity extends Activity implements ColorPickerDialogLi
     private ImageButton moveButton;
     private ImageButton scaleButton;
     private ImageButton rollButton;
+    private ImageButton vFlipButton;
+    private ImageButton hFlipButton;
 
     private EditText editText;
     private TextWatcher textWatcher;
@@ -137,6 +141,8 @@ public class PhotoEditorActivity extends Activity implements ColorPickerDialogLi
         moveButton = findViewById(R.id.photo_editor_move_button);
         scaleButton = findViewById(R.id.photo_editor_scale_button);
         rollButton = findViewById(R.id.photo_editor_roll_button);
+        vFlipButton = findViewById(R.id.photo_editor_v_flip_button);
+        hFlipButton = findViewById(R.id.photo_editor_h_flip_button);
 
         textWatcher = new TextWatcher() {
             @Override
@@ -454,6 +460,26 @@ public class PhotoEditorActivity extends Activity implements ColorPickerDialogLi
     }
 
     /**
+     * Set mode - V_FLIP
+     * @param v button.
+     */
+    public void setModeToVerticalFlip(View v)
+    {
+        mode = mode == V_FLIP ? NONE : V_FLIP;
+        setButtonBackGround();
+    }
+
+    /**
+     * Set mode - H_FLIP
+     * @param v button.
+     */
+    public void setModeToHorizontalFlip(View v)
+    {
+        mode = mode == H_FLIP ? NONE : H_FLIP;
+        setButtonBackGround();
+    }
+
+    /**
      * Set buttons background color.
      */
     private void setButtonBackGround()
@@ -461,9 +487,13 @@ public class PhotoEditorActivity extends Activity implements ColorPickerDialogLi
         moveButton.setBackgroundColor(Color.TRANSPARENT);
         scaleButton.setBackgroundColor(Color.TRANSPARENT);
         rollButton.setBackgroundColor(Color.TRANSPARENT);
+        vFlipButton.setBackgroundColor(Color.TRANSPARENT);
+        hFlipButton.setBackgroundColor(Color.TRANSPARENT);
         if (mode == MOVE) moveButton.setBackgroundColor(getResources().getColor(R.color.primary));
         if (mode == SCALE) scaleButton.setBackgroundColor(getResources().getColor(R.color.primary));
         if (mode == ROLL) rollButton.setBackgroundColor(getResources().getColor(R.color.primary));
+        if (mode == V_FLIP) vFlipButton.setBackgroundColor(getResources().getColor(R.color.primary));
+        if (mode == H_FLIP) hFlipButton.setBackgroundColor(getResources().getColor(R.color.primary));
     }
 
     /**
@@ -1014,6 +1044,22 @@ public class PhotoEditorActivity extends Activity implements ColorPickerDialogLi
                         case ROLL:
                             final float roll = Math.abs(x) > Math.abs(y) ? x : y;
                             setRotation(getRotation() + (roll * 0.1f));
+
+                            break;
+
+                        case V_FLIP:
+                            if (newY - oldY < 0)
+                                setScaleY(Math.abs(getScaleY()));
+                            else
+                                setScaleY(-Math.abs(getScaleY()));
+
+                            break;
+
+                        case H_FLIP:
+                            if (newX - oldX < 0)
+                                setScaleX(Math.abs(getScaleX()));
+                            else
+                                setScaleX(-Math.abs(getScaleX()));
 
                             break;
                     }

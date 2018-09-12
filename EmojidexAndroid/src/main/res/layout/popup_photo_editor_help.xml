@@ -45,13 +45,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:drawableLeft="@drawable/ic_photo_filter_black_24dp"
-                android:drawablePadding="5dp"
-                android:text="@string/photo_editor_help_effect" />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
                 android:drawableLeft="@drawable/ic_add_black_24dp"
                 android:drawablePadding="10dp"
                 android:text="@string/photo_editor_help_add" />
@@ -76,6 +69,27 @@
                 android:drawableLeft="@drawable/ic_roll_black_24dp"
                 android:drawablePadding="10dp"
                 android:text="@string/photo_editor_help_roll" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:drawableLeft="@drawable/ic_compare_rotate_black_24dp"
+                android:drawablePadding="10dp"
+                android:text="@string/photo_editor_help_v_flip" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:drawableLeft="@drawable/ic_compare_black_24dp"
+                android:drawablePadding="10dp"
+                android:text="@string/photo_editor_help_h_flip" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:drawableLeft="@drawable/ic_photo_filter_black_24dp"
+                android:drawablePadding="5dp"
+                android:text="@string/photo_editor_help_effect" />
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
