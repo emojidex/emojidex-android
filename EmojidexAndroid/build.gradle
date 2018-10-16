@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion '28.0.3'
+    compileSdkVersion globalCompileSdkVersion
+    buildToolsVersion globalBuildToolsVersion
 
     defaultConfig {
-        minSdkVersion 16
-        targetSdkVersion 26
+        minSdkVersion globalMinSdkVersion
+        targetSdkVersion globalTargetSdkVersion
         versionCode 33
         versionName "1.5.2"
         applicationId "com.emojidex.emojidexandroid"
