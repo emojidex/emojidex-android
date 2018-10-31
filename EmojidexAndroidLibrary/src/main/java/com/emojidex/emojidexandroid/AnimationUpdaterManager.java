@@ -12,7 +12,7 @@ import java.util.HashSet;
  */
 
 class AnimationUpdaterManager {
-    private final static long NEXT_UPDATE_TIME_MAX = 0x7FFFFFFF;
+    private final static long NEXT_UPDATE_TIME_MAX = 1000 * 1;
     private final static long NEXT_UPDATE_TIME_MIN = 1000 / 60;
 
     private final HashSet<AnimationUpdater> updaters = new HashSet<AnimationUpdater>();

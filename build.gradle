@@ -6,12 +6,18 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.4'
+        classpath 'com.android.tools.build:gradle:3.2.1'
         classpath 'com.google.gms:google-services:3.2.0'
     }
 }
 
 allprojects {
+    ext {
+        globalCompileSdkVersion = 26
+        globalBuildToolsVersion = '28.0.3'
+        globalMinSdkVersion = 16
+        globalTargetSdkVersion = 26
+    }
     repositories {
         google()
         jcenter()
