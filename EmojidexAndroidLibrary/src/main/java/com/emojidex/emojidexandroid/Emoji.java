@@ -7,6 +7,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
 import com.emojidex.emojidexandroid.animation.EmojidexAnimationDrawable;
+import com.emojidex.emojidexandroid.imageloader.ImageLoader;
+import com.emojidex.emojidexandroid.imageloader.ImageParam;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -60,16 +62,6 @@ public class Emoji extends JsonParam {
         final String newest = getChecksums().get(format);
         final String current = getCurrentChecksums().get(format);
         return newest.equals(current);
-    }
-
-    /**
-     * Reload image files.
-     * @param format        Emoji format.
-     */
-    public void reloadImage(EmojiFormat format)
-    {
-        final ImageLoader imageLoader = ImageLoader.getInstance();
-        imageLoader.reload(getCode(), format);
     }
 
     /**
@@ -144,7 +136,7 @@ public class Emoji extends JsonParam {
     public Drawable getDrawable(EmojiFormat format, float size, boolean autoDownload)
     {
         // Load image.
-        final ImageLoader.ImageParam imageParam = ImageLoader.getInstance().load(getCode(), format, autoDownload);
+        final ImageParam imageParam = ImageLoader.getInstance().load(getCode(), format, autoDownload);
 
         Drawable result = null;
 
@@ -156,7 +148,7 @@ public class Emoji extends JsonParam {
             drawable.setOneShot(imageParam.isOneShot());
             drawable.setSkipFirst(imageParam.isSkipFirst());
 
-            for(ImageLoader.ImageParam.Frame frame : imageParam.getFrames())
+            for(ImageParam.Frame frame : imageParam.getFrames())
             {
                 drawable.addFrame(
                         bitmapToDrawable(frame.getBitmap(), size),
@@ -190,8 +182,8 @@ public class Emoji extends JsonParam {
     public Bitmap[] getBitmaps(EmojiFormat format)
     {
         // Load image.
-        final ImageLoader.ImageParam imageParam = ImageLoader.getInstance().load(getCode(), format, false);
-        final ImageLoader.ImageParam.Frame[] frames = imageParam.getFrames();
+        final ImageParam imageParam = ImageLoader.getInstance().load(getCode(), format, false);
+        final ImageParam.Frame[] frames = imageParam.getFrames();
 
         // Create bitmap array and copy bitmaps.
         final Bitmap[] result = new Bitmap[frames.length];

@@ -41,6 +41,7 @@ import com.emojidex.emojidexandroid.animation.EmojidexAnimationImageSpan;
 import com.emojidex.emojidexandroid.animation.updater.AnimationUpdater;
 import com.emojidex.emojidexandroid.animation.updater.TextViewAnimationUpdater;
 import com.emojidex.emojidexandroid.downloader.DownloadListener;
+import com.emojidex.emojidexandroid.imageloader.ImageLoadListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -59,6 +60,7 @@ public class MainActivity extends Activity {
     private FirebaseAnalytics analytics;
 
     private final DownloadListener downloadListener = new CustomDownloadListener();
+    private final ImageLoadListener imageLoadListener = new CustomImageLoadListener();
     private EmojiFormat defaultFormat;
 
     @Override
@@ -131,12 +133,14 @@ public class MainActivity extends Activity {
         super.onStart();
 
         emojidex.addDownloadListener(downloadListener);
+        emojidex.addImageLoadListener(imageLoadListener);
     }
 
     @Override
     protected void onStop()
     {
         emojidex.removeDownloadListener(downloadListener);
+        emojidex.removeImageLoadListener(imageLoadListener);
 
         super.onStop();
     }
@@ -857,37 +861,54 @@ public class MainActivity extends Activity {
     }
 
     /**
+     * set my_emoji button visibility (emojidex IME)
+     */
+    private void setMyEmojiButtonVisibility() {
+        if (EmojidexIME.currentInstance != null) {
+            EmojidexIME.currentInstance.setMyEmojiButtonVisibility();
+        }
+    }
+
+    private boolean skipUpdateText()
+    {
+        // Skip if emoji is not use.
+        if(!toggleState)
+            return true;
+
+        // Skip if text is empty.
+        final Editable text = editText.getText();
+        if(text.length() == 0)
+            return true;
+
+        // Skip if text is composing.
+        final Object[] spans = text.getSpans(0, text.length(), Object.class);
+        for(Object span : spans)
+            if((text.getSpanFlags(span) & Spanned.SPAN_COMPOSING) == Spanned.SPAN_COMPOSING)
+                return true;
+
+        // Not skip.
+        return false;
+    }
+
+    /**
      * Custom download listener
      */
     private class CustomDownloadListener extends DownloadListener
     {
         @Override
-        public void onDownloadImages(int handle, EmojiFormat format, String... emojiNames)
+        public void onDownloadJson(int handle, String... emojiNames)
         {
-            // Skip if emoji is not use.
-            if(!toggleState)
+            // Skip check.
+            if(skipUpdateText())
                 return;
-
-            // Skip if emoji format is not default.
-            if( !format.equals(emojidex.getDefaultFormat()) )
-                return;
-
-            // Skip if text is empty.
-            final Editable text = editText.getText();
-            if(text.length() == 0)
-                return;
-
-            // Skip if text is composing.
-            final Object[] spans = text.getSpans(0, text.length(), Object.class);
-            for(Object span : spans)
-                if((text.getSpanFlags(span) & Spanned.SPAN_COMPOSING) == Spanned.SPAN_COMPOSING)
-                    return;
 
             // Update text.
             editText.removeTextChangedListener(textWatcher);
 
             final int oldStart = editText.getSelectionStart();
             final int oldEnd = editText.getSelectionEnd();
+
+            final Editable text = editText.getText();
 
             final CharSequence newText = emojify(text, false);
             setTextImageSize((Spannable)newText);
@@ -905,12 +926,21 @@ public class MainActivity extends Activity {
         }
     }
 
-    /**
-     * set my_emoji button visibility (emojidex IME)
-     */
-    private void setMyEmojiButtonVisibility() {
-        if (EmojidexIME.currentInstance != null) {
-            EmojidexIME.currentInstance.setMyEmojiButtonVisibility();
+    private class CustomImageLoadListener implements ImageLoadListener
+    {
+        @Override
+        public void onLoad(int handle, EmojiFormat format, String emojiName)
+        {
+            // Skip check.
+            if(skipUpdateText())
+                return;
+
+            // Skip if emoji format is not default.
+            if( !format.equals(emojidex.getDefaultFormat()) )
+                return;
+
+            // Update text.
+            editText.invalidate();
         }
     }
 
