@@ -6,7 +6,6 @@ import android.net.Uri;
 
 import com.emojidex.emojidexandroid.EmojiFormat;
 import com.emojidex.emojidexandroid.EmojidexFileUtils;
-import com.emojidex.emojidexandroid.ImageLoader;
 import com.emojidex.emojidexandroid.downloader.arguments.ImageArchiveDownloadArguments;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
@@ -77,9 +76,6 @@ class ImageArchiveDownloadTask extends AbstractFileDownloadTask {
         if(result)
         {
             final EmojiFormat format = ((ImageArchiveDownloadArguments)getArguments()).getFormat();
-
-            // Reload image.
-            ImageLoader.getInstance().reload(format);
 
             // Notify to listener.
             getDownloader().notifyToListener(new EmojiDownloader.NotifyInterface() {

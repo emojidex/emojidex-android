@@ -30,12 +30,8 @@ public class EmojiDownloader
     static final String TAG = "EmojidexLibrary::EmojiDownloader";
 
     public static final int HANDLE_NULL = -1;
-    private static final int DIRTY_COUNT_MAX = 500;
-    private static final int SAVE_DELAY = 3000;
 
     private static final EmojiDownloader INSTANCE = new EmojiDownloader();
-
-//    private final Map<String, Emoji> localJsonParams = new LinkedHashMap<String, Emoji>();
 
     private Context context = null;
     private EmojiManager manager = null;
@@ -178,7 +174,8 @@ public class EmojiDownloader
             // SKip if illegal arguments.
             // Skip if image is already newest.
             if(     emoji == null
-                ||  emoji.hasNewestImage(arguments.getFormat())  )
+                ||  (   emoji.hasNewestImage(arguments.getFormat())
+                    &&  EmojidexFileUtils.existsLocalFile(EmojidexFileUtils.getLocalEmojiUri(arguments.getEmojiName(), arguments.getFormat()))  )   )
             {
                 handles[i] = HANDLE_NULL;
                 continue;

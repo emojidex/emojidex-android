@@ -28,7 +28,7 @@ import com.emojidex.emojidexandroid.animation.EmojidexAnimationDrawable;
 import com.emojidex.emojidexandroid.animation.updater.AnimationUpdater;
 import com.emojidex.emojidexandroid.comparator.EmojiComparator;
 import com.emojidex.emojidexandroid.downloader.DownloadListener;
-import com.emojidex.libemojidex.Emojidex.Service.User;
+import com.emojidex.emojidexandroid.imageloader.ImageLoadListener;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -82,6 +82,7 @@ public class EmojidexIME extends InputMethodService {
     private final HashMap<String, List<Emoji>> categorizedEmojies = new HashMap<String, List<Emoji>>();
 
     private final CustomDownloadListener downloadListener = new CustomDownloadListener();
+    private final CustomImageLoadListener imageLoadListener = new CustomImageLoadListener();
     private final CustomAnimationUpdater animationUpdater = new CustomAnimationUpdater();
 
     private EmojiComparator.SortType currentSortType;
@@ -240,6 +241,7 @@ public class EmojidexIME extends InputMethodService {
 
         // Regist download listener.
         emojidex.addDownloadListener(downloadListener);
+        emojidex.addImageLoadListener(imageLoadListener);
     }
 
     @Override
@@ -254,6 +256,7 @@ public class EmojidexIME extends InputMethodService {
 
         // Unregist download listener.
         emojidex.removeDownloadListener(downloadListener);
+        emojidex.removeImageLoadListener(imageLoadListener);
     }
 
     /**
@@ -699,6 +702,69 @@ public class EmojidexIME extends InputMethodService {
     }
 
     /**
+     * Get standard emoji only preference
+     * @return true or false
+     */
+    private boolean isStandardOnly() {
+        SharedPreferences pref = getSharedPreferences(FilterActivity.PREF_NAME, Context.MODE_PRIVATE);
+        return pref.getBoolean(getString(R.string.preference_key_standard_only), false);
+    }
+
+    /**
+     * Get sort type preference
+     * @return sort type
+     */
+    private EmojiComparator.SortType getSortType() {
+        if (userdata.isLogined() && userdata.isSubscriber())
+        {
+            SharedPreferences pref = getSharedPreferences(FilterActivity.PREF_NAME, Context.MODE_PRIVATE);
+            int sortType = pref.getInt(getString(R.string.preference_key_sort_type), EmojiComparator.SortType.SCORE.getValue());
+            return EmojiComparator.SortType.fromInt(sortType);
+        }
+        else
+        {
+            return EmojiComparator.SortType.SCORE;
+        }
+    }
+
+    /**
+     * set my_emoji button visibility.
+     */
+    public void setMyEmojiButtonVisibility()
+    {
+        if (userdata.isLogined())
+            myEmojiButton.setVisibility(View.VISIBLE);
+        else
+            myEmojiButton.setVisibility(View.GONE);
+    }
+
+    /**
+     * Custom DownloadListener.
+     */
+    private class CustomDownloadListener extends DownloadListener
+    {
+        @Override
+        public void onDownloadJson(int handle, String... emojiNames)
+        {
+            reload();
+        }
+    }
+
+    /**
+     * Custom image load listener.
+     */
+    private class CustomImageLoadListener implements ImageLoadListener
+    {
+        @Override
+        public void onLoad(int handle, EmojiFormat format, String emojiName)
+        {
+            if(keyFormat.equals(format))
+                invalidate(emojiName);
+        }
+    }
+
+
+    /**
      * Custom OnKeyboardActionListener.
      */
     private class CustomOnKeyboardActionListener implements KeyboardView.OnKeyboardActionListener
@@ -883,7 +949,6 @@ public class EmojidexIME extends InputMethodService {
         }
     }
 
-
     /**
      * Custom OnTouchListener.
      */
@@ -903,62 +968,6 @@ public class EmojidexIME extends InputMethodService {
         public boolean onTouch(View v, MotionEvent event) {
             return detector.onTouchEvent(event);
         }
-    }
-
-    /**
-     * Custom DownloadListener.
-     */
-    private class CustomDownloadListener extends DownloadListener
-    {
-        @Override
-        public void onDownloadJson(int handle, String... emojiNames)
-        {
-            reload();
-        }
-
-        @Override
-        public void onDownloadImages(int handle, EmojiFormat format, String... emojiNames)
-        {
-            if(keyFormat.equals(format))
-                invalidate(emojiNames);
-        }
-    }
-
-    /**
-     * Get standard emoji only preference
-     * @return true or false
-     */
-    private boolean isStandardOnly() {
-        SharedPreferences pref = getSharedPreferences(FilterActivity.PREF_NAME, Context.MODE_PRIVATE);
-        return pref.getBoolean(getString(R.string.preference_key_standard_only), false);
-    }
-
-    /**
-     * Get sort type preference
-     * @return sort type
-     */
-    private EmojiComparator.SortType getSortType() {
-        if (userdata.isLogined() && userdata.isSubscriber())
-        {
-            SharedPreferences pref = getSharedPreferences(FilterActivity.PREF_NAME, Context.MODE_PRIVATE);
-            int sortType = pref.getInt(getString(R.string.preference_key_sort_type), EmojiComparator.SortType.SCORE.getValue());
-            return EmojiComparator.SortType.fromInt(sortType);
-        }
-        else
-        {
-            return EmojiComparator.SortType.SCORE;
-        }
-    }
-
-    /**
-     * set my_emoji button visibility.
-     */
-    public void setMyEmojiButtonVisibility()
-    {
-        if (userdata.isLogined())
-            myEmojiButton.setVisibility(View.VISIBLE);
-        else
-            myEmojiButton.setVisibility(View.GONE);
     }
 
     /**

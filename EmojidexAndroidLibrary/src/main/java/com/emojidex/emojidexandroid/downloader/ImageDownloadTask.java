@@ -4,7 +4,6 @@ import android.content.Context;
 import android.net.Uri;
 
 import com.emojidex.emojidexandroid.EmojidexFileUtils;
-import com.emojidex.emojidexandroid.ImageLoader;
 import com.emojidex.emojidexandroid.downloader.arguments.ImageDownloadArguments;
 
 /**
@@ -37,9 +36,6 @@ class ImageDownloadTask extends AbstractFileDownloadTask {
 
             // Update checksums.
             getDownloader().updateChecksums(arguments.getEmojiName(), arguments.getFormat());
-
-            // Reload image.
-            ImageLoader.getInstance().reload(arguments.getEmojiName(), arguments.getFormat());
 
             // Norify to listener.
             getDownloader().notifyToListener(new EmojiDownloader.NotifyInterface() {

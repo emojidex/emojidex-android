@@ -7,10 +7,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Point;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.MediaScannerConnection;
@@ -18,10 +18,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.support.v4.content.ContextCompat;
-import android.util.DisplayMetrics;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +41,7 @@ import com.emojidex.emojidexandroid.animation.updater.AnimationUpdater;
 import com.emojidex.emojidexandroid.comparator.EmojiComparator;
 import com.emojidex.emojidexandroid.downloader.DownloadListener;
 import com.emojidex.emojidexandroid.downloader.arguments.ImageDownloadArguments;
-import com.emojidex.libemojidex.Emojidex.Service.User;
+import com.emojidex.emojidexandroid.imageloader.ImageLoadListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -98,6 +98,7 @@ public class CatalogActivity extends Activity
     private final int indexLoadPageCount = 2;
 
     private final CustomDownloadListener downloadListener = new CustomDownloadListener();
+    private final CustomImageLoadListener imageLoadListener = new CustomImageLoadListener();
 
     private final List<EmojidexAnimationDrawable> animationDrawables = new ArrayList<EmojidexAnimationDrawable>();
     private final CustomAnimationUpdater animationUpdater = new CustomAnimationUpdater();
@@ -168,12 +169,14 @@ public class CatalogActivity extends Activity
         super.onStart();
 
         emojidex.addDownloadListener(downloadListener);
+        emojidex.addImageLoadListener(imageLoadListener);
     }
 
     @Override
     protected void onStop()
     {
         emojidex.removeDownloadListener(downloadListener);
+        emojidex.removeImageLoadListener(imageLoadListener);
 
         super.onStop();
     }
@@ -887,7 +890,7 @@ public class CatalogActivity extends Activity
     }
 
     /**
-     * Custom emojidex download downloadListener.
+     * Custom emojidex download listener.
      */
     private class CustomDownloadListener extends DownloadListener
     {
@@ -896,12 +899,18 @@ public class CatalogActivity extends Activity
         {
             reloadCategory();
         }
+    }
 
+    /**
+     * Custom emojidex image load listener.
+     */
+    private class CustomImageLoadListener implements ImageLoadListener
+    {
         @Override
-        public void onDownloadImages(int handle, EmojiFormat format, String... emojiNames)
+        public void onLoad(int handle, EmojiFormat format, String emojiName)
         {
             if(CatalogActivity.this.format.equals(format))
-                invalidate(emojiNames);
+                invalidate(emojiName);
         }
     }
 

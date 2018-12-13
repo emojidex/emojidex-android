@@ -34,7 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.emojidex.emojidexandroid.animation.EmojidexAnimationDrawable;
-import com.emojidex.emojidexandroid.downloader.DownloadListener;
+import com.emojidex.emojidexandroid.imageloader.ImageLoadListener;
 
 import java.util.List;
 
@@ -65,7 +65,7 @@ public class EmojidexKeyboardView extends KeyboardView {
 
     private final FavoriteManager favoriteManager;
 
-    private final CustomDownloadListener listener = new CustomDownloadListener();
+    private final CustomImageLoadListener imageLoadListener = new CustomImageLoadListener();
 
     /**
      * Construct EmojidexKeyboardView object.
@@ -83,13 +83,13 @@ public class EmojidexKeyboardView extends KeyboardView {
 
         favoriteManager = FavoriteManager.getInstance(context);
 
-        Emojidex.getInstance().addDownloadListener(listener);
+        Emojidex.getInstance().addImageLoadListener(imageLoadListener);
     }
 
     @Override
     protected void finalize() throws Throwable
     {
-        Emojidex.getInstance().removeDownloadListener(listener);
+        Emojidex.getInstance().removeImageLoadListener(imageLoadListener);
         super.finalize();
     }
 
@@ -648,12 +648,12 @@ public class EmojidexKeyboardView extends KeyboardView {
     }
 
     /**
-     * Custom emojidex download listener.
+     * Custom image load listener.
      */
-    private class CustomDownloadListener extends DownloadListener
+    private class CustomImageLoadListener implements ImageLoadListener
     {
         @Override
-        public void onDownloadImages(int handle, EmojiFormat format, String... emojiNames)
+        public void onLoad(int handle, EmojiFormat format, String emojiName)
         {
             // Skip if format is not equals.
             if( !EmojidexKeyboardView.this.format.equals(format) )
@@ -673,14 +673,11 @@ public class EmojidexKeyboardView extends KeyboardView {
                 final ImageButton ib = (ImageButton)variantsLayout.getChildAt(i);
                 final String variantName = ib.getContentDescription().toString();
 
-                for(String emojiName : emojiNames)
+                if(variantName.equals(emojiName))
                 {
-                    if(variantName.equals(emojiName))
-                    {
-                        final Emoji variant = Emojidex.getInstance().getEmoji(variantName);
-                        ib.setImageDrawable(variant.getDrawable(format, iconSize, false));
-                        break;
-                    }
+                    final Emoji variant = Emojidex.getInstance().getEmoji(variantName);
+                    ib.setImageDrawable(variant.getDrawable(format, iconSize, false));
+                    break;
                 }
             }
         }

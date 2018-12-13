@@ -6,6 +6,8 @@ import android.util.Log;
 import com.emojidex.emojidexandroid.animation.updater.AnimationUpdater;
 import com.emojidex.emojidexandroid.downloader.DownloadListener;
 import com.emojidex.emojidexandroid.downloader.EmojiDownloader;
+import com.emojidex.emojidexandroid.imageloader.ImageLoadListener;
+import com.emojidex.emojidexandroid.imageloader.ImageLoader;
 import com.emojidex.emojidexandroidlibrary.R;
 
 import java.util.Collection;
@@ -124,6 +126,22 @@ public class Emojidex {
             throw new EmojidexIsNotInitializedException();
 
         getEmojiDownloader().removeListener(listener);
+    }
+
+    public void addImageLoadListener(ImageLoadListener listener)
+    {
+        if( !isInitialized() )
+            throw new EmojidexIsNotInitializedException();
+
+        ImageLoader.getInstance().addListener(listener);
+    }
+
+    public void removeImageLoadListener(ImageLoadListener listener)
+    {
+        if( !isInitialized() )
+            throw new EmojidexIsNotInitializedException();
+
+        ImageLoader.getInstance().removeListener(listener);
     }
 
     /**
