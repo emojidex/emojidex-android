@@ -13,10 +13,10 @@ buildscript {
 
 allprojects {
     ext {
-        globalCompileSdkVersion = 26
+        globalCompileSdkVersion = 28
         globalBuildToolsVersion = '28.0.3'
-        globalMinSdkVersion = 16
-        globalTargetSdkVersion = 26
+        globalMinSdkVersion = 22
+        globalTargetSdkVersion = 28
     }
     repositories {
         google()
