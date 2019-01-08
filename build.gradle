@@ -15,7 +15,7 @@ allprojects {
     ext {
         globalCompileSdkVersion = 28
         globalBuildToolsVersion = '28.0.3'
-        globalMinSdkVersion = 22
+        globalMinSdkVersion = 21
         globalTargetSdkVersion = 28
     }
     repositories {
