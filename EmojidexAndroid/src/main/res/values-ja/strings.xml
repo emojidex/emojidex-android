@@ -212,6 +212,8 @@
     <string name="photo_editor_help_move">このボタンがアクティブの時、絵文字をドラッグで移動できます。</string>
     <string name="photo_editor_help_scale">このボタンがアクティブの時、絵文字をドラッグで拡大縮小できます。</string>
     <string name="photo_editor_help_roll">このボタンがアクティブの時、絵文字をドラッグで回転できます。</string>
+    <string name="photo_editor_help_v_flip">このボタンがアクティブの時、絵文字を上下ドラッグで上下に反転できます。</string>
+    <string name="photo_editor_help_h_flip">このボタンがアクティブの時、絵文字を左右ドラッグで左右に反転できます。</string>
     <string name="photo_editor_help_clear">全ての絵文字をクリアします。</string>
     <string name="photo_editor_help_close">閉じる</string>
 

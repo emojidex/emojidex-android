@@ -284,6 +284,8 @@
     <string name="photo_editor_help_move">This tool lets you move emoji by dragging them.</string>
     <string name="photo_editor_help_scale">This tool lets you change the size of emoji.</string>
     <string name="photo_editor_help_roll">This tool lets you rotate emoji.</string>
+    <string name="photo_editor_help_v_flip">This tool lets you flip vertical emoji.</string>
+    <string name="photo_editor_help_h_flip">This tool lets you flip horizontal emoji.</string>
     <string name="photo_editor_help_clear">Clear all emoji.</string>
     <string name="photo_editor_help_close">Close</string>
 

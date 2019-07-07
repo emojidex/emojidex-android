@@ -37,6 +37,29 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_margin="5dp"
+            android:src="@drawable/ic_photo_filter_black_24dp"
+            android:background="@null"
+            android:contentDescription="@null"
+            android:onClick="addEffect" />
+
+        <ImageButton
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="5dp"
+            android:src="@drawable/ic_clear_black_24dp"
+            android:background="@drawable/button_state"
+            android:contentDescription="@null"
+            android:onClick="clearImage" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="5dp"
             android:src="@drawable/ic_help_black_24dp"
             android:background="@drawable/button_state"
             android:contentDescription="@null"
@@ -48,20 +71,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
-
-        <ImageButton
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_margin="5dp"
-            android:src="@drawable/ic_photo_filter_black_24dp"
-            android:background="@null"
-            android:contentDescription="@null"
-            android:onClick="addEffect" />
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_weight="1" />
 
         <ImageButton
             android:layout_width="40dp"
@@ -112,19 +121,25 @@
             android:contentDescription="@null"
             android:onClick="setModeToRoll" />
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_weight="1" />
-
         <ImageButton
+            android:id="@+id/photo_editor_v_flip_button"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_margin="5dp"
-            android:src="@drawable/ic_clear_black_24dp"
-            android:background="@drawable/button_state"
+            android:src="@drawable/ic_compare_rotate_black_24dp"
+            android:background="@null"
             android:contentDescription="@null"
-            android:onClick="clearImage" />
+            android:onClick="setModeToVerticalFlip" />
+
+        <ImageButton
+            android:id="@+id/photo_editor_h_flip_button"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="5dp"
+            android:src="@drawable/ic_compare_black_24dp"
+            android:background="@null"
+            android:contentDescription="@null"
+            android:onClick="setModeToHorizontalFlip" />
 
         <EditText
             android:id="@+id/photo_editor_text"
