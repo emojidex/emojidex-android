@@ -34,6 +34,7 @@
     <string name="clear">クリア</string>
     <string name="clear_and_paste">クリアして貼り付け</string>
     <string name="convert">変換</string>
+    <string name="copy">コピー</string>
 
     <string name="register_favorite">お気に入りに登録しますか？</string>
     <string name="register_success">登録しました。</string>
