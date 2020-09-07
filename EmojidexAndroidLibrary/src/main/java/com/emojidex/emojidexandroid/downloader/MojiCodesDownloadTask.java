@@ -9,6 +9,8 @@ import com.emojidex.libemojidex.Emojidex.Client;
 import com.emojidex.libemojidex.StringVector;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by kou on 18/01/23.
@@ -53,8 +55,12 @@ class MojiCodesDownloadTask extends AbstractDownloadTask {
         final MojiCodes mojiCodes = new MojiCodes();
         mojiCodes.setMojiString(srcMojiCodes.getMoji_string());
         mojiCodes.setMojiArray(mojiArray);
-        mojiCodes.setMojiIndex(srcMojiCodes.getMoji_index());
 
+        final HashMap<String, String> tmpMojiCodes = new HashMap<>();
+        for (Map.Entry<String, String> entry : srcMojiCodes.getMoji_index().entrySet())
+            tmpMojiCodes.put(entry.getKey(), entry.getValue());
+
+        mojiCodes.setMojiIndex(tmpMojiCodes);
         EmojidexFileUtils.writeJsonToFile(
                 EmojidexFileUtils.getLocalMojiCodesJsonUri(),
                 mojiCodes

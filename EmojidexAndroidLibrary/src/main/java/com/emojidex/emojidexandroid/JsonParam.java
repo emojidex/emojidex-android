@@ -574,7 +574,7 @@ public class JsonParam {
                     if(destChecksumsArray.size() <= j)
                         destChecksumsArray.add(new HashMap<String, Checksums>());
                     final HashMap<String, Checksums> destChecksumsMap = destChecksumsArray.get(j);
-                    final HashMap<String, com.emojidex.libemojidex.Emojidex.Data.Checksums> srcChecksumsMap = srcChecksumsArray.get(j);
+                    final com.emojidex.libemojidex.ChecksumsMap srcChecksumsMap = srcChecksumsArray.get(j);
                     destChecksumsMap.clear();
                     for(Map.Entry<String, com.emojidex.libemojidex.Emojidex.Data.Checksums> entry : srcChecksumsMap.entrySet())
                     {
