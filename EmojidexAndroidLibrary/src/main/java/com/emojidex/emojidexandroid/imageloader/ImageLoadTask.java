@@ -100,7 +100,7 @@ class ImageLoadTask extends AsyncTask<Void, Void, ImageLoadTask.LoadResult> {
             param.oneShot = apngasm.getLoops() == 1;
             param.skipFirst = apngasm.isSkipFirst();
 
-            // Create temporar image files.
+            // Create temporary image files.
             final String tmpDir = EmojidexFileUtils.getTemporaryPath() + "/";
             final File tmpFile = new File(tmpDir);
             tmpFile.mkdirs();
