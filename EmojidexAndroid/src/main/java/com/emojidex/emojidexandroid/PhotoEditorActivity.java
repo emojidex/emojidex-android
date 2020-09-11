@@ -79,6 +79,7 @@ public class PhotoEditorActivity extends Activity implements ColorPickerDialogLi
     private static final int SELECT_PHOTO = 1001;
     private static final String[] PERMISSIONS_STORAGE = {
             android.Manifest.permission.READ_EXTERNAL_STORAGE,
+            android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
             android.Manifest.permission.WRITE_APN_SETTINGS
     };
 
