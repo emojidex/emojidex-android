@@ -7,12 +7,17 @@ import android.content.DialogInterface;
 import com.emojidex.emojidexandroid.downloader.DownloadListener;
 import com.emojidex.emojidexandroid.downloader.EmojiDownloader;
 import com.emojidex.emojidexandroid.downloader.arguments.ImageDownloadArguments;
+import com.emojidex.emojidexandroid.imageloader.ImageLoadListener;
+import com.emojidex.emojidexandroid.imageloader.ImageLoader;
 
 /**
  * Created by kou on 15/04/20.
  */
 public class SealDownloader {
     private final Activity parentActivity;
+
+    private String emojiName;
+    private ImageLoadListener listener;
 
     private ProgressDialog dialog = null;
     private boolean canceled = false;
@@ -39,6 +44,7 @@ public class SealDownloader {
     public void download(String name, String dialogTitle, String dialogMessage, String dialogCancel)
     {
         canceled = false;
+        emojiName = name;
 
         // Download seal.
         final EmojiDownloader downloader = EmojiDownloader.getInstance();
@@ -48,21 +54,11 @@ public class SealDownloader {
                     .setFormat(EmojiFormat.toFormat(parentActivity.getString(R.string.emoji_format_seal)))
         )[0];
 
-        // If already downloaded.
-        if(downloadHandle == EmojiDownloader.HANDLE_NULL)
-        {
-            onDismissListener.onDismiss(null);
-            return;
-        }
-
-        Emojidex.getInstance().addDownloadListener(new CustomDownloadListener());
-
         // Show progress dialog.
         dialog = new ProgressDialog(parentActivity);
         dialog.setCanceledOnTouchOutside(false);
         dialog.setTitle(dialogTitle);
         dialog.setMessage(dialogMessage);
-
         dialog.setButton(
                 DialogInterface.BUTTON_NEGATIVE,
                 dialogCancel,
@@ -73,7 +69,6 @@ public class SealDownloader {
                     }
                 }
         );
-
         dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
@@ -81,10 +76,14 @@ public class SealDownloader {
                 canceled = true;
             }
         });
-
         dialog.setOnDismissListener(onDismissListener);
-
         dialog.show();
+
+        // Download or preload.
+        if (downloadHandle == EmojiDownloader.HANDLE_NULL)
+            preload();
+        else
+            Emojidex.getInstance().addDownloadListener(new CustomDownloadListener());
     }
 
     /**
@@ -105,6 +104,43 @@ public class SealDownloader {
         return canceled;
     }
 
+    /**
+     * Preload images to prevent sending dummy images.
+     */
+    private void preload()
+    {
+        final String preloadEmojiName = emojiName;
+        final ImageLoader loader = ImageLoader.getInstance();
+        final int preloadHandle = loader.preload(emojiName, EmojiFormat.toFormat(parentActivity.getApplicationContext().getString(R.string.emoji_format_seal)));
+        if (preloadHandle == ImageLoader.HANDLE_NULL)
+        {
+            dismissDialog();
+        }
+        else
+        {
+            listener = new ImageLoadListener() {
+                @Override
+                public void onLoad(int handle, EmojiFormat format, String emojiName) {
+                    if (handle == preloadHandle && emojiName.equals(preloadEmojiName))
+                    {
+                        loader.removeListener(listener);
+                        dismissDialog();
+                    }
+                }
+            };
+            loader.addListener(listener);
+        }
+
+    }
+
+    private void dismissDialog()
+    {
+        if (dialog != null)
+        {
+            dialog.dismiss();
+            dialog = null;
+        }
+    }
 
     /**
      * Custom download listener.
@@ -116,12 +152,7 @@ public class SealDownloader {
         {
             if(handle == downloadHandle)
             {
-                if(dialog != null)
-                {
-                    dialog.dismiss();
-                    dialog = null;
-                }
-
+                preload();
                 Emojidex.getInstance().removeDownloadListener(this);
             }
         }

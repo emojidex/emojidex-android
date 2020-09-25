@@ -1,10 +1,8 @@
 package com.emojidex.emojidexandroid.imageloader;
 
-import android.app.ActivityManager;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.util.LruCache;
 
 import com.emojidex.emojidexandroid.EmojiFormat;
 import com.emojidex.emojidexandroid.Emojidex;
@@ -23,13 +21,14 @@ import java.util.Map;
  */
 public class ImageLoader
 {
+    public static final int HANDLE_NULL = -1;
+
     private static final ImageLoader INSTANCE = new ImageLoader();
 
     private final Map<String, ImageParamEx> imageParams = new HashMap<String, ImageParamEx>();
 
     private Context context = null;
     private Resources res = null;
-    private BitmapCache bitmapCache = null;
 
     private final ArrayList<ImageLoadListener> listeners = new ArrayList<ImageLoadListener>();
     private final DownloadListener downloadListener;
@@ -71,11 +70,6 @@ public class ImageLoader
 
         context = c;
         res = context.getResources();
-
-        final int memClass = ((ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE)).getMemoryClass();
-        final int cacheSize = 1024 * 1024 * memClass / 8;
-
-        bitmapCache = new BitmapCache(cacheSize);
     }
 
     /**
@@ -92,13 +86,12 @@ public class ImageLoader
      */
     public void clearCache()
     {
-        if(bitmapCache != null)
-            bitmapCache.evictAll();
+        // nothing to do...
     }
 
     /**
      * Add image load listener.
-     * @param listener      Imaeg load listener.
+     * @param listener      Image load listener.
      */
     public void addListener(ImageLoadListener listener)
     {
@@ -149,13 +142,12 @@ public class ImageLoader
         else
             taskManager.regist(arguments);
 
-        // Regist image param.
+        // Register image param.
         if(param == null)
         {
             final String key = createCacheKey(name, format);
             param = createDummyImageParam(format);
             imageParams.put(key, param);
-            bitmapCache.put(key + 0, param.imageParam.frames[0].bitmap);
         }
         return param.imageParam;
     }
@@ -168,22 +160,10 @@ public class ImageLoader
     {
         final ImageParam newParam = result.param;
         final ImageLoadArguments arg = result.arguments;
-
-        final String key = createCacheKey(arg.getEmojiName(), arg.getFormat());
         final ImageParamEx param = isAlreadyLoading(arg.getEmojiName(), arg.getFormat());
-        for(int i = 0;  i < newParam.frames.length;  ++i)
-        {
-            if(i >= param.imageParam.frames.length)
-            {
-                final Bitmap old = bitmapCache.put(
-                        key + i,
-                        newParam.frames[i].bitmap
-                );
-                if(old != null)
-                    old.recycle();
-                continue;
-            }
 
+        for (int i = 0;  i < param.imageParam.frames.length;  ++i)
+        {
             // Overwrite and replace bitmap.
             final Bitmap oldBitmap = param.imageParam.frames[i].bitmap;
             final Bitmap newBitmap = newParam.frames[i].bitmap;
@@ -203,6 +183,29 @@ public class ImageLoader
 
         param.imageParam = newParam;
         param.isDummy = !result.succeeded;
+    }
+
+    /**
+     * Preload image.
+     * @param name          Emoji name.
+     * @param format        Emoji format.
+     * @return handle
+     */
+    public int preload(String name, EmojiFormat format)
+    {
+        // Already loading
+        ImageParamEx param = isAlreadyLoading(name, format);
+        if (param != null && !param.isDummy)
+            return HANDLE_NULL;
+
+        // Load image.
+        int handle = taskManager.regist(new ImageLoadArguments(res, name).setFormat(format));
+
+        // Register image param.
+        if (param == null)
+            imageParams.put(createCacheKey(name, format), createDummyImageParam(format));
+
+        return handle;
     }
 
     void finishTask(int handle)
@@ -238,13 +241,7 @@ public class ImageLoader
     private ImageParamEx isAlreadyLoading(String name, EmojiFormat format)
     {
         final String key = createCacheKey(name, format);
-        final ImageParamEx param = imageParams.get(key);
-        if(param == null)
-            return null;
-        for(int i = 0;  i < param.imageParam.frames.length;  ++i)
-            if(bitmapCache.get(key + i) == null)
-                return null;
-        return param;
+        return imageParams.get(key);
     }
 
     /**
@@ -280,23 +277,6 @@ public class ImageLoader
                 taskManager.regist(arguments);
                 it.remove();
             }
-        }
-    }
-
-    /**
-     * LruCache for bitmap.
-     */
-    private class BitmapCache extends LruCache<String, Bitmap>
-    {
-        public BitmapCache(int maxSize)
-        {
-            super(maxSize);
-        }
-
-        @Override
-        protected int sizeOf(String key, Bitmap value)
-        {
-            return value.getRowBytes() * value.getHeight();
         }
     }
 

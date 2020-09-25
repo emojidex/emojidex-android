@@ -479,6 +479,8 @@ public class CatalogActivity extends Activity
 
         final ImageView image = (ImageView) layout.findViewById(R.id.dialog_sealkit_image);
         Drawable drawable = emoji.getDrawable(EmojiFormat.toFormat(getString(R.string.emoji_format_catalog)));
+        if (drawable.getClass() == EmojidexAnimationDrawable.class)
+            drawable = ((EmojidexAnimationDrawable) drawable).getFrame(0);
         Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
         drawable = new BitmapDrawable(getResources(),
                 Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() * 3, bitmap.getHeight() * 3, true));

@@ -22,7 +22,7 @@ class ImageLoadArguments {
         return res;
     }
 
-    public ImageLoadArguments setResouces(Resources res)
+    public ImageLoadArguments setResources(Resources res)
     {
         this.res = res;
         return this;
