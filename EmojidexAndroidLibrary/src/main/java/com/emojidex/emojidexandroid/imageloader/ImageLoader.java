@@ -21,6 +21,8 @@ import java.util.Map;
  */
 public class ImageLoader
 {
+    public static final int HANDLE_NULL = -1;
+
     private static final ImageLoader INSTANCE = new ImageLoader();
 
     private final Map<String, ImageParamEx> imageParams = new HashMap<String, ImageParamEx>();
@@ -181,6 +183,29 @@ public class ImageLoader
 
         param.imageParam = newParam;
         param.isDummy = !result.succeeded;
+    }
+
+    /**
+     * Preload image.
+     * @param name          Emoji name.
+     * @param format        Emoji format.
+     * @return handle
+     */
+    public int preload(String name, EmojiFormat format)
+    {
+        // Already loading
+        ImageParamEx param = isAlreadyLoading(name, format);
+        if (param != null && !param.isDummy)
+            return HANDLE_NULL;
+
+        // Load image.
+        int handle = taskManager.regist(new ImageLoadArguments(res, name).setFormat(format));
+
+        // Register image param.
+        if (param == null)
+            imageParams.put(createCacheKey(name, format), createDummyImageParam(format));
+
+        return handle;
     }
 
     void finishTask(int handle)
